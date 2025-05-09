@@ -5,6 +5,9 @@
 #include <sstream>
 #include <filesystem>
 #include <Windows.h>
+#include <WebView2.h>
+#include <wrl.h>
+#include <wil/com.h>
 #include "../Lib/rapidjson/document.h"
 
 class Util

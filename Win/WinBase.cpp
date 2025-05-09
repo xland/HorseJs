@@ -1,4 +1,8 @@
 ﻿#include "WinBase.h"
+#include "Page.h"
+#include "../App/App.h"
+
+using namespace Microsoft::WRL;
 
 WinBase::WinBase(const int &x, const int &y, const int &w, const int &h,
                  const bool &visible, const std::wstring &title)
@@ -120,4 +124,27 @@ LRESULT WinBase::WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         }
     }
     return DefWindowProc(hwnd, msg, wParam, lParam);
+}
+
+bool WinBase::createPageCtrl()
+{
+    auto app = App::get();
+    auto callBackInstance = Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(this, &WinBase::pageCtrlReady);
+    auto result = app->env->CreateCoreWebView2Controller(hwnd, callBackInstance.Get());
+    if (FAILED(result)) {
+        return false;
+    }
+    return true;
+}
+
+HRESULT WinBase::pageCtrlReady(HRESULT result, ICoreWebView2Controller* ctrl)
+{
+    HRESULT hr;
+    this->ctrl = ctrl;
+    wil::com_ptr<ICoreWebView2> webview;
+    hr = ctrl->get_CoreWebView2(&webview);
+    page = new Page(webview, this);
+    RECT bounds{ .left{0}, .top{0}, .right{w}, .bottom{h} };
+    hr = ctrl->put_Bounds(bounds);
+    return hr;
 }

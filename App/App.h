@@ -4,7 +4,6 @@
 #include <shellapi.h>
 #include <fstream>
 #include <filesystem>
-#include <functional>
 #include <wrl.h>
 #include <wil/com.h>
 #include <WebView2.h>
@@ -13,11 +12,17 @@
 class App
 {
 public:
+	App();
+	~App();
+	static App* get();
 	static void init();
+public:
+	ICoreWebView2Environment* env;
 private:
+	void start();
 	bool checkRuntime();
 	bool checkRegKey(const HKEY& key, const std::wstring& subKey);
 private:
-	ICoreWebView2Environment* env;
+	HRESULT envReady(HRESULT result, ICoreWebView2Environment* env);
 };
 

@@ -1,15 +1,39 @@
 #include "App.h"
 #include "../Win/WinBase.h"
-
+namespace {
+    std::shared_ptr<App> app;
+}
 using namespace Microsoft::WRL;
+
+
+App::App()
+{
+}
+
+App::~App()
+{
+}
+
+App* App::get()
+{
+    return app.get();
+}
+
 void App::init()
 {
-    auto content = Util::readFile(L"config.json");
-    rapidjson::Document d;
-    d.Parse(content.data());
-    auto win = WinBase::create(d["window"]);
-
+    app = std::make_shared<App>();
 }
+
+void App::start()
+{
+    if (!checkRuntime()) {
+        return;
+    }
+    auto envReadyInstance = Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(this, &App::envReady);
+    CreateCoreWebView2Environment(envReadyInstance.Get()); //todo CreateCoreWebView2EnvironmentWithOptions    
+}
+
+
 
 
 bool App::checkRegKey(const HKEY& key, const std::wstring& subKey) {
@@ -32,6 +56,17 @@ bool App::checkRegKey(const HKEY& key, const std::wstring& subKey) {
     }
     return true;
 }
+
+HRESULT App::envReady(HRESULT result, ICoreWebView2Environment* env)
+{
+    this->env = env;
+    auto content = Util::readFile(L"config.json");
+    rapidjson::Document d;
+    d.Parse(content.data());
+    auto win = WinBase::create(d["window"]);
+    return S_OK;
+}
+
 
 bool App::checkRuntime()
 {
