@@ -16,8 +16,10 @@ void WinBase::initWindow()
 {
     auto wcex = regWinClass();
     auto winStyle = WS_OVERLAPPEDWINDOW;
-    if (visible)
+    if (visible) {
         winStyle = winStyle | WS_VISIBLE;
+    }
+        
 
     hwnd = CreateWindowEx(WS_EX_APPWINDOW, wcex->lpszClassName, title.data(), winStyle, x, y, w, h, nullptr, nullptr, wcex->hInstance, this);
     SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
