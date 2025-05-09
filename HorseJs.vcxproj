@@ -142,6 +142,7 @@
     <ClCompile Include="App\App.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="App\Util.cpp" />
+    <ClCompile Include="Win\Page.cpp" />
     <ClCompile Include="Win\WinBase.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -192,6 +193,7 @@
     <ClInclude Include="Lib\rapidjson\uri.h" />
     <ClInclude Include="Lib\rapidjson\writer.h" />
     <ClInclude Include="App\Util.h" />
+    <ClInclude Include="Win\Page.h" />
     <ClInclude Include="Win\WinBase.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -27,7 +27,7 @@
     <ClCompile Include="App\App.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\yyjson\yyjson.c">
+    <ClCompile Include="Win\Page.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -42,9 +42,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="App\App.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\yyjson\yyjson.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Lib\rapidjson\error\en.h">
@@ -159,6 +156,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Lib\rapidjson\writer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win\Page.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
