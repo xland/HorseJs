@@ -1,0 +1,19 @@
+{
+  "appId": "Horse",
+  "window": {
+    "resizable": true,
+    "size": {
+      "w": 1000,
+      "h": 800
+    },
+    "miniSize": {
+      "w": 250,
+      "h": 200
+    },
+    "position": "screenCenter",
+    "visible": true,
+    "frame": true,
+    "shadow": true,
+    "title" : "窗口标题"
+  }
+}
