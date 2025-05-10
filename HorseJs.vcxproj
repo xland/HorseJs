@@ -150,6 +150,9 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <FileType>Document</FileType>
     </CopyFileToFolders>
+    <None Include="Doc\API.md" />
+    <None Include="Doc\Config.md" />
+    <None Include="Doc\Deploy.md" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

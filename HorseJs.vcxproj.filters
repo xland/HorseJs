@@ -33,6 +33,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Doc\Config.md" />
+    <None Include="Doc\Deploy.md" />
+    <None Include="Doc\API.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Win\WinBase.h">
@@ -164,5 +167,9 @@
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="config.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
+    <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natstepfilter" />
   </ItemGroup>
 </Project>
