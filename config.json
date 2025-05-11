@@ -12,7 +12,7 @@
     },
     "position": "screenCenter",
     "visible": true,
-    "frame": true,
+    "frame": false,
     "shadow": true,
     "title" : "窗口标题"
   }

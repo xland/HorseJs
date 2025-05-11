@@ -8,6 +8,7 @@
 #include <WebView2.h>
 #include <wrl.h>
 #include <wil/com.h>
+#include <gdiplus.h>
 #include "../Lib/rapidjson/document.h"
 
 class Util

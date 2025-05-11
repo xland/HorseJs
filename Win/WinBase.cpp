@@ -1,13 +1,18 @@
-﻿#include "WinBase.h"
+﻿#include <windowsx.h>
+#include <dwmapi.h>
+
+#include "WinBase.h"
 #include "Page.h"
 #include "../App/App.h"
 
 using namespace Microsoft::WRL;
 
 WinBase::WinBase(const int &x, const int &y, const int &w, const int &h,
-                 const bool &visible, const std::wstring &title)
+                 const bool &visible, const bool& frame, const bool& shadow,
+                 const std::wstring &title)
     : x{x}, y{y}, w{w}, h{h},
-      visible{visible}, title{title}
+	visible{ visible }, frame{ frame }, shadow{ shadow },
+    title{ title }
 {
     initWindow();
     createPageCtrl();
@@ -17,25 +22,10 @@ WinBase::~WinBase()
 {
 }
 
-void WinBase::initWindow()
-{
-    auto wcex = regWinClass();
-    auto winStyle = WS_OVERLAPPEDWINDOW;
-    //if (visible) {
-    //    winStyle = winStyle | WS_VISIBLE;
-    //}       
-
-    hwnd = CreateWindowEx(0, wcex->lpszClassName, title.data(), winStyle, x, y, w, h, nullptr, nullptr, wcex->hInstance, this);
-    SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-
-    ShowWindow(hwnd, SW_SHOW);
-    UpdateWindow(hwnd);
-}
-
 WinBase *WinBase::create(const rapidjson::Value &config)
 {
     int x{100}, y{100}, w{1000}, h{800};
-    bool maximize{false}, visible{true};
+    bool maximize{ false }, visible{ true }, frame{ true }, shadow{true};
     std::wstring title{L"Window - HorseJs"};
     if (config.HasMember("size"))
     {
@@ -69,13 +59,50 @@ WinBase *WinBase::create(const rapidjson::Value &config)
     {
         visible = config["visible"].GetBool();
     }
+    if (config.HasMember("frame") && config["frame"].IsBool())
+    {
+        frame = config["frame"].GetBool();
+    }
+    if (config.HasMember("shadow") && config["shadow"].IsBool())
+    {
+        shadow = config["shadow"].GetBool();
+    }
     if (config.HasMember("title") && config["title"].IsString())
     {
         title = Util::convertToWStr(config["title"].GetString());
     }
-    return new WinBase(x, y, w, h, visible, title);
+    return new WinBase(x, y, w, h, visible, frame,shadow,title);
 }
 
+
+void WinBase::initWindow()
+{
+    auto wcex = regWinClass();
+    long winStyle;
+    if (frame)
+    {
+        winStyle = WS_OVERLAPPEDWINDOW;
+    }
+    else {
+		winStyle = WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+    }
+    if (visible) {
+        winStyle = winStyle | WS_VISIBLE;
+    }
+    //WS_EX_APPWINDOW 确保窗口出现在任务栏
+    hwnd = CreateWindowEx(WS_EX_APPWINDOW, wcex->lpszClassName, title.data(), winStyle, x, y, w, h, nullptr, nullptr, wcex->hInstance, this);
+    SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+
+    if (!frame && shadow)
+    {
+        MARGINS margins = { 1, 1, 1, 1 };
+        DwmExtendFrameIntoClientArea(hwnd, &margins);
+        int value = 2;
+        DwmSetWindowAttribute(hwnd, DWMWA_NCRENDERING_POLICY, &value, sizeof(value));
+        DwmSetWindowAttribute(hwnd, DWMWA_ALLOW_NCPAINT, &value, sizeof(value));
+    }
+
+}
 WNDCLASSEX *WinBase::regWinClass()
 {
     static WNDCLASSEX wcex;
@@ -142,6 +169,33 @@ LRESULT WinBase::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             }
             return 0;
         }
+        case WM_NCHITTEST: {
+            LRESULT hit = DefWindowProc(hwnd, msg, wParam, lParam);
+            if (hit == HTCLIENT) {
+                POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+                ScreenToClient(hwnd, &pt);
+
+                RECT rect;
+                GetClientRect(hwnd, &rect);
+
+                bool left = pt.x < 5;
+                bool right = pt.x > rect.right - 5;
+                bool top = pt.y < 5;
+                bool bottom = pt.y > rect.bottom - 5;
+
+                if (left && top) return HTTOPLEFT;
+                if (right && top) return HTTOPRIGHT;
+                if (left && bottom) return HTBOTTOMLEFT;
+                if (right && bottom) return HTBOTTOMRIGHT;
+                if (left) return HTLEFT;
+                if (right) return HTRIGHT;
+                if (top) return HTTOP;
+                if (bottom) return HTBOTTOM;
+
+                return HTCAPTION;
+            }
+            return hit;
+        }
     }
     return DefWindowProc(hwnd, msg, wParam, lParam);
 }
@@ -171,19 +225,28 @@ HRESULT WinBase::pageCtrlReady(HRESULT result, ICoreWebView2Controller* ctrl)
 
     
     auto navigateCB = Callback<ICoreWebView2NavigationStartingEventHandler>(this, &WinBase::navigationStarting);
-    EventRegistrationToken token;
-    webview->add_NavigationStarting(navigateCB.Get(), &token);
+    EventRegistrationToken navigateToken;
+    webview->add_NavigationStarting(navigateCB.Get(), &navigateToken);
 
     auto titleChangedCB = Callback<ICoreWebView2DocumentTitleChangedEventHandler>(this, &WinBase::titleChanged);
     EventRegistrationToken titleToken;
     hr = webview->add_DocumentTitleChanged(titleChangedCB.Get(), &titleToken);
 
-    auto statusMessageCB = Callback<ICoreWebView2StatusBarTextChangedEventHandler>(this, &WinBase::statusChanged);
+    auto statusChangeCB = Callback<ICoreWebView2StatusBarTextChangedEventHandler>(this, &WinBase::statusChanged);
     EventRegistrationToken statusToken;
-    auto m_webView2_12 = webview.try_query<ICoreWebView2_12>();
-    hr = m_webView2_12->add_StatusBarTextChanged(statusMessageCB.Get(), &statusToken);
+    auto webView12 = webview.try_query<ICoreWebView2_12>();
+    hr = webView12->add_StatusBarTextChanged(statusChangeCB.Get(), &statusToken);
 
-    webview->Navigate(L"https://www.bing.com");
+    
+    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+    ULONG_PTR gdiplusToken_;
+    Gdiplus::GdiplusStartup(&gdiplusToken_, &gdiplusStartupInput, NULL);
+    auto webView15 = webview.try_query<ICoreWebView2_15>();
+    EventRegistrationToken faviconToken;
+    auto faviconChangeCB = Callback<ICoreWebView2FaviconChangedEventHandler>(this, &WinBase::faviconChange);
+    hr = webView15->add_FaviconChanged(faviconChangeCB.Get(),&faviconToken);
+
+    webview->Navigate(L"https://www.microsoft.com/");
 
     //RECT bounds{ .left{0}, .top{0}, .right{w}, .bottom{h} };
     RECT bounds;
@@ -209,7 +272,36 @@ HRESULT WinBase::titleChanged(ICoreWebView2* sender, IUnknown* args)
 
 HRESULT WinBase::statusChanged(ICoreWebView2* sender, IUnknown* args)
 {
-    //wv->get_StatusBarText(&value)
-    auto a = 1;
+    LPWSTR statusData;
+    auto m_webView2_12 = webview.try_query<ICoreWebView2_12>();
+    HRESULT hr = m_webView2_12->get_StatusBarText(&statusData);
+    CoTaskMemFree(statusData);
+    return S_OK;
+}
+
+HRESULT WinBase::faviconChange(ICoreWebView2* sender, IUnknown* args)
+{
+    auto webView15 = webview.try_query<ICoreWebView2_15>();
+    LPWSTR urlData;
+    webView15->get_FaviconUri(&urlData);
+    std::wstring url = urlData;
+    CoTaskMemFree(urlData);
+    webView15->GetFavicon(COREWEBVIEW2_FAVICON_IMAGE_FORMAT_PNG,
+        Callback<ICoreWebView2GetFaviconCompletedHandler>([this, url](HRESULT errorCode, IStream* iconStream)
+            {
+                Gdiplus::Bitmap iconBitmap(iconStream);
+                wil::unique_hicon icon;
+                auto hr = iconBitmap.GetHICON(&icon);
+                if (hr == Gdiplus::Status::Ok)
+                {
+                    favicon = std::move(icon);
+                    SendMessage(hwnd, WM_SETICON,ICON_SMALL, (LPARAM)favicon.get());
+                }
+                else
+                {
+                    SendMessage(hwnd, WM_SETICON,ICON_SMALL, (LPARAM)IDC_NO);
+                }
+                return S_OK;
+            }).Get());
     return S_OK;
 }
