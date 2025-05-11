@@ -22,6 +22,7 @@ App* App::get()
 void App::init()
 {
     app = std::make_shared<App>();
+    app->start();
 }
 
 void App::start()
@@ -30,7 +31,12 @@ void App::start()
         return;
     }
     auto envReadyInstance = Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(this, &App::envReady);
-    CreateCoreWebView2Environment(envReadyInstance.Get()); //todo CreateCoreWebView2EnvironmentWithOptions    
+    HRESULT hr = CreateCoreWebView2Environment(envReadyInstance.Get()); //todo CreateCoreWebView2EnvironmentWithOptions    
+    if (FAILED(hr)) {
+        MessageBox(nullptr, L"创建 WebView2 环境失败", L"错误", MB_OK | MB_ICONERROR);
+        // 根据需要处理错误，例如退出应用程序
+        return;
+    }
 }
 
 

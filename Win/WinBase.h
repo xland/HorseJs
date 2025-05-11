@@ -14,15 +14,18 @@ protected:
 private:
 	WNDCLASSEX* regWinClass();
 	void show();
-	static LRESULT CALLBACK WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	static LRESULT CALLBACK winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	LRESULT winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	bool createPageCtrl();
 	HRESULT pageCtrlReady(HRESULT result, ICoreWebView2Controller* ctrl);
+	HRESULT navigationStarting(ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args);
 private:
 	HWND hwnd;
 	int x, y, w, h;
 	bool visible;
 	std::wstring title;
 	wil::com_ptr<ICoreWebView2Controller> ctrl;
+	wil::com_ptr<ICoreWebView2> webview;
 	Page* page;
 };
 

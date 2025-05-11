@@ -10,6 +10,7 @@ WinBase::WinBase(const int &x, const int &y, const int &w, const int &h,
       visible{visible}, title{title}
 {
     initWindow();
+    createPageCtrl();
 }
 
 WinBase::~WinBase()
@@ -20,13 +21,15 @@ void WinBase::initWindow()
 {
     auto wcex = regWinClass();
     auto winStyle = WS_OVERLAPPEDWINDOW;
-    if (visible) {
-        winStyle = winStyle | WS_VISIBLE;
-    }
-        
+    //if (visible) {
+    //    winStyle = winStyle | WS_VISIBLE;
+    //}       
 
-    hwnd = CreateWindowEx(WS_EX_APPWINDOW, wcex->lpszClassName, title.data(), winStyle, x, y, w, h, nullptr, nullptr, wcex->hInstance, this);
+    hwnd = CreateWindowEx(0, wcex->lpszClassName, title.data(), winStyle, x, y, w, h, nullptr, nullptr, wcex->hInstance, this);
     SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+
+    ShowWindow(hwnd, SW_SHOW);
+    UpdateWindow(hwnd);
 }
 
 WinBase *WinBase::create(const rapidjson::Value &config)
@@ -81,8 +84,8 @@ WNDCLASSEX *WinBase::regWinClass()
     {
         auto hinstance = GetModuleHandle(NULL);
         wcex.cbSize = sizeof(WNDCLASSEX);
-        wcex.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-        wcex.lpfnWndProc = &WinBase::WinProc;
+        wcex.style = CS_HREDRAW | CS_VREDRAW;
+        wcex.lpfnWndProc = &WinBase::winProc;
         wcex.cbClsExtra = 0;
         wcex.cbWndExtra = 0;
         wcex.hInstance = hinstance;
@@ -107,20 +110,37 @@ void WinBase::show()
     UpdateWindow(hwnd);
 }
 
-LRESULT WinBase::WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT WinBase::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     auto winObj = reinterpret_cast<WinBase *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
     if (winObj != nullptr)
     {
-        switch (msg)
-        {
-        case WM_CLOSE:
-        {
+        if (msg == WM_CLOSE) {
             DestroyWindow(hwnd);
             SetWindowLongPtr(hwnd, GWLP_USERDATA, 0);
             delete winObj;
-            return 0;
         }
+        else {
+			return winObj->winMsg(hwnd, msg, wParam, lParam);
+        }
+    }
+    else {
+        return DefWindowProc(hwnd, msg, wParam, lParam);
+    }
+}
+
+LRESULT WinBase::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    switch (msg)
+    {
+        case WM_SIZE: {
+            if (ctrl) {
+                // 获取新的窗口客户区大小
+                RECT bounds;
+                GetClientRect(hwnd, &bounds);
+                ctrl->SetBoundsAndZoomFactor(bounds, 1.0);
+            }
+            return 0;
         }
     }
     return DefWindowProc(hwnd, msg, wParam, lParam);
@@ -141,10 +161,28 @@ HRESULT WinBase::pageCtrlReady(HRESULT result, ICoreWebView2Controller* ctrl)
 {
     HRESULT hr;
     this->ctrl = ctrl;
-    wil::com_ptr<ICoreWebView2> webview;
     hr = ctrl->get_CoreWebView2(&webview);
-    page = new Page(webview, this);
-    RECT bounds{ .left{0}, .top{0}, .right{w}, .bottom{h} };
+
+    wil::com_ptr<ICoreWebView2Settings> settings;
+    webview->get_Settings(&settings);
+    settings->put_IsScriptEnabled(TRUE);
+    settings->put_AreDefaultScriptDialogsEnabled(TRUE);
+    settings->put_IsWebMessageEnabled(TRUE);
+
+    
+    auto navigateCB = Callback<ICoreWebView2NavigationStartingEventHandler>(this, &WinBase::navigationStarting);
+    EventRegistrationToken token;
+    webview->add_NavigationStarting(navigateCB.Get(), &token);
+    webview->Navigate(L"https://www.bing.com");
+
+    //RECT bounds{ .left{0}, .top{0}, .right{w}, .bottom{h} };
+    RECT bounds;
+    GetClientRect(hwnd, &bounds);
     hr = ctrl->put_Bounds(bounds);
     return hr;
+}
+
+HRESULT WinBase::navigationStarting(ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args)
+{
+    return S_OK;
 }
