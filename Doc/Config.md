@@ -1,5 +1,8 @@
 - appId
 > - 应用程序的Id。
+- quitWhenNoWindow
+> - 类型：布尔，默认值：`true`
+> 当所有窗口关闭时，退出应用程序。
 - window.resizable
 > - 类型：布尔，默认值：`true`
 > - 是否允许调整窗口的大小。

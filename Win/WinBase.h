@@ -1,4 +1,7 @@
 #pragma once
+#include <windows.h>
+#include <wil/com.h>
+#include <WebView2.h>
 #include "../App/Util.h"
 
 class Page;
@@ -20,6 +23,7 @@ private:
 	HRESULT pageCtrlReady(HRESULT result, ICoreWebView2Controller* ctrl);
 	HRESULT navigationStarting(ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args);
 	HRESULT titleChanged(ICoreWebView2* sender, IUnknown* args);
+	HRESULT statusChanged(ICoreWebView2* sender, IUnknown* args);
 private:
 	HWND hwnd;
 	int x, y, w, h;

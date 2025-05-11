@@ -178,6 +178,11 @@ HRESULT WinBase::pageCtrlReady(HRESULT result, ICoreWebView2Controller* ctrl)
     EventRegistrationToken titleToken;
     hr = webview->add_DocumentTitleChanged(titleChangedCB.Get(), &titleToken);
 
+    auto statusMessageCB = Callback<ICoreWebView2StatusBarTextChangedEventHandler>(this, &WinBase::statusChanged);
+    EventRegistrationToken statusToken;
+    auto m_webView2_12 = webview.try_query<ICoreWebView2_12>();
+    hr = m_webView2_12->add_StatusBarTextChanged(statusMessageCB.Get(), &statusToken);
+
     webview->Navigate(L"https://www.bing.com");
 
     //RECT bounds{ .left{0}, .top{0}, .right{w}, .bottom{h} };
@@ -199,5 +204,12 @@ HRESULT WinBase::titleChanged(ICoreWebView2* sender, IUnknown* args)
 	title = titleData;
     SetWindowText(hwnd, title.data());
     CoTaskMemFree(titleData);
+    return S_OK;
+}
+
+HRESULT WinBase::statusChanged(ICoreWebView2* sender, IUnknown* args)
+{
+    //wv->get_StatusBarText(&value)
+    auto a = 1;
     return S_OK;
 }
