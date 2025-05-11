@@ -19,6 +19,7 @@ private:
 	bool createPageCtrl();
 	HRESULT pageCtrlReady(HRESULT result, ICoreWebView2Controller* ctrl);
 	HRESULT navigationStarting(ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args);
+	HRESULT titleChanged(ICoreWebView2* sender, IUnknown* args);
 private:
 	HWND hwnd;
 	int x, y, w, h;
@@ -26,6 +27,5 @@ private:
 	std::wstring title;
 	wil::com_ptr<ICoreWebView2Controller> ctrl;
 	wil::com_ptr<ICoreWebView2> webview;
-	Page* page;
 };
 

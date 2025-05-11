@@ -31,7 +31,9 @@ void App::start()
         return;
     }
     auto envReadyInstance = Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(this, &App::envReady);
-    HRESULT hr = CreateCoreWebView2Environment(envReadyInstance.Get()); //todo CreateCoreWebView2EnvironmentWithOptions    
+    HRESULT hr = CreateCoreWebView2Environment(envReadyInstance.Get()); 
+    //todo CreateCoreWebView2EnvironmentWithOptions    
+    //WebView2 Warning: Using default User Data Folder is not recommended, please see documentation.  https://go.microsoft.com/fwlink/?linkid=2187341 
     if (FAILED(hr)) {
         MessageBox(nullptr, L"创建 WebView2 环境失败", L"错误", MB_OK | MB_ICONERROR);
         // 根据需要处理错误，例如退出应用程序

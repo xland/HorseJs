@@ -173,6 +173,11 @@ HRESULT WinBase::pageCtrlReady(HRESULT result, ICoreWebView2Controller* ctrl)
     auto navigateCB = Callback<ICoreWebView2NavigationStartingEventHandler>(this, &WinBase::navigationStarting);
     EventRegistrationToken token;
     webview->add_NavigationStarting(navigateCB.Get(), &token);
+
+    auto titleChangedCB = Callback<ICoreWebView2DocumentTitleChangedEventHandler>(this, &WinBase::titleChanged);
+    EventRegistrationToken titleToken;
+    hr = webview->add_DocumentTitleChanged(titleChangedCB.Get(), &titleToken);
+
     webview->Navigate(L"https://www.bing.com");
 
     //RECT bounds{ .left{0}, .top{0}, .right{w}, .bottom{h} };
@@ -184,5 +189,15 @@ HRESULT WinBase::pageCtrlReady(HRESULT result, ICoreWebView2Controller* ctrl)
 
 HRESULT WinBase::navigationStarting(ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args)
 {
+    return S_OK;
+}
+
+HRESULT WinBase::titleChanged(ICoreWebView2* sender, IUnknown* args)
+{
+	LPWSTR titleData;
+    HRESULT hr = webview->get_DocumentTitle(&titleData);
+	title = titleData;
+    SetWindowText(hwnd, title.data());
+    CoTaskMemFree(titleData);
     return S_OK;
 }
