@@ -141,6 +141,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App\App.cpp" />
+    <ClCompile Include="Win\JsBridge.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="App\Util.cpp" />
     <ClCompile Include="Win\Page.cpp" />
@@ -165,6 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\App.h" />
+    <ClInclude Include="Win\JsBridge.h" />
     <ClInclude Include="Lib\rapidjson\allocators.h" />
     <ClInclude Include="Lib\rapidjson\cursorstreamwrapper.h" />
     <ClInclude Include="Lib\rapidjson\document.h" />

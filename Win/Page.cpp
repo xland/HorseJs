@@ -1,7 +1,10 @@
 #include <wil/com.h>
+#include <winrt/base.h>
+#include <winrt/Windows.Foundation.h>
 
 #include "Page.h"
 #include "BrowserWindow.h"
+#include "JsBridge.h"
 #include "../App/App.h"
 
 using namespace Microsoft;
@@ -70,6 +73,21 @@ void Page::load()
     auto newWindowCB = WRL::Callback<ICoreWebView2NewWindowRequestedEventHandler>(this, &Page::newWindowRequested);
     EventRegistrationToken newWindowToken;
     hr = webView15->add_NewWindowRequested(newWindowCB.Get(), &newWindowToken);
+
+
+
+    auto jsBridge = winrt::make<JsBridge>();
+    VARIANT hostObject;
+    VariantInit(&hostObject);
+    hostObject.vt = VT_UNKNOWN;
+    IUnknown* pUnknown = reinterpret_cast<IUnknown*>(winrt::get_abi(jsBridge));
+    pUnknown->AddRef();
+    hostObject.punkVal = pUnknown;
+    hr = webview->AddHostObjectToScript(L"hostObj", &hostObject);
+    if (FAILED(hr)) {
+        auto a = 1;
+    }
+
     webview->Navigate(L"https://HorseJs/index.html");
 }
 

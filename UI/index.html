@@ -4,5 +4,16 @@
 </HEAD>
 <BODY>
     HorseJs
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+            if (window.hostObj) {
+                hostObj.sayHello().then(result => {
+                    console.log(result);
+                });
+            } else {
+                console.error("hostObj not found!");
+            }
+        });
+    </script>
 </BODY>
 </HTML>
