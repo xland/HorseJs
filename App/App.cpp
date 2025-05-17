@@ -1,7 +1,7 @@
 #include "App.h"
 #include "../Win/WinBase.h"
 namespace {
-    std::shared_ptr<App> app;
+    std::unique_ptr<App> app;
 }
 using namespace Microsoft::WRL;
 
@@ -21,27 +21,51 @@ App* App::get()
 
 void App::init()
 {
-    app = std::make_shared<App>();
+    app = std::make_unique<App>();
     app->start();
 }
 
 void App::start()
 {
+    auto content = Util::readFile(L"config.json");
+    d.Parse(content.data());
     if (!checkRuntime()) {
         return;
     }
+    auto path = ensureAppFolder();
+    if (path.empty()) {
+        return;
+    }
     auto envReadyInstance = Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(this, &App::envReady);
-    HRESULT hr = CreateCoreWebView2Environment(envReadyInstance.Get()); 
-    //todo CreateCoreWebView2EnvironmentWithOptions    
-    //WebView2 Warning: Using default User Data Folder is not recommended, please see documentation.  https://go.microsoft.com/fwlink/?linkid=2187341 
+    HRESULT hr = CreateCoreWebView2EnvironmentWithOptions(nullptr, path.c_str(), nullptr,envReadyInstance.Get());
     if (FAILED(hr)) {
         MessageBox(nullptr, L"创建 WebView2 环境失败", L"错误", MB_OK | MB_ICONERROR);
-        // 根据需要处理错误，例如退出应用程序
         return;
     }
 }
 
-
+std::filesystem::path App::ensureAppFolder() {
+    std::filesystem::path path;
+    PWSTR pathTmp;
+    auto ret = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, &pathTmp);
+    if (ret != S_OK) {
+        CoTaskMemFree(pathTmp);
+        auto result = MessageBox(nullptr, L"无法得到系统数据目录地址", L"系统提示", MB_OK | MB_ICONINFORMATION | MB_DEFBUTTON1);
+        exit(1);
+        return path;
+    }
+    path = pathTmp;
+    CoTaskMemFree(pathTmp);
+    path /= d["appId"].GetString();
+    if (!std::filesystem::exists(path)) {
+        auto flag = std::filesystem::create_directory(path);
+        if (!flag) {
+            MessageBox(nullptr, L"无法创建应用程序数据目录", L"系统提示", MB_OK | MB_ICONINFORMATION | MB_DEFBUTTON1);
+            exit(1);
+        }
+    }
+    return path;
+}
 
 
 bool App::checkRegKey(const HKEY& key, const std::wstring& subKey) {
@@ -68,10 +92,7 @@ bool App::checkRegKey(const HKEY& key, const std::wstring& subKey) {
 HRESULT App::envReady(HRESULT result, ICoreWebView2Environment* env)
 {
     this->env = env;
-    auto content = Util::readFile(L"config.json");
-    rapidjson::Document d;
-    d.Parse(content.data());
-    auto win = WinBase::create(d["window"]);
+    auto win = WinBase::create(d["window"]); //todo
     return S_OK;
 }
 

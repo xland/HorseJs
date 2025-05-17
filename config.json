@@ -1,5 +1,6 @@
 {
-  "appId": "Horse",
+  "appId": "HorseJs",
+  "quitWhenAllWindowClosed": true,
   "window": {
     "resizable": true,
     "size": {
@@ -12,8 +13,13 @@
     },
     "position": "screenCenter",
     "visible": true,
-    "frame": false,
+    "frame": true,
     "shadow": true,
-    "title" : "窗口标题"
+    "title": "窗口标题",
+    "page": {
+      "areDefaultScriptDialogsEnabled": true,
+      "isScriptEnabled": true,
+      "isWebMessageEnabled": true
+    }
   }
 }

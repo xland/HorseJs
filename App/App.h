@@ -18,10 +18,12 @@ public:
 	static void init();
 public:
 	ICoreWebView2Environment* env;
+	rapidjson::Document d;
 private:
 	void start();
 	bool checkRuntime();
 	bool checkRegKey(const HKEY& key, const std::wstring& subKey);
+	std::filesystem::path ensureAppFolder();
 private:
 	HRESULT envReady(HRESULT result, ICoreWebView2Environment* env);
 };
