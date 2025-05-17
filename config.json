@@ -19,7 +19,8 @@
     "page": {
       "areDefaultScriptDialogsEnabled": true,
       "isScriptEnabled": true,
-      "isWebMessageEnabled": true
+      "isWebMessageEnabled": true,
+      "url": "index.html"
     }
   }
 }

@@ -1,9 +1,19 @@
+#include <Shlobj.h>
+#include <shellapi.h>
+#include <fstream>
+#include <filesystem>
+#include <functional>
+#include <wrl.h>
+#include <wil/com.h>
+#include <WebView2.h>
+#include <WebView2EnvironmentOptions.h>
+
 #include "App.h"
-#include "../Win/WinBase.h"
+#include "../Win/BrowserWindow.h"
 namespace {
     std::unique_ptr<App> app;
 }
-using namespace Microsoft::WRL;
+using namespace Microsoft;
 
 
 App::App()
@@ -36,8 +46,24 @@ void App::start()
     if (path.empty()) {
         return;
     }
-    auto envReadyInstance = Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(this, &App::envReady);
-    HRESULT hr = CreateCoreWebView2EnvironmentWithOptions(nullptr, path.c_str(), nullptr,envReadyInstance.Get());
+
+    auto options = WRL::Make<CoreWebView2EnvironmentOptions>();
+    options->put_AdditionalBrowserArguments(L"--allow-file-access-from-files");
+    WRL::ComPtr<ICoreWebView2EnvironmentOptions4> options4;
+    HRESULT oeResult = options.As(&options4);
+    if (oeResult != S_OK) {
+        // UNREACHABLE - cannot continue  todo
+    }
+    const WCHAR* allowedSchemeOrigins[5] = { L"about://*", L"http://*", L"https://*", L"file://*", L"socket://*" };
+    auto defaultRegistration = WRL::Make<CoreWebView2CustomSchemeRegistration>(L"horse");
+    defaultRegistration->put_HasAuthorityComponent(TRUE);
+    defaultRegistration->put_TreatAsSecure(TRUE);
+    defaultRegistration->SetAllowedOrigins(5, allowedSchemeOrigins);
+    ICoreWebView2CustomSchemeRegistration* registrations[1] = { defaultRegistration.Get() };
+    options4->SetCustomSchemeRegistrations(1, static_cast<ICoreWebView2CustomSchemeRegistration**>(registrations));
+
+    auto envReadyInstance = WRL::Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(this, &App::envReady);
+    HRESULT hr = CreateCoreWebView2EnvironmentWithOptions(nullptr, path.c_str(), options.Get(),envReadyInstance.Get());
     if (FAILED(hr)) {
         MessageBox(nullptr, L"创建 WebView2 环境失败", L"错误", MB_OK | MB_ICONERROR);
         return;
@@ -92,7 +118,7 @@ bool App::checkRegKey(const HKEY& key, const std::wstring& subKey) {
 HRESULT App::envReady(HRESULT result, ICoreWebView2Environment* env)
 {
     this->env = env;
-    auto win = WinBase::create(d["window"]); //todo
+    auto win = BrowserWindow::create(d["window"]); //todo
     return S_OK;
 }
 

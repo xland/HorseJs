@@ -1,12 +1,12 @@
 #include <wil/com.h>
 
 #include "Page.h"
-#include "WinBase.h"
+#include "BrowserWindow.h"
 #include "../App/App.h"
 
-using namespace Microsoft::WRL;
+using namespace Microsoft;
 
-Page::Page(WinBase* win) : win{ win }
+Page::Page(BrowserWindow* win) : win{ win }
 {
 }
 
@@ -41,15 +41,15 @@ void Page::load()
     settings->put_IsWebMessageEnabled(isWebMessageEnabled);
 
 
-    auto navigateCB = Callback<ICoreWebView2NavigationStartingEventHandler>(this, &Page::navigationStarting);
+    auto navigateCB = WRL::Callback<ICoreWebView2NavigationStartingEventHandler>(this, &Page::navigationStarting);
     EventRegistrationToken navigateToken;
     webview->add_NavigationStarting(navigateCB.Get(), &navigateToken);
 
-    auto titleChangedCB = Callback<ICoreWebView2DocumentTitleChangedEventHandler>(this, &Page::titleChanged);
+    auto titleChangedCB = WRL::Callback<ICoreWebView2DocumentTitleChangedEventHandler>(this, &Page::titleChanged);
     EventRegistrationToken titleToken;
     hr = webview->add_DocumentTitleChanged(titleChangedCB.Get(), &titleToken);
 
-    auto statusChangeCB = Callback<ICoreWebView2StatusBarTextChangedEventHandler>(this, &Page::statusChanged);
+    auto statusChangeCB = WRL::Callback<ICoreWebView2StatusBarTextChangedEventHandler>(this, &Page::statusChanged);
     EventRegistrationToken statusToken;
     auto webView12 = webview.try_query<ICoreWebView2_12>();
     hr = webView12->add_StatusBarTextChanged(statusChangeCB.Get(), &statusToken);
@@ -60,10 +60,10 @@ void Page::load()
     Gdiplus::GdiplusStartup(&gdiplusToken_, &gdiplusStartupInput, NULL);
     auto webView15 = webview.try_query<ICoreWebView2_15>();
     EventRegistrationToken faviconToken;
-    auto faviconChangeCB = Callback<ICoreWebView2FaviconChangedEventHandler>(this, &Page::faviconChange);
+    auto faviconChangeCB = WRL::Callback<ICoreWebView2FaviconChangedEventHandler>(this, &Page::faviconChange);
     hr = webView15->add_FaviconChanged(faviconChangeCB.Get(), &faviconToken);
 
-    auto newWindowCB = Callback<ICoreWebView2NewWindowRequestedEventHandler>(this, &Page::newWindowRequested);
+    auto newWindowCB = WRL::Callback<ICoreWebView2NewWindowRequestedEventHandler>(this, &Page::newWindowRequested);
     EventRegistrationToken newWindowToken;
     hr = webView15->add_NewWindowRequested(newWindowCB.Get(), &newWindowToken);
 
@@ -103,7 +103,7 @@ HRESULT Page::faviconChange(ICoreWebView2* sender, IUnknown* args)
     std::wstring url = urlData;
     CoTaskMemFree(urlData);
     webView15->GetFavicon(COREWEBVIEW2_FAVICON_IMAGE_FORMAT_PNG,
-        Callback<ICoreWebView2GetFaviconCompletedHandler>([this, url](HRESULT errorCode, IStream* iconStream)
+        WRL::Callback<ICoreWebView2GetFaviconCompletedHandler>([this, url](HRESULT errorCode, IStream* iconStream)
             {
                 Gdiplus::Bitmap iconBitmap(iconStream);
                 wil::unique_hicon icon;

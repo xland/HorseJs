@@ -18,7 +18,7 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Win\WinBase.cpp">
+    <ClCompile Include="Win\BrowserWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="App\Util.cpp">
@@ -38,7 +38,7 @@
     <None Include="Doc\API.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Win\WinBase.h">
+    <ClInclude Include="Win\BrowserWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="App\Util.h">
@@ -167,6 +167,7 @@
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="config.json" />
+    <CopyFileToFolders Include="UI\index.html" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

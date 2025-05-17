@@ -143,7 +143,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="App\Util.cpp" />
     <ClCompile Include="Win\Page.cpp" />
-    <ClCompile Include="Win\WinBase.cpp" />
+    <ClCompile Include="Win\BrowserWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="config.json">
@@ -154,6 +154,12 @@
     <None Include="Doc\Config.md" />
     <None Include="Doc\Deploy.md" />
     <None Include="packages.config" />
+    <CopyFileToFolders Include="UI\index.html">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)UI</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)UI</DestinationFolders>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\App.h" />
@@ -197,7 +203,7 @@
     <ClInclude Include="Lib\rapidjson\writer.h" />
     <ClInclude Include="App\Util.h" />
     <ClInclude Include="Win\Page.h" />
-    <ClInclude Include="Win\WinBase.h" />
+    <ClInclude Include="Win\BrowserWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
