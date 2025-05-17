@@ -33,6 +33,10 @@ void Page::init(const rapidjson::Value& config)
 void Page::load()
 {
     HRESULT hr = win->ctrl->get_CoreWebView2(&webview);
+    auto app = App::get();
+    auto appId = Util::convertToWStr(app->appId.data());
+    auto webView3 = webview.try_query<ICoreWebView2_3>();
+    webView3->SetVirtualHostNameToFolderMapping(appId.data(),L"UI",COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_ALLOW);
 
     wil::com_ptr<ICoreWebView2Settings> settings;
     webview->get_Settings(&settings);
@@ -66,8 +70,7 @@ void Page::load()
     auto newWindowCB = WRL::Callback<ICoreWebView2NewWindowRequestedEventHandler>(this, &Page::newWindowRequested);
     EventRegistrationToken newWindowToken;
     hr = webView15->add_NewWindowRequested(newWindowCB.Get(), &newWindowToken);
-
-    webview->Navigate(L"https://www.microsoft.com/");
+    webview->Navigate(L"https://HorseJs/index.html");
 }
 
 

@@ -39,6 +39,7 @@ void App::start()
 {
     auto content = Util::readFile(L"config.json");
     d.Parse(content.data());
+    appId = d["appId"].GetString();
     if (!checkRuntime()) {
         return;
     }
@@ -47,23 +48,24 @@ void App::start()
         return;
     }
 
-    auto options = WRL::Make<CoreWebView2EnvironmentOptions>();
-    options->put_AdditionalBrowserArguments(L"--allow-file-access-from-files");
-    WRL::ComPtr<ICoreWebView2EnvironmentOptions4> options4;
-    HRESULT oeResult = options.As(&options4);
-    if (oeResult != S_OK) {
-        // UNREACHABLE - cannot continue  todo
-    }
-    const WCHAR* allowedSchemeOrigins[5] = { L"about://*", L"http://*", L"https://*", L"file://*", L"socket://*" };
-    auto defaultRegistration = WRL::Make<CoreWebView2CustomSchemeRegistration>(L"horse");
-    defaultRegistration->put_HasAuthorityComponent(TRUE);
-    defaultRegistration->put_TreatAsSecure(TRUE);
-    defaultRegistration->SetAllowedOrigins(5, allowedSchemeOrigins);
-    ICoreWebView2CustomSchemeRegistration* registrations[1] = { defaultRegistration.Get() };
-    options4->SetCustomSchemeRegistrations(1, static_cast<ICoreWebView2CustomSchemeRegistration**>(registrations));
+    //auto options = WRL::Make<CoreWebView2EnvironmentOptions>();
+    //options->put_AdditionalBrowserArguments(L"--allow-file-access-from-files");
+    //WRL::ComPtr<ICoreWebView2EnvironmentOptions4> options4;
+    //HRESULT oeResult = options.As(&options4);
+    //if (oeResult != S_OK) {
+    //    // UNREACHABLE - cannot continue  todo
+    //}
+    //const WCHAR* allowedSchemeOrigins[5] = { L"about://*", L"http://*", L"https://*", L"file://*", L"socket://*" };
+    //auto defaultRegistration = WRL::Make<CoreWebView2CustomSchemeRegistration>(L"horse");
+    //defaultRegistration->put_HasAuthorityComponent(TRUE);
+    //defaultRegistration->put_TreatAsSecure(TRUE);
+    //defaultRegistration->SetAllowedOrigins(5, allowedSchemeOrigins);
+    //ICoreWebView2CustomSchemeRegistration* registrations[1] = { defaultRegistration.Get() };
+    //options4->SetCustomSchemeRegistrations(1, static_cast<ICoreWebView2CustomSchemeRegistration**>(registrations));
+    //HRESULT hr = CreateCoreWebView2EnvironmentWithOptions(nullptr, path.c_str(), options.Get(),envReadyInstance.Get());
 
     auto envReadyInstance = WRL::Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(this, &App::envReady);
-    HRESULT hr = CreateCoreWebView2EnvironmentWithOptions(nullptr, path.c_str(), options.Get(),envReadyInstance.Get());
+    HRESULT hr = CreateCoreWebView2EnvironmentWithOptions(nullptr, path.c_str(), nullptr,envReadyInstance.Get());
     if (FAILED(hr)) {
         MessageBox(nullptr, L"创建 WebView2 环境失败", L"错误", MB_OK | MB_ICONERROR);
         return;
@@ -82,7 +84,7 @@ std::filesystem::path App::ensureAppFolder() {
     }
     path = pathTmp;
     CoTaskMemFree(pathTmp);
-    path /= d["appId"].GetString();
+    path /= appId;
     if (!std::filesystem::exists(path)) {
         auto flag = std::filesystem::create_directory(path);
         if (!flag) {

@@ -19,6 +19,7 @@ public:
 public:
 	ICoreWebView2Environment* env;
 	rapidjson::Document d;
+	std::string appId;
 private:
 	void start();
 	bool checkRuntime();
