@@ -36,6 +36,7 @@
     <None Include="Doc\Config.md" />
     <None Include="Doc\Deploy.md" />
     <None Include="Doc\API.md" />
+    <None Include="Doc\ChangeLog.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Win\BrowserWindow.h">

@@ -24,6 +24,16 @@ App::~App()
 {
 }
 
+void App::onWindowDestroy(BrowserWindow* win)
+{
+    std::erase_if(windows, [win](BrowserWindow* w) {
+        return w  == win;
+        });
+    if (quitWhenAllWindowClosed && windows.empty()) {
+        PostQuitMessage(0);
+    }
+}
+
 App* App::get()
 {
     return app.get();
@@ -40,6 +50,7 @@ void App::start()
     auto content = Util::readFile(L"config.json");
     d.Parse(content.data());
     appId = d["appId"].GetString();
+    quitWhenAllWindowClosed = d["quitWhenAllWindowClosed"].GetBool();
     if (!checkRuntime()) {
         return;
     }
@@ -120,7 +131,8 @@ bool App::checkRegKey(const HKEY& key, const std::wstring& subKey) {
 HRESULT App::envReady(HRESULT result, ICoreWebView2Environment* env)
 {
     this->env = env;
-    auto win = BrowserWindow::create(d["window"]); //todo
+    auto win = BrowserWindow::create(d["window"]);
+    windows.push_back(win);
     return S_OK;
 }
 

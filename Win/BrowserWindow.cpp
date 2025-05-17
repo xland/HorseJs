@@ -143,14 +143,7 @@ LRESULT BrowserWindow::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
     auto winObj = reinterpret_cast<BrowserWindow*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
     if (winObj != nullptr)
     {
-        if (msg == WM_CLOSE) {
-            DestroyWindow(hwnd);
-            SetWindowLongPtr(hwnd, GWLP_USERDATA, 0);
-            delete winObj;
-        }
-        else {
-			return winObj->winMsg(hwnd, msg, wParam, lParam);
-        }
+        return winObj->winMsg(hwnd, msg, wParam, lParam);
     }
     else {
         return DefWindowProc(hwnd, msg, wParam, lParam);
@@ -167,6 +160,15 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 GetClientRect(hwnd, &bounds);
                 ctrl->SetBoundsAndZoomFactor(bounds, 1.0);
             }
+            return 0;
+        }
+        case WM_CLOSE: {
+            DestroyWindow(hwnd);
+            return 0;
+        }
+        case WM_DESTROY: {
+            SetWindowLongPtr(hwnd, GWLP_USERDATA, 0);
+            App::get()->onWindowDestroy(this);
             return 0;
         }
         case WM_GETMINMAXINFO:
