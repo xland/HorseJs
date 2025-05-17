@@ -12,3 +12,29 @@
 
 # Event
 # API
+
+## 下载
+
+[Release](https://github.com/xland/HorseJs/releases) （100kb）
+
+## 赞助
+<table>
+  <tr>
+    <td align="center">
+      <img src="./Doc/alipay.jpg" width="160" height="160">
+      <p>支付宝赞助</p>
+    </td>
+    <td align="center">
+      <img src="./Doc/wechat.png" width="160" height="160">
+      <p>微信赞助</p>
+    </td>
+    <td align="center">
+      <img src="./Doc/author.jpg" width="160" height="160">
+      <p>作者微信</p>
+    </td>
+    <td align="center">
+      <img src="./Doc/gongzhonghao.jpg" width="160" height="160">
+      <p>公众号：桌面软件</p>
+    </td>
+  </tr>
+</table>
