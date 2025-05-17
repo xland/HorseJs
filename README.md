@@ -6,7 +6,7 @@
 
 # Config
 
-
+[Config](./Doc/Config.md)
 
 # Event
 # API
