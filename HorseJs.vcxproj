@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App\App.cpp" />
+    <ClCompile Include="App\JsonParsor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="App\Util.cpp" />
     <ClCompile Include="Win\Page.cpp" />
@@ -159,7 +160,7 @@
     <None Include="Doc\Config.md" />
     <None Include="Doc\Deploy.md" />
     <None Include="packages.config" />
-    <CopyFileToFolders Include="UI\index.html">
+    <CopyFileToFolders Include="Script\index.html">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)UI</DestinationFolders>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)UI</DestinationFolders>
@@ -168,6 +169,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\App.h" />
+    <ClInclude Include="App\Res.h" />
+    <ClInclude Include="App\JsonParsor.h" />
     <ClInclude Include="Lib\rapidjson\allocators.h" />
     <ClInclude Include="Lib\rapidjson\cursorstreamwrapper.h" />
     <ClInclude Include="Lib\rapidjson\document.h" />
@@ -215,6 +218,9 @@
     <None Include="Script\horse.ts">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="App\Res.rc" />
   </ItemGroup>
   <Target Name="BuildTypeScript" BeforeTargets="Build">
     <ItemGroup>

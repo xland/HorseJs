@@ -4,6 +4,7 @@
 
 #include "Page.h"
 #include "BrowserWindow.h"
+#include "../App/Res.h"
 #include "../App/App.h"
 
 using namespace Microsoft;
@@ -81,14 +82,30 @@ void Page::load()
     auto msgReceivedCB = WRL::Callback<ICoreWebView2WebMessageReceivedEventHandler>(this, &Page::msgReceived);
     webview->add_WebMessageReceived(msgReceivedCB.Get(), &msgReceivedToken);
 
-    
-    
-    std::wstring script = L"console.log(123);";
-    hr = webview->AddScriptToExecuteOnDocumentCreated(script.c_str(), nullptr);
+    loadResource();    
 
     webview->Navigate(L"https://HorseJs/index.html");
 }
 
+void Page::loadResource()
+{
+    HMODULE hModule = GetModuleHandleW(nullptr);  // 获取当前模块句柄
+
+    HRSRC hResource = FindResourceW(hModule, MAKEINTRESOURCEW(IDR_JS), RT_RCDATA);
+    if (!hResource) throw std::runtime_error("Failed to find resource");
+
+    HGLOBAL hLoadedResource = LoadResource(hModule, hResource);
+    if (!hLoadedResource) throw std::runtime_error("Failed to load resource");
+
+    DWORD resourceSize = SizeofResource(hModule, hResource);
+    if (resourceSize == 0) throw std::runtime_error("Resource size is zero");
+
+    void* pResourceData = LockResource(hLoadedResource);
+    if (!pResourceData) throw std::runtime_error("Failed to lock resource");
+
+    std::wstring script = Util::convertToWStr((char*)pResourceData);
+    webview->AddScriptToExecuteOnDocumentCreated(script.data(), nullptr);
+}
 
 HRESULT Page::navigateStart(ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args)
 {
@@ -97,6 +114,12 @@ HRESULT Page::navigateStart(ICoreWebView2* webview, ICoreWebView2NavigationStart
 
 HRESULT Page::navigateEnd(ICoreWebView2* webview, ICoreWebView2NavigationCompletedEventArgs* args)
 {
+    JsonParsor parsor;
+    parsor.addString("eventName", "window_close");
+    rapidjson::Value items(rapidjson::kArrayType);
+    parsor.addValue("param", std::move(items));
+    std::wstring jsonStr = parsor.parse();
+    webview->PostWebMessageAsJson(jsonStr.data());
     return S_OK;
 }
 

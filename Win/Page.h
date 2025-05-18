@@ -19,6 +19,7 @@ private:
 	HRESULT faviconChange(ICoreWebView2* sender, IUnknown* args);
 	HRESULT newWindowRequested(ICoreWebView2* sender, ICoreWebView2NewWindowRequestedEventArgs* args);
 	HRESULT msgReceived(ICoreWebView2* webview, ICoreWebView2WebMessageReceivedEventArgs* args);
+	void loadResource();
 private:
 	wil::com_ptr<ICoreWebView2> webview;
 	BrowserWindow* win;

@@ -9,6 +9,7 @@
 #include <WebView2.h>
 #include "Util.h"
 #include "../Lib/rapidjson/document.h"
+#include "JsonParsor.h"
 
 class BrowserWindow;
 class App

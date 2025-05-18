@@ -5,6 +5,7 @@
     constructor() {
       window.chrome.webview.addEventListener("message", (e) => {
         let arr = this.dic[e.data["eventName"]];
+        if (!arr) return;
         for (let i = 0; i < arr.length; i++) {
           arr[i](...e.data["param"]);
         }

@@ -5,10 +5,11 @@
 <BODY>
     HorseJs
     <script>
-        console.log(456);
         window.addEventListener("DOMContentLoaded", () => {
             window.chrome.webview.postMessage(window.document.URL);
-            console.log(789);
+            horse.window.on("close",()=>{
+                console.log("close")
+            })
         });
     </script>
 </BODY>
