@@ -30,9 +30,6 @@
     <ClCompile Include="Win\Page.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Win\JsBridge.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -168,9 +165,6 @@
     <ClInclude Include="Win\Page.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Win\JsBridge.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="config.json" />
@@ -179,5 +173,8 @@
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natstepfilter" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Script\horse.ts" />
   </ItemGroup>
 </Project>

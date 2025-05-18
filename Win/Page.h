@@ -12,11 +12,13 @@ public:
 	void init(const rapidjson::Value& config);
 	void load();
 private:
-	HRESULT navigationStarting(ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args);
+	HRESULT navigateStart(ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args);
+	HRESULT navigateEnd(ICoreWebView2* webview, ICoreWebView2NavigationCompletedEventArgs* args);
 	HRESULT titleChanged(ICoreWebView2* sender, IUnknown* args);
 	HRESULT statusChanged(ICoreWebView2* sender, IUnknown* args);
 	HRESULT faviconChange(ICoreWebView2* sender, IUnknown* args);
 	HRESULT newWindowRequested(ICoreWebView2* sender, ICoreWebView2NewWindowRequestedEventArgs* args);
+	HRESULT msgReceived(ICoreWebView2* webview, ICoreWebView2WebMessageReceivedEventArgs* args);
 private:
 	wil::com_ptr<ICoreWebView2> webview;
 	BrowserWindow* win;

@@ -1,0 +1,18 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build with esbuild",
+      "type": "shell",
+      "command": "esbuild Horse.ts --bundle --outfile=../Res/horse.js --watch",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "runOptions": {
+        "runOn": "folderOpen" // 可选：打开文件夹时自动运行
+      }
+    }
+  ]
+}

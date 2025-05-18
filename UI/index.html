@@ -5,14 +5,10 @@
 <BODY>
     HorseJs
     <script>
+        console.log(456);
         window.addEventListener("DOMContentLoaded", () => {
-            if (window.hostObj) {
-                hostObj.sayHello().then(result => {
-                    console.log(result);
-                });
-            } else {
-                console.error("hostObj not found!");
-            }
+            window.chrome.webview.postMessage(window.document.URL);
+            console.log(789);
         });
     </script>
 </BODY>

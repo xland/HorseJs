@@ -4,7 +4,6 @@
 
 #include "Page.h"
 #include "BrowserWindow.h"
-#include "JsBridge.h"
 #include "../App/App.h"
 
 using namespace Microsoft;
@@ -48,9 +47,13 @@ void Page::load()
     settings->put_IsWebMessageEnabled(isWebMessageEnabled);
 
 
-    auto navigateCB = WRL::Callback<ICoreWebView2NavigationStartingEventHandler>(this, &Page::navigationStarting);
-    EventRegistrationToken navigateToken;
-    webview->add_NavigationStarting(navigateCB.Get(), &navigateToken);
+    auto navigateStartCB = WRL::Callback<ICoreWebView2NavigationStartingEventHandler>(this, &Page::navigateStart);
+    EventRegistrationToken navigateStartToken;
+    webview->add_NavigationStarting(navigateStartCB.Get(), &navigateStartToken);
+
+    auto navigateEndCB = WRL::Callback<ICoreWebView2NavigationCompletedEventHandler>(this, &Page::navigateEnd);
+    EventRegistrationToken navigateEndToken;
+    webview->add_NavigationCompleted(navigateEndCB.Get(),&navigateEndToken);
 
     auto titleChangedCB = WRL::Callback<ICoreWebView2DocumentTitleChangedEventHandler>(this, &Page::titleChanged);
     EventRegistrationToken titleToken;
@@ -74,57 +77,53 @@ void Page::load()
     EventRegistrationToken newWindowToken;
     hr = webView15->add_NewWindowRequested(newWindowCB.Get(), &newWindowToken);
 
+    EventRegistrationToken msgReceivedToken;
+    auto msgReceivedCB = WRL::Callback<ICoreWebView2WebMessageReceivedEventHandler>(this, &Page::msgReceived);
+    webview->add_WebMessageReceived(msgReceivedCB.Get(), &msgReceivedToken);
 
-
-    auto jsBridge = winrt::make<JsBridge>();
-    VARIANT hostObject;
-    VariantInit(&hostObject);
-    hostObject.vt = VT_UNKNOWN;
-    IUnknown* pUnknown = reinterpret_cast<IUnknown*>(winrt::get_abi(jsBridge));
-    pUnknown->AddRef();
-    hostObject.punkVal = pUnknown;
-    hr = webview->AddHostObjectToScript(L"hostObj", &hostObject);
-    if (FAILED(hr)) {
-        auto a = 1;
-    }
+    
+    
+    std::wstring script = L"console.log(123);";
+    hr = webview->AddScriptToExecuteOnDocumentCreated(script.c_str(), nullptr);
 
     webview->Navigate(L"https://HorseJs/index.html");
 }
 
 
-HRESULT Page::navigationStarting(ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args)
+HRESULT Page::navigateStart(ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args)
+{
+    return S_OK;
+}
+
+HRESULT Page::navigateEnd(ICoreWebView2* webview, ICoreWebView2NavigationCompletedEventArgs* args)
 {
     return S_OK;
 }
 
 HRESULT Page::titleChanged(ICoreWebView2* sender, IUnknown* args)
 {
-    LPWSTR titleData;
+    wil::unique_cotaskmem_string titleData;
     HRESULT hr = webview->get_DocumentTitle(&titleData);
-    win->title = titleData;
+    win->title = titleData.get();
     SetWindowText(win->hwnd, win->title.data());
-    CoTaskMemFree(titleData);
     return S_OK;
 }
 
 HRESULT Page::statusChanged(ICoreWebView2* sender, IUnknown* args)
 {
-    LPWSTR statusData;
+    wil::unique_cotaskmem_string statusData;
     auto m_webView2_12 = webview.try_query<ICoreWebView2_12>();
     HRESULT hr = m_webView2_12->get_StatusBarText(&statusData);
-    CoTaskMemFree(statusData);
     return S_OK;
 }
 
 HRESULT Page::faviconChange(ICoreWebView2* sender, IUnknown* args)
 {
     auto webView15 = webview.try_query<ICoreWebView2_15>();
-    LPWSTR urlData;
+    wil::unique_cotaskmem_string urlData;
     webView15->get_FaviconUri(&urlData);
-    std::wstring url = urlData;
-    CoTaskMemFree(urlData);
     webView15->GetFavicon(COREWEBVIEW2_FAVICON_IMAGE_FORMAT_PNG,
-        WRL::Callback<ICoreWebView2GetFaviconCompletedHandler>([this, url](HRESULT errorCode, IStream* iconStream)
+        WRL::Callback<ICoreWebView2GetFaviconCompletedHandler>([this](HRESULT errorCode, IStream* iconStream)
             {
                 Gdiplus::Bitmap iconBitmap(iconStream);
                 wil::unique_hicon icon;
@@ -230,5 +229,13 @@ HRESULT Page::newWindowRequested(ICoreWebView2* sender, ICoreWebView2NewWindowRe
     //        CHECK_FAILURE(args->put_Handled(TRUE));
     //        CHECK_FAILURE(deferral->Complete());
     //    };
+    return S_OK;
+}
+
+HRESULT Page::msgReceived(ICoreWebView2* webview, ICoreWebView2WebMessageReceivedEventArgs* args)
+{
+    wil::unique_cotaskmem_string messageRaw;
+    args->TryGetWebMessageAsString(&messageRaw);
+    std::wstring message = messageRaw.get();
     return S_OK;
 }
