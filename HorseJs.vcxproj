@@ -155,14 +155,17 @@
     <ClCompile Include="Win\BrowserWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="config.json">
+    <CopyFileToFolders Include="Script\config.json">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)UI</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)UI</DestinationFolders>
     </CopyFileToFolders>
     <None Include="Doc\API.md" />
     <None Include="Doc\ChangeLog.md" />
     <None Include="Doc\Config.md" />
     <None Include="Doc\Deploy.md" />
+    <None Include="Doc\ReadWriteRes.md" />
     <None Include="packages.config" />
     <CopyFileToFolders Include="Script\index.html">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
@@ -216,12 +219,6 @@
     <ClInclude Include="App\Util.h" />
     <ClInclude Include="Win\Page.h" />
     <ClInclude Include="Win\BrowserWindow.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <!-- 将 horse.ts 标记为内容，但不自动编译 -->
-    <None Include="Script\horse.ts">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="App\Res.rc" />

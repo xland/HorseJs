@@ -114,54 +114,54 @@ HRESULT Page::navigateStart(ICoreWebView2* webview, ICoreWebView2NavigationStart
 
 HRESULT Page::navigateEnd(ICoreWebView2* webview, ICoreWebView2NavigationCompletedEventArgs* args)
 {
-    JsonParsor parsor;
-    parsor.addString("eventName", "window_close");
-    rapidjson::Value items(rapidjson::kArrayType);
-    parsor.addValue("param", std::move(items));
-    std::wstring jsonStr = parsor.parse();
-    webview->PostWebMessageAsJson(jsonStr.data());
+    //JsonParsor parsor;
+    //parsor.addString("eventName", "window_close");
+    //rapidjson::Value items(rapidjson::kArrayType);
+    //parsor.addValue("param", std::move(items));
+    //std::wstring jsonStr = parsor.parse();
+    //webview->PostWebMessageAsJson(jsonStr.data());
     return S_OK;
 }
 
 HRESULT Page::titleChanged(ICoreWebView2* sender, IUnknown* args)
 {
-    wil::unique_cotaskmem_string titleData;
-    HRESULT hr = webview->get_DocumentTitle(&titleData);
-    win->title = titleData.get();
-    SetWindowText(win->hwnd, win->title.data());
+    //wil::unique_cotaskmem_string titleData;
+    //HRESULT hr = webview->get_DocumentTitle(&titleData);
+    //win->title = titleData.get();
+    //SetWindowText(win->hwnd, win->title.data());
     return S_OK;
 }
 
 HRESULT Page::statusChanged(ICoreWebView2* sender, IUnknown* args)
 {
-    wil::unique_cotaskmem_string statusData;
-    auto m_webView2_12 = webview.try_query<ICoreWebView2_12>();
-    HRESULT hr = m_webView2_12->get_StatusBarText(&statusData);
+    //wil::unique_cotaskmem_string statusData;
+    //auto m_webView2_12 = webview.try_query<ICoreWebView2_12>();
+    //HRESULT hr = m_webView2_12->get_StatusBarText(&statusData);
     return S_OK;
 }
 
 HRESULT Page::faviconChange(ICoreWebView2* sender, IUnknown* args)
 {
-    auto webView15 = webview.try_query<ICoreWebView2_15>();
-    wil::unique_cotaskmem_string urlData;
-    webView15->get_FaviconUri(&urlData);
-    webView15->GetFavicon(COREWEBVIEW2_FAVICON_IMAGE_FORMAT_PNG,
-        WRL::Callback<ICoreWebView2GetFaviconCompletedHandler>([this](HRESULT errorCode, IStream* iconStream)
-            {
-                Gdiplus::Bitmap iconBitmap(iconStream);
-                wil::unique_hicon icon;
-                auto hr = iconBitmap.GetHICON(&icon);
-                if (hr == Gdiplus::Status::Ok)
-                {
-                    win->favicon = std::move(icon);
-                    SendMessage(win->hwnd, WM_SETICON, ICON_SMALL, (LPARAM)win->favicon.get());
-                }
-                else
-                {
-                    SendMessage(win->hwnd, WM_SETICON, ICON_SMALL, (LPARAM)IDC_NO);
-                }
-                return S_OK;
-            }).Get());
+    //auto webView15 = webview.try_query<ICoreWebView2_15>();
+    //wil::unique_cotaskmem_string urlData;
+    //webView15->get_FaviconUri(&urlData);
+    //webView15->GetFavicon(COREWEBVIEW2_FAVICON_IMAGE_FORMAT_PNG,
+    //    WRL::Callback<ICoreWebView2GetFaviconCompletedHandler>([this](HRESULT errorCode, IStream* iconStream)
+    //        {
+    //            Gdiplus::Bitmap iconBitmap(iconStream);
+    //            wil::unique_hicon icon;
+    //            auto hr = iconBitmap.GetHICON(&icon);
+    //            if (hr == Gdiplus::Status::Ok)
+    //            {
+    //                win->favicon = std::move(icon);
+    //                SendMessage(win->hwnd, WM_SETICON, ICON_SMALL, (LPARAM)win->favicon.get());
+    //            }
+    //            else
+    //            {
+    //                SendMessage(win->hwnd, WM_SETICON, ICON_SMALL, (LPARAM)IDC_NO);
+    //            }
+    //            return S_OK;
+    //        }).Get());
     return S_OK;
 }
 

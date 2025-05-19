@@ -47,7 +47,7 @@ void App::init()
 
 void App::start()
 {
-    auto content = Util::readFile(L"config.json");
+    auto content = Util::readFile(L"UI/config.json");
     d.Parse(content.data());
     appId = d["appId"].GetString();
     quitWhenAllWindowClosed = d["quitWhenAllWindowClosed"].GetBool();

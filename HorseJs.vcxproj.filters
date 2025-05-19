@@ -40,7 +40,7 @@
     <None Include="Doc\Deploy.md" />
     <None Include="Doc\API.md" />
     <None Include="Doc\ChangeLog.md" />
-    <None Include="Script\horse.ts" />
+    <None Include="Doc\ReadWriteRes.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Win\BrowserWindow.h">
@@ -177,7 +177,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="config.json" />
+    <CopyFileToFolders Include="Script\config.json" />
     <CopyFileToFolders Include="Script\index.html" />
   </ItemGroup>
   <ItemGroup>

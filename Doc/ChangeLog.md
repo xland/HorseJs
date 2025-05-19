@@ -1,4 +1,10 @@
-﻿- 使用 COM 对象，AddHostObjectToScript 
+﻿- 把用户的UI文件加入到exe的资源
+- 运行时读取UI文件资源
+- 用这个程序开发一个工具，来构建最终exe
+	- 指定UI路径
+	- 指定图标ICON
+	- 指定专用于安全的Token或Key
+- 使用 COM 对象，AddHostObjectToScript 
 - 拖动改变无边框窗口的大小
 - 窗口置顶
 - 访问进程列表
@@ -9,3 +15,4 @@
 - 页内打开新窗口
 - 为第三方页面注入JS脚本
 - 如何禁止第三方页面访问本地API
+- SQLite第三方库
