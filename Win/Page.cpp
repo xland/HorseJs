@@ -89,7 +89,7 @@ void Page::load()
 
 void Page::loadResource()
 {
-    HMODULE hModule = GetModuleHandleW(nullptr);  // 获取当前模块句柄
+    HMODULE hModule = GetModuleHandleW(nullptr);  // 鑾峰彇褰撳墠妯″潡鍙ユ焺
 
     HRSRC hResource = FindResourceW(hModule, MAKEINTRESOURCEW(IDR_JS), RT_RCDATA);
     if (!hResource) throw std::runtime_error("Failed to find resource");

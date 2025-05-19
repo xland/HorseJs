@@ -30,6 +30,9 @@
     <ClCompile Include="Win\Page.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="App\JsonParsor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -37,6 +40,7 @@
     <None Include="Doc\Deploy.md" />
     <None Include="Doc\API.md" />
     <None Include="Doc\ChangeLog.md" />
+    <None Include="Script\horse.ts" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Win\BrowserWindow.h">
@@ -165,16 +169,24 @@
     <ClInclude Include="Win\Page.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="App\Res.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="App\JsonParsor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="config.json" />
-    <CopyFileToFolders Include="UI\index.html" />
+    <CopyFileToFolders Include="Script\index.html" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Script\horse.ts" />
+    <ResourceCompile Include="App\Res.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
