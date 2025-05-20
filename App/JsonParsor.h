@@ -10,6 +10,7 @@ class JsonParsor
 	public:
 		JsonParsor();
 		~JsonParsor();
+		rapidjson::Document::AllocatorType& getAllocator();
 		void addString(const std::string& name, const std::string& value);
 		void addNumber(const std::string& name, const int& value);
 		void addNumber(const std::string& name, const double& value);

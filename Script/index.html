@@ -1,16 +1,29 @@
-<HTML>
-<HEAD>
-<TITLE>HorseJs</TITLE>
-</HEAD>
-<BODY>
-    HorseJs
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>HorseJs</title>
+    </head>
+    <body>
+    <div id="btnMaximize">最大化</div>
+    <div id="btnMinimize">最小化</div>
+    <div id="btnResize">改变大小</div>
+    <div id="">最大化</div>
+    <div id="">最大化</div>
     <script>
         window.addEventListener("DOMContentLoaded", () => {
-            window.chrome.webview.postMessage(window.document.URL);
-            horse.window.on("close",()=>{
-                console.log("close")
+            // horse.window.on("close",()=>{
+            //     console.log("close")
+            // })
+            let btnMaximize = document.querySelector("#btnMaximize");
+            btnMaximize.addEventListener("click",()=>{
+                horse.window.maximize();
+            })
+            let btnResize = document.querySelector("#btnResize");
+            btnResize.addEventListener("click",async ()=>{
+                let result = await horse.window.resize(1000, 800);
+                console.log(result);
             })
         });
     </script>
-</BODY>
-</HTML>
+    </body>
+</html>

@@ -10,6 +10,11 @@ JsonParsor::~JsonParsor()
 {
 }
 
+rapidjson::Document::AllocatorType& JsonParsor::getAllocator()
+{
+    return allocator;
+}
+
 void JsonParsor::addString(const std::string& name, const std::string& value)
 {
     rapidjson::Value val;

@@ -11,7 +11,7 @@
         "isDefault": true
       },
       "runOptions": {
-        "runOn": "folderOpen" // 可选：打开文件夹时自动运行
+        "runOn": "folderOpen"
       }
     }
   ]

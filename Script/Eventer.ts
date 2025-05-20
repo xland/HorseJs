@@ -1,8 +1,11 @@
-export class Eventer {
-  private dic: Record<string, EventHandler[]> = {};
+import { Horse } from "./Types";
+import { util } from "./Util";
+class Eventer {
+  private dic: Record<string, Horse.EventHandler[]> = {};
   constructor() {
     window.chrome.webview.addEventListener("message", (e) => {
-      let arr = this.dic[e.data["eventName"]];
+      debugger;
+      let arr = this.dic[e.data["eventId"]];
       if (!arr) return;
       for (let i = 0; i < arr.length; i++) {
         arr[i](...e.data["param"]);
@@ -10,7 +13,7 @@ export class Eventer {
     });
   }
   // 监听事件
-  on(eventName: string, callback: EventHandler): void {
+  on(eventName: string, callback: Horse.EventHandler): void {
     if (!this.dic[eventName]) {
       this.dic[eventName] = [callback];
     } else {
@@ -29,7 +32,7 @@ export class Eventer {
   }
 
   // 取消监听事件
-  off(eventName: string, callback?: EventHandler): void {
+  off(eventName: string, callback?: Horse.EventHandler): void {
     const handlers = this.dic[eventName];
     if (!handlers) return;
 
@@ -44,25 +47,24 @@ export class Eventer {
   }
 
   // 监听一次性事件
-  once(eventName: string, callback: EventHandler): void {
+  once(eventName: string, callback: Horse.EventHandler): void {
     const wrapper = (...args: any[]) => {
       this.off(eventName, wrapper);
       callback(...args);
     };
+    debugger;
     this.on(eventName, wrapper);
   }
-  //生成一个12位的随机数字
-  private randomNum(len: number = 12): number {
-    return Math.floor(Math.pow(10, len) * Math.random());
-  }
   // 调用原生方法并返回 Promise
-  call<T = any>(msgName: string, ...params: any[]): Promise<T> {
+  call<T = any>(msgType: string, msgName: string, ...params: any[]): Promise<T> {
     return new Promise((resolve, reject) => {
-      const eventName = `${msgName}_${this.randomNum()}`;
-      this.once(eventName, (result: T) => {
+      const eventId = `e${util.randomNum()}`;
+      this.once(eventId, (result: T) => {
         resolve(result);
       });
-      window.chrome.webview.postMessage({ eventName, ...params });
+      window.chrome.webview.postMessage({ msgType, msgName, eventId, params });
     });
   }
 }
+
+export let eventer = new Eventer();

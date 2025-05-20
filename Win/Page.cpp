@@ -258,7 +258,30 @@ HRESULT Page::newWindowRequested(ICoreWebView2* sender, ICoreWebView2NewWindowRe
 HRESULT Page::msgReceived(ICoreWebView2* webview, ICoreWebView2WebMessageReceivedEventArgs* args)
 {
     wil::unique_cotaskmem_string messageRaw;
-    args->TryGetWebMessageAsString(&messageRaw);
+    args->get_WebMessageAsJson(&messageRaw);
     std::wstring message = messageRaw.get();
+    auto str = Util::convertToStr(message);
+
+    rapidjson::Document jsonDoc;
+    jsonDoc.Parse(str.data());
+    if (jsonDoc.HasMember("eventId") && jsonDoc["eventId"].IsString())
+    {
+        auto eventId = jsonDoc["eventId"].GetString();
+
+        JsonParsor parsor;
+        parsor.addString("eventId", eventId);
+        rapidjson::Value items(rapidjson::kArrayType);
+        rapidjson::Value number1(42); // 第一个数字
+        rapidjson::Value number2(3.14); // 第二个数字（支持浮点数）
+        items.PushBack(number1, parsor.getAllocator());
+        items.PushBack(number2, parsor.getAllocator());
+        parsor.addValue("param", std::move(items));
+        std::wstring jsonStr = parsor.parse();
+        webview->PostWebMessageAsJson(jsonStr.data());
+    }
+
+
+
+
     return S_OK;
 }
