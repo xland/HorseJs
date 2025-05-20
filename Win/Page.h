@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <windows.h>
 #include <wil/com.h>
 #include "../App/Util.h"
