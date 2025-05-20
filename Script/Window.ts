@@ -6,15 +6,15 @@ export class Window {
     eventer.on(`window_${eventName}`, callback);
   }
   maximize() {
-    return eventer.call("window", "maximize");
+    return eventer.call(Horse.EventType.Window, "maximize");
   }
   minimize() {
-    return eventer.call("window", "minimize");
+    return eventer.call(Horse.EventType.Window, "minimize");
   }
   resize(w: number, h: number) {
-    return eventer.call("window", "resize", w, h);
+    return eventer.call(Horse.EventType.Window, "resize", w, h);
   }
   move(x: number, y: number) {
-    return eventer.call("window", "resize", x, y);
+    return eventer.call(Horse.EventType.Window, "resize", x, y);
   }
 }

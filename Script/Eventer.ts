@@ -56,7 +56,7 @@ class Eventer {
     this.on(eventName, wrapper);
   }
   // 调用原生方法并返回 Promise
-  call<T = any>(msgType: string, msgName: string, ...params: any[]): Promise<T> {
+  call<T = any>(msgType: Horse.EventType, msgName: string, ...params: any[]): Promise<T> {
     return new Promise((resolve, reject) => {
       const eventId = `e${util.randomNum()}`;
       this.once(eventId, (result: T) => {

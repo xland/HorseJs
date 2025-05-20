@@ -6,7 +6,9 @@ export namespace Horse {
     priority?: number;
   }
   export enum EventType {
-    Click = "click",
-    Resize = "resize",
+    Sys,
+    App,
+    Window,
+    Page,
   }
 }

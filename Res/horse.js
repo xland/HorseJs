@@ -1,4 +1,16 @@
 (() => {
+  // Types.ts
+  var Horse;
+  ((Horse3) => {
+    let EventType;
+    ((EventType2) => {
+      EventType2[EventType2["Sys"] = 0] = "Sys";
+      EventType2[EventType2["App"] = 1] = "App";
+      EventType2[EventType2["Window"] = 2] = "Window";
+      EventType2[EventType2["Page"] = 3] = "Page";
+    })(EventType = Horse3.EventType || (Horse3.EventType = {}));
+  })(Horse || (Horse = {}));
+
   // Util.ts
   var Util = class {
     postMsg(json) {
@@ -81,25 +93,25 @@
       eventer.on(`window_${eventName}`, callback);
     }
     maximize() {
-      return eventer.call("window", "maximize");
+      return eventer.call(Horse.EventType.Window, "maximize");
     }
     minimize() {
-      return eventer.call("window", "minimize");
+      return eventer.call(Horse.EventType.Window, "minimize");
     }
     resize(w, h) {
-      return eventer.call("window", "resize", w, h);
+      return eventer.call(Horse.EventType.Window, "resize", w, h);
     }
     move(x, y) {
-      return eventer.call("window", "resize", x, y);
+      return eventer.call(Horse.EventType.Window, "resize", x, y);
     }
   };
 
   // Horse.ts
-  var Horse = class {
+  var Horse2 = class {
     window;
     constructor() {
       this.window = new Window();
     }
   };
-  globalThis.horse = new Horse();
+  globalThis.horse = new Horse2();
 })();

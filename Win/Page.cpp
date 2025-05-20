@@ -89,20 +89,15 @@ void Page::load()
 
 void Page::loadResource()
 {
-    HMODULE hModule = GetModuleHandleW(nullptr);  // 获取当前模块句柄
-
+    HMODULE hModule = GetModuleHandleW(nullptr);
     HRSRC hResource = FindResourceW(hModule, MAKEINTRESOURCEW(IDR_JS), RT_RCDATA);
     if (!hResource) throw std::runtime_error("Failed to find resource");
-
     HGLOBAL hLoadedResource = LoadResource(hModule, hResource);
     if (!hLoadedResource) throw std::runtime_error("Failed to load resource");
-
     DWORD resourceSize = SizeofResource(hModule, hResource);
     if (resourceSize == 0) throw std::runtime_error("Resource size is zero");
-
     void* pResourceData = LockResource(hLoadedResource);
     if (!pResourceData) throw std::runtime_error("Failed to lock resource");
-
     std::wstring script = Util::convertToWStr((char*)pResourceData);
     webview->AddScriptToExecuteOnDocumentCreated(script.data(), nullptr);
 }
@@ -264,6 +259,14 @@ HRESULT Page::msgReceived(ICoreWebView2* webview, ICoreWebView2WebMessageReceive
 
     rapidjson::Document jsonDoc;
     jsonDoc.Parse(str.data());
+
+    if (jsonDoc.HasMember("msgType") && jsonDoc["msgType"].IsInt()) {
+        auto eventId = jsonDoc["msgType"].GetInt();
+        auto a = 1;
+    }
+
+
+
     if (jsonDoc.HasMember("eventId") && jsonDoc["eventId"].IsString())
     {
         auto eventId = jsonDoc["eventId"].GetString();
