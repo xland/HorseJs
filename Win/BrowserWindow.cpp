@@ -4,6 +4,7 @@
 #include "BrowserWindow.h"
 #include "BrowserWindowConfig.h"
 #include "Page.h"
+#include "../App/EnumId.h"
 #include "../App/App.h"
 
 using namespace Microsoft;
@@ -146,6 +147,19 @@ bool BrowserWindow::load(rapidjson::Value& pageConfig)
         return false;
     }
     return true;
+}
+
+void BrowserWindow::call(rapidjson::Document& jsonDoc)
+{
+    if (jsonDoc.HasMember("methodId") && jsonDoc["methodId"].IsInt()) {
+        auto methodId = jsonDoc["methodId"].GetInt();
+        auto a = 1;
+    }
+
+    if (jsonDoc.HasMember("eventId") && jsonDoc["eventId"].IsInt()) {
+        auto eventId = jsonDoc["eventId"].GetInt();
+        auto a = 1;
+    }
 }
 
 HRESULT BrowserWindow::pageCtrlReady(HRESULT result, ICoreWebView2Controller* ctrl)

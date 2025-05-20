@@ -187,6 +187,9 @@
     <ClInclude Include="App\AppConfig.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="App\EnumId.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Script\config.json" />

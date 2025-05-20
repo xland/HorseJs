@@ -5,6 +5,7 @@
 #include "Page.h"
 #include "BrowserWindow.h"
 #include "../App/Res.h"
+#include "../App/EnumId.h"
 #include "../App/App.h"
 
 using namespace Microsoft;
@@ -260,13 +261,18 @@ HRESULT Page::msgReceived(ICoreWebView2* webview, ICoreWebView2WebMessageReceive
     rapidjson::Document jsonDoc;
     jsonDoc.Parse(str.data());
 
-    if (jsonDoc.HasMember("msgType") && jsonDoc["msgType"].IsInt()) {
-        auto eventId = jsonDoc["msgType"].GetInt();
-        auto a = 1;
+    if (jsonDoc.HasMember("classId") && jsonDoc["classId"].IsInt()) {
+        auto classId = jsonDoc["classId"].GetInt();
+        if (classId == (int)ClassId::Window) {
+            win->call(jsonDoc);
+        }
+        else if (classId == (int)ClassId::Page) {
+            call(jsonDoc);
+        }
     }
-
-
-
+    return S_OK;
+}
+void Page::call(rapidjson::Document& jsonDoc) {
     if (jsonDoc.HasMember("eventId") && jsonDoc["eventId"].IsString())
     {
         auto eventId = jsonDoc["eventId"].GetString();
@@ -282,9 +288,4 @@ HRESULT Page::msgReceived(ICoreWebView2* webview, ICoreWebView2WebMessageReceive
         std::wstring jsonStr = parsor.parse();
         webview->PostWebMessageAsJson(jsonStr.data());
     }
-
-
-
-
-    return S_OK;
 }

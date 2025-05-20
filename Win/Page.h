@@ -11,6 +11,7 @@ public:
 	~Page();
 	void init(const rapidjson::Value& config);
 	void load();
+	void call(rapidjson::Document& jsonDoc);
 private:
 	HRESULT navigateStart(ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args);
 	HRESULT navigateEnd(ICoreWebView2* webview, ICoreWebView2NavigationCompletedEventArgs* args);

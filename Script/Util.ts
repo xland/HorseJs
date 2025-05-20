@@ -3,7 +3,7 @@ class Util {
     window.chrome.webview.postMessage(json);
   }
   //生成一个12位的随机数字
-  randomNum(len: number = 12): number {
+  randomNum(len: number = 9): number {
     return Math.floor(Math.pow(10, len) * Math.random());
   }
 }

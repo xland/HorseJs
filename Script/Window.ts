@@ -1,20 +1,17 @@
-import { Horse } from "./Types";
-import { eventer } from "./Eventer";
+import { Eventer } from "./Eventer";
+import { WindowMethodId, ClassId } from "./EnumId";
 
-export class Window {
-  on(eventName: string, callback: Horse.EventHandler): void {
-    eventer.on(`window_${eventName}`, callback);
-  }
+export class Window extends Eventer {
   maximize() {
-    return eventer.call(Horse.EventType.Window, "maximize");
+    return this.call(ClassId.Window, WindowMethodId.maximize);
   }
   minimize() {
-    return eventer.call(Horse.EventType.Window, "minimize");
+    return this.call(ClassId.Window, WindowMethodId.minimize);
   }
   resize(w: number, h: number) {
-    return eventer.call(Horse.EventType.Window, "resize", w, h);
+    return this.call(ClassId.Window, WindowMethodId.resize, w, h);
   }
   move(x: number, y: number) {
-    return eventer.call(Horse.EventType.Window, "resize", x, y);
+    return this.call(ClassId.Window, WindowMethodId.move, x, y);
   }
 }

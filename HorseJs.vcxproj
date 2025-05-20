@@ -179,6 +179,7 @@
   <ItemGroup>
     <ClInclude Include="App\AppConfig.h" />
     <ClInclude Include="App\App.h" />
+    <ClInclude Include="App\EnumId.h" />
     <ClInclude Include="App\Res.h" />
     <ClInclude Include="App\JsonParsor.h" />
     <ClInclude Include="Win\BrowserWindowConfig.h" />

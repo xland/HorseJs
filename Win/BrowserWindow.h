@@ -12,6 +12,7 @@ public:
 	BrowserWindow(rapidjson::Value& winConfig);
 	~BrowserWindow();
 	bool load(rapidjson::Value& pageConfig);
+	void call(rapidjson::Document& jsonDoc);
 public:
 	wil::com_ptr<ICoreWebView2Controller> ctrl;
 	HWND hwnd;

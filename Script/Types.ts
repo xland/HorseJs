@@ -5,10 +5,4 @@ export namespace Horse {
     once?: boolean;
     priority?: number;
   }
-  export enum EventType {
-    Sys,
-    App,
-    Window,
-    Page,
-  }
 }
