@@ -2,17 +2,14 @@
 #include <dwmapi.h>
 
 #include "BrowserWindow.h"
+#include "BrowserWindowConfig.h"
 #include "Page.h"
 #include "../App/App.h"
 
 using namespace Microsoft;
 
-BrowserWindow::BrowserWindow(const int &x, const int &y, const int &w, const int &h,
-                 const bool &visible, const bool& frame, const bool& shadow,
-                 const std::wstring &title)
-    : x{x}, y{y}, w{w}, h{h},
-	visible{ visible }, frame{ frame }, shadow{ shadow },
-    title{ title }
+BrowserWindow::BrowserWindow(rapidjson::Value& winConfig)
+    : config{std::make_unique<BrowserWindowConfig>(winConfig)}
 {
     initWindow();
 }
@@ -21,80 +18,28 @@ BrowserWindow::~BrowserWindow()
 {
 }
 
-BrowserWindow* BrowserWindow::create(const rapidjson::Value &config)
-{
-    int x{100}, y{100}, w{1000}, h{800};
-    bool maximize{ false }, visible{ true }, frame{ true }, shadow{true};
-    std::wstring title{L"Window - HorseJs"};
-    if (config.HasMember("size"))
-    {
-        if (config["size"].IsString())
-        {
-            auto size = std::string_view(config["size"].GetString());
-            if (size == "maximize")
-            {
-                maximize = true;
-            }
-        }
-        else if (config["size"].IsObject())
-        {
-            auto sizeObj = config["size"].GetObj();
-            w = sizeObj["w"].GetInt();
-            h = sizeObj["h"].GetInt();
-        }
-    }
-    if (config.HasMember("position") && config["position"].IsString())
-    {
-        auto pos = std::string_view(config["position"].GetString());
-        if (pos == "screenCenter")
-        {
-            int sw = GetSystemMetrics(SM_CXSCREEN);
-            int sh = GetSystemMetrics(SM_CYSCREEN);
-            x = (sw - w) / 2;
-            y = (sh - h) / 2;
-        }
-    }
-    if (config.HasMember("visible") && config["visible"].IsBool())
-    {
-        visible = config["visible"].GetBool();
-    }
-    if (config.HasMember("frame") && config["frame"].IsBool())
-    {
-        frame = config["frame"].GetBool();
-    }
-    if (config.HasMember("shadow") && config["shadow"].IsBool())
-    {
-        shadow = config["shadow"].GetBool();
-    }
-    if (config.HasMember("title") && config["title"].IsString())
-    {
-        title = Util::convertToWStr(config["title"].GetString());
-    }
-    auto win = new BrowserWindow(x, y, w, h, visible, frame,shadow,title);
-    win->load(config["page"]);
-    return win;
-}
-
 
 void BrowserWindow::initWindow()
 {
     auto wcex = regWinClass();
     long winStyle;
-    if (frame)
+    if (config->frame)
     {
         winStyle = WS_OVERLAPPEDWINDOW;
     }
     else {
 		winStyle = WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
     }
-    if (visible) {
+    if (config->visible) {
         winStyle = winStyle | WS_VISIBLE;
     }
     //WS_EX_APPWINDOW 确保窗口出现在任务栏
-    hwnd = CreateWindowEx(WS_EX_APPWINDOW, wcex->lpszClassName, title.data(), winStyle, x, y, w, h, nullptr, nullptr, wcex->hInstance, this);
+    hwnd = CreateWindowEx(WS_EX_APPWINDOW, wcex->lpszClassName, config->title.data(), winStyle, 
+        config->x, config->y, config->w, config->h, 
+        nullptr, nullptr, wcex->hInstance, this);
     SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 
-    if (!frame && shadow)
+    if (!config->frame && config->shadow)
     {
         MARGINS margins = { 1, 1, 1, 1 };
         DwmExtendFrameIntoClientArea(hwnd, &margins);
@@ -178,20 +123,22 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             SystemParametersInfo(SPI_GETWORKAREA, 0, &workArea, 0);
             mminfo->ptMinTrackSize.x = 1200;
             mminfo->ptMinTrackSize.y = 800;
-            mminfo->ptMaxSize.x = workArea.right - workArea.left - 2;
-            mminfo->ptMaxSize.y = workArea.bottom - workArea.top - 2;
-            mminfo->ptMaxPosition.x = 1;
-            mminfo->ptMaxPosition.y = 1;
+            if (!config->maximizable) {
+                //mminfo->ptMaxSize.x = workArea.right - workArea.left - 2;
+                //mminfo->ptMaxSize.y = workArea.bottom - workArea.top - 2;
+                //mminfo->ptMaxPosition.x = 1;
+                //mminfo->ptMaxPosition.y = 1;
+            }
             return true;
         }
     }
     return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-bool BrowserWindow::load(const rapidjson::Value& config)
+bool BrowserWindow::load(rapidjson::Value& pageConfig)
 {
     page = std::make_unique<Page>(this);
-    page->init(config);
+    page->init(pageConfig);
     auto app = App::get();
     auto callBackInstance = WRL::Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(this, &BrowserWindow::pageCtrlReady);
     auto result = app->env->CreateCoreWebView2Controller(hwnd, callBackInstance.Get());

@@ -147,8 +147,10 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="App\AppConfig.cpp" />
     <ClCompile Include="App\App.cpp" />
     <ClCompile Include="App\JsonParsor.cpp" />
+    <ClCompile Include="Win\BrowserWindowConfig.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="App\Util.cpp" />
     <ClCompile Include="Win\Page.cpp" />
@@ -175,9 +177,11 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="App\AppConfig.h" />
     <ClInclude Include="App\App.h" />
     <ClInclude Include="App\Res.h" />
     <ClInclude Include="App\JsonParsor.h" />
+    <ClInclude Include="Win\BrowserWindowConfig.h" />
     <ClInclude Include="Lib\rapidjson\allocators.h" />
     <ClInclude Include="Lib\rapidjson\cursorstreamwrapper.h" />
     <ClInclude Include="Lib\rapidjson\document.h" />

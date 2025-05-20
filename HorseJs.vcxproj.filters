@@ -33,6 +33,12 @@
     <ClCompile Include="App\JsonParsor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Win\BrowserWindowConfig.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="App\AppConfig.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -173,6 +179,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="App\JsonParsor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win\BrowserWindowConfig.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="App\AppConfig.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

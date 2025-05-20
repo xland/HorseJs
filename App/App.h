@@ -8,6 +8,7 @@
 #include <wil/com.h>
 #include <WebView2.h>
 #include "Util.h"
+#include "AppConfig.h"
 #include "../Lib/rapidjson/document.h"
 #include "JsonParsor.h"
 
@@ -21,12 +22,10 @@ public:
 	static App* get();
 	static void init();
 public:
+	std::unique_ptr<AppConfig> config;
 	ICoreWebView2Environment* env;
-	rapidjson::Document d;
-	std::string appId;
 private:
-	std::vector<BrowserWindow*> windows;
-	bool quitWhenAllWindowClosed{ true };
+	std::vector<std::unique_ptr<BrowserWindow>> windows;
 private:
 	void start();
 	bool checkRuntime();

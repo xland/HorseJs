@@ -37,7 +37,7 @@ void Page::load()
 {
     HRESULT hr = win->ctrl->get_CoreWebView2(&webview);
     auto app = App::get();
-    auto appId = Util::convertToWStr(app->appId.data());
+    auto appId = Util::convertToWStr(app->config->appId.data());
     auto webView3 = webview.try_query<ICoreWebView2_3>();
     webView3->SetVirtualHostNameToFolderMapping(appId.data(),L"UI",COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_ALLOW);
 

@@ -15,6 +15,7 @@
     "visible": true,
     "frame": true,
     "shadow": true,
+    "maximizable": true,
     "title": "窗口标题",
     "page": {
       "areDefaultScriptDialogsEnabled": true,
