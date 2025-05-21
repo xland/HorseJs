@@ -1,5 +1,5 @@
 import { Eventer } from "./Eventer";
-import { WindowMethodId, ClassId } from "./EnumId";
+import { WindowMethodId, ClassId, WindowEventId } from "./EnumId";
 
 export class Window extends Eventer {
   maximize() {
@@ -13,5 +13,9 @@ export class Window extends Eventer {
   }
   move(x: number, y: number) {
     return this.call(ClassId.Window, WindowMethodId.move, x, y);
+  }
+  onResize(cb: (x: number, y: number) => void) {
+    this.on(WindowEventId.resize, cb);
+    return this.call(ClassId.Window, WindowMethodId.regEvent, WindowEventId.resize);
   }
 }

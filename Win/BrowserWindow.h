@@ -6,6 +6,7 @@
 
 class Page;
 class BrowserWindowConfig;
+class MsgProcessor;
 class BrowserWindow
 {
 public:
@@ -13,21 +14,24 @@ public:
 	~BrowserWindow();
 	bool load(rapidjson::Value& pageConfig);
 	void call(rapidjson::Document& jsonDoc);
+	void resize(const int& w, const int& h);
 public:
 	wil::com_ptr<ICoreWebView2Controller> ctrl;
 	HWND hwnd;
 	wil::unique_hicon favicon;
 	std::unique_ptr<BrowserWindowConfig> config;
+	std::unique_ptr<MsgProcessor> msgProcessor;
+	std::unique_ptr<Page> page;
 protected:
 private:
+	void regEvent();
+	void unregEvent();
 	void initWindow();
 	WNDCLASSEX* regWinClass();
 	void show();
 	static LRESULT CALLBACK winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	HRESULT pageCtrlReady(HRESULT result, ICoreWebView2Controller* ctrl);
-	
+	HRESULT pageCtrlReady(HRESULT result, ICoreWebView2Controller* ctrl);	
 private:
-	std::unique_ptr<Page> page;
 };
 

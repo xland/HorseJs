@@ -4,44 +4,44 @@ export class Eventer {
   private dic = {};
   constructor() {}
   // 监听事件
-  on(methodId: number, callback: EventHandler): void {
-    if (!this.dic[methodId]) {
-      this.dic[methodId] = [callback];
+  on(eventId: number, callback: EventHandler): void {
+    if (!this.dic[eventId]) {
+      this.dic[eventId] = [callback];
     } else {
-      this.dic[methodId].push(callback);
+      this.dic[eventId].push(callback);
     }
   }
 
   // 发射事件
-  emit(methodId: number, ...args: any[]): void {
-    const handlers = this.dic[methodId];
+  emit(eventId: number, ...args: any[]): void {
+    const handlers = this.dic[eventId];
     if (!handlers || handlers.length === 0) {
-      console.warn(`没有找到该事件的监听函数：${methodId}`);
+      console.warn(`没有找到该事件的监听函数：${eventId}`);
       return;
     }
     handlers.forEach((handler) => handler(...args));
   }
 
   // 取消监听事件
-  off(methodId: number, callback?: EventHandler): void {
-    const handlers = this.dic[methodId];
+  off(eventId: number, callback?: EventHandler): void {
+    const handlers = this.dic[eventId];
     if (!handlers) return;
     if (!callback) {
-      delete this.dic[methodId];
+      delete this.dic[eventId];
       return;
     }
     const index = handlers.findIndex((h) => h === callback);
     if (index >= 0) handlers.splice(index, 1);
-    if (handlers.length === 0) delete this.dic[methodId];
+    if (handlers.length === 0) delete this.dic[eventId];
   }
 
   // 监听一次性事件
-  once(methodId: number, callback: EventHandler): void {
+  once(eventId: number, callback: EventHandler): void {
     const wrapper = (...args: any[]) => {
-      this.off(methodId, wrapper);
+      this.off(eventId, wrapper);
       callback(...args);
     };
-    this.on(methodId, wrapper);
+    this.on(eventId, wrapper);
   }
   // 调用原生方法并返回 Promise
   call<T = any>(classId: number, methodId: number, ...params: any[]): Promise<T> {
@@ -50,7 +50,6 @@ export class Eventer {
       this.once(eventId, (result: T) => {
         resolve(result);
       });
-      debugger;
       window.chrome.webview.postMessage({ classId, methodId, eventId, params });
     });
   }

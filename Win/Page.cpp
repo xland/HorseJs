@@ -5,7 +5,7 @@
 #include "Page.h"
 #include "BrowserWindow.h"
 #include "../App/Res.h"
-#include "../App/EnumId.h"
+#include "MsgProcessor.h"
 #include "../App/App.h"
 
 using namespace Microsoft;
@@ -256,20 +256,9 @@ HRESULT Page::msgReceived(ICoreWebView2* webview, ICoreWebView2WebMessageReceive
     wil::unique_cotaskmem_string messageRaw;
     args->get_WebMessageAsJson(&messageRaw);
     std::wstring message = messageRaw.get();
+    messageRaw.reset();
     auto str = Util::convertToStr(message);
-
-    rapidjson::Document jsonDoc;
-    jsonDoc.Parse(str.data());
-
-    if (jsonDoc.HasMember("classId") && jsonDoc["classId"].IsInt()) {
-        auto classId = jsonDoc["classId"].GetInt();
-        if (classId == (int)ClassId::Window) {
-            win->call(jsonDoc);
-        }
-        else if (classId == (int)ClassId::Page) {
-            call(jsonDoc);
-        }
-    }
+    win->msgProcessor->processStr(str);
     return S_OK;
 }
 void Page::call(rapidjson::Document& jsonDoc) {

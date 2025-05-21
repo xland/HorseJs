@@ -12,6 +12,8 @@ public:
 	void init(const rapidjson::Value& config);
 	void load();
 	void call(rapidjson::Document& jsonDoc);
+public:
+	wil::com_ptr<ICoreWebView2> webview;
 private:
 	HRESULT navigateStart(ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args);
 	HRESULT navigateEnd(ICoreWebView2* webview, ICoreWebView2NavigationCompletedEventArgs* args);
@@ -22,7 +24,6 @@ private:
 	HRESULT msgReceived(ICoreWebView2* webview, ICoreWebView2WebMessageReceivedEventArgs* args);
 	void loadResource();
 private:
-	wil::com_ptr<ICoreWebView2> webview;
 	BrowserWindow* win;
 	bool areDefaultScriptDialogsEnabled{ true };
 	bool isWebMessageEnabled{ true };

@@ -17,41 +17,41 @@
     constructor() {
     }
     // 监听事件
-    on(methodId, callback) {
-      if (!this.dic[methodId]) {
-        this.dic[methodId] = [callback];
+    on(eventId, callback) {
+      if (!this.dic[eventId]) {
+        this.dic[eventId] = [callback];
       } else {
-        this.dic[methodId].push(callback);
+        this.dic[eventId].push(callback);
       }
     }
     // 发射事件
-    emit(methodId, ...args) {
-      const handlers = this.dic[methodId];
+    emit(eventId, ...args) {
+      const handlers = this.dic[eventId];
       if (!handlers || handlers.length === 0) {
-        console.warn(`\u6CA1\u6709\u627E\u5230\u8BE5\u4E8B\u4EF6\u7684\u76D1\u542C\u51FD\u6570\uFF1A${methodId}`);
+        console.warn(`\u6CA1\u6709\u627E\u5230\u8BE5\u4E8B\u4EF6\u7684\u76D1\u542C\u51FD\u6570\uFF1A${eventId}`);
         return;
       }
       handlers.forEach((handler) => handler(...args));
     }
     // 取消监听事件
-    off(methodId, callback) {
-      const handlers = this.dic[methodId];
+    off(eventId, callback) {
+      const handlers = this.dic[eventId];
       if (!handlers) return;
       if (!callback) {
-        delete this.dic[methodId];
+        delete this.dic[eventId];
         return;
       }
       const index = handlers.findIndex((h) => h === callback);
       if (index >= 0) handlers.splice(index, 1);
-      if (handlers.length === 0) delete this.dic[methodId];
+      if (handlers.length === 0) delete this.dic[eventId];
     }
     // 监听一次性事件
-    once(methodId, callback) {
+    once(eventId, callback) {
       const wrapper = (...args) => {
-        this.off(methodId, wrapper);
+        this.off(eventId, wrapper);
         callback(...args);
       };
-      this.on(methodId, wrapper);
+      this.on(eventId, wrapper);
     }
     // 调用原生方法并返回 Promise
     call(classId, methodId, ...params) {
@@ -60,7 +60,6 @@
         this.once(eventId, (result) => {
           resolve(result);
         });
-        debugger;
         window.chrome.webview.postMessage({ classId, methodId, eventId, params });
       });
     }
@@ -79,6 +78,10 @@
     }
     move(x, y) {
       return this.call(2 /* Window */, 3 /* move */, x, y);
+    }
+    onResize(cb) {
+      this.on(2 /* resize */, cb);
+      return this.call(2 /* Window */, 4 /* regEvent */, 2 /* resize */);
     }
   };
 

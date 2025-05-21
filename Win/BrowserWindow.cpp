@@ -1,11 +1,11 @@
 ﻿#include <windowsx.h>
 #include <dwmapi.h>
 
+#include "../App/App.h"
 #include "BrowserWindow.h"
 #include "BrowserWindowConfig.h"
 #include "Page.h"
-#include "../App/EnumId.h"
-#include "../App/App.h"
+#include "MsgProcessor.h"
 
 using namespace Microsoft;
 
@@ -19,6 +19,14 @@ BrowserWindow::~BrowserWindow()
 {
 }
 
+
+void BrowserWindow::regEvent()
+{
+}
+
+void BrowserWindow::unregEvent()
+{
+}
 
 void BrowserWindow::initWindow()
 {
@@ -122,8 +130,8 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             MINMAXINFO* mminfo = (PMINMAXINFO)lParam;
             RECT workArea;
             SystemParametersInfo(SPI_GETWORKAREA, 0, &workArea, 0);
-            mminfo->ptMinTrackSize.x = 1200;
-            mminfo->ptMinTrackSize.y = 800;
+            mminfo->ptMinTrackSize.x = 600;
+            mminfo->ptMinTrackSize.y = 400;
             if (!config->maximizable) {
                 //mminfo->ptMaxSize.x = workArea.right - workArea.left - 2;
                 //mminfo->ptMaxSize.y = workArea.bottom - workArea.top - 2;
@@ -140,26 +148,15 @@ bool BrowserWindow::load(rapidjson::Value& pageConfig)
 {
     page = std::make_unique<Page>(this);
     page->init(pageConfig);
+    msgProcessor = std::make_unique<MsgProcessor>(this, page.get());
+
     auto app = App::get();
-    auto callBackInstance = WRL::Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(this, &BrowserWindow::pageCtrlReady);
-    auto result = app->env->CreateCoreWebView2Controller(hwnd, callBackInstance.Get());
+    auto ctrlReadyCB = WRL::Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(this, &BrowserWindow::pageCtrlReady);
+    auto result = app->env->CreateCoreWebView2Controller(hwnd, ctrlReadyCB.Get());
     if (FAILED(result)) {
         return false;
     }
     return true;
-}
-
-void BrowserWindow::call(rapidjson::Document& jsonDoc)
-{
-    if (jsonDoc.HasMember("methodId") && jsonDoc["methodId"].IsInt()) {
-        auto methodId = jsonDoc["methodId"].GetInt();
-        auto a = 1;
-    }
-
-    if (jsonDoc.HasMember("eventId") && jsonDoc["eventId"].IsInt()) {
-        auto eventId = jsonDoc["eventId"].GetInt();
-        auto a = 1;
-    }
 }
 
 HRESULT BrowserWindow::pageCtrlReady(HRESULT result, ICoreWebView2Controller* ctrl)
@@ -170,4 +167,24 @@ HRESULT BrowserWindow::pageCtrlReady(HRESULT result, ICoreWebView2Controller* ct
     GetClientRect(hwnd, &bounds);
     auto hr = ctrl->put_Bounds(bounds);
     return hr;
+}
+
+void BrowserWindow::call(rapidjson::Document& jsonDoc)
+{
+    int methodId{ -1 }, eventId{ -1 };
+    if (jsonDoc.HasMember("methodId") && jsonDoc["methodId"].IsInt()) {
+        methodId = jsonDoc["methodId"].GetInt();
+    }
+    if (jsonDoc.HasMember("eventId") && jsonDoc["eventId"].IsInt()) {
+        eventId = jsonDoc["eventId"].GetInt();
+    }
+    if (methodId < 0 || eventId < 0) {
+        MessageBox(nullptr, L"methodId或eventId为空", L"错误", MB_OK | MB_ICONERROR);
+        return;
+    }
+}
+
+void BrowserWindow::resize(const int& w, const int& h)
+{
+    SetWindowPos(hwnd,nullptr,0,0,w,h,SWP_NOMOVE | SWP_NOZORDER);
 }
