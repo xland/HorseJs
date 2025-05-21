@@ -11,9 +11,9 @@
     <div id="">最大化</div>
     <script>
         window.addEventListener("DOMContentLoaded", () => {
-            // horse.window.on("close",()=>{
-            //     console.log("close")
-            // })
+            horse.window.onClosing(()=>{
+                console.log("close")
+            });
             let btnMaximize = document.querySelector("#btnMaximize");
             btnMaximize.addEventListener("click",()=>{
                 horse.window.maximize();

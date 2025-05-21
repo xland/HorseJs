@@ -80,8 +80,12 @@
       return this.call(2 /* Window */, 3 /* move */, x, y);
     }
     onResize(cb) {
-      this.on(2 /* resize */, cb);
-      return this.call(2 /* Window */, 4 /* regEvent */, 2 /* resize */);
+      this.on(1 /* resize */, cb);
+      return this.call(2 /* Window */, 4 /* regEvent */, 1 /* resize */);
+    }
+    onClosing(cb) {
+      this.on(0 /* closing */, cb);
+      return this.call(2 /* Window */, 4 /* regEvent */, 0 /* closing */);
     }
   };
 
@@ -95,7 +99,11 @@
     listenMsg() {
       window.chrome.webview.addEventListener("message", (e) => {
         if (e.data.classId === 2 /* Window */) {
-          this.window.emit(e.data.eventId, ...e.data.param);
+          if (e.data.param) {
+            this.window.emit(e.data.eventId, ...e.data.param);
+          } else {
+            this.window.emit(e.data.eventId, []);
+          }
         }
       });
     }

@@ -6,6 +6,7 @@
 #include "BrowserWindowConfig.h"
 #include "Page.h"
 #include "MsgProcessor.h"
+#include "EnumId.h"
 
 using namespace Microsoft;
 
@@ -20,8 +21,17 @@ BrowserWindow::~BrowserWindow()
 }
 
 
-void BrowserWindow::regEvent()
+void BrowserWindow::regEvent(const int& eventId)
 {
+    if (eventId == (int)WindowEventId::closing) {
+        closingIsReg = true;
+    }
+    else if (eventId == (int)WindowEventId::sizing) {
+        sizingIsReg = true;
+    }
+    else if (eventId == (int)WindowEventId::sized) {
+        sizedIsReg = true;
+    }
 }
 
 void BrowserWindow::unregEvent()
@@ -108,16 +118,24 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
+        case WM_CLOSE: {
+            if (closingIsReg) {
+                msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::closing, 0);
+                return 0;
+            }
+            DestroyWindow(hwnd);
+            return 0;
+        }
         case WM_SIZE: {
             if (ctrl) {
                 RECT bounds;
                 GetClientRect(hwnd, &bounds);
                 ctrl->SetBoundsAndZoomFactor(bounds, 1.0);
             }
+            msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::sized, 0);
             return 0;
         }
-        case WM_CLOSE: {
-            DestroyWindow(hwnd);
+        case WM_SIZING: {
             return 0;
         }
         case WM_DESTROY: {

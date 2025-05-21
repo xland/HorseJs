@@ -15,6 +15,8 @@ public:
 	bool load(rapidjson::Value& pageConfig);
 	void call(rapidjson::Document& jsonDoc);
 	void resize(const int& w, const int& h);
+	void regEvent(const int& eventId);
+	void unregEvent();
 public:
 	wil::com_ptr<ICoreWebView2Controller> ctrl;
 	HWND hwnd;
@@ -22,10 +24,12 @@ public:
 	std::unique_ptr<BrowserWindowConfig> config;
 	std::unique_ptr<MsgProcessor> msgProcessor;
 	std::unique_ptr<Page> page;
+public:
+	bool closingIsReg{ false };
+	bool sizingIsReg{ false };
+	bool sizedIsReg{ false };
 protected:
 private:
-	void regEvent();
-	void unregEvent();
 	void initWindow();
 	WNDCLASSEX* regWinClass();
 	void show();

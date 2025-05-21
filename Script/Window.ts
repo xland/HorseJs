@@ -18,4 +18,8 @@ export class Window extends Eventer {
     this.on(WindowEventId.resize, cb);
     return this.call(ClassId.Window, WindowMethodId.regEvent, WindowEventId.resize);
   }
+  onClosing(cb: () => void) {
+    this.on(WindowEventId.closing, cb);
+    return this.call(ClassId.Window, WindowMethodId.regEvent, WindowEventId.closing);
+  }
 }

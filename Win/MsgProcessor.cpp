@@ -48,16 +48,82 @@ void MsgProcessor::processStr(const std::string& msgStr)
     page->webview->PostWebMessageAsJson(jsonStr.data());
 }
 
+void MsgProcessor::emit(const int& classId, const int& eventId, int count, ...)
+{
+    JsonParsor parsor;
+    parsor.addNumber("classId", classId);
+    parsor.addNumber("eventId", eventId);
+    va_list args;
+    va_start(args, count);
+    if (classId == (int)ClassId::Window) {
+        emitWin(eventId, count, args);
+    }
+    else if (classId == (int)ClassId::Page) {
+        emitPage(eventId, count, args);
+    }
+    va_end(args);
+    std::wstring jsonStr = parsor.parse();
+    page->webview->PostWebMessageAsJson(jsonStr.data());
+}
+
+void MsgProcessor::emitWin(const int& eventId, int count, va_list args)
+{
+    if (eventId == (int)WindowEventId::closing) {
+        int value = va_arg(args, int);
+    }
+    else if (eventId == (int)WindowEventId::sizing) {
+
+    }
+    else if (eventId == (int)WindowEventId::sized) {
+
+    }
+}
+
+void MsgProcessor::emitPage(const int& msgId, int count, va_list args)
+{
+}
+
 void MsgProcessor::processPage(const int& methodId, const rapidjson::Value& params, JsonParsor& parsor)
 {
+    const rapidjson::Value::ConstArray paramsArray = params.GetArray();
+    if (methodId == (int)WindowMethodId::maximize) {
+
+    }
+    else if (methodId == (int)WindowMethodId::minimize) {
+
+    }
+    else if (methodId == (int)WindowMethodId::resize) {
+        auto w = paramsArray[0].GetInt();
+        auto h = paramsArray[1].GetInt();
+        win->resize(w, h);
+    }
+    else if (methodId == (int)WindowMethodId::move) {
+
+    }
 }
 
 void MsgProcessor::processWin(const int& methodId, const rapidjson::Value& params, JsonParsor& parsor)
 {
     const rapidjson::Value::ConstArray paramsArray = params.GetArray();
-    if (methodId == (int)WindowMethodId::resize) {        
+    if (methodId == (int)WindowMethodId::maximize) {
+
+    }
+    else if (methodId == (int)WindowMethodId::minimize) {
+
+    }
+    else if (methodId == (int)WindowMethodId::resize) {
         auto w = paramsArray[0].GetInt();
         auto h = paramsArray[1].GetInt();
-        win->resize(w,h);
+        win->resize(w, h);
+    }
+    else if (methodId == (int)WindowMethodId::move) {
+
+    }
+    else if (methodId == (int)WindowMethodId::regEvent) {
+        auto eventId = paramsArray[0].GetInt();
+        win->regEvent(eventId);
+    }
+    else if (methodId == (int)WindowMethodId::unregEvent) {
+
     }
 }

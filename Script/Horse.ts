@@ -9,7 +9,11 @@ class Horse {
   private listenMsg() {
     window.chrome.webview.addEventListener("message", (e) => {
       if (e.data.classId === ClassId.Window) {
-        this.window.emit(e.data.eventId, ...e.data.param);
+        if (e.data.param) {
+          this.window.emit(e.data.eventId, ...e.data.param);
+        } else {
+          this.window.emit(e.data.eventId, []);
+        }
       }
     });
   }
