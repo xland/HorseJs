@@ -26,16 +26,19 @@ void BrowserWindow::regEvent(const int& eventId)
     if (eventId == (int)WindowEventId::closing) {
         closingIsReg = true;
     }
-    else if (eventId == (int)WindowEventId::sizing) {
-        sizingIsReg = true;
-    }
     else if (eventId == (int)WindowEventId::sized) {
         sizedIsReg = true;
     }
 }
 
-void BrowserWindow::unregEvent()
+void BrowserWindow::unregEvent(const int& eventId)
 {
+    if (eventId == (int)WindowEventId::closing) {
+        closingIsReg = false;
+    }
+    else if (eventId == (int)WindowEventId::sized) {
+        sizedIsReg = false;
+    }
 }
 
 void BrowserWindow::initWindow()
@@ -127,15 +130,16 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             return 0;
         }
         case WM_SIZE: {
+            RECT bounds;
+            GetClientRect(hwnd, &bounds);
+            config->w = bounds.right - bounds.left;
+            config->h = bounds.bottom - bounds.top;
             if (ctrl) {
-                RECT bounds;
-                GetClientRect(hwnd, &bounds);
                 ctrl->SetBoundsAndZoomFactor(bounds, 1.0);
             }
-            msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::sized, 0);
-            return 0;
-        }
-        case WM_SIZING: {
+            if (sizedIsReg) {
+                msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::sized, 2,config->w,config->h);
+            }            
             return 0;
         }
         case WM_DESTROY: {

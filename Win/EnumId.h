@@ -13,10 +13,11 @@ enum class WindowMethodId {
 	move,
 	regEvent, 
 	unregEvent,
+	close,
+	destory,
 };
 enum class WindowEventId {
 	closing,
-	sizing,
 	sized,
 };
 

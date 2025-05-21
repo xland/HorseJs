@@ -39,6 +39,9 @@
     <ClCompile Include="App\AppConfig.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Win\MsgProcessor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -187,7 +190,10 @@
     <ClInclude Include="App\AppConfig.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="App\EnumId.h">
+    <ClInclude Include="Win\EnumId.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win\MsgProcessor.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

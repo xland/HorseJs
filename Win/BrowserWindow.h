@@ -16,7 +16,7 @@ public:
 	void call(rapidjson::Document& jsonDoc);
 	void resize(const int& w, const int& h);
 	void regEvent(const int& eventId);
-	void unregEvent();
+	void unregEvent(const int& eventId);
 public:
 	wil::com_ptr<ICoreWebView2Controller> ctrl;
 	HWND hwnd;
@@ -26,7 +26,6 @@ public:
 	std::unique_ptr<Page> page;
 public:
 	bool closingIsReg{ false };
-	bool sizingIsReg{ false };
 	bool sizedIsReg{ false };
 protected:
 private:

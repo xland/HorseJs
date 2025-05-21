@@ -10,8 +10,11 @@ export enum WindowMethodId {
   resize,
   move,
   regEvent,
+  unregEvent,
+  close,
+  destory,
 }
 export enum WindowEventId {
   closing,
-  resize,
+  sized,
 }

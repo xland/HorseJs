@@ -65,6 +65,13 @@
     }
   };
 
+  // EnumId.ts
+  var WindowEventId = /* @__PURE__ */ ((WindowEventId2) => {
+    WindowEventId2[WindowEventId2["closing"] = 0] = "closing";
+    WindowEventId2[WindowEventId2["sized"] = 1] = "sized";
+    return WindowEventId2;
+  })(WindowEventId || {});
+
   // Window.ts
   var Window = class extends Eventer {
     maximize() {
@@ -79,25 +86,30 @@
     move(x, y) {
       return this.call(2 /* Window */, 3 /* move */, x, y);
     }
-    onResize(cb) {
-      this.on(1 /* resize */, cb);
-      return this.call(2 /* Window */, 4 /* regEvent */, 1 /* resize */);
+    removeEventListener(eventName, cb) {
+      if (!(eventName in WindowEventId)) return;
+      let eId = WindowEventId[eventName];
+      this.off(eId, cb);
+      return this.call(2 /* Window */, 5 /* unregEvent */, eId);
     }
-    onClosing(cb) {
-      this.on(0 /* closing */, cb);
-      return this.call(2 /* Window */, 4 /* regEvent */, 0 /* closing */);
+    addEventListener(eventName, cb) {
+      if (!(eventName in WindowEventId)) return;
+      let eId = WindowEventId[eventName];
+      this.on(eId, cb);
+      return this.call(2 /* Window */, 4 /* regEvent */, eId);
     }
   };
 
   // Horse.ts
   var Horse = class {
     window;
+    webview = window.chrome.webview;
     constructor() {
       this.window = new Window();
       this.listenMsg();
     }
     listenMsg() {
-      window.chrome.webview.addEventListener("message", (e) => {
+      this.webview.addEventListener("message", (e) => {
         if (e.data.classId === 2 /* Window */) {
           if (e.data.param) {
             this.window.emit(e.data.eventId, ...e.data.param);

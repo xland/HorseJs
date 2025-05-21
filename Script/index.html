@@ -11,8 +11,13 @@
     <div id="">最大化</div>
     <script>
         window.addEventListener("DOMContentLoaded", () => {
-            horse.window.onClosing(()=>{
+            horse.window.addEventListener("closing", async ()=>{
                 console.log("close")
+                alert("确定要关闭窗口吗");
+                await horse.window.removeEventListener("closing");
+            });
+            horse.window.addEventListener("sized",(w,h)=>{
+                console.log("sized----:",w,h);
             });
             let btnMaximize = document.querySelector("#btnMaximize");
             btnMaximize.addEventListener("click",()=>{
@@ -22,7 +27,7 @@
             btnResize.addEventListener("click",async ()=>{
                 let result = await horse.window.resize(1200, 600);
                 console.log(result);
-            })
+            });
         });
     </script>
     </body>

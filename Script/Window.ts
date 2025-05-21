@@ -14,12 +14,16 @@ export class Window extends Eventer {
   move(x: number, y: number) {
     return this.call(ClassId.Window, WindowMethodId.move, x, y);
   }
-  onResize(cb: (x: number, y: number) => void) {
-    this.on(WindowEventId.resize, cb);
-    return this.call(ClassId.Window, WindowMethodId.regEvent, WindowEventId.resize);
+  removeEventListener(eventName: string, cb: any) {
+    if (!(eventName in WindowEventId)) return;
+    let eId = WindowEventId[eventName as keyof typeof WindowEventId] as WindowEventId;
+    this.off(eId, cb);
+    return this.call(ClassId.Window, WindowMethodId.unregEvent, eId);
   }
-  onClosing(cb: () => void) {
-    this.on(WindowEventId.closing, cb);
-    return this.call(ClassId.Window, WindowMethodId.regEvent, WindowEventId.closing);
+  addEventListener(eventName: string, cb: (...args: any[]) => void) {
+    if (!(eventName in WindowEventId)) return;
+    let eId = WindowEventId[eventName as keyof typeof WindowEventId] as WindowEventId;
+    this.on(eId, cb);
+    return this.call(ClassId.Window, WindowMethodId.regEvent, eId);
   }
 }

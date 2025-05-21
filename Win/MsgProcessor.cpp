@@ -56,30 +56,29 @@ void MsgProcessor::emit(const int& classId, const int& eventId, int count, ...)
     va_list args;
     va_start(args, count);
     if (classId == (int)ClassId::Window) {
-        emitWin(eventId, count, args);
+        emitWin(eventId, count, args,parsor);
     }
     else if (classId == (int)ClassId::Page) {
-        emitPage(eventId, count, args);
+        emitPage(eventId, count, args,parsor);
     }
     va_end(args);
     std::wstring jsonStr = parsor.parse();
     page->webview->PostWebMessageAsJson(jsonStr.data());
 }
 
-void MsgProcessor::emitWin(const int& eventId, int count, va_list args)
+void MsgProcessor::emitWin(const int& eventId, int count, va_list args, JsonParsor& parsor)
 {
-    if (eventId == (int)WindowEventId::closing) {
-        int value = va_arg(args, int);
-    }
-    else if (eventId == (int)WindowEventId::sizing) {
-
-    }
-    else if (eventId == (int)WindowEventId::sized) {
-
+    if (eventId == (int)WindowEventId::sized) {
+        int w = va_arg(args, int);
+        int h = va_arg(args, int);
+        rapidjson::Value items(rapidjson::kArrayType);
+        items.PushBack(rapidjson::Value(w), parsor.getAllocator());
+        items.PushBack(rapidjson::Value(h), parsor.getAllocator());
+        parsor.addValue("param", std::move(items));
     }
 }
 
-void MsgProcessor::emitPage(const int& msgId, int count, va_list args)
+void MsgProcessor::emitPage(const int& msgId, int count, va_list args, JsonParsor& parsor)
 {
 }
 
@@ -124,6 +123,7 @@ void MsgProcessor::processWin(const int& methodId, const rapidjson::Value& param
         win->regEvent(eventId);
     }
     else if (methodId == (int)WindowMethodId::unregEvent) {
-
+        auto eventId = paramsArray[0].GetInt();
+        win->unregEvent(eventId);
     }
 }
