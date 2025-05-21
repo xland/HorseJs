@@ -7,15 +7,15 @@
     <div id="btnMaximize">最大化</div>
     <div id="btnMinimize">最小化</div>
     <div id="btnResize">改变大小</div>
-    <div id="">最大化</div>
+    <div id="btnBindRes">附加资源</div>
     <div id="">最大化</div>
     <script>
         window.addEventListener("DOMContentLoaded", () => {
-            horse.window.addEventListener("closing", async ()=>{
-                console.log("close")
-                alert("确定要关闭窗口吗");
-                await horse.window.removeEventListener("closing");
-            });
+            // horse.window.addEventListener("closing", async ()=>{
+            //     console.log("close")
+            //     alert("确定要关闭窗口吗");
+            //     await horse.window.removeEventListener("closing");
+            // });
             horse.window.addEventListener("sized",(w,h)=>{
                 console.log("sized----:",w,h);
             });
@@ -25,9 +25,12 @@
             })
             let btnResize = document.querySelector("#btnResize");
             btnResize.addEventListener("click",async ()=>{
-                let result = await horse.window.resize(1200, 600);
-                console.log(result);
+                await horse.window.resize(1200, 600);
             });
+            let btnBindRes = document.querySelector("#btnBindRes");
+            btnBindRes.addEventListener("click",async ()=>{
+                horse.fs.addResToExe("C:/Users/liuxiaolun/Desktop/allen","D:\\project\\HorseJs\\x64\\Release\\HorseJs.exe");
+            })
         });
     </script>
     </body>

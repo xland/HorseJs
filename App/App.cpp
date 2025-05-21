@@ -10,11 +10,12 @@
 
 #include "App.h"
 #include "AppConfig.h"
+#include "Fs.h"
 #include "../Win/BrowserWindow.h"
+using namespace Microsoft;
 namespace {
     std::unique_ptr<App> app;
 }
-using namespace Microsoft;
 
 
 App::App() :config{std::make_unique<AppConfig>()}
@@ -59,6 +60,8 @@ void App::start()
         return;
     }
 
+    Fs::init();
+
     //auto options = WRL::Make<CoreWebView2EnvironmentOptions>();
     //options->put_AdditionalBrowserArguments(L"--allow-file-access-from-files");
     //WRL::ComPtr<ICoreWebView2EnvironmentOptions4> options4;
@@ -74,6 +77,8 @@ void App::start()
     //ICoreWebView2CustomSchemeRegistration* registrations[1] = { defaultRegistration.Get() };
     //options4->SetCustomSchemeRegistrations(1, static_cast<ICoreWebView2CustomSchemeRegistration**>(registrations));
     //HRESULT hr = CreateCoreWebView2EnvironmentWithOptions(nullptr, path.c_str(), options.Get(),envReadyInstance.Get());
+
+
 
     auto envReadyInstance = WRL::Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(this, &App::envReady);
     HRESULT hr = CreateCoreWebView2EnvironmentWithOptions(nullptr, path.c_str(), nullptr,envReadyInstance.Get());

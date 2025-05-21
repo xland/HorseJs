@@ -75,42 +75,51 @@
   // Window.ts
   var Window = class extends Eventer {
     maximize() {
-      return this.call(2 /* Window */, 0 /* maximize */);
+      return this.call(3 /* Window */, 0 /* maximize */);
     }
     minimize() {
-      return this.call(2 /* Window */, 1 /* minimize */);
+      return this.call(3 /* Window */, 1 /* minimize */);
     }
     resize(w, h) {
-      return this.call(2 /* Window */, 2 /* resize */, w, h);
+      return this.call(3 /* Window */, 2 /* resize */, w, h);
     }
     move(x, y) {
-      return this.call(2 /* Window */, 3 /* move */, x, y);
+      return this.call(3 /* Window */, 3 /* move */, x, y);
     }
     removeEventListener(eventName, cb) {
       if (!(eventName in WindowEventId)) return;
       let eId = WindowEventId[eventName];
       this.off(eId, cb);
-      return this.call(2 /* Window */, 5 /* unregEvent */, eId);
+      return this.call(3 /* Window */, 5 /* unregEvent */, eId);
     }
     addEventListener(eventName, cb) {
       if (!(eventName in WindowEventId)) return;
       let eId = WindowEventId[eventName];
       this.on(eId, cb);
-      return this.call(2 /* Window */, 4 /* regEvent */, eId);
+      return this.call(3 /* Window */, 4 /* regEvent */, eId);
+    }
+  };
+
+  // Fs.ts
+  var Fs = class extends Eventer {
+    addResToExe(dirPath, exePath) {
+      return this.call(1 /* Fs */, 0 /* addResToExe */, dirPath, exePath);
     }
   };
 
   // Horse.ts
   var Horse = class {
     window;
+    fs;
     webview = window.chrome.webview;
     constructor() {
       this.window = new Window();
+      this.fs = new Fs();
       this.listenMsg();
     }
     listenMsg() {
       this.webview.addEventListener("message", (e) => {
-        if (e.data.classId === 2 /* Window */) {
+        if (e.data.classId === 3 /* Window */) {
           if (e.data.param) {
             this.window.emit(e.data.eventId, ...e.data.param);
           } else {

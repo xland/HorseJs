@@ -2,6 +2,7 @@
 #include "EnumId.h"
 #include "BrowserWindow.h"
 #include "Page.h"
+#include "../App/Fs.h"
 #include "../App/JsonParsor.h"
 
 MsgProcessor::MsgProcessor(BrowserWindow* win, Page* page) :win{ win }, page{page}
@@ -37,7 +38,10 @@ void MsgProcessor::processStr(const std::string& msgStr)
     }
     else if (classId == (int)ClassId::Page) {
         processPage(methodId, jsonDoc["params"],parsor);
-    }    
+    }
+    else if (classId == (int)ClassId::Fs) {
+        processFs(methodId, jsonDoc["params"], parsor);
+    }
     //rapidjson::Value items(rapidjson::kArrayType);
     //rapidjson::Value number1(42); // 第一个数字
     //rapidjson::Value number2(3.14); // 第二个数字（支持浮点数）
@@ -103,7 +107,7 @@ void MsgProcessor::processPage(const int& methodId, const rapidjson::Value& para
 
 void MsgProcessor::processWin(const int& methodId, const rapidjson::Value& params, JsonParsor& parsor)
 {
-    const rapidjson::Value::ConstArray paramsArray = params.GetArray();
+    const rapidjson::Value::ConstArray arr = params.GetArray();
     if (methodId == (int)WindowMethodId::maximize) {
 
     }
@@ -111,19 +115,31 @@ void MsgProcessor::processWin(const int& methodId, const rapidjson::Value& param
 
     }
     else if (methodId == (int)WindowMethodId::resize) {
-        auto w = paramsArray[0].GetInt();
-        auto h = paramsArray[1].GetInt();
+        auto w = arr[0].GetInt();
+        auto h = arr[1].GetInt();
         win->resize(w, h);
     }
     else if (methodId == (int)WindowMethodId::move) {
 
     }
     else if (methodId == (int)WindowMethodId::regEvent) {
-        auto eventId = paramsArray[0].GetInt();
+        auto eventId = arr[0].GetInt();
         win->regEvent(eventId);
     }
     else if (methodId == (int)WindowMethodId::unregEvent) {
-        auto eventId = paramsArray[0].GetInt();
+        auto eventId = arr[0].GetInt();
         win->unregEvent(eventId);
+    }
+}
+
+void MsgProcessor::processFs(const int& methodId, const rapidjson::Value& params, JsonParsor& parsor)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    if (methodId == (int)FsMethodId::addResToExe) {
+        auto str1 = arr[0].GetString();
+        auto str2 = arr[1].GetString();
+        auto dirPath = Util::convertToWStr(str1);
+        auto exePath = Util::convertToWStr(str2);
+        Fs::get()->addDirAsExeRes(dirPath, exePath);
     }
 }

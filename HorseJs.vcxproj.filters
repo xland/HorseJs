@@ -42,6 +42,9 @@
     <ClCompile Include="Win\MsgProcessor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="App\Fs.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -194,6 +197,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Win\MsgProcessor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Fs.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

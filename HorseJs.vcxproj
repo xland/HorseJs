@@ -150,6 +150,7 @@
     <ClCompile Include="App\AppConfig.cpp" />
     <ClCompile Include="App\App.cpp" />
     <ClCompile Include="App\JsonParsor.cpp" />
+    <ClCompile Include="App\Fs.cpp" />
     <ClCompile Include="Win\MsgProcessor.cpp" />
     <ClCompile Include="Win\BrowserWindowConfig.cpp" />
     <ClCompile Include="main.cpp" />
@@ -180,6 +181,7 @@
   <ItemGroup>
     <ClInclude Include="App\AppConfig.h" />
     <ClInclude Include="App\App.h" />
+    <ClInclude Include="App\Fs.h" />
     <ClInclude Include="Win\EnumId.h" />
     <ClInclude Include="App\Res.h" />
     <ClInclude Include="App\JsonParsor.h" />

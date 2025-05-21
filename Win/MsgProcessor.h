@@ -18,6 +18,7 @@ private:
 private:
 	void processPage(const int& methodId, const rapidjson::Value& params, JsonParsor& parsor);
 	void processWin(const int& methodId, const rapidjson::Value& params, JsonParsor& parsor);
+	void processFs(const int& methodId, const rapidjson::Value& params, JsonParsor& parsor);
 	void emitWin(const int& eventId, int count, va_list args, JsonParsor& parsor);
 	void emitPage(const int& eventId, int count, va_list args, JsonParsor& parsor);
 };
