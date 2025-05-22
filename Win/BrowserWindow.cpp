@@ -162,6 +162,21 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             App::get()->onWindowDestroy(this);
             return 0;
         }
+        case WM_MOUSEMOVE:{
+            if (!isMouseTracking)
+            {
+                // WebView needs to know when the mouse leaves the client area
+                // so that it can dismiss hover popups. TrackMouseEvent will
+                // provide a notification when the mouse leaves the client area.
+                
+                isMouseTracking = true;
+            }
+            break;
+        }
+        case WM_MOUSELEAVE:{
+            isMouseTracking = false;
+            break;
+        }
         case WM_GETMINMAXINFO:
         {
             MINMAXINFO* mminfo = (PMINMAXINFO)lParam;
@@ -199,6 +214,11 @@ bool BrowserWindow::load(rapidjson::Value& pageConfig)
 HRESULT BrowserWindow::pageCtrlReady(HRESULT result, ICoreWebView2Controller* ctrl)
 {
     this->ctrl = ctrl;
+    auto m_compositionController = this->ctrl.try_query<ICoreWebView2CompositionController>();
+    m_compositionController->SendMouseInput(
+        static_cast<COREWEBVIEW2_MOUSE_EVENT_KIND>(WM_MOUSELEAVE),
+        static_cast<COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS>(GET_KEYSTATE_WPARAM(wParam)),
+        mouseData, point));
     page->load();
     RECT bounds;
     GetClientRect(hwnd, &bounds);

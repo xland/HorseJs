@@ -39,5 +39,6 @@ private:
 	LRESULT winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	HRESULT pageCtrlReady(HRESULT result, ICoreWebView2Controller* ctrl);	
 private:
+	bool isMouseTracking{ false };
 };
 
