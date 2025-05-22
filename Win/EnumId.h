@@ -13,6 +13,9 @@ enum class FsMethodId {
 enum class WindowMethodId {
 	maximize,
 	minimize,
+	hide,
+	show,
+	restore,
 	resize,
 	move,
 	regEvent, 
@@ -21,7 +24,6 @@ enum class WindowMethodId {
 	destory,
 };
 enum class WindowEventId {
-	closing,
-	sized,
+	closing
 };
 

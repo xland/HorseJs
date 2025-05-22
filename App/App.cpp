@@ -59,7 +59,6 @@ void App::start()
     if (path.empty()) {
         return;
     }
-
     Fs::init();
 
     //auto options = WRL::Make<CoreWebView2EnvironmentOptions>();

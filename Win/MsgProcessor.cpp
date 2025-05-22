@@ -72,14 +72,14 @@ void MsgProcessor::emit(const int& classId, const int& eventId, int count, ...)
 
 void MsgProcessor::emitWin(const int& eventId, int count, va_list args, JsonParsor& parsor)
 {
-    if (eventId == (int)WindowEventId::sized) {
-        int w = va_arg(args, int);
-        int h = va_arg(args, int);
-        rapidjson::Value items(rapidjson::kArrayType);
-        items.PushBack(rapidjson::Value(w), parsor.getAllocator());
-        items.PushBack(rapidjson::Value(h), parsor.getAllocator());
-        parsor.addValue("param", std::move(items));
-    }
+    //if (eventId == (int)WindowEventId::sized) {
+    //    int w = va_arg(args, int);
+    //    int h = va_arg(args, int);
+    //    rapidjson::Value items(rapidjson::kArrayType);
+    //    items.PushBack(rapidjson::Value(w), parsor.getAllocator());
+    //    items.PushBack(rapidjson::Value(h), parsor.getAllocator());
+    //    parsor.addValue("param", std::move(items));
+    //}
 }
 
 void MsgProcessor::emitPage(const int& msgId, int count, va_list args, JsonParsor& parsor)
@@ -109,10 +109,19 @@ void MsgProcessor::processWin(const int& methodId, const rapidjson::Value& param
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     if (methodId == (int)WindowMethodId::maximize) {
-
+        win->maximize();
     }
     else if (methodId == (int)WindowMethodId::minimize) {
-
+        win->minimize();
+    }
+    else if (methodId == (int)WindowMethodId::show) {
+        win->show();
+    }
+    else if (methodId == (int)WindowMethodId::hide) {
+        win->hide();
+    }
+    else if (methodId == (int)WindowMethodId::restore) {
+        win->restore();
     }
     else if (methodId == (int)WindowMethodId::resize) {
         auto w = arr[0].GetInt();

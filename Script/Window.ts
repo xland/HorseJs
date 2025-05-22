@@ -8,6 +8,15 @@ export class Window extends Eventer {
   minimize() {
     return this.call(ClassId.Window, WindowMethodId.minimize);
   }
+  hide() {
+    return this.call(ClassId.Window, WindowMethodId.hide);
+  }
+  show() {
+    return this.call(ClassId.Window, WindowMethodId.show);
+  }
+  restore() {
+    return this.call(ClassId.Window, WindowMethodId.restore);
+  }
   resize(w: number, h: number) {
     return this.call(ClassId.Window, WindowMethodId.resize, w, h);
   }

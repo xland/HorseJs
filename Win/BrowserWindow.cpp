@@ -26,9 +26,6 @@ void BrowserWindow::regEvent(const int& eventId)
     if (eventId == (int)WindowEventId::closing) {
         closingIsReg = true;
     }
-    else if (eventId == (int)WindowEventId::sized) {
-        sizedIsReg = true;
-    }
 }
 
 void BrowserWindow::unregEvent(const int& eventId)
@@ -36,11 +33,33 @@ void BrowserWindow::unregEvent(const int& eventId)
     if (eventId == (int)WindowEventId::closing) {
         closingIsReg = false;
     }
-    else if (eventId == (int)WindowEventId::sized) {
-        sizedIsReg = false;
-    }
 }
 
+void BrowserWindow::maximize()
+{
+    ShowWindow(hwnd, SW_MAXIMIZE);
+}
+
+void BrowserWindow::minimize()
+{
+    ShowWindow(hwnd, SW_MINIMIZE);
+}
+void BrowserWindow::show()
+{
+    ShowWindow(hwnd, SW_SHOW);
+    SetForegroundWindow(hwnd);
+    //ShowWindow(hwnd, SW_SHOWNORMAL);
+}
+
+void BrowserWindow::hide()
+{
+    ShowWindow(hwnd, SW_HIDE);
+}
+
+void BrowserWindow::restore()
+{
+    ShowWindow(hwnd, SW_RESTORE);
+}
 void BrowserWindow::initWindow()
 {
     auto wcex = regWinClass();
@@ -99,11 +118,7 @@ WNDCLASSEX*  BrowserWindow::regWinClass()
     return &wcex;
 }
 
-void BrowserWindow::show()
-{
-    ShowWindow(hwnd, SW_SHOW);
-    UpdateWindow(hwnd);
-}
+
 
 LRESULT BrowserWindow::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -137,13 +152,13 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             if (ctrl) {
                 ctrl->SetBoundsAndZoomFactor(bounds, 1.0);
             }
-            if (sizedIsReg) {
+/*            if (sizedIsReg) {
                 msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::sized, 2,config->w,config->h);
-            }            
+            }      */      
             return 0;
         }
         case WM_DESTROY: {
-            SetWindowLongPtr(hwnd, GWLP_USERDATA, 0);
+            SetWindowLongPtr(hwnd, GWLP_USERDATA, 0);            
             App::get()->onWindowDestroy(this);
             return 0;
         }

@@ -14,6 +14,9 @@ export enum FsEventId {
 export enum WindowMethodId {
   maximize,
   minimize,
+  hide,
+  show,
+  restore,
   resize,
   move,
   regEvent,
@@ -23,5 +26,4 @@ export enum WindowMethodId {
 }
 export enum WindowEventId {
   closing,
-  sized,
 }

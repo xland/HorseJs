@@ -17,6 +17,11 @@ public:
 	void resize(const int& w, const int& h);
 	void regEvent(const int& eventId);
 	void unregEvent(const int& eventId);
+	void maximize();
+	void minimize();
+	void show();
+	void hide();
+	void restore();
 public:
 	wil::com_ptr<ICoreWebView2Controller> ctrl;
 	HWND hwnd;
@@ -26,12 +31,10 @@ public:
 	std::unique_ptr<Page> page;
 public:
 	bool closingIsReg{ false };
-	bool sizedIsReg{ false };
 protected:
 private:
 	void initWindow();
 	WNDCLASSEX* regWinClass();
-	void show();
 	static LRESULT CALLBACK winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	HRESULT pageCtrlReady(HRESULT result, ICoreWebView2Controller* ctrl);	

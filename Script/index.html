@@ -2,27 +2,46 @@
     <head>
         <meta charset="UTF-8">
         <title>HorseJs</title>
+        <style>
+            .btn{cursor: pointer; background: #eee; display: inline-block; border-radius: 3px; margin: 6px; padding: 6px;}
+            .btn:hover{background: #888; color: #fff;}
+        </style>
     </head>
     <body>
-    <div id="btnMaximize">最大化</div>
-    <div id="btnMinimize">最小化</div>
-    <div id="btnResize">改变大小</div>
-    <div id="btnBindRes">附加资源</div>
-    <div id="">最大化</div>
+    <div id="btnMaximize" class="btn">最大化</div>
+    <div id="btnMinimize" class="btn">最小化</div>
+    <div id="btnShow" class="btn">显示</div>
+    <div id="btnHide" class="btn">隐藏</div>
+    <div id="btnRestore" class="btn">还原</div>
+    <div id="btnResize" class="btn">改变大小</div>
+    <div id="btnBindRes" class="btn">附加资源</div>
+    <div id="btnRegWinClose" class="btn">注册窗口关闭事件</div>
+    <div id="" class="btn">关闭窗口</div>
+    <div id="" class="btn">销毁窗口</div>
     <script>
+        let $ = (selector)=>document.querySelector(selector);
         window.addEventListener("DOMContentLoaded", () => {
-            // horse.window.addEventListener("closing", async ()=>{
-            //     console.log("close")
-            //     alert("确定要关闭窗口吗");
-            //     await horse.window.removeEventListener("closing");
-            // });
-            horse.window.addEventListener("sized",(w,h)=>{
-                console.log("sized----:",w,h);
-            });
-            let btnMaximize = document.querySelector("#btnMaximize");
-            btnMaximize.addEventListener("click",()=>{
+            $("#btnMaximize").addEventListener("click",()=>{
                 horse.window.maximize();
             })
+            $("#btnMinimize").addEventListener("click",()=>{
+                horse.window.minimize();
+            })
+            $("#btnHide").addEventListener("click",()=>{
+                horse.window.hide();
+                setTimeout(()=>{
+                    horse.window.show();
+                },2000)
+            })
+            $("#btnRestore").addEventListener("click",()=>{
+                horse.window.restore();
+            })
+            $("#btnRegWinClose").addEventListener("click",()=>{
+                horse.window.addEventListener("closing", async ()=>{
+                    alert("确定要关闭窗口吗");
+                    await horse.window.removeEventListener("closing");
+                });
+            });
             let btnResize = document.querySelector("#btnResize");
             btnResize.addEventListener("click",async ()=>{
                 await horse.window.resize(1200, 600);
@@ -31,6 +50,9 @@
             btnBindRes.addEventListener("click",async ()=>{
                 horse.fs.addResToExe("D:\\project\\HorseJs\\x64\\Release\\UI\\","D:\\project\\HorseJs\\x64\\Release\\HorseJs.exe");
             })
+            window.addEventListener('resize', function() {
+                console.log('宽度：' + window.innerWidth + '高度：' + window.innerHeight);
+            });
         });
     </script>
     </body>
