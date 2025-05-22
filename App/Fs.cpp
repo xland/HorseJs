@@ -27,18 +27,16 @@ Fs* Fs::get()
 
 void Fs::addDirAsExeRes(const std::wstring& dirPath, const std::wstring& exePath)
 {
-    const std::filesystem::path root = dirPath;
+    std::filesystem::path root{ dirPath };
+    if (dirPath.back() == L'\0') {
+        auto str = dirPath;
+        str.pop_back();
+        root = std::filesystem::path(str);
+    }
     if (!std::filesystem::is_directory(root)) {
         std::cerr << "不是一个有效的目录\n";
         return;
     }
-
-    auto iterator = std::filesystem::recursive_directory_iterator(root, std::filesystem::directory_options::skip_permission_denied);
-    if (iterator == std::filesystem::end(iterator)) {
-        std::cerr << "目录为空或无法迭代\n";
-        return;
-    }
-
     HANDLE hResource = BeginUpdateResource(exePath.data(), FALSE);
     try {
         for (auto const& entry : std::filesystem::recursive_directory_iterator(root)) {
@@ -49,8 +47,11 @@ void Fs::addDirAsExeRes(const std::wstring& dirPath, const std::wstring& exePath
                 std::ifstream file(entry.path(), std::ios::binary);
                 std::vector<char> buffer(fileSize);
                 file.read(buffer.data(), fileSize);
-                auto ctrlId = MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL);
-                BOOL ok = UpdateResource(hResource, RT_RCDATA, resName.data(), ctrlId,(void*)buffer.data(), (DWORD)fileSize);
+                buffer.erase(std::remove_if(buffer.begin(), buffer.end(),[](char c) {
+                            return c == ' ' || c == '\n' || c == '\r' || c == '\t';
+                        }),buffer.end());
+                auto langId = MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL);
+                BOOL ok = UpdateResource(hResource, RT_RCDATA, resName.data(), langId,(void*)buffer.data(), (DWORD)fileSize);
                 if (!ok) {
                     std::wcerr << L"UpdateResource failed\n";
                     EndUpdateResource(hResource, TRUE);

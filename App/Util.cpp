@@ -17,9 +17,6 @@ std::wstring Util::convertToWStr(const char* str)
     int count = MultiByteToWideChar(CP_UTF8, 0, str, -1, 0, 0);
     std::wstring wstr(count, 0);
     MultiByteToWideChar(CP_UTF8, 0, str, -1, &wstr[0], count);
-    if (wstr.length() == 1 && str[0] == L'\0') {
-        wstr = std::wstring{};
-    }
     return wstr;
 }
 
