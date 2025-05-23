@@ -214,11 +214,11 @@ bool BrowserWindow::load(rapidjson::Value& pageConfig)
 HRESULT BrowserWindow::pageCtrlReady(HRESULT result, ICoreWebView2Controller* ctrl)
 {
     this->ctrl = ctrl;
-    auto m_compositionController = this->ctrl.try_query<ICoreWebView2CompositionController>();
-    m_compositionController->SendMouseInput(
-        static_cast<COREWEBVIEW2_MOUSE_EVENT_KIND>(WM_MOUSELEAVE),
-        static_cast<COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS>(GET_KEYSTATE_WPARAM(wParam)),
-        mouseData, point));
+    //auto m_compositionController = this->ctrl.try_query<ICoreWebView2CompositionController>();
+    //m_compositionController->SendMouseInput(
+    //    static_cast<COREWEBVIEW2_MOUSE_EVENT_KIND>(WM_MOUSELEAVE),
+    //    static_cast<COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS>(GET_KEYSTATE_WPARAM(wParam)),
+    //    mouseData, point));
     page->load();
     RECT bounds;
     GetClientRect(hwnd, &bounds);
