@@ -135,6 +135,13 @@ bool App::checkRegKey(const HKEY& key, const std::wstring& subKey) {
 HRESULT App::envReady(HRESULT result, ICoreWebView2Environment* env)
 {
     this->env = env;
+
+
+
+    //wil::com_ptr<ICoreWebView2ControllerOptions> controllerOptions;
+    //env4->CreateCoreWebView2CompositionController(&controllerOptions);
+
+
     auto& winConfig = config->getFirstWindowConfig();
     auto win = std::make_unique<BrowserWindow>(winConfig);
     win->load(winConfig["page"]);

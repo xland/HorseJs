@@ -23,7 +23,7 @@ public:
 	static void init();
 public:
 	std::unique_ptr<AppConfig> config;
-	ICoreWebView2Environment* env;
+	wil::com_ptr<ICoreWebView2Environment> env;
 private:
 	std::vector<std::unique_ptr<BrowserWindow>> windows;
 private:

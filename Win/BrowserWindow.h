@@ -1,5 +1,8 @@
 #pragma once
 #include <windows.h>
+#include <DispatcherQueue.h>
+#include <windows.ui.composition.interop.h>
+#include <winrt/Windows.UI.Composition.Desktop.h>
 #include <wil/com.h>
 #include <WebView2.h>
 #include "../App/Util.h"
@@ -25,6 +28,12 @@ public:
 public:
 	wil::com_ptr<ICoreWebView2Controller> ctrl;
 	wil::com_ptr<ICoreWebView2CompositionController> ctrlComp;
+	winrt::Windows::System::DispatcherQueueController m_dispatcherQueueController{ nullptr };
+	winrt::Windows::UI::Composition::Compositor m_compositor{ nullptr };
+	winrt::Windows::UI::Composition::Desktop::DesktopWindowTarget m_target{ nullptr };
+	winrt::Windows::UI::Composition::ContainerVisual m_rootVisual{ nullptr };
+	winrt::Windows::UI::Composition::ContainerVisual m_webViewVisual{ nullptr };
+
 	HWND hwnd;
 	wil::unique_hicon favicon;
 	std::unique_ptr<BrowserWindowConfig> config;
@@ -38,7 +47,7 @@ private:
 	WNDCLASSEX* regWinClass();
 	static LRESULT CALLBACK winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	HRESULT ctrlReady(HRESULT result, ICoreWebView2Controller* ctrl);	
+	HRESULT ctrlReady(HRESULT result, ICoreWebView2CompositionController* ctrl);
 private:
 	bool isMouseTracking{ false };
 };

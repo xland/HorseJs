@@ -1,5 +1,6 @@
 ﻿#include <windowsx.h>
 #include <dwmapi.h>
+#include <winrt/base.h>
 
 #include "../App/App.h"
 #include "BrowserWindow.h"
@@ -75,7 +76,7 @@ void BrowserWindow::initWindow()
         winStyle = winStyle | WS_VISIBLE;
     }
     //WS_EX_APPWINDOW 确保窗口出现在任务栏
-    hwnd = CreateWindowEx(WS_EX_APPWINDOW, wcex->lpszClassName, config->title.data(), winStyle, 
+    hwnd = CreateWindowEx(WS_EX_APPWINDOW, wcex->lpszClassName, config->title.data(), winStyle,
         config->x, config->y, config->w, config->h, nullptr, nullptr, wcex->hInstance, nullptr);
     SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
     SetTimer(hwnd, 100, 1000, NULL);
@@ -133,8 +134,32 @@ LRESULT BrowserWindow::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
 
 LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+    if (msg >= WM_MOUSEFIRST && msg <= WM_MOUSELAST)
+    {
+        POINT point;
+        point.x = GET_X_LPARAM(lParam);
+        point.y = GET_Y_LPARAM(lParam);
+        ctrlComp->SendMouseInput(
+            static_cast<COREWEBVIEW2_MOUSE_EVENT_KIND>(msg),
+            static_cast<COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS>(GET_KEYSTATE_WPARAM(wParam)), 0,
+            point);
+        return true;
+    }
     switch (msg)
     {
+        case WM_SETCURSOR:
+        {
+            if (ctrlComp)
+            {
+                HCURSOR cursor = nullptr;
+                if (SUCCEEDED(ctrlComp->get_Cursor(&cursor)) && cursor)
+                {
+                    ::SetCursor(cursor);
+                    return TRUE;
+                }
+            }
+            break;
+        }
         case WM_CLOSE: {
             if (closingIsReg) {
                 msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::closing, 0);
@@ -248,28 +273,68 @@ bool BrowserWindow::load(rapidjson::Value& pageConfig)
     msgProcessor = std::make_unique<MsgProcessor>(this, page.get());
 
     auto app = App::get();
-    auto ctrlReadyCB = WRL::Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(this, &BrowserWindow::ctrlReady);
-    auto result = app->env->CreateCoreWebView2Controller(hwnd, ctrlReadyCB.Get());
+    auto ctrlReadyCB = WRL::Callback<ICoreWebView2CreateCoreWebView2CompositionControllerCompletedHandler>(this, &BrowserWindow::ctrlReady);
+
+    auto env3 = app->env.try_query<ICoreWebView2Environment3>();
+    auto result = env3->CreateCoreWebView2CompositionController(hwnd,ctrlReadyCB.Get());
     if (FAILED(result)) {
         return false;
     }
     return true;
 }
 
-HRESULT BrowserWindow::ctrlReady(HRESULT result, ICoreWebView2Controller* ctrl)
+HRESULT BrowserWindow::ctrlReady(HRESULT result, ICoreWebView2CompositionController* ctrlComp)
 {
-    this->ctrl = ctrl;
-    //ctrlComp = this->ctrl.try_query<ICoreWebView2CompositionController>();
-    //auto m_compositionController = this->ctrl.try_query<ICoreWebView2CompositionController>();
-    //m_compositionController->SendMouseInput(
-    //    static_cast<COREWEBVIEW2_MOUSE_EVENT_KIND>(WM_MOUSELEAVE),
-    //    static_cast<COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS>(GET_KEYSTATE_WPARAM(wParam)),
-    //    mouseData, point));
+    this->ctrlComp = ctrlComp;
+    this->ctrl = this->ctrlComp.query<ICoreWebView2Controller>();
+    ctrl->put_IsVisible(true);
     page->load();
     RECT bounds;
     GetClientRect(hwnd, &bounds);
-    auto hr = ctrl->put_Bounds(bounds);
-    return hr;
+
+    EventRegistrationToken token;
+    this->ctrlComp->add_CursorChanged(
+        WRL::Callback<ICoreWebView2CursorChangedEventHandler>(
+            [this](ICoreWebView2CompositionController*, IUnknown*) -> HRESULT
+            {
+                HCURSOR cursor = nullptr;
+                HRESULT hr = this->ctrlComp->get_Cursor(&cursor);
+                if (SUCCEEDED(hr) && cursor)
+                {
+                    // 设置系统当前光标
+                    ::SetCursor(cursor);
+                }
+                return S_OK;
+            }).Get(), &token);
+
+    namespace abi = ABI::Windows::System;
+    DispatcherQueueOptions options{
+            sizeof(DispatcherQueueOptions), /* dwSize */
+            DQTYPE_THREAD_CURRENT,          /* threadType */
+            DQTAT_COM_ASTA                  /* apartmentType */
+    };
+    winrt::Windows::System::DispatcherQueueController controller{ nullptr };
+    CreateDispatcherQueueController(options, reinterpret_cast<abi::IDispatcherQueueController**>(winrt::put_abi(controller)));
+    m_dispatcherQueueController = controller;
+    m_compositor = winrt::Windows::UI::Composition::Compositor();
+
+    namespace abi2 = ABI::Windows::UI::Composition::Desktop;
+
+    auto interop = m_compositor.as<abi2::ICompositorDesktopInterop>();
+    interop->CreateDesktopWindowTarget(hwnd, false, reinterpret_cast<abi2::IDesktopWindowTarget**>(winrt::put_abi(m_target)));
+
+    m_rootVisual = m_compositor.CreateContainerVisual();
+    m_rootVisual.RelativeSizeAdjustment({ 1.0f, 1.0f });
+    m_rootVisual.Offset({ 0, 0, 0 });
+    m_target.Root(m_rootVisual);
+
+    m_webViewVisual = m_compositor.CreateContainerVisual();
+    m_rootVisual.Children().InsertAtTop(m_webViewVisual);
+    this->ctrlComp->put_RootVisualTarget(m_webViewVisual.as<IUnknown>().get());
+
+    ctrl->put_Bounds(bounds);
+
+    return S_OK;
 }
 
 void BrowserWindow::call(rapidjson::Document& jsonDoc)
