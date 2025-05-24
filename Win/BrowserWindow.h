@@ -24,6 +24,7 @@ public:
 	void restore();
 public:
 	wil::com_ptr<ICoreWebView2Controller> ctrl;
+	wil::com_ptr<ICoreWebView2CompositionController> ctrlComp;
 	HWND hwnd;
 	wil::unique_hicon favicon;
 	std::unique_ptr<BrowserWindowConfig> config;
@@ -37,7 +38,7 @@ private:
 	WNDCLASSEX* regWinClass();
 	static LRESULT CALLBACK winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	HRESULT pageCtrlReady(HRESULT result, ICoreWebView2Controller* ctrl);	
+	HRESULT ctrlReady(HRESULT result, ICoreWebView2Controller* ctrl);	
 private:
 	bool isMouseTracking{ false };
 };

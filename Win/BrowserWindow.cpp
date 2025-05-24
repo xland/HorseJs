@@ -76,10 +76,9 @@ void BrowserWindow::initWindow()
     }
     //WS_EX_APPWINDOW 确保窗口出现在任务栏
     hwnd = CreateWindowEx(WS_EX_APPWINDOW, wcex->lpszClassName, config->title.data(), winStyle, 
-        config->x, config->y, config->w, config->h, 
-        nullptr, nullptr, wcex->hInstance, this);
+        config->x, config->y, config->w, config->h, nullptr, nullptr, wcex->hInstance, nullptr);
     SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-
+    SetTimer(hwnd, 100, 1000, NULL);
     if (!config->frame && config->shadow)
     {
         MARGINS margins = { 1, 1, 1, 1 };
@@ -144,6 +143,52 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             DestroyWindow(hwnd);
             return 0;
         }
+        case WM_TIMER: {
+            if (wParam == 100) {
+                POINT pt;
+                GetCursorPos(&pt);
+                RECT rc;
+                GetClientRect(hwnd, &rc);  // rc 是客户区的大小（相对于客户区左上角）
+
+                // 将客户区左上角转换为屏幕坐标
+                POINT topLeft = { rc.left, rc.top };
+                ClientToScreen(hwnd, &topLeft);
+
+                // 将客户区右下角转换为屏幕坐标（可选）
+                POINT bottomRight = { rc.right, rc.bottom };
+                ClientToScreen(hwnd, &bottomRight);
+
+                if (pt.x>topLeft.x && pt.y>topLeft.y && pt.x < bottomRight.x && pt.y < bottomRight.y)
+                {
+                    if(ctrlComp.get()){
+                        ctrlComp->SendMouseInput(
+                            COREWEBVIEW2_MOUSE_EVENT_KIND_LEAVE,
+                            COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS_NONE,
+                            0,
+                            pt );
+                    }
+                }
+            }
+            break;
+        }
+        case WM_WINDOWPOSCHANGED:
+        {
+            WINDOWPLACEMENT wp = {};
+            wp.length = sizeof(wp);
+            GetWindowPlacement(hwnd, &wp);
+            if (wp.showCmd == SW_SHOWNORMAL || wp.showCmd == SW_RESTORE) {
+                if (IsWindowVisible(hwnd)) {
+                    SetTimer(hwnd, 100, 1000, NULL);
+                }
+                else {
+                    KillTimer(hwnd, 100);
+                }
+            }
+            else if (wp.showCmd == SW_SHOWMAXIMIZED|| wp.showCmd == SW_SHOWMINIMIZED) {
+                KillTimer(hwnd, 100);
+            }
+            break;
+        }
         case WM_SIZE: {
             RECT bounds;
             GetClientRect(hwnd, &bounds);
@@ -157,25 +202,25 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             }      */      
             return 0;
         }
+  //      case WM_WINDOWPOSCHANGED:{
+  //          WINDOWPOS* wp = (WINDOWPOS*)lParam;
+  //          if (wp->flags & SWP_NOSIZE) {
+  //              return 0;
+  //          }
+  //          RECT bounds;
+  //          GetClientRect(hwnd, &bounds);
+  //          config->w = bounds.right - bounds.left;
+  //          config->h = bounds.bottom - bounds.top;
+  //          if (ctrl) {
+  //              ctrl->SetBoundsAndZoomFactor(bounds, 1.0);
+  //          }
+  //          return 0;
+		//}
         case WM_DESTROY: {
+            KillTimer(hwnd, 100);
             SetWindowLongPtr(hwnd, GWLP_USERDATA, 0);            
             App::get()->onWindowDestroy(this);
             return 0;
-        }
-        case WM_MOUSEMOVE:{
-            if (!isMouseTracking)
-            {
-                // WebView needs to know when the mouse leaves the client area
-                // so that it can dismiss hover popups. TrackMouseEvent will
-                // provide a notification when the mouse leaves the client area.
-                
-                isMouseTracking = true;
-            }
-            break;
-        }
-        case WM_MOUSELEAVE:{
-            isMouseTracking = false;
-            break;
         }
         case WM_GETMINMAXINFO:
         {
@@ -203,7 +248,7 @@ bool BrowserWindow::load(rapidjson::Value& pageConfig)
     msgProcessor = std::make_unique<MsgProcessor>(this, page.get());
 
     auto app = App::get();
-    auto ctrlReadyCB = WRL::Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(this, &BrowserWindow::pageCtrlReady);
+    auto ctrlReadyCB = WRL::Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(this, &BrowserWindow::ctrlReady);
     auto result = app->env->CreateCoreWebView2Controller(hwnd, ctrlReadyCB.Get());
     if (FAILED(result)) {
         return false;
@@ -211,9 +256,10 @@ bool BrowserWindow::load(rapidjson::Value& pageConfig)
     return true;
 }
 
-HRESULT BrowserWindow::pageCtrlReady(HRESULT result, ICoreWebView2Controller* ctrl)
+HRESULT BrowserWindow::ctrlReady(HRESULT result, ICoreWebView2Controller* ctrl)
 {
     this->ctrl = ctrl;
+    //ctrlComp = this->ctrl.try_query<ICoreWebView2CompositionController>();
     //auto m_compositionController = this->ctrl.try_query<ICoreWebView2CompositionController>();
     //m_compositionController->SendMouseInput(
     //    static_cast<COREWEBVIEW2_MOUSE_EVENT_KIND>(WM_MOUSELEAVE),
