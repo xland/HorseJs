@@ -219,6 +219,13 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         }
         return true;
     }
+    else if (msg == WM_WINDOWPOSCHANGED) {
+        WINDOWPOS* pos = reinterpret_cast<WINDOWPOS*>(lParam);
+        config->x = pos->x;
+        config->y = pos->y;
+        config->w = pos->cx;
+        config->h = pos->cy;
+    }
     sysProcess:
     return DefWindowProc(hwnd, msg, wParam, lParam);
 }
