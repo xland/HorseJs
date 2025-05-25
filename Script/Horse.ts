@@ -22,5 +22,5 @@ class Horse {
     });
   }
 }
-
+console.log(123);
 globalThis.horse = new Horse();

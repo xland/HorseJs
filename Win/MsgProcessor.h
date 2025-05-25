@@ -12,7 +12,7 @@ public:
 	~MsgProcessor();
 	void processStr(const std::string& msgStr);
 	void emit(const int& classId, const int& eventId, int count, ...);
-private:
+public:
 	BrowserWindow* win;
 	Page* page;
 private:

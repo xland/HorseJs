@@ -18,10 +18,10 @@ enum class WindowMethodId {
 	restore,
 	resize,
 	move,
-	regEvent, 
-	unregEvent,
 	close,
 	destory,
+	regEvent, 
+	unregEvent,
 };
 enum class WindowEventId {
 	closing

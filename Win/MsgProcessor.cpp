@@ -1,4 +1,6 @@
-﻿#include "MsgProcessor.h"
+﻿#include <memory>
+
+#include "MsgProcessor.h"
 #include "EnumId.h"
 #include "BrowserWindow.h"
 #include "Page.h"
@@ -15,6 +17,7 @@ MsgProcessor::~MsgProcessor()
 
 void MsgProcessor::processStr(const std::string& msgStr)
 {
+    
     rapidjson::Document jsonDoc;
     jsonDoc.Parse(msgStr.data());
     int classId{-1}, methodId{ -1 }, eventId{ -1 };
@@ -42,18 +45,25 @@ void MsgProcessor::processStr(const std::string& msgStr)
     else if (classId == (int)ClassId::Fs) {
         processFs(methodId, jsonDoc["params"], parsor);
     }
+    
+    
+
     //rapidjson::Value items(rapidjson::kArrayType);
     //rapidjson::Value number1(42); // 第一个数字
     //rapidjson::Value number2(3.14); // 第二个数字（支持浮点数）
     //items.PushBack(number1, parsor.getAllocator());
     //items.PushBack(number2, parsor.getAllocator());
     //parsor.addValue("param", std::move(items));
+    // 
+    //必须放在后面
+    if (!this->win || !this->page) return;
     std::wstring jsonStr = parsor.parse();
     page->webview->PostWebMessageAsJson(jsonStr.data());
 }
 
 void MsgProcessor::emit(const int& classId, const int& eventId, int count, ...)
 {
+    if (!win || !page) return;
     JsonParsor parsor;
     parsor.addNumber("classId", classId);
     parsor.addNumber("eventId", eventId);
@@ -130,6 +140,12 @@ void MsgProcessor::processWin(const int& methodId, const rapidjson::Value& param
     }
     else if (methodId == (int)WindowMethodId::move) {
 
+    }
+    else if (methodId == (int)WindowMethodId::close) {
+        win->close();
+    }
+    else if (methodId == (int)WindowMethodId::destory) {
+        win->destroy();
     }
     else if (methodId == (int)WindowMethodId::regEvent) {
         auto eventId = arr[0].GetInt();

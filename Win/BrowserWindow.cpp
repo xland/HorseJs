@@ -62,6 +62,18 @@ void BrowserWindow::restore()
     ShowWindow(hwnd, SW_RESTORE);
 }
 
+void BrowserWindow::close()
+{
+    //CloseWindow(hwnd); 这相当于窗口最小化
+    //不能用SendMessage，因为这回导致对象删除之后，MsgProcessor还在准备向页面发消息
+    PostMessage(hwnd, WM_CLOSE, 0, 0);
+}
+
+void BrowserWindow::destroy()
+{
+    PostMessage(hwnd, WM_DESTROY, 0, 0);
+}
+
 void BrowserWindow::initWindow()
 {
     long winStyle;
@@ -202,6 +214,8 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     else if (msg == WM_DESTROY) {
         SetWindowLongPtr(hwnd, GWLP_USERDATA, 0);
+        msgProcessor->win = nullptr;
+        msgProcessor->page = nullptr;
         App::get()->onWindowDestroy(this);
         return false;
     }

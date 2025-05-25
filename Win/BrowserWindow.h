@@ -24,6 +24,8 @@ public:
 	void show();
 	void hide();
 	void restore();
+	void close();
+	void destroy();
 public:
 	wil::com_ptr<ICoreWebView2Controller> ctrl;
 	wil::com_ptr<ICoreWebView2CompositionController> ctrlComp;

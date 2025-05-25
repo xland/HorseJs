@@ -23,6 +23,12 @@ export class Window extends Eventer {
   move(x: number, y: number) {
     return this.call(ClassId.Window, WindowMethodId.move, x, y);
   }
+  close() {
+    return this.call(ClassId.Window, WindowMethodId.close);
+  }
+  destroy() {
+    return this.call(ClassId.Window, WindowMethodId.destory);
+  }
   removeEventListener(eventName: string, cb: any) {
     if (!(eventName in WindowEventId)) return;
     let eId = WindowEventId[eventName as keyof typeof WindowEventId] as WindowEventId;

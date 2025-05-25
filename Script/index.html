@@ -3,7 +3,8 @@
         <meta charset="UTF-8">
         <title>HorseJs</title>
         <style>
-            .btn{cursor: pointer; background: #eee; display: inline-block; border-radius: 3px; margin: 6px; padding: 6px;}
+            .btn{cursor: pointer; background: #eee; display: inline-block; user-select: none;
+                border-radius: 3px; margin: 6px; padding: 6px;}
             .btn:hover{background: #888; color: #fff;}
         </style>
     </head>
@@ -16,8 +17,8 @@
     <div id="btnResize" class="btn">改变大小</div>
     <div id="btnBindRes" class="btn">附加资源</div>
     <div id="btnRegWinClose" class="btn">注册窗口关闭事件</div>
-    <div id="" class="btn">关闭窗口</div>
-    <div id="" class="btn">销毁窗口</div>
+    <div id="btnClose" class="btn">关闭窗口</div>
+    <div id="btnDestory" class="btn">销毁窗口</div>
     <input type="text" value="asdfasdfasdf" />
     <script>
         let $ = (selector)=>document.querySelector(selector);
@@ -43,14 +44,18 @@
                     await horse.window.removeEventListener("closing");
                 });
             });
-            let btnResize = document.querySelector("#btnResize");
-            btnResize.addEventListener("click",async ()=>{
+            $("#btnResize").addEventListener("click",async ()=>{
                 await horse.window.resize(1200, 600);
             });
-            let btnBindRes = document.querySelector("#btnBindRes");
-            btnBindRes.addEventListener("click",async ()=>{
-                horse.fs.addResToExe("D:\\project\\HorseJs\\x64\\Release\\UI\\","D:\\project\\HorseJs\\x64\\Release\\HorseJs.exe");
-            })
+            $("#btnBindRes").addEventListener("click", async () => {
+                horse.fs.addResToExe("D:\\project\\HorseJs\\x64\\Release\\UI\\", "D:\\project\\HorseJs\\x64\\Release\\HorseJs.exe");
+            });
+            $("#btnClose").addEventListener("click", () => {
+                horse.window.close();
+            });
+            $("#btnDestory").addEventListener("click", () => {
+                horse.window.destroy();
+            });
             window.addEventListener('resize', function() {
                 console.log('宽度：' + window.innerWidth + '高度：' + window.innerHeight);
             });
