@@ -61,6 +61,7 @@ void BrowserWindow::restore()
 {
     ShowWindow(hwnd, SW_RESTORE);
 }
+
 void BrowserWindow::initWindow()
 {
     long winStyle;
@@ -111,7 +112,25 @@ std::wstring& BrowserWindow::getWinClsName()
     return clsName;
 }
 
-
+int BrowserWindow::hittest(const POINT& pt)
+{
+    RECT rcClient;
+    GetClientRect(hwnd, &rcClient);
+    const int border = 6;
+    bool left = pt.x < border;
+    bool right = pt.x >= rcClient.right - border;
+    bool top = pt.y < border;
+    bool bottom = pt.y >= rcClient.bottom - border;
+    if (top && left) return HTTOPLEFT;
+    if (top && right) return HTTOPRIGHT;
+    if (bottom && left) return HTBOTTOMLEFT;
+    if (bottom && right) return HTBOTTOMRIGHT;
+    if (left) return HTLEFT;
+    if (right) return HTRIGHT;
+    if (top) return HTTOP;
+    if (bottom) return HTBOTTOM;
+    return HTCLIENT;
+}
 
 LRESULT BrowserWindow::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -129,93 +148,78 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if (msg >= WM_MOUSEFIRST && msg <= WM_MOUSELAST)
     {
-        POINT point;
-        point.x = GET_X_LPARAM(lParam);
-        point.y = GET_Y_LPARAM(lParam);
-        if (msg == WM_MOUSEMOVE)
+        if (!ctrlComp) goto sysProcess;
+        if (msg == WM_MOUSEMOVE && !isMouseTracking)
         {
-            if (!isMouseTracking) {
-                TRACKMOUSEEVENT tme = { sizeof(TRACKMOUSEEVENT) };
-                tme.dwFlags = TME_LEAVE;
-                tme.hwndTrack = hwnd;
-                TrackMouseEvent(&tme);
-                isMouseTracking = true;
-            }
+            TRACKMOUSEEVENT tme = { sizeof(TRACKMOUSEEVENT) };
+            tme.dwFlags = TME_LEAVE;
+            tme.hwndTrack = hwnd;
+            TrackMouseEvent(&tme);
+            isMouseTracking = true;
         }
-        if (ctrlComp) {
-            ctrlComp->SendMouseInput(static_cast<COREWEBVIEW2_MOUSE_EVENT_KIND>(msg),
-                static_cast<COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS>(GET_KEYSTATE_WPARAM(wParam)), 0, point);
-        }
+        POINT point{ .x{GET_X_LPARAM(lParam)},.y{GET_Y_LPARAM(lParam)} };
+        ctrlComp->SendMouseInput(static_cast<COREWEBVIEW2_MOUSE_EVENT_KIND>(msg),
+            static_cast<COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS>(GET_KEYSTATE_WPARAM(wParam)), 0, point);
         return true;
+    }
+    else if (msg == WM_NCHITTEST) {
+        POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+        ScreenToClient(hwnd, &pt);
+        return hittest(pt);
     }
     else if (msg == WM_MOUSELEAVE)
     {
-        POINT point;
-        point.x = GET_X_LPARAM(lParam);
-        point.y = GET_Y_LPARAM(lParam);
         isMouseTracking = false;
+        if (!ctrlComp) goto sysProcess;
         ctrlComp->SendMouseInput(COREWEBVIEW2_MOUSE_EVENT_KIND_LEAVE,
-            COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS_NONE,0,point);
-        return 0;
+            COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS_NONE, 0, POINT{});
+        return true;
     }
-    switch (msg)
-    {
-        case WM_SETCURSOR:
-        {
-            if (ctrlComp)
-            {
-                HCURSOR cursor = nullptr;
-                if (SUCCEEDED(ctrlComp->get_Cursor(&cursor)) && cursor)
-                {
-                    ::SetCursor(cursor);
-                    return TRUE;
-                }
-            }
-            break;
-        }
-        case WM_CLOSE: {
-            if (closingIsReg) {
-                msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::closing, 0);
-                return 0;
-            }
-            DestroyWindow(hwnd);
-            return 0;
-        }
-        case WM_SIZE: {
-            RECT bounds;
-            GetClientRect(hwnd, &bounds);
-            config->w = bounds.right - bounds.left;
-            config->h = bounds.bottom - bounds.top;
-            if (ctrl) {
-                ctrl->SetBoundsAndZoomFactor(bounds, 1.0);
-            }
-/*            if (sizedIsReg) {
-                msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::sized, 2,config->w,config->h);
-            }      */      
-            return 0;
-        }
-        case WM_DESTROY: {
-            KillTimer(hwnd, 100);
-            SetWindowLongPtr(hwnd, GWLP_USERDATA, 0);            
-            App::get()->onWindowDestroy(this);
-            return 0;
-        }
-        case WM_GETMINMAXINFO:
-        {
-            MINMAXINFO* mminfo = (PMINMAXINFO)lParam;
-            RECT workArea;
-            SystemParametersInfo(SPI_GETWORKAREA, 0, &workArea, 0);
-            mminfo->ptMinTrackSize.x = 600;
-            mminfo->ptMinTrackSize.y = 400;
-            if (!config->maximizable) {
-                //mminfo->ptMaxSize.x = workArea.right - workArea.left - 2;
-                //mminfo->ptMaxSize.y = workArea.bottom - workArea.top - 2;
-                //mminfo->ptMaxPosition.x = 1;
-                //mminfo->ptMaxPosition.y = 1;
-            }
-            return true;
-        }
+    else if(msg == WM_SETCURSOR){
+        if (LOWORD(lParam) != HTCLIENT) goto sysProcess;
+        if (!ctrlComp) goto sysProcess;
+        HCURSOR cursor = nullptr;
+        auto hr = ctrlComp->get_Cursor(&cursor);
+        if (FAILED(hr)) return false;
+        if(!cursor) goto sysProcess;
+        SetCursor(cursor);
+        return true;
     }
+    else if (msg == WM_SIZE) {
+        if (!ctrl) goto sysProcess;
+        RECT bounds;
+        GetClientRect(hwnd, &bounds);
+        ctrl->put_Bounds(bounds);
+        return false;
+    }
+    else if (msg == WM_CLOSE) {
+        if (closingIsReg) {
+            msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::closing, 0);
+            return false; //阻止窗口关闭
+        }
+        DestroyWindow(hwnd);
+        return false;
+    }
+    else if (msg == WM_DESTROY) {
+        SetWindowLongPtr(hwnd, GWLP_USERDATA, 0);
+        App::get()->onWindowDestroy(this);
+        return false;
+    }
+    else if (msg == WM_GETMINMAXINFO) {
+        MINMAXINFO* mminfo = (PMINMAXINFO)lParam;
+        RECT workArea;
+        SystemParametersInfo(SPI_GETWORKAREA, 0, &workArea, 0);
+        mminfo->ptMinTrackSize.x = 600;
+        mminfo->ptMinTrackSize.y = 400;
+        if (!config->maximizable) {
+            //mminfo->ptMaxSize.x = workArea.right - workArea.left - 2;
+            //mminfo->ptMaxSize.y = workArea.bottom - workArea.top - 2;
+            //mminfo->ptMaxPosition.x = 1;
+            //mminfo->ptMaxPosition.y = 1;
+        }
+        return true;
+    }
+    sysProcess:
     return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
@@ -238,14 +242,31 @@ HRESULT BrowserWindow::ctrlReady(HRESULT result, ICoreWebView2CompositionControl
     this->ctrlComp = ctrlComp;
     this->ctrl = this->ctrlComp.query<ICoreWebView2Controller>();
     ctrl->put_IsVisible(true);
-    page->load();
-    RECT bounds;
-    GetClientRect(hwnd, &bounds);
-
     EventRegistrationToken token;
     auto cursorChangeCB = WRL::Callback<ICoreWebView2CursorChangedEventHandler>(this, &BrowserWindow::cursorChange);
     this->ctrlComp->add_CursorChanged(cursorChangeCB.Get(), &token);
+    bindCompCtrlToHwnd();
+    page->load();
+    return S_OK;
+}
 
+HRESULT BrowserWindow::cursorChange(ICoreWebView2CompositionController*, IUnknown*)
+{
+    HCURSOR cursor = nullptr;
+    HRESULT hr = this->ctrlComp->get_Cursor(&cursor);
+    if (SUCCEEDED(hr) && cursor)
+    {
+        SetCursor(cursor);
+    }
+    return S_OK;
+}
+
+void BrowserWindow::resize(const int& w, const int& h)
+{
+    SetWindowPos(hwnd,nullptr,0,0,w,h,SWP_NOMOVE | SWP_NOZORDER);
+}
+void BrowserWindow::bindCompCtrlToHwnd()
+{
     namespace abi = ABI::Windows::System;
     DispatcherQueueOptions options{
             sizeof(DispatcherQueueOptions), /* dwSize */
@@ -270,24 +291,7 @@ HRESULT BrowserWindow::ctrlReady(HRESULT result, ICoreWebView2CompositionControl
     m_webViewVisual = m_compositor.CreateContainerVisual();
     m_rootVisual.Children().InsertAtTop(m_webViewVisual);
     this->ctrlComp->put_RootVisualTarget(m_webViewVisual.as<IUnknown>().get());
-
+    RECT bounds;
+    GetClientRect(hwnd, &bounds);
     ctrl->put_Bounds(bounds);
-
-    return S_OK;
-}
-
-HRESULT BrowserWindow::cursorChange(ICoreWebView2CompositionController*, IUnknown*)
-{
-    HCURSOR cursor = nullptr;
-    HRESULT hr = this->ctrlComp->get_Cursor(&cursor);
-    if (SUCCEEDED(hr) && cursor)
-    {
-        SetCursor(cursor);
-    }
-    return S_OK;
-}
-
-void BrowserWindow::resize(const int& w, const int& h)
-{
-    SetWindowPos(hwnd,nullptr,0,0,w,h,SWP_NOMOVE | SWP_NOZORDER);
 }

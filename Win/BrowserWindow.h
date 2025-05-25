@@ -42,8 +42,10 @@ public:
 	bool closingIsReg{ false };
 protected:
 private:
+	void bindCompCtrlToHwnd();
 	void initWindow();
 	std::wstring& getWinClsName();
+	int hittest(const POINT& pt);
 	static LRESULT CALLBACK winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	HRESULT ctrlReady(HRESULT result, ICoreWebView2CompositionController* ctrl);

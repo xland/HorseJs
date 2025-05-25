@@ -1,4 +1,4 @@
-#include "MsgProcessor.h"
+﻿#include "MsgProcessor.h"
 #include "EnumId.h"
 #include "BrowserWindow.h"
 #include "Page.h"
