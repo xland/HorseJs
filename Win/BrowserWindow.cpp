@@ -63,7 +63,6 @@ void BrowserWindow::restore()
 }
 void BrowserWindow::initWindow()
 {
-    auto wcex = regWinClass();
     long winStyle;
     if (config->frame)
     {
@@ -76,8 +75,8 @@ void BrowserWindow::initWindow()
         winStyle = winStyle | WS_VISIBLE;
     }
     //WS_EX_APPWINDOW 确保窗口出现在任务栏
-    hwnd = CreateWindowEx(WS_EX_APPWINDOW, wcex->lpszClassName, config->title.data(), winStyle,
-        config->x, config->y, config->w, config->h, nullptr, nullptr, wcex->hInstance, nullptr);
+    hwnd = CreateWindowEx(WS_EX_APPWINDOW, getWinClsName().data(), config->title.data(), winStyle,
+        config->x, config->y, config->w, config->h, nullptr, nullptr, App::get()->hInstance, nullptr);
     SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
     SetTimer(hwnd, 100, 1000, NULL);
     if (!config->frame && config->shadow)
@@ -90,32 +89,26 @@ void BrowserWindow::initWindow()
     }
 
 }
-WNDCLASSEX*  BrowserWindow::regWinClass()
+std::wstring& BrowserWindow::getWinClsName()
 {
-    static WNDCLASSEX wcex;
-    static bool wcexInit = false;
-    if (!wcexInit)
-    {
-        auto hinstance = GetModuleHandle(NULL);
+    static std::wstring clsName = [] {
+        WNDCLASSEXW wcex;
         wcex.cbSize = sizeof(WNDCLASSEX);
         wcex.style = CS_HREDRAW | CS_VREDRAW;
         wcex.lpfnWndProc = &BrowserWindow::winProc;
         wcex.cbClsExtra = 0;
         wcex.cbWndExtra = 0;
-        wcex.hInstance = hinstance;
-        wcex.hIcon = LoadIcon(hinstance, (LPCTSTR)IDI_WINLOGO);
+        wcex.hInstance = App::get()->hInstance;
+        wcex.hIcon = LoadIcon(wcex.hInstance, (LPCTSTR)IDI_WINLOGO);
         wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
         wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
         wcex.lpszMenuName = nullptr;
         wcex.lpszClassName = L"HorseJs";
-        wcex.hIconSm = LoadIcon(hinstance, (LPCTSTR)IDI_WINLOGO);
-        if (!RegisterClassEx(&wcex))
-        {
-            MessageBox(NULL, L"注册窗口类失败", L"系统提示", NULL);
-        }
-        wcexInit = true;
-    }
-    return &wcex;
+        wcex.hIconSm = LoadIcon(wcex.hInstance, (LPCTSTR)IDI_WINLOGO);
+        RegisterClassExW(&wcex);
+        return wcex.lpszClassName;
+        }();
+    return clsName;
 }
 
 
@@ -139,10 +132,8 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         POINT point;
         point.x = GET_X_LPARAM(lParam);
         point.y = GET_Y_LPARAM(lParam);
-        ctrlComp->SendMouseInput(
-            static_cast<COREWEBVIEW2_MOUSE_EVENT_KIND>(msg),
-            static_cast<COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS>(GET_KEYSTATE_WPARAM(wParam)), 0,
-            point);
+        ctrlComp->SendMouseInput(static_cast<COREWEBVIEW2_MOUSE_EVENT_KIND>(msg),
+            static_cast<COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS>(GET_KEYSTATE_WPARAM(wParam)), 0,point);
         return true;
     }
     switch (msg)
@@ -168,52 +159,6 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             DestroyWindow(hwnd);
             return 0;
         }
-        case WM_TIMER: {
-            if (wParam == 100) {
-                POINT pt;
-                GetCursorPos(&pt);
-                RECT rc;
-                GetClientRect(hwnd, &rc);  // rc 是客户区的大小（相对于客户区左上角）
-
-                // 将客户区左上角转换为屏幕坐标
-                POINT topLeft = { rc.left, rc.top };
-                ClientToScreen(hwnd, &topLeft);
-
-                // 将客户区右下角转换为屏幕坐标（可选）
-                POINT bottomRight = { rc.right, rc.bottom };
-                ClientToScreen(hwnd, &bottomRight);
-
-                if (pt.x>topLeft.x && pt.y>topLeft.y && pt.x < bottomRight.x && pt.y < bottomRight.y)
-                {
-                    if(ctrlComp.get()){
-                        ctrlComp->SendMouseInput(
-                            COREWEBVIEW2_MOUSE_EVENT_KIND_LEAVE,
-                            COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS_NONE,
-                            0,
-                            pt );
-                    }
-                }
-            }
-            break;
-        }
-        case WM_WINDOWPOSCHANGED:
-        {
-            WINDOWPLACEMENT wp = {};
-            wp.length = sizeof(wp);
-            GetWindowPlacement(hwnd, &wp);
-            if (wp.showCmd == SW_SHOWNORMAL || wp.showCmd == SW_RESTORE) {
-                if (IsWindowVisible(hwnd)) {
-                    SetTimer(hwnd, 100, 1000, NULL);
-                }
-                else {
-                    KillTimer(hwnd, 100);
-                }
-            }
-            else if (wp.showCmd == SW_SHOWMAXIMIZED|| wp.showCmd == SW_SHOWMINIMIZED) {
-                KillTimer(hwnd, 100);
-            }
-            break;
-        }
         case WM_SIZE: {
             RECT bounds;
             GetClientRect(hwnd, &bounds);
@@ -227,20 +172,6 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             }      */      
             return 0;
         }
-  //      case WM_WINDOWPOSCHANGED:{
-  //          WINDOWPOS* wp = (WINDOWPOS*)lParam;
-  //          if (wp->flags & SWP_NOSIZE) {
-  //              return 0;
-  //          }
-  //          RECT bounds;
-  //          GetClientRect(hwnd, &bounds);
-  //          config->w = bounds.right - bounds.left;
-  //          config->h = bounds.bottom - bounds.top;
-  //          if (ctrl) {
-  //              ctrl->SetBoundsAndZoomFactor(bounds, 1.0);
-  //          }
-  //          return 0;
-		//}
         case WM_DESTROY: {
             KillTimer(hwnd, 100);
             SetWindowLongPtr(hwnd, GWLP_USERDATA, 0);            
@@ -271,11 +202,8 @@ bool BrowserWindow::load(rapidjson::Value& pageConfig)
     page = std::make_unique<Page>(this);
     page->init(pageConfig);
     msgProcessor = std::make_unique<MsgProcessor>(this, page.get());
-
-    auto app = App::get();
     auto ctrlReadyCB = WRL::Callback<ICoreWebView2CreateCoreWebView2CompositionControllerCompletedHandler>(this, &BrowserWindow::ctrlReady);
-
-    auto env3 = app->env.try_query<ICoreWebView2Environment3>();
+    auto env3 = App::get()->env.try_query<ICoreWebView2Environment3>();
     auto result = env3->CreateCoreWebView2CompositionController(hwnd,ctrlReadyCB.Get());
     if (FAILED(result)) {
         return false;
@@ -293,19 +221,8 @@ HRESULT BrowserWindow::ctrlReady(HRESULT result, ICoreWebView2CompositionControl
     GetClientRect(hwnd, &bounds);
 
     EventRegistrationToken token;
-    this->ctrlComp->add_CursorChanged(
-        WRL::Callback<ICoreWebView2CursorChangedEventHandler>(
-            [this](ICoreWebView2CompositionController*, IUnknown*) -> HRESULT
-            {
-                HCURSOR cursor = nullptr;
-                HRESULT hr = this->ctrlComp->get_Cursor(&cursor);
-                if (SUCCEEDED(hr) && cursor)
-                {
-                    // 设置系统当前光标
-                    ::SetCursor(cursor);
-                }
-                return S_OK;
-            }).Get(), &token);
+    auto cursorChangeCB = WRL::Callback<ICoreWebView2CursorChangedEventHandler>(this, &BrowserWindow::cursorChange);
+    this->ctrlComp->add_CursorChanged(cursorChangeCB.Get(), &token);
 
     namespace abi = ABI::Windows::System;
     DispatcherQueueOptions options{
@@ -334,6 +251,17 @@ HRESULT BrowserWindow::ctrlReady(HRESULT result, ICoreWebView2CompositionControl
 
     ctrl->put_Bounds(bounds);
 
+    return S_OK;
+}
+
+HRESULT BrowserWindow::cursorChange(ICoreWebView2CompositionController*, IUnknown*)
+{
+    HCURSOR cursor = nullptr;
+    HRESULT hr = this->ctrlComp->get_Cursor(&cursor);
+    if (SUCCEEDED(hr) && cursor)
+    {
+        SetCursor(cursor);
+    }
     return S_OK;
 }
 

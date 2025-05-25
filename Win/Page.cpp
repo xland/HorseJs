@@ -57,11 +57,11 @@ void Page::load()
     EventRegistrationToken navigateEndToken;
     webview->add_NavigationCompleted(navigateEndCB.Get(),&navigateEndToken);
 
-    auto titleChangedCB = WRL::Callback<ICoreWebView2DocumentTitleChangedEventHandler>(this, &Page::titleChanged);
+    auto titleChangedCB = WRL::Callback<ICoreWebView2DocumentTitleChangedEventHandler>(this, &Page::titleChange);
     EventRegistrationToken titleToken;
     hr = webview->add_DocumentTitleChanged(titleChangedCB.Get(), &titleToken);
 
-    auto statusChangeCB = WRL::Callback<ICoreWebView2StatusBarTextChangedEventHandler>(this, &Page::statusChanged);
+    auto statusChangeCB = WRL::Callback<ICoreWebView2StatusBarTextChangedEventHandler>(this, &Page::statusChange);
     EventRegistrationToken statusToken;
     auto webView12 = webview.try_query<ICoreWebView2_12>();
     hr = webView12->add_StatusBarTextChanged(statusChangeCB.Get(), &statusToken);
@@ -75,27 +75,28 @@ void Page::load()
     auto faviconChangeCB = WRL::Callback<ICoreWebView2FaviconChangedEventHandler>(this, &Page::faviconChange);
     hr = webView15->add_FaviconChanged(faviconChangeCB.Get(), &faviconToken);
 
-    auto newWindowCB = WRL::Callback<ICoreWebView2NewWindowRequestedEventHandler>(this, &Page::newWindowRequested);
+    auto newWindowCB = WRL::Callback<ICoreWebView2NewWindowRequestedEventHandler>(this, &Page::newWindowRequeste);
     EventRegistrationToken newWindowToken;
     hr = webView15->add_NewWindowRequested(newWindowCB.Get(), &newWindowToken);
 
     EventRegistrationToken msgReceivedToken;
-    auto msgReceivedCB = WRL::Callback<ICoreWebView2WebMessageReceivedEventHandler>(this, &Page::msgReceived);
+    auto msgReceivedCB = WRL::Callback<ICoreWebView2WebMessageReceivedEventHandler>(this, &Page::msgReceive);
     webview->add_WebMessageReceived(msgReceivedCB.Get(), &msgReceivedToken);
 
     loadResource();    
 
     webview->Navigate(L"https://HorseJs/index.html");
+    //webview->Navigate(L"https://www.baidu.com");
 }
 
 void Page::loadResource()
 {
-    HMODULE hModule = GetModuleHandleW(nullptr);
-    HRSRC hResource = FindResourceW(hModule, MAKEINTRESOURCEW(IDR_JS), RT_RCDATA);
+	auto hInstance = App::get()->hInstance;
+    HRSRC hResource = FindResourceW(hInstance, MAKEINTRESOURCEW(IDR_JS), RT_RCDATA);
     if (!hResource) throw std::runtime_error("Failed to find resource");
-    HGLOBAL hLoadedResource = LoadResource(hModule, hResource);
+    HGLOBAL hLoadedResource = LoadResource(hInstance, hResource);
     if (!hLoadedResource) throw std::runtime_error("Failed to load resource");
-    DWORD resourceSize = SizeofResource(hModule, hResource);
+    DWORD resourceSize = SizeofResource(hInstance, hResource);
     if (resourceSize == 0) throw std::runtime_error("Resource size is zero");
     void* pResourceData = LockResource(hLoadedResource);
     if (!pResourceData) throw std::runtime_error("Failed to lock resource");
@@ -119,7 +120,7 @@ HRESULT Page::navigateEnd(ICoreWebView2* webview, ICoreWebView2NavigationComplet
     return S_OK;
 }
 
-HRESULT Page::titleChanged(ICoreWebView2* sender, IUnknown* args)
+HRESULT Page::titleChange(ICoreWebView2* sender, IUnknown* args)
 {
     //wil::unique_cotaskmem_string titleData;
     //HRESULT hr = webview->get_DocumentTitle(&titleData);
@@ -128,7 +129,7 @@ HRESULT Page::titleChanged(ICoreWebView2* sender, IUnknown* args)
     return S_OK;
 }
 
-HRESULT Page::statusChanged(ICoreWebView2* sender, IUnknown* args)
+HRESULT Page::statusChange(ICoreWebView2* sender, IUnknown* args)
 {
     //wil::unique_cotaskmem_string statusData;
     //auto m_webView2_12 = webview.try_query<ICoreWebView2_12>();
@@ -161,7 +162,7 @@ HRESULT Page::faviconChange(ICoreWebView2* sender, IUnknown* args)
     return S_OK;
 }
 
-HRESULT Page::newWindowRequested(ICoreWebView2* sender, ICoreWebView2NewWindowRequestedEventArgs* args)
+HRESULT Page::newWindowRequeste(ICoreWebView2* sender, ICoreWebView2NewWindowRequestedEventArgs* args)
 {
     //if (!m_shouldHandleNewWindowRequest)
     //{
@@ -251,7 +252,7 @@ HRESULT Page::newWindowRequested(ICoreWebView2* sender, ICoreWebView2NewWindowRe
     return S_OK;
 }
 
-HRESULT Page::msgReceived(ICoreWebView2* webview, ICoreWebView2WebMessageReceivedEventArgs* args)
+HRESULT Page::msgReceive(ICoreWebView2* webview, ICoreWebView2WebMessageReceivedEventArgs* args)
 {
     wil::unique_cotaskmem_string messageRaw;
     args->get_WebMessageAsJson(&messageRaw);

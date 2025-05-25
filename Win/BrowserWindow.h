@@ -44,10 +44,11 @@ public:
 protected:
 private:
 	void initWindow();
-	WNDCLASSEX* regWinClass();
+	std::wstring& getWinClsName();
 	static LRESULT CALLBACK winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	HRESULT ctrlReady(HRESULT result, ICoreWebView2CompositionController* ctrl);
+	HRESULT cursorChange(ICoreWebView2CompositionController*, IUnknown*);
 private:
 	bool isMouseTracking{ false };
 };

@@ -16,14 +16,15 @@ class BrowserWindow;
 class App
 {
 public:
-	App();
+	App(HINSTANCE hInstance);
 	~App();
 	void onWindowDestroy(BrowserWindow* win);
 	static App* get();
-	static void init();
+	static void init(HINSTANCE hInstance);
 public:
 	std::unique_ptr<AppConfig> config;
 	wil::com_ptr<ICoreWebView2Environment> env;
+	HINSTANCE hInstance;
 private:
 	std::vector<std::unique_ptr<BrowserWindow>> windows;
 private:

@@ -17,11 +17,11 @@ public:
 private:
 	HRESULT navigateStart(ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args);
 	HRESULT navigateEnd(ICoreWebView2* webview, ICoreWebView2NavigationCompletedEventArgs* args);
-	HRESULT titleChanged(ICoreWebView2* sender, IUnknown* args);
-	HRESULT statusChanged(ICoreWebView2* sender, IUnknown* args);
+	HRESULT titleChange(ICoreWebView2* sender, IUnknown* args);
+	HRESULT statusChange(ICoreWebView2* sender, IUnknown* args);
 	HRESULT faviconChange(ICoreWebView2* sender, IUnknown* args);
-	HRESULT newWindowRequested(ICoreWebView2* sender, ICoreWebView2NewWindowRequestedEventArgs* args);
-	HRESULT msgReceived(ICoreWebView2* webview, ICoreWebView2WebMessageReceivedEventArgs* args);
+	HRESULT newWindowRequeste(ICoreWebView2* sender, ICoreWebView2NewWindowRequestedEventArgs* args);
+	HRESULT msgReceive(ICoreWebView2* webview, ICoreWebView2WebMessageReceivedEventArgs* args);
 	void loadResource();
 private:
 	BrowserWindow* win;

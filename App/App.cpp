@@ -18,7 +18,7 @@ namespace {
 }
 
 
-App::App() :config{std::make_unique<AppConfig>()}
+App::App(HINSTANCE hInstance) :config{ std::make_unique<AppConfig>() }, hInstance{hInstance}
 {
 }
 
@@ -43,9 +43,9 @@ App* App::get()
     return app.get();
 }
 
-void App::init()
+void App::init(HINSTANCE hInstance)
 {
-    app = std::make_unique<App>();
+    app = std::make_unique<App>(hInstance);
     app->start();
 }
 
