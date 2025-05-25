@@ -132,9 +132,31 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         POINT point;
         point.x = GET_X_LPARAM(lParam);
         point.y = GET_Y_LPARAM(lParam);
-        ctrlComp->SendMouseInput(static_cast<COREWEBVIEW2_MOUSE_EVENT_KIND>(msg),
-            static_cast<COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS>(GET_KEYSTATE_WPARAM(wParam)), 0,point);
+        if (msg == WM_MOUSEMOVE)
+        {
+            if (!isMouseTracking) {
+                TRACKMOUSEEVENT tme = { sizeof(TRACKMOUSEEVENT) };
+                tme.dwFlags = TME_LEAVE;
+                tme.hwndTrack = hwnd;
+                TrackMouseEvent(&tme);
+                isMouseTracking = true;
+            }
+        }
+        if (ctrlComp) {
+            ctrlComp->SendMouseInput(static_cast<COREWEBVIEW2_MOUSE_EVENT_KIND>(msg),
+                static_cast<COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS>(GET_KEYSTATE_WPARAM(wParam)), 0, point);
+        }
         return true;
+    }
+    else if (msg == WM_MOUSELEAVE)
+    {
+        POINT point;
+        point.x = GET_X_LPARAM(lParam);
+        point.y = GET_Y_LPARAM(lParam);
+        isMouseTracking = false;
+        ctrlComp->SendMouseInput(COREWEBVIEW2_MOUSE_EVENT_KIND_LEAVE,
+            COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS_NONE,0,point);
+        return 0;
     }
     switch (msg)
     {
