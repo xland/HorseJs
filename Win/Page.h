@@ -11,7 +11,6 @@ public:
 	~Page();
 	void init(const rapidjson::Value& config);
 	void load();
-	void call(rapidjson::Document& jsonDoc);
 public:
 	wil::com_ptr<ICoreWebView2> webview;
 private:

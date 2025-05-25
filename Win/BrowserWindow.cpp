@@ -287,21 +287,6 @@ HRESULT BrowserWindow::cursorChange(ICoreWebView2CompositionController*, IUnknow
     return S_OK;
 }
 
-void BrowserWindow::call(rapidjson::Document& jsonDoc)
-{
-    int methodId{ -1 }, eventId{ -1 };
-    if (jsonDoc.HasMember("methodId") && jsonDoc["methodId"].IsInt()) {
-        methodId = jsonDoc["methodId"].GetInt();
-    }
-    if (jsonDoc.HasMember("eventId") && jsonDoc["eventId"].IsInt()) {
-        eventId = jsonDoc["eventId"].GetInt();
-    }
-    if (methodId < 0 || eventId < 0) {
-        MessageBox(nullptr, L"methodId或eventId为空", L"错误", MB_OK | MB_ICONERROR);
-        return;
-    }
-}
-
 void BrowserWindow::resize(const int& w, const int& h)
 {
     SetWindowPos(hwnd,nullptr,0,0,w,h,SWP_NOMOVE | SWP_NOZORDER);

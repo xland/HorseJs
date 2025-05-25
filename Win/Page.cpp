@@ -262,20 +262,3 @@ HRESULT Page::msgReceive(ICoreWebView2* webview, ICoreWebView2WebMessageReceived
     win->msgProcessor->processStr(str);
     return S_OK;
 }
-void Page::call(rapidjson::Document& jsonDoc) {
-    if (jsonDoc.HasMember("eventId") && jsonDoc["eventId"].IsString())
-    {
-        auto eventId = jsonDoc["eventId"].GetString();
-
-        JsonParsor parsor;
-        parsor.addString("eventId", eventId);
-        rapidjson::Value items(rapidjson::kArrayType);
-        rapidjson::Value number1(42); // 第一个数字
-        rapidjson::Value number2(3.14); // 第二个数字（支持浮点数）
-        items.PushBack(number1, parsor.getAllocator());
-        items.PushBack(number2, parsor.getAllocator());
-        parsor.addValue("param", std::move(items));
-        std::wstring jsonStr = parsor.parse();
-        webview->PostWebMessageAsJson(jsonStr.data());
-    }
-}

@@ -16,7 +16,6 @@ public:
 	BrowserWindow(rapidjson::Value& winConfig);
 	~BrowserWindow();
 	bool load(rapidjson::Value& pageConfig);
-	void call(rapidjson::Document& jsonDoc);
 	void resize(const int& w, const int& h);
 	void regEvent(const int& eventId);
 	void unregEvent(const int& eventId);
