@@ -58,8 +58,6 @@
 > - 类型：布尔，默认值：`true`。是否允许窗口最小化
  - window.maximizable 
 > - 类型：布尔，默认值：`true`。是否允许窗口最大化
- - window.closable
-> - 类型：布尔，默认值：`true`。是否允许窗口关闭
  - window.alwaysOnTop
 > - 类型：布尔，默认值：`false`。是否置顶窗口
  - window.skipTaskbar

@@ -4,6 +4,8 @@
   "window": {
     "resizable": true,
     "maximizable": false,
+    "minimizable":false,
+    "alwaysOnTop":false,
     "size": {
       "w": 1000,
       "h": 800

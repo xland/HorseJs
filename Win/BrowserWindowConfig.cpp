@@ -16,7 +16,22 @@ BrowserWindowConfig::BrowserWindowConfig(const rapidjson::Value& config)
     {
         shadow = config["shadow"].GetBool();
     }
-
+    if (config.HasMember("maximizable") && config["maximizable"].IsBool())
+    {
+        maximizable = config["maximizable"].GetBool();
+    }
+    if (config.HasMember("minimizable") && config["minimizable"].IsBool())
+    {
+        minimizable = config["minimizable"].GetBool();
+    }
+    if (config.HasMember("alwaysOnTop") && config["alwaysOnTop"].IsBool())
+    {
+        alwaysOnTop = config["alwaysOnTop"].GetBool();
+    }
+    if (config.HasMember("resizable") && config["resizable"].IsBool())
+    {
+        resizable = config["resizable"].GetBool();
+    }
     if (config.HasMember("title") && config["title"].IsString())
     {
         title = Util::convertToWStr(config["title"].GetString());
@@ -29,14 +44,6 @@ BrowserWindowConfig::~BrowserWindowConfig()
 
 void BrowserWindowConfig::setSize(const rapidjson::Value& config)
 {
-    if (config.HasMember("maximizable") && config["maximizable"].IsBool())
-    {
-        maximizable = config["maximizable"].GetBool();
-    }
-    if (config.HasMember("resizable") && config["resizable"].IsBool())
-    {
-        resizable = config["resizable"].GetBool();
-    }
     if (config.HasMember("size"))
     {
         if (config["size"].IsString())

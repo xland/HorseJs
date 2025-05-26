@@ -120,6 +120,7 @@ void BrowserWindow::resize(const int& w, const int& h)
 void BrowserWindow::initWindow()
 {
     long winStyle;
+    long exStyle = WS_EX_APPWINDOW;
     if (config->frame)
     {
         winStyle = WS_OVERLAPPEDWINDOW;
@@ -136,8 +137,14 @@ void BrowserWindow::initWindow()
     if (!config->maximizable) {
         winStyle = winStyle & ~WS_MAXIMIZEBOX;
     }
+    if (!config->minimizable) {
+        winStyle = winStyle & ~WS_MINIMIZEBOX;
+    }
+    if (config->alwaysOnTop) {
+        exStyle = exStyle | WS_EX_TOPMOST;
+    }
     //WS_EX_APPWINDOW 确保窗口出现在任务栏
-    hwnd = CreateWindowEx(WS_EX_APPWINDOW, getWinClsName().data(), config->title.data(), winStyle,
+    hwnd = CreateWindowEx(exStyle, getWinClsName().data(), config->title.data(), winStyle,
         config->x, config->y, config->w, config->h, nullptr, nullptr, App::get()->hInstance, nullptr);
     SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
     if (!config->frame && config->shadow)
