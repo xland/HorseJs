@@ -236,13 +236,6 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         SetCursor(cursor);
         return true;
     }
-    else if (msg == WM_SIZE) {
-        if (!ctrl) goto sysProcess;
-        RECT bounds;
-        GetClientRect(hwnd, &bounds);
-        ctrl->put_Bounds(bounds);
-        return false;
-    }
     else if (msg == WM_CLOSE) {
         if (closingIsReg) {
             msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::closing, 0);
@@ -278,6 +271,9 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         config->y = pos->y;
         config->w = pos->cx;
         config->h = pos->cy;
+        RECT bounds;
+        GetClientRect(hwnd, &bounds);
+        ctrl->put_Bounds(bounds);
         if (sizePosChangedIsReg) {
             msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::sizePosChanged, 4, config->x, config->y, config->w, config->h);
         }        
