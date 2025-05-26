@@ -140,7 +140,6 @@ void BrowserWindow::initWindow()
     hwnd = CreateWindowEx(WS_EX_APPWINDOW, getWinClsName().data(), config->title.data(), winStyle,
         config->x, config->y, config->w, config->h, nullptr, nullptr, App::get()->hInstance, nullptr);
     SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-    SetTimer(hwnd, 100, 1000, NULL);
     if (!config->frame && config->shadow)
     {
         MARGINS margins = { 1, 1, 1, 1 };

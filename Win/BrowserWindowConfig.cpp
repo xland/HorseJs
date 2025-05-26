@@ -3,17 +3,7 @@
 BrowserWindowConfig::BrowserWindowConfig(const rapidjson::Value& config)
 {
     setSize(config);
-    if (config.HasMember("position") && config["position"].IsString())
-    {
-        auto pos = std::string_view(config["position"].GetString());
-        if (pos == "screenCenter")
-        {
-            int sw = GetSystemMetrics(SM_CXSCREEN);
-            int sh = GetSystemMetrics(SM_CYSCREEN);
-            x = (sw - w) / 2;
-            y = (sh - h) / 2;
-        }
-    }
+    setPos(config);
     if (config.HasMember("visible") && config["visible"].IsBool())
     {
         visible = config["visible"].GetBool();
@@ -81,6 +71,28 @@ void BrowserWindowConfig::setSize(const rapidjson::Value& config)
             maxWidth = sizeObj["w"].GetInt();
             maxHeight = sizeObj["h"].GetInt();
             maximizable = false;
+        }
+    }
+}
+
+void BrowserWindowConfig::setPos(const rapidjson::Value& config)
+{
+    if (config.HasMember("position"))
+    {
+        if(config["position"].IsString()){
+            auto pos = std::string_view(config["position"].GetString());
+            if (pos == "screenCenter")
+            {
+                int sw = GetSystemMetrics(SM_CXSCREEN);
+                int sh = GetSystemMetrics(SM_CYSCREEN);
+                x = (sw - w) / 2;
+                y = (sh - h) / 2;
+            }
+        }
+        else if (config["size"].IsObject()) {
+            auto posObj = config["position"].GetObj();
+            x = posObj["x"].GetInt();
+            y = posObj["y"].GetInt();
         }
     }
 }

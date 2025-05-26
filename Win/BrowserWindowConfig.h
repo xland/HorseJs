@@ -13,5 +13,6 @@ public:
 	std::wstring title{ L"HorseJs" };
 private:
 	void setSize(const rapidjson::Value& config);
+	void setPos(const rapidjson::Value& config);
 };
 

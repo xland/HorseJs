@@ -16,7 +16,10 @@
       "w": 250,
       "h": 200
     },
-    "position": "screenCenter",
+    "position": {
+      "x":200,
+      "y":200
+    },
     "visible": true,
     "frame": true,
     "shadow": true,
