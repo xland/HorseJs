@@ -21,6 +21,7 @@ BrowserWindow::~BrowserWindow()
 {
 }
 
+#pragma region JsMethod
 
 void BrowserWindow::regEvent(const int& eventId)
 {
@@ -110,6 +111,11 @@ void BrowserWindow::setResizable(bool flag)
     SetWindowPos(hwnd, nullptr, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
 }
 
+void BrowserWindow::resize(const int& w, const int& h)
+{
+    SetWindowPos(hwnd, nullptr, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER);
+}
+#pragma endregion
 void BrowserWindow::initWindow()
 {
     long winStyle;
@@ -253,17 +259,13 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     else if (msg == WM_GETMINMAXINFO) {
         MINMAXINFO* mminfo = (PMINMAXINFO)lParam;
-        RECT workArea;
-        SystemParametersInfo(SPI_GETWORKAREA, 0, &workArea, 0);
         mminfo->ptMinTrackSize.x = 600;
         mminfo->ptMinTrackSize.y = 400;
         if (!config->maximizable) {
-            //mminfo->ptMaxSize.x = workArea.right - workArea.left - 2;
-            //mminfo->ptMaxSize.y = workArea.bottom - workArea.top - 2;
-            //mminfo->ptMaxPosition.x = 1;
-            //mminfo->ptMaxPosition.y = 1;
+            mminfo->ptMaxTrackSize.x = config->maxWidth;
+            mminfo->ptMaxTrackSize.y = config->maxHeight;
         }
-        return true;
+        return false;
     }
     else if (msg == WM_WINDOWPOSCHANGED) {
         WINDOWPOS* pos = reinterpret_cast<WINDOWPOS*>(lParam);
@@ -320,10 +322,6 @@ HRESULT BrowserWindow::cursorChange(ICoreWebView2CompositionController*, IUnknow
     return S_OK;
 }
 
-void BrowserWindow::resize(const int& w, const int& h)
-{
-    SetWindowPos(hwnd,nullptr,0,0,w,h,SWP_NOMOVE | SWP_NOZORDER);
-}
 void BrowserWindow::bindCompCtrlToHwnd()
 {
     namespace abi = ABI::Windows::System;
