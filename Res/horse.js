@@ -129,23 +129,27 @@
   };
 
   // Horse.ts
-  var Horse = class {
+  var Horse = class extends Eventer {
     window;
     fs;
-    webview = window.chrome.webview;
+    webview;
     constructor() {
+      super();
+      this.webview = window.chrome.webview;
       this.window = new Window();
       this.fs = new Fs();
       this.listenMsg();
     }
+    getConfig() {
+      return this.call(2 /* Horse */, 0 /* getConfig */);
+    }
     listenMsg() {
       this.webview.addEventListener("message", (e) => {
-        if (e.data.classId === 3 /* Window */) {
-          if (e.data.param) {
-            this.window.emit(e.data.eventId, ...e.data.param);
-          } else {
-            this.window.emit(e.data.eventId, []);
-          }
+        if (!e.data.param) e.data.param = [];
+        if (e.data.classId === 2 /* Horse */) {
+          this.emit(e.data.eventId, ...e.data.param);
+        } else if (e.data.classId === 3 /* Window */) {
+          this.window.emit(e.data.eventId, ...e.data.param);
         }
       });
     }

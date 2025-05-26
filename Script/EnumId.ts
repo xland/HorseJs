@@ -1,10 +1,14 @@
 export enum ClassId {
   Sys,
   Fs,
-  App,
+  Horse,
   Window,
   Page,
 }
+export enum HorseMethodId {
+  getConfig,
+}
+
 export enum FsMethodId {
   addResToExe,
 }

@@ -4,6 +4,7 @@
 #include "EnumId.h"
 #include "BrowserWindow.h"
 #include "Page.h"
+#include "../App/App.h"
 #include "../App/Fs.h"
 #include "../App/JsonParsor.h"
 
@@ -35,8 +36,12 @@ void MsgProcessor::processStr(const std::string& msgStr)
         return;
     }
     JsonParsor parsor;
+    parsor.addNumber("classId", classId);
     parsor.addNumber("eventId", eventId);
-    if (classId == (int)ClassId::Window) {
+    if (classId == (int)ClassId::Horse) {
+        processHorse(methodId, jsonDoc["params"], parsor);
+    }
+    else if (classId == (int)ClassId::Window) {
         processWin(methodId, jsonDoc["params"],parsor);
     }
     else if (classId == (int)ClassId::Page) {
@@ -178,5 +183,20 @@ void MsgProcessor::processFs(const int& methodId, const rapidjson::Value& params
         auto dirPath = Util::convertToWStr(str1);
         auto exePath = Util::convertToWStr(str2);
         Fs::get()->addDirAsExeRes(dirPath, exePath);
+    }
+}
+
+void MsgProcessor::processHorse(const int& methodId, const rapidjson::Value& params, JsonParsor& parsor)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    auto app = App::get();
+    if (methodId == (int)HorseMethodId::getConfig) {
+        auto str = Util::readFile(L"UI/config.json");
+        rapidjson::Document doc;
+        doc.Parse(str.data());
+        rapidjson::Value copiedValue(doc, parsor.getAllocator());
+        rapidjson::Value items(rapidjson::kArrayType);
+        items.PushBack(copiedValue, parsor.getAllocator());
+        parsor.addValue("param", std::move(items));
     }
 }

@@ -9,6 +9,7 @@
         </style>
     </head>
     <body>
+    <div id="btnGetConfig" class="btn">获取App配置</div>
     <div id="btnMaximize" class="btn">最大化</div>
     <div id="btnMinimize" class="btn">最小化</div>
     <div id="btnShow" class="btn">显示</div>
@@ -24,7 +25,11 @@
     <div id="btnUnregWinClose" class="btn">取消注册窗口关闭事件</div>
     <script>
         let $ = (selector)=>document.querySelector(selector);
-        window.addEventListener("DOMContentLoaded", () => {
+        window.addEventListener("DOMContentLoaded", async () => {
+            $("#btnGetConfig").addEventListener("click",async ()=>{
+                let config = await horse.getConfig();
+                console.log(config);
+            })
             $("#btnMaximize").addEventListener("click",()=>{
                 horse.window.maximize();
             })
@@ -74,14 +79,14 @@
                     },2000);
                 },2000);                
             });
-            window.addEventListener('resize', ()=>{
-                //这是html自带的事件
-                console.log('宽度：' + window.innerWidth + '高度：' + window.innerHeight);
-            });
-            horse.window.addEventListener("sizePosChanged",(x,y,w,h)=>{
-                console.log(`x:${x},y:${y},w:${w},h:${h}`);
-            })
         });
+        window.addEventListener('resize', ()=>{
+            //这是html自带的事件
+            console.log('宽度：' + window.innerWidth + '高度：' + window.innerHeight);
+        });
+        horse.window.addEventListener("sizePosChanged",(x,y,w,h)=>{
+            console.log(`x:${x},y:${y},w:${w},h:${h}`);
+        })
     </script>
     </body>
 </html>

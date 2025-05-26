@@ -101,7 +101,10 @@ void Page::loadResource()
     void* pResourceData = LockResource(hLoadedResource);
     if (!pResourceData) throw std::runtime_error("Failed to lock resource");
     std::wstring script = Util::convertToWStr((char*)pResourceData);
-    webview->AddScriptToExecuteOnDocumentCreated(script.data(), nullptr);
+    auto hr = webview->AddScriptToExecuteOnDocumentCreated(script.data(), nullptr);
+    if (FAILED(hr)) {
+        auto a = 1;
+    }
 }
 
 HRESULT Page::navigateStart(ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args)

@@ -3,13 +3,18 @@
 enum class ClassId {
 	Sys,
 	Fs,
-	App,
+	Horse,
 	Window,
 	Page,
 };
 enum class FsMethodId {
 	addResToExe,
 };
+
+enum class HorseMethodId {
+	getConfig,
+};
+
 enum class WindowMethodId {
 	maximize,
 	minimize,
