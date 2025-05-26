@@ -3,26 +3,39 @@
         <meta charset="UTF-8">
         <title>HorseJs</title>
         <style>
+            html,body{
+                margin: 0px;padding: 0px;
+            }
             .btn{cursor: pointer; background: #eee; display: inline-block; user-select: none;
                 border-radius: 3px; margin: 6px; padding: 6px;}
             .btn:hover{background: #888; color: #fff;}
+            .titleBar{
+                background: #CCD5F0;user-select: none;line-height: 38px;height: 38px;padding-left: 12px;
+            }
+            .box{
+                padding: 12px;
+            }
         </style>
     </head>
     <body>
-    <div id="btnGetConfig" class="btn">获取App配置</div>
-    <div id="btnMaximize" class="btn">最大化</div>
-    <div id="btnMinimize" class="btn">最小化</div>
-    <div id="btnShow" class="btn">显示</div>
-    <div id="btnHide" class="btn">隐藏</div>
-    <div id="btnRestore" class="btn">还原</div>
-    <div id="btnResize" class="btn">改变大小</div>
-    <div id="btnBindRes" class="btn">附加资源</div>
-    <div id="btnClose" class="btn">关闭窗口</div>
-    <div id="btnDestory" class="btn">销毁窗口</div>
-    <div id="btnFlash" class="btn">闪烁窗口</div>
-    <div id="btnSetResizable" class="btn">启用/禁止改变窗口大小</div>
-    <div id="btnRegWinClose" class="btn">注册窗口关闭事件</div>
-    <div id="btnUnregWinClose" class="btn">取消注册窗口关闭事件</div>
+        <div class="titleBar">html自定义窗口标题栏</div>
+        <div class="box">
+            <div id="btnGetConfig" class="btn">获取App配置</div>
+            <div id="btnMaximize" class="btn">最大化</div>
+            <div id="btnMinimize" class="btn">最小化</div>
+            <div id="btnShow" class="btn">显示</div>
+            <div id="btnHide" class="btn">隐藏</div>
+            <div id="btnRestore" class="btn">还原</div>
+            <div id="btnResize" class="btn">改变大小</div>
+            <div id="btnBindRes" class="btn">附加资源</div>
+            <div id="btnClose" class="btn">关闭窗口</div>
+            <div id="btnDestory" class="btn">销毁窗口</div>
+            <div id="btnFlash" class="btn">闪烁窗口</div>
+            <div id="btnSetResizable" class="btn">启用/禁止改变窗口大小</div>
+            <div id="btnRegWinClose" class="btn">注册窗口关闭事件</div>
+            <div id="btnUnregWinClose" class="btn">取消注册窗口关闭事件</div>
+        </div>
+
     <script>
         let $ = (selector)=>document.querySelector(selector);
         window.addEventListener("DOMContentLoaded", async () => {

@@ -259,8 +259,8 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     else if (msg == WM_GETMINMAXINFO) {
         MINMAXINFO* mminfo = (PMINMAXINFO)lParam;
-        mminfo->ptMinTrackSize.x = 600;
-        mminfo->ptMinTrackSize.y = 400;
+        mminfo->ptMinTrackSize.x = config->minWidth;
+        mminfo->ptMinTrackSize.y = config->minHeight;
         if (!config->maximizable) {
             mminfo->ptMaxTrackSize.x = config->maxWidth;
             mminfo->ptMaxTrackSize.y = config->maxHeight;
@@ -275,6 +275,7 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         config->h = pos->cy;
         RECT bounds;
         GetClientRect(hwnd, &bounds);
+        if (!ctrl) goto sysProcess;
         ctrl->put_Bounds(bounds);
         if (sizePosChangedIsReg) {
             msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::sizePosChanged, 4, config->x, config->y, config->w, config->h);
