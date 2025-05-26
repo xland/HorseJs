@@ -189,7 +189,7 @@
     <ClInclude Include="App\App.h" />
     <ClInclude Include="App\Fs.h" />
     <ClInclude Include="Win\EnumId.h" />
-    <ClInclude Include="App\Res.h" />
+    <ClInclude Include="Res\Res.h" />
     <ClInclude Include="App\JsonParsor.h" />
     <ClInclude Include="Win\MsgProcessor.h" />
     <ClInclude Include="Win\BrowserWindowConfig.h" />
@@ -236,7 +236,7 @@
     <ClInclude Include="Win\BrowserWindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="App\Res.rc" />
+    <ResourceCompile Include="Res\Res.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

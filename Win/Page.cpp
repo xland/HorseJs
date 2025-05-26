@@ -4,7 +4,7 @@
 
 #include "Page.h"
 #include "BrowserWindow.h"
-#include "../App/Res.h"
+#include "../Res/Res.h"
 #include "MsgProcessor.h"
 #include "../App/App.h"
 

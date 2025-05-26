@@ -181,7 +181,7 @@
     <ClInclude Include="Win\Page.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="App\Res.h">
+    <ClInclude Include="Res\Res.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="App\JsonParsor.h">
@@ -212,7 +212,7 @@
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="App\Res.rc">
+    <ResourceCompile Include="Res\Res.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
   </ItemGroup>
