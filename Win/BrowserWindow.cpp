@@ -133,6 +133,9 @@ void BrowserWindow::initWindow()
     if (!config->resizable) {
         winStyle = winStyle & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX;
     }
+    if (!config->maximizable) {
+        winStyle = winStyle & ~WS_MAXIMIZEBOX;
+    }
     //WS_EX_APPWINDOW 确保窗口出现在任务栏
     hwnd = CreateWindowEx(WS_EX_APPWINDOW, getWinClsName().data(), config->title.data(), winStyle,
         config->x, config->y, config->w, config->h, nullptr, nullptr, App::get()->hInstance, nullptr);
@@ -225,7 +228,7 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             mouseData = GET_WHEEL_DELTA_WPARAM(wParam);
             ScreenToClient(hwnd, &point);
         }
-        else if(msg == WM_XBUTTONDBLCLK || msg == WM_XBUTTONDOWN || msg == WM_XBUTTONUP){
+        else if(msg == WM_XBUTTONDBLCLK || msg == WM_XBUTTONDOWN || msg == WM_XBUTTONUP){ //前进后退之类的按钮
             mouseData = GET_XBUTTON_WPARAM(wParam);
         }
         auto eventKind = static_cast<COREWEBVIEW2_MOUSE_EVENT_KIND>(msg);

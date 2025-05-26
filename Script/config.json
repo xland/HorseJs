@@ -3,6 +3,7 @@
   "quitWhenAllWindowClosed": true,
   "window": {
     "resizable": true,
+    "maximizable": false,
     "size": {
       "w": 1000,
       "h": 800
@@ -19,7 +20,6 @@
     "visible": true,
     "frame": true,
     "shadow": true,
-    "maximizable": true,
     "title": "窗口标题",
     "page": {
       "areDefaultScriptDialogsEnabled": true,
