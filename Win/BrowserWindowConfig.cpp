@@ -28,6 +28,10 @@ BrowserWindowConfig::BrowserWindowConfig(const rapidjson::Value& config)
     {
         alwaysOnTop = config["alwaysOnTop"].GetBool();
     }
+    if (config.HasMember("skipTaskbar") && config["skipTaskbar"].IsBool())
+    {
+        skipTaskbar = config["skipTaskbar"].GetBool();
+    }
     if (config.HasMember("resizable") && config["resizable"].IsBool())
     {
         resizable = config["resizable"].GetBool();

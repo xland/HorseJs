@@ -6,6 +6,7 @@
     "maximizable": false,
     "minimizable":false,
     "alwaysOnTop":false,
+    "skipTaskbar":true,
     "size": {
       "w": 1000,
       "h": 800

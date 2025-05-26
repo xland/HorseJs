@@ -47,6 +47,7 @@ public:
 	bool sizePosChangedIsReg{ false };
 protected:
 private:
+	void setWindowStyle(long& exStyle, long& style);
 	void bindCompCtrlToHwnd();
 	void initWindow();
 	std::wstring& getWinClsName();

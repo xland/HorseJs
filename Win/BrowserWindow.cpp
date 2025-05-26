@@ -119,32 +119,9 @@ void BrowserWindow::resize(const int& w, const int& h)
 
 void BrowserWindow::initWindow()
 {
-    long winStyle;
-    long exStyle = WS_EX_APPWINDOW;
-    if (config->frame)
-    {
-        winStyle = WS_OVERLAPPEDWINDOW;
-    }
-    else {
-		winStyle = WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
-    }
-    if (config->visible) {
-        winStyle = winStyle | WS_VISIBLE;
-    }
-    if (!config->resizable) {
-        winStyle = winStyle & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX;
-    }
-    if (!config->maximizable) {
-        winStyle = winStyle & ~WS_MAXIMIZEBOX;
-    }
-    if (!config->minimizable) {
-        winStyle = winStyle & ~WS_MINIMIZEBOX;
-    }
-    if (config->alwaysOnTop) {
-        exStyle = exStyle | WS_EX_TOPMOST;
-    }
-    //WS_EX_APPWINDOW 确保窗口出现在任务栏
-    hwnd = CreateWindowEx(exStyle, getWinClsName().data(), config->title.data(), winStyle,
+    long exStyle, style;
+    setWindowStyle(exStyle, style);
+    hwnd = CreateWindowEx(exStyle, getWinClsName().data(), config->title.data(), style,
         config->x, config->y, config->w, config->h, nullptr, nullptr, App::get()->hInstance, nullptr);
     SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
     if (!config->frame && config->shadow)
@@ -343,6 +320,38 @@ HRESULT BrowserWindow::cursorChange(ICoreWebView2CompositionController*, IUnknow
         SetCursor(cursor);
     }
     return S_OK;
+}
+
+void BrowserWindow::setWindowStyle(long& exStyle, long& style)
+{
+    if (config->frame)
+    {
+        style = WS_OVERLAPPEDWINDOW;
+    }
+    else {
+        style = WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+    }
+    if (config->visible) {
+        style = style | WS_VISIBLE;
+    }
+    if (!config->resizable) {
+        style = style & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX;
+    }
+    if (!config->maximizable) {
+        style = style & ~WS_MAXIMIZEBOX;
+    }
+    if (!config->minimizable) {
+        style = style & ~WS_MINIMIZEBOX;
+    }
+    if (config->skipTaskbar) {
+        exStyle = WS_EX_TOOLWINDOW;
+    }
+    else {
+        exStyle = WS_EX_APPWINDOW;
+    }
+    if (config->alwaysOnTop) {
+        exStyle = exStyle | WS_EX_TOPMOST;
+    }
 }
 
 void BrowserWindow::bindCompCtrlToHwnd()
