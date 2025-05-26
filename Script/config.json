@@ -20,7 +20,7 @@
       "x":200,
       "y":200
     },
-    "visible": true,
+    "visible": false,
     "frame": true,
     "shadow": true,
     "title": "窗口标题",

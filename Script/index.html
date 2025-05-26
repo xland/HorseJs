@@ -34,6 +34,7 @@
     <script>
         let $ = (selector)=>document.querySelector(selector);
         window.addEventListener("DOMContentLoaded", async () => {
+            horse.window.show();
             $("#btnGetConfig").addEventListener("click",async ()=>{
                 let config = await horse.getConfig();
                 console.log(config);
