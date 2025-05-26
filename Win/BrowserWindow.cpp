@@ -116,6 +116,7 @@ void BrowserWindow::resize(const int& w, const int& h)
     SetWindowPos(hwnd, nullptr, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER);
 }
 #pragma endregion
+
 void BrowserWindow::initWindow()
 {
     long winStyle;
@@ -206,17 +207,30 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     if (msg >= WM_MOUSEFIRST && msg <= WM_MOUSELAST)
     {
         if (!ctrlComp) goto sysProcess;
-        if (msg == WM_MOUSEMOVE && !isMouseTracking)
-        {
-            TRACKMOUSEEVENT tme = { sizeof(TRACKMOUSEEVENT) };
-            tme.dwFlags = TME_LEAVE;
-            tme.hwndTrack = hwnd;
-            TrackMouseEvent(&tme);
-            isMouseTracking = true;
-        }
+        DWORD mouseData = 0;
         POINT point{ .x{GET_X_LPARAM(lParam)},.y{GET_Y_LPARAM(lParam)} };
-        ctrlComp->SendMouseInput(static_cast<COREWEBVIEW2_MOUSE_EVENT_KIND>(msg),
-            static_cast<COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS>(GET_KEYSTATE_WPARAM(wParam)), 0, point);
+        //todo 鼠标按下 释放时 SetCapture  ReleaseCapture
+        if (msg == WM_MOUSEMOVE)
+        {
+            if(!isMouseTracking){
+                TRACKMOUSEEVENT tme = { sizeof(TRACKMOUSEEVENT) };
+                tme.dwFlags = TME_LEAVE;
+                tme.hwndTrack = hwnd;
+                TrackMouseEvent(&tme);
+                isMouseTracking = true;
+            }
+        }
+        else if (msg == WM_MOUSEWHEEL || msg == WM_MOUSEHWHEEL)
+        {
+            mouseData = GET_WHEEL_DELTA_WPARAM(wParam);
+            ScreenToClient(hwnd, &point);
+        }
+        else if(msg == WM_XBUTTONDBLCLK || msg == WM_XBUTTONDOWN || msg == WM_XBUTTONUP){
+            mouseData = GET_XBUTTON_WPARAM(wParam);
+        }
+        auto eventKind = static_cast<COREWEBVIEW2_MOUSE_EVENT_KIND>(msg);
+        auto eventKey = static_cast<COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS>(GET_KEYSTATE_WPARAM(wParam));
+        ctrlComp->SendMouseInput(eventKind,eventKey, mouseData, point);
         return true;
     }
     else if (msg == WM_NCHITTEST) {
