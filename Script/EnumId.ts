@@ -21,6 +21,7 @@ export enum WindowMethodId {
   move,
   close,
   destory,
+  flash,
   regEvent,
   unregEvent,
 }

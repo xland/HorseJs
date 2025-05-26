@@ -80,6 +80,23 @@ void BrowserWindow::destroy()
     PostMessage(hwnd, WM_DESTROY, 0, 0);
 }
 
+void BrowserWindow::flash(bool isStart)
+{
+    FLASHWINFO fwInfo = {};
+    fwInfo.cbSize = sizeof(FLASHWINFO);
+    fwInfo.hwnd = hwnd;
+    if (isStart) {
+        fwInfo.dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG;        
+    }
+    else
+    {
+        fwInfo.dwFlags = FLASHW_STOP;
+    }
+    fwInfo.uCount = 0;                   // uCount = 0 且设置了 FLASHW_TIMERNOFG 时，会持续闪烁直到窗口变为前台；
+    fwInfo.dwTimeout = 0;                 // 使用默认闪烁时间
+    FlashWindowEx(&fwInfo);
+}
+
 void BrowserWindow::initWindow()
 {
     long winStyle;

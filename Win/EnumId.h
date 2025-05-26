@@ -20,6 +20,7 @@ enum class WindowMethodId {
 	move,
 	close,
 	destory,
+	flash,
 	regEvent, 
 	unregEvent,
 };

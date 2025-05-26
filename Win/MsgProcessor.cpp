@@ -151,6 +151,10 @@ void MsgProcessor::processWin(const int& methodId, const rapidjson::Value& param
     else if (methodId == (int)WindowMethodId::destory) {
         win->destroy();
     }
+    else if (methodId == (int)WindowMethodId::flash) {
+        auto flag = arr[0].GetBool();
+        win->flash(flag);
+    }
     else if (methodId == (int)WindowMethodId::regEvent) {
         auto eventId = arr[0].GetInt();
         win->regEvent(eventId);

@@ -16,10 +16,11 @@
     <div id="btnRestore" class="btn">还原</div>
     <div id="btnResize" class="btn">改变大小</div>
     <div id="btnBindRes" class="btn">附加资源</div>
-    <div id="btnRegWinClose" class="btn">注册窗口关闭事件</div>
-    <div id="btnUnregWinClose" class="btn">取消注册窗口关闭事件</div>
     <div id="btnClose" class="btn">关闭窗口</div>
     <div id="btnDestory" class="btn">销毁窗口</div>
+    <div id="btnFlash" class="btn">闪烁窗口</div>
+    <div id="btnRegWinClose" class="btn">注册窗口关闭事件</div>
+    <div id="btnUnregWinClose" class="btn">取消注册窗口关闭事件</div>
     <script>
         let $ = (selector)=>document.querySelector(selector);
         window.addEventListener("DOMContentLoaded", () => {
@@ -58,6 +59,14 @@
             });
             $("#btnDestory").addEventListener("click", () => {
                 horse.window.destroy();
+            });
+            $("#btnFlash").addEventListener("click", () => {
+                setTimeout(()=>{
+                    horse.window.flash(true);
+                    setTimeout(()=>{
+                        horse.window.flash(false);
+                    },2000);
+                },2000);                
             });
             window.addEventListener('resize', ()=>{
                 //这是html自带的事件

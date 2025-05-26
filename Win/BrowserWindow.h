@@ -26,6 +26,7 @@ public:
 	void restore();
 	void close();
 	void destroy();
+	void flash(bool isStart);
 public:
 	wil::com_ptr<ICoreWebView2Controller> ctrl;
 	wil::com_ptr<ICoreWebView2CompositionController> ctrlComp;

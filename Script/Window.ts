@@ -29,6 +29,9 @@ export class Window extends Eventer {
   destroy() {
     return this.call(ClassId.Window, WindowMethodId.destory);
   }
+  flash(flag: boolean) {
+    return this.call(ClassId.Window, WindowMethodId.flash, flag);
+  }
   removeEventListener(eventName: string, cb: any) {
     if (!(eventName in WindowEventId)) return;
     let eId = WindowEventId[eventName as keyof typeof WindowEventId] as WindowEventId;
