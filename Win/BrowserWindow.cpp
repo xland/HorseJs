@@ -97,6 +97,19 @@ void BrowserWindow::flash(bool isStart)
     FlashWindowEx(&fwInfo);
 }
 
+void BrowserWindow::setResizable(bool flag)
+{
+    LONG style = GetWindowLong(hwnd, GWL_STYLE);
+    if (flag) {
+        style |= WS_THICKFRAME | WS_MAXIMIZEBOX;
+    }
+    else {
+        style &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
+    }
+    SetWindowLong(hwnd, GWL_STYLE, style);
+    SetWindowPos(hwnd, nullptr, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
+}
+
 void BrowserWindow::initWindow()
 {
     long winStyle;
@@ -109,6 +122,9 @@ void BrowserWindow::initWindow()
     }
     if (config->visible) {
         winStyle = winStyle | WS_VISIBLE;
+    }
+    if (!config->resizable) {
+        winStyle = winStyle & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX;
     }
     //WS_EX_APPWINDOW 确保窗口出现在任务栏
     hwnd = CreateWindowEx(WS_EX_APPWINDOW, getWinClsName().data(), config->title.data(), winStyle,

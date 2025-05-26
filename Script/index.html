@@ -19,6 +19,7 @@
     <div id="btnClose" class="btn">关闭窗口</div>
     <div id="btnDestory" class="btn">销毁窗口</div>
     <div id="btnFlash" class="btn">闪烁窗口</div>
+    <div id="btnSetResizable" class="btn">启用/禁止改变窗口大小</div>
     <div id="btnRegWinClose" class="btn">注册窗口关闭事件</div>
     <div id="btnUnregWinClose" class="btn">取消注册窗口关闭事件</div>
     <script>
@@ -50,6 +51,11 @@
             });
             $("#btnResize").addEventListener("click",async ()=>{
                 await horse.window.resize(1200, 600);
+            });
+            let isResizalbe = true;
+            $("#btnSetResizable").addEventListener("click",async ()=>{
+                isResizalbe = !isResizalbe;
+                await horse.window.setResizable(isResizalbe);
             });
             $("#btnBindRes").addEventListener("click", async () => {
                 horse.fs.addResToExe("D:\\project\\HorseJs\\x64\\Release\\UI\\", "D:\\project\\HorseJs\\x64\\Release\\HorseJs.exe");

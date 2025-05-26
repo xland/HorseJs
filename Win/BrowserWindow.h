@@ -27,6 +27,7 @@ public:
 	void close();
 	void destroy();
 	void flash(bool isStart);
+	void setResizable(bool flag);
 public:
 	wil::com_ptr<ICoreWebView2Controller> ctrl;
 	wil::com_ptr<ICoreWebView2CompositionController> ctrlComp;

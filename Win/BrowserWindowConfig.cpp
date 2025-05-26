@@ -50,6 +50,10 @@ BrowserWindowConfig::BrowserWindowConfig(const rapidjson::Value& config)
     {
         title = Util::convertToWStr(config["title"].GetString());
     }
+    if (config.HasMember("resizable") && config["resizable"].IsBool())
+    {
+        resizable = config["resizable"].GetBool();
+    }
 }
 
 BrowserWindowConfig::~BrowserWindowConfig()

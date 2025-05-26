@@ -104,17 +104,20 @@
     flash(flag) {
       return this.call(3 /* Window */, 9 /* flash */, flag);
     }
+    setResizable(flag) {
+      return this.call(3 /* Window */, 10 /* setResizable */, flag);
+    }
     removeEventListener(eventName, cb) {
       if (!(eventName in WindowEventId)) return;
       let eId = WindowEventId[eventName];
       this.off(eId, cb);
-      return this.call(3 /* Window */, 11 /* unregEvent */, eId);
+      return this.call(3 /* Window */, 12 /* unregEvent */, eId);
     }
     addEventListener(eventName, cb) {
       if (!(eventName in WindowEventId)) return;
       let eId = WindowEventId[eventName];
       this.on(eId, cb);
-      return this.call(3 /* Window */, 10 /* regEvent */, eId);
+      return this.call(3 /* Window */, 11 /* regEvent */, eId);
     }
   };
 

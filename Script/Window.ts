@@ -32,6 +32,9 @@ export class Window extends Eventer {
   flash(flag: boolean) {
     return this.call(ClassId.Window, WindowMethodId.flash, flag);
   }
+  setResizable(flag: boolean) {
+    return this.call(ClassId.Window, WindowMethodId.setResizable, flag);
+  }
   removeEventListener(eventName: string, cb: any) {
     if (!(eventName in WindowEventId)) return;
     let eId = WindowEventId[eventName as keyof typeof WindowEventId] as WindowEventId;

@@ -21,6 +21,7 @@ enum class WindowMethodId {
 	close,
 	destory,
 	flash,
+	setResizable,
 	regEvent, 
 	unregEvent,
 };
