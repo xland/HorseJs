@@ -42,6 +42,7 @@ public:
 	std::unique_ptr<Page> page;
 public:
 	bool closingIsReg{ false };
+	bool sizePosChangedIsReg{ false };
 protected:
 private:
 	void bindCompCtrlToHwnd();

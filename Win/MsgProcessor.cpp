@@ -55,7 +55,7 @@ void MsgProcessor::processStr(const std::string& msgStr)
     //items.PushBack(number2, parsor.getAllocator());
     //parsor.addValue("param", std::move(items));
     // 
-    //必须放在后面
+    //返回值，必须放在后面，因为win有可能被销毁
     if (!this->win || !this->page) return;
     std::wstring jsonStr = parsor.parse();
     page->webview->PostWebMessageAsJson(jsonStr.data());
@@ -82,14 +82,18 @@ void MsgProcessor::emit(const int& classId, const int& eventId, int count, ...)
 
 void MsgProcessor::emitWin(const int& eventId, int count, va_list args, JsonParsor& parsor)
 {
-    //if (eventId == (int)WindowEventId::sized) {
-    //    int w = va_arg(args, int);
-    //    int h = va_arg(args, int);
-    //    rapidjson::Value items(rapidjson::kArrayType);
-    //    items.PushBack(rapidjson::Value(w), parsor.getAllocator());
-    //    items.PushBack(rapidjson::Value(h), parsor.getAllocator());
-    //    parsor.addValue("param", std::move(items));
-    //}
+    if (eventId == (int)WindowEventId::sizePosChanged) {
+        int x = va_arg(args, int);
+        int y = va_arg(args, int);
+        int w = va_arg(args, int);
+        int h = va_arg(args, int);
+        rapidjson::Value items(rapidjson::kArrayType);
+        items.PushBack(rapidjson::Value(x), parsor.getAllocator());
+        items.PushBack(rapidjson::Value(y), parsor.getAllocator());
+        items.PushBack(rapidjson::Value(w), parsor.getAllocator());
+        items.PushBack(rapidjson::Value(h), parsor.getAllocator());
+        parsor.addValue("param", std::move(items));
+    }
 }
 
 void MsgProcessor::emitPage(const int& msgId, int count, va_list args, JsonParsor& parsor)

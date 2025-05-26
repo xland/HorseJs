@@ -17,6 +17,7 @@
     <div id="btnResize" class="btn">改变大小</div>
     <div id="btnBindRes" class="btn">附加资源</div>
     <div id="btnRegWinClose" class="btn">注册窗口关闭事件</div>
+    <div id="btnUnregWinClose" class="btn">取消注册窗口关闭事件</div>
     <div id="btnClose" class="btn">关闭窗口</div>
     <div id="btnDestory" class="btn">销毁窗口</div>
     <input type="text" value="asdfasdfasdf" />
@@ -40,9 +41,12 @@
             })
             $("#btnRegWinClose").addEventListener("click",()=>{
                 horse.window.addEventListener("closing", async ()=>{
-                    alert("确定要关闭窗口吗");
-                    await horse.window.removeEventListener("closing");
+                    alert("现在你只能用销毁窗口关闭此窗口了");
                 });
+            });
+            $("#btnUnregWinClose").addEventListener("click",async ()=>{
+                await horse.window.removeEventListener("closing");
+                alert("现在你可以正常关闭窗口了");
             });
             $("#btnResize").addEventListener("click",async ()=>{
                 await horse.window.resize(1200, 600);
@@ -56,9 +60,13 @@
             $("#btnDestory").addEventListener("click", () => {
                 horse.window.destroy();
             });
-            window.addEventListener('resize', function() {
+            window.addEventListener('resize', ()=>{
+                //这是html自带的事件
                 console.log('宽度：' + window.innerWidth + '高度：' + window.innerHeight);
             });
+            horse.window.addEventListener("sizePosChanged",(x,y,w,h)=>{
+                console.log(`x:${x},y:${y},w:${w},h:${h}`);
+            })
         });
     </script>
     </body>

@@ -68,6 +68,7 @@
   // EnumId.ts
   var WindowEventId = /* @__PURE__ */ ((WindowEventId2) => {
     WindowEventId2[WindowEventId2["closing"] = 0] = "closing";
+    WindowEventId2[WindowEventId2["sizePosChanged"] = 1] = "sizePosChanged";
     return WindowEventId2;
   })(WindowEventId || {});
 
@@ -143,6 +144,5 @@
       });
     }
   };
-  console.log(123);
   globalThis.horse = new Horse();
 })();

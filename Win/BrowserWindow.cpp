@@ -27,12 +27,18 @@ void BrowserWindow::regEvent(const int& eventId)
     if (eventId == (int)WindowEventId::closing) {
         closingIsReg = true;
     }
+    else if (eventId == (int)WindowEventId::sizePosChanged) {
+        sizePosChangedIsReg = true;
+    }
 }
 
 void BrowserWindow::unregEvent(const int& eventId)
 {
     if (eventId == (int)WindowEventId::closing) {
         closingIsReg = false;
+    }
+    else if (eventId == (int)WindowEventId::sizePosChanged) {
+        sizePosChangedIsReg = false;
     }
 }
 
@@ -239,6 +245,9 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         config->y = pos->y;
         config->w = pos->cx;
         config->h = pos->cy;
+        if (sizePosChangedIsReg) {
+            msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::sizePosChanged, 4, config->x, config->y, config->w, config->h);
+        }        
     }
     sysProcess:
     return DefWindowProc(hwnd, msg, wParam, lParam);

@@ -24,6 +24,7 @@ enum class WindowMethodId {
 	unregEvent,
 };
 enum class WindowEventId {
-	closing
+	closing,
+	sizePosChanged
 };
 

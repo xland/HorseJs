@@ -26,4 +26,5 @@ export enum WindowMethodId {
 }
 export enum WindowEventId {
   closing,
+  sizePosChanged,
 }
