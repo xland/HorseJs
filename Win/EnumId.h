@@ -33,6 +33,7 @@ enum class WindowMethodId {
 };
 enum class WindowEventId {
 	closing,
-	sizePosChanged
+	sizePosChanged,
+	stateChanged
 };
 

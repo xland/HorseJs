@@ -206,6 +206,8 @@
   <ItemGroup>
     <CopyFileToFolders Include="Script\config.json" />
     <CopyFileToFolders Include="Script\index.html" />
+    <CopyFileToFolders Include="Script\css\iconfont.woff2" />
+    <CopyFileToFolders Include="Script\css\iconfont.css" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

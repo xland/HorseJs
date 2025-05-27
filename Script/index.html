@@ -2,26 +2,54 @@
     <head>
         <meta charset="UTF-8">
         <title>HorseJs</title>
+        <link rel="stylesheet" href="css/iconfont.css">
         <style>
             html,body{
-                margin: 0px;padding: 0px;
+                margin: 0px;padding: 0px;font-size: 12px;
             }
             .btn{cursor: pointer; background: #eee; display: inline-block; user-select: none;
                 border-radius: 3px; margin: 6px; padding: 6px;}
             .btn:hover{background: #888; color: #fff;}
-            .titleBar{
-                background: #CCD5F0;user-select: none;line-height: 38px;height: 38px;padding-left: 12px;
-                app-region: drag;
+            #titleBar{
+                background: #CCD5F0;user-select: none;line-height: 32px;height: 32px;display: flex;
+            }
+            #titleBox{
+                padding-left: 12px;
+                flex: 1;
+            }
+            .titleBtn{
+                width: 38px;
+                text-align: center;
+                cursor: pointer;
+            }
+            .titleBtn:hover{
+                background: #E9EEFF;
+            }
+            #btnCloseT:hover{
+                background: red !important;
+                color: #fff !important;
+            }
+            i{
+                font-size: 12px !important;
             }
             .box{
                 padding: 12px;
             }
+
         </style>
     </head>
     <body>
-        <div class="titleBar">html自定义窗口标题栏</div>
+        <div id="titleBar">
+            <div id="titleBox">html自定义窗口标题栏</div>
+            <div id="btnMinimizeT" class="titleBtn"><i class="iconfont horse-minimize"></i></div>
+            <div id="btnMaximizeT" class="titleBtn"><i class="iconfont horse-maximize"></i></div>
+            <div id="btnRestoreT" class="titleBtn" style="display:none;"><i class="iconfont horse-restore"></i></div>
+            <div id="btnCloseT" class="titleBtn"><i class="iconfont horse-close"></i></div>
+        </div>
         <div class="box">
+            <p>horse</p>
             <div id="btnGetConfig" class="btn">获取App配置</div>
+            <p>window</p>
             <div id="btnMaximize" class="btn">最大化</div>
             <div id="btnMinimize" class="btn">最小化</div>
             <div id="btnShow" class="btn">显示</div>
@@ -39,9 +67,30 @@
 
     <script>
         let $ = (selector)=>document.querySelector(selector);
+        let initTitleBar = ()=>{
+            $("#btnMaximizeT").addEventListener("click",async ()=>{
+                await horse.window.maximize();
+                $("#btnMaximizeT").setAttribute('style', 'display:none;');
+                $("#btnRestoreT").setAttribute('style',"");
+            })
+            $("#btnMinimizeT").addEventListener("click",()=>{
+                horse.window.minimize();
+            })
+            $("#btnCloseT").addEventListener("click", () => {
+                horse.window.close();
+            });
+            $("#btnRestoreT").addEventListener("click",()=>{
+                horse.window.restore();
+                $("#btnMaximizeT").setAttribute('style', '');
+                $("#btnRestoreT").setAttribute('style', 'display:none;');
+            })
+            horse.window.addEventListener("stateChangedIsReg",async (state)=>{
+
+            })
+        }
         window.addEventListener("DOMContentLoaded", async () => {
-            horse.window.show();
-            $(".titleBar").addEventListener("mousedown",async ()=>{
+            initTitleBar();
+            $("#titleBox").addEventListener("mousedown",async ()=>{
                 horse.window.startDrag();
             })
             $("#btnGetConfig").addEventListener("click",async ()=>{
@@ -97,6 +146,7 @@
                     },2000);
                 },2000);                
             });
+            horse.window.show();
         });
         window.addEventListener('resize', ()=>{
             //这是html自带的事件

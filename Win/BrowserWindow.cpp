@@ -31,6 +31,9 @@ void BrowserWindow::regEvent(const int& eventId)
     else if (eventId == (int)WindowEventId::sizePosChanged) {
         sizePosChangedIsReg = true;
     }
+    else if (eventId == (int)WindowEventId::stateChanged) {
+        stateChangedIsReg = true;
+    }
 }
 
 void BrowserWindow::unregEvent(const int& eventId)
@@ -41,6 +44,9 @@ void BrowserWindow::unregEvent(const int& eventId)
     else if (eventId == (int)WindowEventId::sizePosChanged) {
         sizePosChangedIsReg = false;
     }
+    else if (eventId == (int)WindowEventId::stateChanged) {
+        stateChangedIsReg = false;
+    }
 }
 
 void BrowserWindow::maximize()
@@ -50,6 +56,12 @@ void BrowserWindow::maximize()
 
 void BrowserWindow::minimize()
 {
+    if (ctrlComp){
+        //由于窗口最小化了，WebView2 内部的 Chromium 引擎判定视图不可见，不再处理鼠标事件。
+        //todo 还得拦截这个消息： case WM_SYSCOMMAND: switch (wParam & 0xFFF0) { case SC_MINIMIZE:
+        ctrlComp->SendMouseInput(COREWEBVIEW2_MOUSE_EVENT_KIND_LEAVE,
+            COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS_NONE, 0, POINT{});
+    }
     ShowWindow(hwnd, SW_MINIMIZE);
 }
 void BrowserWindow::show()
@@ -234,6 +246,7 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         isMouseTracking = false;
         if (!ctrlComp) goto sysProcess;
+        //ctrlComp->SendMouseInput(COREWEBVIEW2_MOUSE_EVENT_KIND_MOVE, COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS_NONE, 0, POINT{-999999,-999999 });
         ctrlComp->SendMouseInput(COREWEBVIEW2_MOUSE_EVENT_KIND_LEAVE,
             COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS_NONE, 0, POINT{});
         return true;
@@ -273,15 +286,27 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         }
         return false;
     }
+    else if (msg == WM_SIZE) {
+        if(!stateChangedIsReg) goto sysProcess;
+        if (wParam == SIZE_MAXIMIZED) {
+            msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::stateChanged, 1, 0);
+        }
+        else if (wParam == SIZE_MINIMIZED) {
+            msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::stateChanged, 1, 1);
+        }
+        else if (wParam == SIZE_RESTORED) {
+            msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::stateChanged, 1, 2);
+        }
+    }
     else if (msg == WM_WINDOWPOSCHANGED) {
         WINDOWPOS* pos = reinterpret_cast<WINDOWPOS*>(lParam);
         config->x = pos->x;
         config->y = pos->y;
         config->w = pos->cx;
         config->h = pos->cy;
+        if (!ctrl) goto sysProcess;
         RECT bounds;
         GetClientRect(hwnd, &bounds);
-        if (!ctrl) goto sysProcess;
         ctrl->put_Bounds(bounds);
         if (sizePosChangedIsReg) {
             msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::sizePosChanged, 4, config->x, config->y, config->w, config->h);

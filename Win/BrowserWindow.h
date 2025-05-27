@@ -46,6 +46,7 @@ public:
 public:
 	bool closingIsReg{ false };
 	bool sizePosChangedIsReg{ false };
+	bool stateChangedIsReg{ false };
 protected:
 private:
 	void setWindowStyle(long& exStyle, long& style);
