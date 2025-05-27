@@ -69,7 +69,7 @@
   var WindowEventId = /* @__PURE__ */ ((WindowEventId2) => {
     WindowEventId2[WindowEventId2["closing"] = 0] = "closing";
     WindowEventId2[WindowEventId2["sizePosChanged"] = 1] = "sizePosChanged";
-    WindowEventId2[WindowEventId2["stateChangedIsReg"] = 2] = "stateChangedIsReg";
+    WindowEventId2[WindowEventId2["stateChanged"] = 2] = "stateChanged";
     return WindowEventId2;
   })(WindowEventId || {});
 

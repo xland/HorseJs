@@ -99,6 +99,12 @@ void MsgProcessor::emitWin(const int& eventId, int count, va_list args, JsonPars
         items.PushBack(rapidjson::Value(h), parsor.getAllocator());
         parsor.addValue("param", std::move(items));
     }
+    else if (eventId == (int)WindowEventId::stateChanged) {
+        int state = va_arg(args, int);
+        rapidjson::Value items(rapidjson::kArrayType);
+        items.PushBack(rapidjson::Value(state), parsor.getAllocator());
+        parsor.addValue("param", std::move(items));
+    }
 }
 
 void MsgProcessor::emitPage(const int& msgId, int count, va_list args, JsonParsor& parsor)

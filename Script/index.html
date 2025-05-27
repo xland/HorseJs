@@ -70,8 +70,6 @@
         let initTitleBar = ()=>{
             $("#btnMaximizeT").addEventListener("click",async ()=>{
                 await horse.window.maximize();
-                $("#btnMaximizeT").setAttribute('style', 'display:none;');
-                $("#btnRestoreT").setAttribute('style',"");
             })
             $("#btnMinimizeT").addEventListener("click",()=>{
                 horse.window.minimize();
@@ -81,11 +79,16 @@
             });
             $("#btnRestoreT").addEventListener("click",()=>{
                 horse.window.restore();
-                $("#btnMaximizeT").setAttribute('style', '');
-                $("#btnRestoreT").setAttribute('style', 'display:none;');
-            })
-            horse.window.addEventListener("stateChangedIsReg",async (state)=>{
 
+            })
+            horse.window.addEventListener("stateChanged",async (state)=>{
+                if(state == 0){
+                    $("#btnMaximizeT").setAttribute('style', 'display:none;');
+                    $("#btnRestoreT").setAttribute('style',"");
+                }else if(state == 2){
+                    $("#btnMaximizeT").setAttribute('style', '');
+                    $("#btnRestoreT").setAttribute('style', 'display:none;');
+                }
             })
         }
         window.addEventListener("DOMContentLoaded", async () => {

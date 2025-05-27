@@ -277,12 +277,25 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         return false;
     }
     else if (msg == WM_GETMINMAXINFO) {
-        MINMAXINFO* mminfo = (PMINMAXINFO)lParam;
-        mminfo->ptMinTrackSize.x = config->minWidth;
-        mminfo->ptMinTrackSize.y = config->minHeight;
+        MINMAXINFO* mmi = (PMINMAXINFO)lParam;
+        HMONITOR hMonitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+        if (hMonitor) {
+            MONITORINFO mi = { sizeof(mi) };
+            if (GetMonitorInfo(hMonitor, &mi)) {
+                RECT workArea = mi.rcWork;
+                RECT monitorArea = mi.rcMonitor;
+
+                mmi->ptMaxPosition.x = workArea.left - monitorArea.left;
+                mmi->ptMaxPosition.y = workArea.top - monitorArea.top;
+                mmi->ptMaxSize.x = workArea.right - workArea.left;
+                mmi->ptMaxSize.y = workArea.bottom - workArea.top;
+            }
+        }
+        mmi->ptMinTrackSize.x = config->minWidth;
+        mmi->ptMinTrackSize.y = config->minHeight;
         if (!config->maximizable) {
-            mminfo->ptMaxTrackSize.x = config->maxWidth;
-            mminfo->ptMaxTrackSize.y = config->maxHeight;
+            mmi->ptMaxTrackSize.x = config->maxWidth;
+            mmi->ptMaxTrackSize.y = config->maxHeight;
         }
         return false;
     }
