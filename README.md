@@ -164,6 +164,15 @@ horse.window.addEventListener("closing", async ()=>{
 ## horse.window.page的方法
 ## horse.window.page的事件
 
+## FAQ
+
+- 为什么不能在一个窗口的页面内操作另一个窗口？
+```
+方法执行完是有返回值的，返回值是通过消息发送给目标窗口的。
+如果要实现此需求，发送任何一个消息时，都要遍历窗口列表。
+况且还要考虑在A窗口内，注册B窗口的事件。
+```
+
 
 ## 下载
 

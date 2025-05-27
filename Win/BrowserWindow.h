@@ -30,6 +30,7 @@ public:
 	void flash(bool isStart);
 	void setResizable(bool flag);
 	void startDrag();
+	void openWindow();
 public:
 	wil::com_ptr<ICoreWebView2Controller> ctrl;
 	wil::com_ptr<ICoreWebView2CompositionController> ctrlComp;

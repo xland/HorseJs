@@ -3,9 +3,10 @@
 #include <winrt/Windows.Foundation.h>
 
 #include "Page.h"
+#include "BrowserWindowConfig.h"
 #include "BrowserWindow.h"
-#include "../Res/Res.h"
 #include "MsgProcessor.h"
+#include "../Res/Res.h"
 #include "../App/App.h"
 
 using namespace Microsoft;
@@ -95,17 +96,23 @@ void Page::load()
 
 void Page::loadResource()
 {
-	auto hInstance = App::get()->hInstance;
-    HRSRC hResource = FindResourceW(hInstance, MAKEINTRESOURCEW(IDR_JS), RT_RCDATA);
-    if (!hResource) throw std::runtime_error("Failed to find resource");
-    HGLOBAL hLoadedResource = LoadResource(hInstance, hResource);
-    if (!hLoadedResource) throw std::runtime_error("Failed to load resource");
-    DWORD resourceSize = SizeofResource(hInstance, hResource);
-    if (resourceSize == 0) throw std::runtime_error("Resource size is zero");
-    void* pResourceData = LockResource(hLoadedResource);
-    if (!pResourceData) throw std::runtime_error("Failed to lock resource");
-    std::wstring script = Util::convertToWStr((char*)pResourceData);
-    auto hr = webview->AddScriptToExecuteOnDocumentCreated(script.data(), nullptr);
+    const static std::wstring resScript = []() {
+        auto hInstance = App::get()->hInstance;
+        HRSRC hResource = FindResourceW(hInstance, MAKEINTRESOURCEW(IDR_JS), RT_RCDATA);
+        if (!hResource) throw std::runtime_error("Failed to find resource");
+        HGLOBAL hLoadedResource = LoadResource(hInstance, hResource);
+        if (!hLoadedResource) throw std::runtime_error("Failed to load resource");
+        DWORD resourceSize = SizeofResource(hInstance, hResource);
+        if (resourceSize == 0) throw std::runtime_error("Resource size is zero");
+        void* pResourceData = LockResource(hLoadedResource);
+        if (!pResourceData) throw std::runtime_error("Failed to lock resource");
+        std::string utf8Script((char*)pResourceData, resourceSize);
+        std::wstring script = Util::convertToWStr(utf8Script.data());
+        return script;
+        }();
+    auto hr = webview->AddScriptToExecuteOnDocumentCreated(resScript.data(), nullptr);
+    auto script = std::format(L"horse.id={};__HORSE_ID={};", win->config->id, win->config->id);
+    hr = webview->AddScriptToExecuteOnDocumentCreated(script.data(), nullptr);
     if (FAILED(hr)) {
         auto a = 1;
     }

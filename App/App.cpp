@@ -12,6 +12,7 @@
 #include "AppConfig.h"
 #include "Fs.h"
 #include "../Win/BrowserWindow.h"
+#include "../Win/BrowserWindowConfig.h"
 using namespace Microsoft;
 namespace {
     std::unique_ptr<App> app;
@@ -28,14 +29,11 @@ App::~App()
 
 void App::onWindowDestroy(BrowserWindow* win)
 {
-    windows.erase(std::remove_if(windows.begin(), windows.end(),
-        [win](const std::unique_ptr<BrowserWindow>& ptr) {
-            return ptr.get() == win;
-        }),
-        windows.end());
-    if (config->quitWhenAllWindowClosed && windows.empty()) {
+    winMap.erase(win->config->id);
+    if (config->quitWhenAllWindowClosed && winMap.empty()) {
         PostQuitMessage(0);
     }
+    
 }
 
 App* App::get()
@@ -146,7 +144,8 @@ HRESULT App::envReady(HRESULT result, ICoreWebView2Environment* env)
     auto win = std::make_unique<BrowserWindow>(winConfig);
     win->load(winConfig["page"]);
     config->releaseJsonDoc();
-    windows.push_back(std::move(win));   
+    //windows.push_back(std::move(win));
+    winMap.insert({ win->config->id,std::move(win)});
     return S_OK;
 }
 

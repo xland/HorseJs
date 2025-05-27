@@ -7,6 +7,8 @@
 #include <wrl.h>
 #include <wil/com.h>
 #include <WebView2.h>
+#include <memory>
+#include <unordered_map>
 #include "Util.h"
 #include "AppConfig.h"
 #include "../Lib/rapidjson/document.h"
@@ -26,7 +28,7 @@ public:
 	wil::com_ptr<ICoreWebView2Environment> env;
 	HINSTANCE hInstance;
 private:
-	std::vector<std::unique_ptr<BrowserWindow>> windows;
+	std::unordered_map<int, std::unique_ptr<BrowserWindow>> winMap;
 private:
 	void start();
 	bool checkRuntime();

@@ -163,6 +163,10 @@ void MsgProcessor::processWin(const int& methodId, const rapidjson::Value& param
     else if (methodId == (int)WindowMethodId::startDrag) {
         win->startDrag();
     }
+    else if (methodId == (int)WindowMethodId::openWindow) {
+        //auto eventId = arr[0].GetObject();
+        win->openWindow();
+    }
     else if (methodId == (int)WindowMethodId::regEvent) {
         auto eventId = arr[0].GetInt();
         win->regEvent(eventId);

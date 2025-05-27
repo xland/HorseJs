@@ -56,7 +56,7 @@
       this.on(eventId, wrapper);
     }
     // 调用原生方法并返回 Promise
-    call(classId, methodId, ...params) {
+    call(obj) {
       return new Promise((resolve, reject) => {
         const eventId = util.randomNum();
         this.once(eventId, (result) => {
@@ -66,7 +66,8 @@
             resolve(result);
           }
         });
-        window.chrome.webview.postMessage({ classId, methodId, eventId, params });
+        obj.eventId = eventId;
+        window.chrome.webview.postMessage(obj);
       });
     }
   };
@@ -81,8 +82,9 @@
 
   // Window.ts
   var Window = class extends Eventer {
+    id;
     maximize() {
-      return this.call(3 /* Window */, 0 /* maximize */);
+      return this.callMethod("maximize");
     }
     minimize() {
       return this.call(3 /* Window */, 1 /* minimize */);
@@ -117,17 +119,29 @@
     setResizable(flag) {
       return this.call(3 /* Window */, 11 /* setResizable */, flag);
     }
+    openWindow(config) {
+      return this.call(3 /* Window */, 12 /* openWindow */, config);
+    }
     removeEventListener(eventName, cb) {
       if (!(eventName in WindowEventId)) return;
       let eId = WindowEventId[eventName];
       this.off(eId, cb);
-      return this.call(3 /* Window */, 13 /* unregEvent */, eId);
+      return this.call(3 /* Window */, 14 /* unregEvent */, eId);
     }
     addEventListener(eventName, cb) {
       if (!(eventName in WindowEventId)) return;
       let eId = WindowEventId[eventName];
       this.on(eId, cb);
-      return this.call(3 /* Window */, 12 /* regEvent */, eId);
+      return this.call(3 /* Window */, 13 /* regEvent */, eId);
+    }
+    callMethod(methodName, ...params) {
+      return this.call({
+        className: "window",
+        methodName,
+        params,
+        srcId: globalThis.__HORSE_ID,
+        tarId: this.id
+      });
     }
   };
 
@@ -140,6 +154,7 @@
 
   // Horse.ts
   var Horse = class extends Eventer {
+    id;
     window;
     fs;
     webview;

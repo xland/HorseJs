@@ -133,6 +133,11 @@ void BrowserWindow::startDrag()
     SendMessage(hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
 }
 
+void BrowserWindow::openWindow()
+{
+
+}
+
 void BrowserWindow::resize(const int& w, const int& h)
 {
     SetWindowPos(hwnd, nullptr, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER);

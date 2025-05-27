@@ -3,6 +3,7 @@ import { ClassId, HorseMethodId } from "./EnumId";
 import { Fs } from "./Fs";
 import { Eventer } from "./Eventer";
 class Horse extends Eventer {
+  id: number;
   window: Window;
   fs: Fs;
   webview;

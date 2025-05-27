@@ -46,7 +46,7 @@ export class Eventer {
     this.on(eventId, wrapper);
   }
   // 调用原生方法并返回 Promise
-  call(classId: number, methodId: number, ...params: any[]) {
+  call(obj: any) {
     return new Promise((resolve, reject) => {
       const eventId = util.randomNum();
       this.once(eventId, (result: any) => {
@@ -56,7 +56,8 @@ export class Eventer {
           resolve(result);
         }
       });
-      window.chrome.webview.postMessage({ classId, methodId, eventId, params });
+      obj.eventId = eventId;
+      window.chrome.webview.postMessage(obj);
     });
   }
 }

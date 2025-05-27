@@ -2,8 +2,9 @@ import { Eventer } from "./Eventer";
 import { WindowMethodId, ClassId, WindowEventId } from "./EnumId";
 
 export class Window extends Eventer {
+  id: number;
   maximize() {
-    return this.call(ClassId.Window, WindowMethodId.maximize);
+    return this.callMethod("maximize");
   }
   minimize() {
     return this.call(ClassId.Window, WindowMethodId.minimize);
@@ -38,6 +39,9 @@ export class Window extends Eventer {
   setResizable(flag: boolean) {
     return this.call(ClassId.Window, WindowMethodId.setResizable, flag);
   }
+  openWindow(config: object) {
+    return this.call(ClassId.Window, WindowMethodId.openWindow, config);
+  }
   removeEventListener(eventName: string, cb: any) {
     if (!(eventName in WindowEventId)) return;
     let eId = WindowEventId[eventName as keyof typeof WindowEventId] as WindowEventId;
@@ -49,5 +53,14 @@ export class Window extends Eventer {
     let eId = WindowEventId[eventName as keyof typeof WindowEventId] as WindowEventId;
     this.on(eId, cb);
     return this.call(ClassId.Window, WindowMethodId.regEvent, eId);
+  }
+  private callMethod(methodName: string, ...params: any[]) {
+    return this.call({
+      className: "window",
+      methodName,
+      params,
+      srcId: globalThis.__HORSE_ID,
+      tarId: this.id,
+    });
   }
 }

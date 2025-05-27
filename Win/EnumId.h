@@ -28,6 +28,7 @@ enum class WindowMethodId {
 	flash,
 	startDrag,
 	setResizable,
+	openWindow,
 	regEvent, 
 	unregEvent,
 };

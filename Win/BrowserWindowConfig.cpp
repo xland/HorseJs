@@ -2,6 +2,9 @@
 
 BrowserWindowConfig::BrowserWindowConfig(const rapidjson::Value& config)
 {
+    static int orgId{ 0 };
+    id = orgId;
+    orgId += 1;
     setSize(config);
     setPos(config);
     if (config.HasMember("visible") && config["visible"].IsBool())
