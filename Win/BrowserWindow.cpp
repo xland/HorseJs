@@ -284,7 +284,6 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             if (GetMonitorInfo(hMonitor, &mi)) {
                 RECT workArea = mi.rcWork;
                 RECT monitorArea = mi.rcMonitor;
-
                 mmi->ptMaxPosition.x = workArea.left - monitorArea.left;
                 mmi->ptMaxPosition.y = workArea.top - monitorArea.top;
                 mmi->ptMaxSize.x = workArea.right - workArea.left;

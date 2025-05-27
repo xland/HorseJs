@@ -4,8 +4,13 @@
         <title>HorseJs</title>
         <link rel="stylesheet" href="css/iconfont.css">
         <style>
-            html,body{
+            html{
+                margin: 0px;padding: 0px;
+            }
+            body{
                 margin: 0px;padding: 0px;font-size: 12px;
+                display: flex;flex-direction: column; 
+                height: 100%; width: 100%;               
             }
             .btn{cursor: pointer; background: #eee; display: inline-block; user-select: none;
                 border-radius: 3px; margin: 6px; padding: 6px;}
@@ -34,6 +39,8 @@
             }
             .box{
                 padding: 12px;
+                flex: 1;
+                overflow-y: auto;
             }
 
         </style>
