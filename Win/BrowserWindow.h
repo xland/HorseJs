@@ -6,6 +6,7 @@
 #include <wil/com.h>
 #include <WebView2.h>
 #include "../App/Util.h"
+#include "../App/JsonParsor.h"
 
 class Page;
 class BrowserWindowConfig;
@@ -19,7 +20,7 @@ public:
 	void resize(const int& w, const int& h);
 	void regEvent(const int& eventId);
 	void unregEvent(const int& eventId);
-	void maximize();
+	void maximize(JsonParsor& result);
 	void minimize();
 	void show();
 	void hide();

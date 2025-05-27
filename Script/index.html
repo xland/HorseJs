@@ -88,8 +88,8 @@
                 horse.window.restore();
 
             })
-            horse.window.addEventListener("stateChanged",async (state)=>{
-                if(state == 0){
+            horse.window.addEventListener("stateChanged",async (result)=>{
+                if(result.state == 0){
                     $("#btnMaximizeT").setAttribute('style', 'display:none;');
                     $("#btnRestoreT").setAttribute('style',"");
                 }else if(state == 2){
@@ -107,8 +107,8 @@
                 let config = await horse.getConfig();
                 console.log(config);
             })
-            $("#btnMaximize").addEventListener("click",()=>{
-                horse.window.maximize();
+            $("#btnMaximize").addEventListener("click",async ()=>{
+                await horse.window.maximize();
             })
             $("#btnMinimize").addEventListener("click",()=>{
                 horse.window.minimize();
@@ -158,12 +158,8 @@
             });
             horse.window.show();
         });
-        window.addEventListener('resize', ()=>{
-            //这是html自带的事件
-            console.log('宽度：' + window.innerWidth + '高度：' + window.innerHeight);
-        });
-        horse.window.addEventListener("sizePosChanged",(x,y,w,h)=>{
-            console.log(`x:${x},y:${y},w:${w},h:${h}`);
+        horse.window.addEventListener("sizePosChanged",(data)=>{
+            console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
         })
     </script>
     </body>

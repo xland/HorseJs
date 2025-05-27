@@ -16,6 +16,7 @@ class JsonParsor
 		void addNumber(const std::string& name, const double& value);
 		void addBool(const std::string& name, const bool& value);
 		void addValue(const std::string& name, rapidjson::Value&& value);
+		void addParsor(const std::string& name, const JsonParsor&& parsor);
 		std::wstring parse();
 	protected:
 	private:

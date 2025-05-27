@@ -44,7 +44,7 @@ export class Window extends Eventer {
     this.off(eId, cb);
     return this.call(ClassId.Window, WindowMethodId.unregEvent, eId);
   }
-  addEventListener(eventName: string, cb: (...args: any[]) => void) {
+  addEventListener(eventName: string, cb: (data: any) => void) {
     if (!(eventName in WindowEventId)) return;
     let eId = WindowEventId[eventName as keyof typeof WindowEventId] as WindowEventId;
     this.on(eId, cb);

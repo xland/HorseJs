@@ -17,8 +17,7 @@ MsgProcessor::~MsgProcessor()
 }
 
 void MsgProcessor::processStr(const std::string& msgStr)
-{
-    
+{    
     rapidjson::Document jsonDoc;
     jsonDoc.Parse(msgStr.data());
     int classId{-1}, methodId{ -1 }, eventId{ -1 };
@@ -50,16 +49,6 @@ void MsgProcessor::processStr(const std::string& msgStr)
     else if (classId == (int)ClassId::Fs) {
         processFs(methodId, jsonDoc["params"], parsor);
     }
-    
-    
-
-    //rapidjson::Value items(rapidjson::kArrayType);
-    //rapidjson::Value number1(42); // 第一个数字
-    //rapidjson::Value number2(3.14); // 第二个数字（支持浮点数）
-    //items.PushBack(number1, parsor.getAllocator());
-    //items.PushBack(number2, parsor.getAllocator());
-    //parsor.addValue("param", std::move(items));
-    // 
     //返回值，必须放在后面，因为win有可能被销毁
     if (!this->win || !this->page) return;
     std::wstring jsonStr = parsor.parse();
@@ -92,18 +81,18 @@ void MsgProcessor::emitWin(const int& eventId, int count, va_list args, JsonPars
         int y = va_arg(args, int);
         int w = va_arg(args, int);
         int h = va_arg(args, int);
-        rapidjson::Value items(rapidjson::kArrayType);
-        items.PushBack(rapidjson::Value(x), parsor.getAllocator());
-        items.PushBack(rapidjson::Value(y), parsor.getAllocator());
-        items.PushBack(rapidjson::Value(w), parsor.getAllocator());
-        items.PushBack(rapidjson::Value(h), parsor.getAllocator());
-        parsor.addValue("param", std::move(items));
+        rapidjson::Value result(rapidjson::kObjectType);
+        result.AddMember("x", rapidjson::Value(x), parsor.getAllocator());
+        result.AddMember("y", rapidjson::Value(y), parsor.getAllocator());
+        result.AddMember("w", rapidjson::Value(w), parsor.getAllocator());
+        result.AddMember("h", rapidjson::Value(h), parsor.getAllocator());
+        parsor.addValue("data", std::move(result));
     }
     else if (eventId == (int)WindowEventId::stateChanged) {
         int state = va_arg(args, int);
-        rapidjson::Value items(rapidjson::kArrayType);
-        items.PushBack(rapidjson::Value(state), parsor.getAllocator());
-        parsor.addValue("param", std::move(items));
+        rapidjson::Value result(rapidjson::kObjectType);
+        result.AddMember("state", rapidjson::Value(state), parsor.getAllocator());
+        parsor.addValue("data", std::move(result));
     }
 }
 
@@ -133,8 +122,9 @@ void MsgProcessor::processPage(const int& methodId, const rapidjson::Value& para
 void MsgProcessor::processWin(const int& methodId, const rapidjson::Value& params, JsonParsor& parsor)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
+    JsonParsor result;
     if (methodId == (int)WindowMethodId::maximize) {
-        win->maximize();
+        win->maximize(result);
     }
     else if (methodId == (int)WindowMethodId::minimize) {
         win->minimize();
@@ -181,6 +171,7 @@ void MsgProcessor::processWin(const int& methodId, const rapidjson::Value& param
         auto eventId = arr[0].GetInt();
         win->unregEvent(eventId);
     }
+    parsor.addParsor("data", std::move(result));
 }
 
 void MsgProcessor::processFs(const int& methodId, const rapidjson::Value& params, JsonParsor& parsor)
@@ -204,8 +195,6 @@ void MsgProcessor::processHorse(const int& methodId, const rapidjson::Value& par
         rapidjson::Document doc;
         doc.Parse(str.data());
         rapidjson::Value copiedValue(doc, parsor.getAllocator());
-        rapidjson::Value items(rapidjson::kArrayType);
-        items.PushBack(copiedValue, parsor.getAllocator());
-        parsor.addValue("param", std::move(items));
+        parsor.addValue("data", std::move(copiedValue));
     }
 }

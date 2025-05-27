@@ -49,8 +49,12 @@ void BrowserWindow::unregEvent(const int& eventId)
     }
 }
 
-void BrowserWindow::maximize()
+void BrowserWindow::maximize(JsonParsor& result)
 {
+    if (!config->maximizable) {
+        result.addString("err", "failed due to the maximizable or maxSize settings in config.json.");
+        return;
+    }
     ShowWindow(hwnd, SW_MAXIMIZE);
 }
 

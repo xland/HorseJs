@@ -25,13 +25,15 @@
       }
     }
     // 发射事件
-    emit(eventId, ...args) {
+    emit(eventId, result) {
       const handlers = this.dic[eventId];
       if (!handlers || handlers.length === 0) {
         console.warn(`\u6CA1\u6709\u627E\u5230\u8BE5\u4E8B\u4EF6\u7684\u76D1\u542C\u51FD\u6570\uFF1A${eventId}`);
         return;
       }
-      handlers.forEach((handler) => handler(...args));
+      handlers.forEach((handler) => {
+        handler(result);
+      });
     }
     // 取消监听事件
     off(eventId, callback) {
@@ -47,9 +49,9 @@
     }
     // 监听一次性事件
     once(eventId, callback) {
-      const wrapper = (...args) => {
+      const wrapper = (result) => {
         this.off(eventId, wrapper);
-        callback(...args);
+        callback(result);
       };
       this.on(eventId, wrapper);
     }
@@ -58,7 +60,11 @@
       return new Promise((resolve, reject) => {
         const eventId = util.randomNum();
         this.once(eventId, (result) => {
-          resolve(result);
+          if (result.err) {
+            reject(new Error(result.err));
+          } else {
+            resolve(result);
+          }
         });
         window.chrome.webview.postMessage({ classId, methodId, eventId, params });
       });
@@ -149,11 +155,10 @@
     }
     listenMsg() {
       this.webview.addEventListener("message", (e) => {
-        if (!e.data.param) e.data.param = [];
         if (e.data.classId === 2 /* Horse */) {
-          this.emit(e.data.eventId, ...e.data.param);
+          this.emit(e.data.eventId, e.data.data);
         } else if (e.data.classId === 3 /* Window */) {
-          this.window.emit(e.data.eventId, ...e.data.param);
+          this.window.emit(e.data.eventId, e.data.data);
         }
       });
     }

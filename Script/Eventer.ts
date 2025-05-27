@@ -1,5 +1,5 @@
 import { util } from "./Util";
-type EventHandler = (...args: any[]) => void;
+type EventHandler = (result: any) => void;
 export class Eventer {
   private dic = {};
   constructor() {}
@@ -13,13 +13,15 @@ export class Eventer {
   }
 
   // 发射事件
-  emit(eventId: number, ...args: any[]): void {
+  emit(eventId: number, result: any): void {
     const handlers = this.dic[eventId];
     if (!handlers || handlers.length === 0) {
       console.warn(`没有找到该事件的监听函数：${eventId}`);
       return;
     }
-    handlers.forEach((handler) => handler(...args));
+    handlers.forEach((handler) => {
+      handler(result);
+    });
   }
 
   // 取消监听事件
@@ -37,18 +39,22 @@ export class Eventer {
 
   // 监听一次性事件
   once(eventId: number, callback: EventHandler): void {
-    const wrapper = (...args: any[]) => {
+    const wrapper = (result: any) => {
       this.off(eventId, wrapper);
-      callback(...args);
+      callback(result);
     };
     this.on(eventId, wrapper);
   }
   // 调用原生方法并返回 Promise
-  call<T = any>(classId: number, methodId: number, ...params: any[]): Promise<T> {
+  call(classId: number, methodId: number, ...params: any[]) {
     return new Promise((resolve, reject) => {
       const eventId = util.randomNum();
-      this.once(eventId, (result: T) => {
-        resolve(result);
+      this.once(eventId, (result: any) => {
+        if (result.err) {
+          reject(new Error(result.err));
+        } else {
+          resolve(result);
+        }
       });
       window.chrome.webview.postMessage({ classId, methodId, eventId, params });
     });
