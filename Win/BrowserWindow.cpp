@@ -111,6 +111,12 @@ void BrowserWindow::setResizable(bool flag)
     SetWindowPos(hwnd, nullptr, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
 }
 
+void BrowserWindow::startDrag()
+{
+    ReleaseCapture();
+    SendMessage(hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
+}
+
 void BrowserWindow::resize(const int& w, const int& h)
 {
     SetWindowPos(hwnd, nullptr, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER);

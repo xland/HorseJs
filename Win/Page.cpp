@@ -66,6 +66,10 @@ void Page::load()
     auto webView12 = webview.try_query<ICoreWebView2_12>();
     hr = webView12->add_StatusBarTextChanged(statusChangeCB.Get(), &statusToken);
 
+    //todo
+    // ICoreWebView2Controller::put_IsDefaultContextMenuEnabled(false)
+    //todo
+    //ICoreWebView2Controller::put_DefaultBackgroundColor + ICoreWebView2CompositionController::SetCursor 等接口实现透明窗口支持（可选）
 
     Gdiplus::GdiplusStartupInput gdiplusStartupInput;
     ULONG_PTR gdiplusToken_;

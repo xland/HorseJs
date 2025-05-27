@@ -26,6 +26,7 @@ export enum WindowMethodId {
   close,
   destory,
   flash,
+  startDrag,
   setResizable,
   regEvent,
   unregEvent,

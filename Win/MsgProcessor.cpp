@@ -164,6 +164,9 @@ void MsgProcessor::processWin(const int& methodId, const rapidjson::Value& param
         auto flag = arr[0].GetBool();
         win->setResizable(flag);
     }
+    else if (methodId == (int)WindowMethodId::startDrag) {
+        win->startDrag();
+    }
     else if (methodId == (int)WindowMethodId::regEvent) {
         auto eventId = arr[0].GetInt();
         win->regEvent(eventId);

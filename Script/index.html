@@ -11,6 +11,7 @@
             .btn:hover{background: #888; color: #fff;}
             .titleBar{
                 background: #CCD5F0;user-select: none;line-height: 38px;height: 38px;padding-left: 12px;
+                app-region: drag;
             }
             .box{
                 padding: 12px;
@@ -40,6 +41,9 @@
         let $ = (selector)=>document.querySelector(selector);
         window.addEventListener("DOMContentLoaded", async () => {
             horse.window.show();
+            $(".titleBar").addEventListener("mousedown",async ()=>{
+                horse.window.startDrag();
+            })
             $("#btnGetConfig").addEventListener("click",async ()=>{
                 let config = await horse.getConfig();
                 console.log(config);

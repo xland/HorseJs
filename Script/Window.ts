@@ -32,6 +32,9 @@ export class Window extends Eventer {
   flash(flag: boolean) {
     return this.call(ClassId.Window, WindowMethodId.flash, flag);
   }
+  startDrag() {
+    return this.call(ClassId.Window, WindowMethodId.startDrag);
+  }
   setResizable(flag: boolean) {
     return this.call(ClassId.Window, WindowMethodId.setResizable, flag);
   }
