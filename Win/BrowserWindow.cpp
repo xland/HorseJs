@@ -12,7 +12,7 @@
 
 
 
-BrowserWindow::BrowserWindow(rapidjson::Value& winConfig)
+BrowserWindow::BrowserWindow(const rapidjson::Value& winConfig)
     : config{std::make_unique<BrowserWindowConfig>(winConfig)},
     eventFlag{
         {"closing",false},
@@ -144,10 +144,13 @@ void BrowserWindow::startDrag(const rapidjson::Value& params, JsonParsor& result
 void BrowserWindow::openWindow(const rapidjson::Value& params, JsonParsor& result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
-    auto win = std::make_unique<BrowserWindow>(arr[0]);
-    win->load(arr[0]["page"]);
-    //windows.push_back(std::move(win));
-    winMap.insert({ win->config->id,std::move(win) });
+	const rapidjson::Value& value = arr[0];
+    auto win = std::make_unique<BrowserWindow>(value);
+    if (value.HasMember("page") && value["page"].IsObject()) {
+        const rapidjson::Value& pageObject = value["page"];
+        win->load(pageObject);
+    }
+    App::get()->winMap.insert({ win->config->id,std::move(win) });
 }
 
 void BrowserWindow::resize(const rapidjson::Value& params, JsonParsor& result)
@@ -386,7 +389,7 @@ LRESULT BrowserWindow::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
     }
 }
 
-bool BrowserWindow::load(rapidjson::Value& pageConfig)
+bool BrowserWindow::load(const rapidjson::Value& pageConfig)
 {
     page = std::make_unique<Page>(this);
     page->init(pageConfig);

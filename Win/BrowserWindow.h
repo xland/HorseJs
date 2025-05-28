@@ -16,9 +16,9 @@ class MsgProcessor;
 class BrowserWindow
 {
 public:
-	BrowserWindow(rapidjson::Value& winConfig);
+	BrowserWindow(const rapidjson::Value& winConfig);
 	~BrowserWindow();
-	bool load(rapidjson::Value& pageConfig);
+	bool load(const rapidjson::Value& pageConfig);
 public:
 	void show(const rapidjson::Value& params, JsonParsor& result);
 	void hide(const rapidjson::Value& params, JsonParsor& result);

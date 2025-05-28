@@ -28,8 +28,8 @@ public:
 	std::unique_ptr<AppConfig> config;
 	wil::com_ptr<ICoreWebView2Environment> env;
 	HINSTANCE hInstance;
-private:
 	std::unordered_map<int, std::unique_ptr<BrowserWindow>> winMap;
+private:
 private:
 	void start();
 	bool checkRuntime();
