@@ -40,11 +40,22 @@ export class Window extends Eventer {
   openWindow(config: object) {
     return this.callMethod("openWindow", config);
   }
+  addEventListener(eventName, func) {
+    let flag = this.on(eventName, func);
+    if (flag) {
+      this.callMethod("addEventListener", eventName);
+    }
+  }
+  removeEventListener(eventName, func) {
+    let flag = this.off(eventName, func);
+    if (flag) {
+      this.callMethod("removeEventListener", eventName);
+    }
+  }
   private callMethod(methodName: string, ...params: any[]) {
     return this.call({
       className: "window",
-      srcId: globalThis.__HORSE_ID,
-      tarId: this.id,
+      winId: globalThis.__WIN_ID,
       methodName,
       params,
     });

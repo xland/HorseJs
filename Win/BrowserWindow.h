@@ -17,11 +17,6 @@ public:
 	BrowserWindow(rapidjson::Value& winConfig);
 	~BrowserWindow();
 	bool load(rapidjson::Value& pageConfig);
-	void resize(const int& w, const int& h);
-	void regEvent(const int& eventId);
-	void unregEvent(const int& eventId);
-	void setResizable(bool flag);
-	void openWindow();
 public:
 	void show(const rapidjson::Value& params, JsonParsor& result);
 	void hide(const rapidjson::Value& params, JsonParsor& result);
@@ -32,6 +27,11 @@ public:
 	void close(const rapidjson::Value& params, JsonParsor& result);
 	void destroy(const rapidjson::Value& params, JsonParsor& result);
 	void startDrag(const rapidjson::Value& params, JsonParsor& result);
+	void openWindow(const rapidjson::Value& params, JsonParsor& result);
+	void setResizable(const rapidjson::Value& params, JsonParsor& result);
+	void resize(const rapidjson::Value& params, JsonParsor& result);
+	void addEventListener(const rapidjson::Value& params, JsonParsor& result);
+	void removeEventListener(const rapidjson::Value& params, JsonParsor& result);
 public:
 	wil::com_ptr<ICoreWebView2Controller> ctrl;
 	wil::com_ptr<ICoreWebView2CompositionController> ctrlComp;
@@ -44,17 +44,18 @@ public:
 	HWND hwnd;
 	wil::unique_hicon favicon;
 	std::unique_ptr<BrowserWindowConfig> config;
-	//std::unique_ptr<MsgProcessor> msgProcessor;
+	std::unordered_map<std::string, bool> eventFlag;
 	std::unique_ptr<Page> page;
-public:
-	bool closingIsReg{ false };
-	bool sizePosChangedIsReg{ false };
-	bool stateChangedIsReg{ false };
 protected:
 private:
 	void setWindowStyle(long& exStyle, long& style);
 	void bindCompCtrlToHwnd();
 	void initWindow();
+	void sizePosChanged(WINDOWPOS* winPos);
+	void stateChanged(const int& state);
+	void closing();
+	void setMinMaxInfo(MINMAXINFO* mmi);
+	void routeMsgToPage(UINT msg, WPARAM wParam, LPARAM lParam);
 	std::wstring& getWinClsName();
 	int hittest(const POINT& pt);
 	static LRESULT CALLBACK winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);

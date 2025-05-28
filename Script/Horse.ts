@@ -18,17 +18,16 @@ class Horse extends Eventer {
   private listenMsg() {
     this.webview.addEventListener("message", (e) => {
       if (e.data.className === "horse") {
-        this.emit(e.data.eventId, e.data.data);
+        this.emit(e.data.eventName, e.data);
       } else if (e.data.className === "window") {
-        this.window.emit(e.data.eventId, e.data.data);
+        this.window.emit(e.data.eventName, e.data);
       }
     });
   }
   private callMethod(methodName: string, ...params: any[]) {
     return this.call({
       className: "horse",
-      srcId: globalThis.__HORSE_ID,
-      tarId: this.id,
+      winId: globalThis.__WIN_ID,
       methodName,
       params,
     });

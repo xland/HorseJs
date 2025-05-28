@@ -110,8 +110,9 @@ void Page::loadResource()
         std::wstring script = Util::convertToWStr(utf8Script.data());
         return script;
         }();
-    auto str = std::format(L"__HORSE_ID={};",win->config->id) + resScript;
+    auto str = std::format(L"__WIN_ID={};",win->config->id);
     auto hr = webview->AddScriptToExecuteOnDocumentCreated(str.data(), nullptr);
+    hr = webview->AddScriptToExecuteOnDocumentCreated(resScript.data(), nullptr);
     if (FAILED(hr)) {
         auto a = 1;
     }

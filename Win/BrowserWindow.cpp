@@ -13,10 +13,14 @@ using namespace Microsoft;
 
 
 BrowserWindow::BrowserWindow(rapidjson::Value& winConfig)
-    : config{std::make_unique<BrowserWindowConfig>(winConfig)}
+    : config{std::make_unique<BrowserWindowConfig>(winConfig)},
+    eventFlag{
+        {"closing",false},
+        {"sizePosChanged",false},
+        {"stateChanged",false},
+    }
 {
     initWindow();
-
 }
 
 BrowserWindow::~BrowserWindow()
@@ -25,30 +29,24 @@ BrowserWindow::~BrowserWindow()
 
 #pragma region JsMethod
 
-void BrowserWindow::regEvent(const int& eventId)
+void BrowserWindow::addEventListener(const rapidjson::Value& params, JsonParsor& result)
 {
-    if (eventId == (int)WindowEventId::closing) {
-        closingIsReg = true;
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    auto eventName = arr[0].GetString();
+    if (!eventFlag.contains(eventName)) {
+        result.addString("err", "doesn't have this event.");
     }
-    else if (eventId == (int)WindowEventId::sizePosChanged) {
-        sizePosChangedIsReg = true;
-    }
-    else if (eventId == (int)WindowEventId::stateChanged) {
-        stateChangedIsReg = true;
-    }
+    eventFlag[eventName] = true;
 }
 
-void BrowserWindow::unregEvent(const int& eventId)
+void BrowserWindow::removeEventListener(const rapidjson::Value& params, JsonParsor& result)
 {
-    if (eventId == (int)WindowEventId::closing) {
-        closingIsReg = false;
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    auto eventName = arr[0].GetString();
+    if (!eventFlag.contains(eventName)) {
+        result.addString("err", "doesn't have this event.");
     }
-    else if (eventId == (int)WindowEventId::sizePosChanged) {
-        sizePosChangedIsReg = false;
-    }
-    else if (eventId == (int)WindowEventId::stateChanged) {
-        stateChangedIsReg = false;
-    }
+    eventFlag[eventName] = false;
 }
 
 void BrowserWindow::maximize(const rapidjson::Value& params, JsonParsor& result)
@@ -118,8 +116,10 @@ void BrowserWindow::flash(const rapidjson::Value& params, JsonParsor& result)
     FlashWindowEx(&fwInfo);
 }
 
-void BrowserWindow::setResizable(bool flag)
+void BrowserWindow::setResizable(const rapidjson::Value& params, JsonParsor& result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    auto flag = arr[0].GetBool();
     LONG style = GetWindowLong(hwnd, GWL_STYLE);
     if (flag) {
         style |= WS_THICKFRAME | WS_MAXIMIZEBOX;
@@ -137,13 +137,16 @@ void BrowserWindow::startDrag(const rapidjson::Value& params, JsonParsor& result
     SendMessage(hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
 }
 
-void BrowserWindow::openWindow()
+void BrowserWindow::openWindow(const rapidjson::Value& params, JsonParsor& result)
 {
 
 }
 
-void BrowserWindow::resize(const int& w, const int& h)
+void BrowserWindow::resize(const rapidjson::Value& params, JsonParsor& result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    auto w = arr[0].GetInt();
+    auto h = arr[0].GetInt();
     SetWindowPos(hwnd, nullptr, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER);
 }
 #pragma endregion
@@ -164,6 +167,161 @@ void BrowserWindow::initWindow()
         DwmSetWindowAttribute(hwnd, DWMWA_ALLOW_NCPAINT, &value, sizeof(value));
     }
 
+}
+LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    if (msg >= WM_MOUSEFIRST && msg <= WM_MOUSELAST)
+    {
+        routeMsgToPage(msg, wParam, lParam);
+        return true;
+    }
+    else if (msg == WM_NCHITTEST) {
+        POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+        ScreenToClient(hwnd, &pt);
+        return hittest(pt);
+    }
+    else if (msg == WM_MOUSELEAVE)
+    {
+        isMouseTracking = false;
+        if (!ctrlComp) goto sysProcess;
+        ctrlComp->SendMouseInput(COREWEBVIEW2_MOUSE_EVENT_KIND_LEAVE,
+            COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS_NONE, 0, POINT{});
+        return true;
+    }
+    else if(msg == WM_SETCURSOR){
+        if (LOWORD(lParam) != HTCLIENT) goto sysProcess;
+        if (!ctrlComp) goto sysProcess;
+        HCURSOR cursor = nullptr;
+        auto hr = ctrlComp->get_Cursor(&cursor);
+        if (FAILED(hr)) return false;
+        if(!cursor) goto sysProcess;
+        SetCursor(cursor);
+        return true;
+    }
+    else if (msg == WM_CLOSE) {
+        closing();
+        return false;
+    }
+    else if (msg == WM_DESTROY) {
+        SetWindowLongPtr(hwnd, GWLP_USERDATA, 0);
+        App::get()->onWindowDestroy(this);
+        return false;
+    }
+    else if (msg == WM_GETMINMAXINFO) {
+        MINMAXINFO* mmi = (PMINMAXINFO)lParam;
+        setMinMaxInfo(mmi);
+        return false;
+    }
+    else if (msg == WM_SIZE) {
+        stateChanged(wParam);
+    }
+    else if (msg == WM_WINDOWPOSCHANGED) {
+        WINDOWPOS* winPos = reinterpret_cast<WINDOWPOS*>(lParam);
+        sizePosChanged(winPos);
+    }
+    sysProcess:
+    return DefWindowProc(hwnd, msg, wParam, lParam);
+}
+
+void BrowserWindow::sizePosChanged(WINDOWPOS* winPos)
+{
+    config->x = winPos->x;
+    config->y = winPos->y;
+    config->w = winPos->cx;
+    config->h = winPos->cy;
+    if (!ctrl) return;
+    RECT bounds;
+    GetClientRect(hwnd, &bounds);
+    ctrl->put_Bounds(bounds);
+    if (!eventFlag["sizePosChanged"]) return;
+    JsonParsor eventData;
+    eventData.addString("className", "window");
+    eventData.addString("eventName", "sizePosChanged");
+    eventData.addNumber("x", config->x);
+    eventData.addNumber("y", config->y);
+    eventData.addNumber("w", config->w);
+    eventData.addNumber("h", config->h);
+    std::wstring jsonStr = eventData.parse();
+    page->webview->PostWebMessageAsJson(jsonStr.data());
+}
+void BrowserWindow::stateChanged(const int& state)
+{
+    if (!ctrl || !eventFlag["stateChanged"]) return;
+    JsonParsor eventData;
+    eventData.addString("className", "window");
+    eventData.addString("eventName", "stateChanged");
+    if (state == SIZE_MAXIMIZED) {
+        eventData.addString("state", "maximize");
+    }
+    else if (state == SIZE_MINIMIZED) {
+        eventData.addString("state", "minimize");
+    }
+    else if (state == SIZE_RESTORED) {
+        eventData.addString("state", "restore");
+    }
+    std::wstring jsonStr = eventData.parse();
+    page->webview->PostWebMessageAsJson(jsonStr.data());
+}
+void BrowserWindow::closing()
+{
+    if (eventFlag["closing"]) {
+        JsonParsor eventData;
+        eventData.addString("className", "window");
+        eventData.addString("eventName", "closing");
+        std::wstring jsonStr = eventData.parse();
+        page->webview->PostWebMessageAsJson(jsonStr.data());
+        return; //阻止窗口关闭
+    }
+    DestroyWindow(hwnd);
+}
+void BrowserWindow::setMinMaxInfo(MINMAXINFO* mmi)
+{
+    HMONITOR hMonitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+    if (hMonitor) {
+        MONITORINFO mi = { sizeof(mi) };
+        if (GetMonitorInfo(hMonitor, &mi)) {
+            RECT workArea = mi.rcWork;
+            RECT monitorArea = mi.rcMonitor;
+            mmi->ptMaxPosition.x = workArea.left - monitorArea.left;
+            mmi->ptMaxPosition.y = workArea.top - monitorArea.top;
+            mmi->ptMaxSize.x = workArea.right - workArea.left;
+            mmi->ptMaxSize.y = workArea.bottom - workArea.top;
+        }
+    }
+    mmi->ptMinTrackSize.x = config->minWidth;
+    mmi->ptMinTrackSize.y = config->minHeight;
+    if (!config->maximizable) {
+        mmi->ptMaxTrackSize.x = config->maxWidth;
+        mmi->ptMaxTrackSize.y = config->maxHeight;
+    }
+}
+void BrowserWindow::routeMsgToPage(UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    if (!ctrlComp) return;
+    DWORD mouseData = 0;
+    POINT point{ .x{GET_X_LPARAM(lParam)},.y{GET_Y_LPARAM(lParam)} };
+    //todo 鼠标按下 释放时 SetCapture  ReleaseCapture
+    if (msg == WM_MOUSEMOVE)
+    {
+        if (!isMouseTracking) {
+            TRACKMOUSEEVENT tme = { sizeof(TRACKMOUSEEVENT) };
+            tme.dwFlags = TME_LEAVE;
+            tme.hwndTrack = hwnd;
+            TrackMouseEvent(&tme);
+            isMouseTracking = true;
+        }
+    }
+    else if (msg == WM_MOUSEWHEEL || msg == WM_MOUSEHWHEEL)
+    {
+        mouseData = GET_WHEEL_DELTA_WPARAM(wParam);
+        ScreenToClient(hwnd, &point);
+    }
+    else if (msg == WM_XBUTTONDBLCLK || msg == WM_XBUTTONDOWN || msg == WM_XBUTTONUP) { //前进后退之类的按钮
+        mouseData = GET_XBUTTON_WPARAM(wParam);
+    }
+    auto eventKind = static_cast<COREWEBVIEW2_MOUSE_EVENT_KIND>(msg);
+    auto eventKey = static_cast<COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS>(GET_KEYSTATE_WPARAM(wParam));
+    ctrlComp->SendMouseInput(eventKind, eventKey, mouseData, point);
 }
 std::wstring& BrowserWindow::getWinClsName()
 {
@@ -217,128 +375,6 @@ LRESULT BrowserWindow::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
     else {
         return DefWindowProc(hwnd, msg, wParam, lParam);
     }
-}
-
-LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    if (msg >= WM_MOUSEFIRST && msg <= WM_MOUSELAST)
-    {
-        if (!ctrlComp) goto sysProcess;
-        DWORD mouseData = 0;
-        POINT point{ .x{GET_X_LPARAM(lParam)},.y{GET_Y_LPARAM(lParam)} };
-        //todo 鼠标按下 释放时 SetCapture  ReleaseCapture
-        if (msg == WM_MOUSEMOVE)
-        {
-            if(!isMouseTracking){
-                TRACKMOUSEEVENT tme = { sizeof(TRACKMOUSEEVENT) };
-                tme.dwFlags = TME_LEAVE;
-                tme.hwndTrack = hwnd;
-                TrackMouseEvent(&tme);
-                isMouseTracking = true;
-            }
-        }
-        else if (msg == WM_MOUSEWHEEL || msg == WM_MOUSEHWHEEL)
-        {
-            mouseData = GET_WHEEL_DELTA_WPARAM(wParam);
-            ScreenToClient(hwnd, &point);
-        }
-        else if(msg == WM_XBUTTONDBLCLK || msg == WM_XBUTTONDOWN || msg == WM_XBUTTONUP){ //前进后退之类的按钮
-            mouseData = GET_XBUTTON_WPARAM(wParam);
-        }
-        auto eventKind = static_cast<COREWEBVIEW2_MOUSE_EVENT_KIND>(msg);
-        auto eventKey = static_cast<COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS>(GET_KEYSTATE_WPARAM(wParam));
-        ctrlComp->SendMouseInput(eventKind,eventKey, mouseData, point);
-        return true;
-    }
-    else if (msg == WM_NCHITTEST) {
-        POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-        ScreenToClient(hwnd, &pt);
-        return hittest(pt);
-    }
-    else if (msg == WM_MOUSELEAVE)
-    {
-        isMouseTracking = false;
-        if (!ctrlComp) goto sysProcess;
-        //ctrlComp->SendMouseInput(COREWEBVIEW2_MOUSE_EVENT_KIND_MOVE, COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS_NONE, 0, POINT{-999999,-999999 });
-        ctrlComp->SendMouseInput(COREWEBVIEW2_MOUSE_EVENT_KIND_LEAVE,
-            COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS_NONE, 0, POINT{});
-        return true;
-    }
-    else if(msg == WM_SETCURSOR){
-        if (LOWORD(lParam) != HTCLIENT) goto sysProcess;
-        if (!ctrlComp) goto sysProcess;
-        HCURSOR cursor = nullptr;
-        auto hr = ctrlComp->get_Cursor(&cursor);
-        if (FAILED(hr)) return false;
-        if(!cursor) goto sysProcess;
-        SetCursor(cursor);
-        return true;
-    }
-    else if (msg == WM_CLOSE) {
-        if (closingIsReg) {
-            //msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::closing, 0);
-            return false; //阻止窗口关闭
-        }
-        DestroyWindow(hwnd);
-        return false;
-    }
-    else if (msg == WM_DESTROY) {
-        SetWindowLongPtr(hwnd, GWLP_USERDATA, 0);
-        //msgProcessor->win = nullptr;
-        //msgProcessor->page = nullptr;
-        App::get()->onWindowDestroy(this);
-        return false;
-    }
-    else if (msg == WM_GETMINMAXINFO) {
-        MINMAXINFO* mmi = (PMINMAXINFO)lParam;
-        HMONITOR hMonitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
-        if (hMonitor) {
-            MONITORINFO mi = { sizeof(mi) };
-            if (GetMonitorInfo(hMonitor, &mi)) {
-                RECT workArea = mi.rcWork;
-                RECT monitorArea = mi.rcMonitor;
-                mmi->ptMaxPosition.x = workArea.left - monitorArea.left;
-                mmi->ptMaxPosition.y = workArea.top - monitorArea.top;
-                mmi->ptMaxSize.x = workArea.right - workArea.left;
-                mmi->ptMaxSize.y = workArea.bottom - workArea.top;
-            }
-        }
-        mmi->ptMinTrackSize.x = config->minWidth;
-        mmi->ptMinTrackSize.y = config->minHeight;
-        if (!config->maximizable) {
-            mmi->ptMaxTrackSize.x = config->maxWidth;
-            mmi->ptMaxTrackSize.y = config->maxHeight;
-        }
-        return false;
-    }
-    else if (msg == WM_SIZE) {
-        if(!stateChangedIsReg) goto sysProcess;
-        if (wParam == SIZE_MAXIMIZED) {
-            //msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::stateChanged, 1, 0);
-        }
-        else if (wParam == SIZE_MINIMIZED) {
-            //msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::stateChanged, 1, 1);
-        }
-        else if (wParam == SIZE_RESTORED) {
-            //msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::stateChanged, 1, 2);
-        }
-    }
-    else if (msg == WM_WINDOWPOSCHANGED) {
-        WINDOWPOS* pos = reinterpret_cast<WINDOWPOS*>(lParam);
-        config->x = pos->x;
-        config->y = pos->y;
-        config->w = pos->cx;
-        config->h = pos->cy;
-        if (!ctrl) goto sysProcess;
-        RECT bounds;
-        GetClientRect(hwnd, &bounds);
-        ctrl->put_Bounds(bounds);
-        if (sizePosChangedIsReg) {
-            //msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::sizePosChanged, 4, config->x, config->y, config->w, config->h);
-        }        
-    }
-    sysProcess:
-    return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
 bool BrowserWindow::load(rapidjson::Value& pageConfig)

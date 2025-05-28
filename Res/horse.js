@@ -13,27 +13,32 @@
 
   // Eventer.ts
   var Eventer = class {
-    id;
     dic = {};
     constructor() {
-      this.id = globalThis.__HORSE_ID;
     }
     // 监听事件
     on(eventName, callback) {
       if (!this.dic[eventName]) {
         this.dic[eventName] = [callback];
-        if (!eventName.startsWith("once_")) {
-          return this.call({
-            className: "event",
-            srcId: globalThis.__HORSE_ID,
-            tarId: this.id,
-            methodName: "on",
-            params: [eventName]
-          });
-        }
+        return true;
       } else {
         this.dic[eventName].push(callback);
+        return false;
       }
+    }
+    // 取消监听事件
+    off(eventName, callback) {
+      const handlers = this.dic[eventName];
+      if (!handlers) return false;
+      if (callback) {
+        const index = handlers.findIndex((h) => h === callback);
+        if (index >= 0) handlers.splice(index, 1);
+      }
+      if (handlers.length === 0 || !callback) {
+        delete this.dic[eventName];
+        return true;
+      }
+      return false;
     }
     // 发射事件
     emit(eventName, result) {
@@ -45,18 +50,6 @@
       handlers.forEach((handler) => {
         handler(result);
       });
-    }
-    // 取消监听事件
-    off(eventName, callback) {
-      const handlers = this.dic[eventName];
-      if (!handlers) return;
-      if (!callback) {
-        delete this.dic[eventName];
-        return;
-      }
-      const index = handlers.findIndex((h) => h === callback);
-      if (index >= 0) handlers.splice(index, 1);
-      if (handlers.length === 0) delete this.dic[eventName];
     }
     // 监听一次性事件
     once(eventName, callback) {
@@ -123,11 +116,22 @@
     openWindow(config) {
       return this.callMethod("openWindow", config);
     }
+    addEventListener(eventName, func) {
+      let flag = this.on(eventName, func);
+      if (flag) {
+        this.callMethod("addEventListener", eventName);
+      }
+    }
+    removeEventListener(eventName, func) {
+      let flag = this.off(eventName, func);
+      if (flag) {
+        this.callMethod("removeEventListener", eventName);
+      }
+    }
     callMethod(methodName, ...params) {
       return this.call({
         className: "window",
-        srcId: globalThis.__HORSE_ID,
-        tarId: this.id,
+        winId: globalThis.__WIN_ID,
         methodName,
         params
       });
@@ -158,17 +162,16 @@
     listenMsg() {
       this.webview.addEventListener("message", (e) => {
         if (e.data.className === "horse") {
-          this.emit(e.data.eventId, e.data.data);
+          this.emit(e.data.eventName, e.data);
         } else if (e.data.className === "window") {
-          this.window.emit(e.data.eventId, e.data.data);
+          this.window.emit(e.data.eventName, e.data);
         }
       });
     }
     callMethod(methodName, ...params) {
       return this.call({
         className: "horse",
-        srcId: globalThis.__HORSE_ID,
-        tarId: this.id,
+        winId: globalThis.__WIN_ID,
         methodName,
         params
       });
