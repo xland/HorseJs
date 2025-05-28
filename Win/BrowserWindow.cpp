@@ -143,7 +143,11 @@ void BrowserWindow::startDrag(const rapidjson::Value& params, JsonParsor& result
 
 void BrowserWindow::openWindow(const rapidjson::Value& params, JsonParsor& result)
 {
-
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    auto win = std::make_unique<BrowserWindow>(arr[0]);
+    win->load(arr[0]["page"]);
+    //windows.push_back(std::move(win));
+    winMap.insert({ win->config->id,std::move(win) });
 }
 
 void BrowserWindow::resize(const rapidjson::Value& params, JsonParsor& result)
@@ -386,7 +390,6 @@ bool BrowserWindow::load(rapidjson::Value& pageConfig)
 {
     page = std::make_unique<Page>(this);
     page->init(pageConfig);
-    //msgProcessor = std::make_unique<MsgProcessor>(this, page.get());
     auto ctrlReadyCB = WRL::Callback<ICoreWebView2CreateCoreWebView2CompositionControllerCompletedHandler>(this, &BrowserWindow::ctrlReady);
     auto env3 = App::get()->env.try_query<ICoreWebView2Environment3>();
     auto result = env3->CreateCoreWebView2CompositionController(hwnd,ctrlReadyCB.Get());
