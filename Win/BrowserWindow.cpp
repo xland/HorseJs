@@ -9,7 +9,7 @@
 #include "../App/MsgProcessor.h"
 #include "EnumId.h"
 
-using namespace Microsoft;
+
 
 
 BrowserWindow::BrowserWindow(rapidjson::Value& winConfig)
@@ -120,6 +120,10 @@ void BrowserWindow::setResizable(const rapidjson::Value& params, JsonParsor& res
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     auto flag = arr[0].GetBool();
+    if (!config->frame) {
+        framelessResizable = flag;
+        return;
+    }
     LONG style = GetWindowLong(hwnd, GWL_STYLE);
     if (flag) {
         style |= WS_THICKFRAME | WS_MAXIMIZEBOX;
@@ -347,6 +351,7 @@ std::wstring& BrowserWindow::getWinClsName()
 
 int BrowserWindow::hittest(const POINT& pt)
 {
+    if(!framelessResizable) return HTCLIENT;
     RECT rcClient;
     GetClientRect(hwnd, &rcClient);
     const int border = 6;

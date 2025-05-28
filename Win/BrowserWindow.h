@@ -8,6 +8,8 @@
 #include "../App/Util.h"
 #include "../App/JsonParsor.h"
 
+using namespace Microsoft;
+using namespace winrt::Windows;
 class Page;
 class BrowserWindowConfig;
 class MsgProcessor;
@@ -35,11 +37,12 @@ public:
 public:
 	wil::com_ptr<ICoreWebView2Controller> ctrl;
 	wil::com_ptr<ICoreWebView2CompositionController> ctrlComp;
-	winrt::Windows::System::DispatcherQueueController m_dispatcherQueueController{ nullptr };
-	winrt::Windows::UI::Composition::Compositor m_compositor{ nullptr };
-	winrt::Windows::UI::Composition::Desktop::DesktopWindowTarget m_target{ nullptr };
-	winrt::Windows::UI::Composition::ContainerVisual m_rootVisual{ nullptr };
-	winrt::Windows::UI::Composition::ContainerVisual m_webViewVisual{ nullptr };
+
+	System::DispatcherQueueController m_dispatcherQueueController{ nullptr };
+	UI::Composition::Compositor m_compositor{ nullptr };
+	UI::Composition::Desktop::DesktopWindowTarget m_target{ nullptr };
+	UI::Composition::ContainerVisual m_rootVisual{ nullptr };
+	UI::Composition::ContainerVisual m_webViewVisual{ nullptr };
 
 	HWND hwnd;
 	wil::unique_hicon favicon;
@@ -63,6 +66,6 @@ private:
 	HRESULT ctrlReady(HRESULT result, ICoreWebView2CompositionController* ctrl);
 	HRESULT cursorChange(ICoreWebView2CompositionController*, IUnknown*);
 private:
-	bool isMouseTracking{ false };
+	bool isMouseTracking{ false }, framelessResizable{true};
 };
 
