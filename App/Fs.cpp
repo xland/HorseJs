@@ -15,13 +15,11 @@ Fs::~Fs()
 {
 }
 
-void Fs::init()
-{
-    fs = std::make_unique<Fs>();
-}
-
 Fs* Fs::get()
 {
+    if(!fs) {
+        fs = std::make_unique<Fs>();
+	}
     return fs.get();
 }
 
@@ -78,4 +76,52 @@ void Fs::addFileAsExeRes()
 void Fs::addExeRes()
 {
 
+}
+
+void Fs::stat(const rapidjson::Value& params, JsonParsor& result)
+{
+}
+
+void Fs::exists(const rapidjson::Value& params, JsonParsor& result)
+{
+}
+
+void Fs::readFile(const rapidjson::Value& params, JsonParsor& result)
+{
+}
+
+void Fs::writeFile(const rapidjson::Value& params, JsonParsor& result)
+{
+}
+
+void Fs::removeFile(const rapidjson::Value& params, JsonParsor& result)
+{
+}
+
+void Fs::removeDir(const rapidjson::Value& params, JsonParsor& result)
+{
+}
+
+void Fs::createDir(const rapidjson::Value& params, JsonParsor& result)
+{
+}
+
+void Fs::listDir(const rapidjson::Value& params, JsonParsor& result)
+{
+}
+
+void Fs::copyFile(const rapidjson::Value& params, JsonParsor& result)
+{
+}
+
+void Fs::moveFile(const rapidjson::Value& params, JsonParsor& result)
+{
+}
+
+void Fs::renameFile(const rapidjson::Value& params, JsonParsor& result)
+{
+}
+
+void Fs::watch(const rapidjson::Value& params, JsonParsor& result)
+{
 }

@@ -6,6 +6,7 @@
 #include "JsonParsor.h"
 #include "../Win/BrowserWindow.h"
 #include "../Win/Page.h"
+#include "Fs.h"
 
 namespace {
     std::unique_ptr<MsgProcessor> msgProcessor;
@@ -24,19 +25,29 @@ namespace {
         {"addEventListener", &BrowserWindow::addEventListener},
         {"removeEventListener", &BrowserWindow::removeEventListener},
     };
-    static std::unordered_map<std::string, void (BrowserWindow::*)(const rapidjson::Value&, JsonParsor&)> pageFunc = {
+    static std::unordered_map<std::string, void (Fs::*)(const rapidjson::Value&, JsonParsor&)> fsFunc = {
+        {"stat", &Fs::stat},
+        {"exists", &Fs::exists},
+        {"readFile", &Fs::readFile},
+        {"writeFile", &Fs::writeFile},
+        {"removeFile", &Fs::removeFile},
+        {"removeDir", &Fs::removeDir},
+        {"createDir", &Fs::createDir},
+        {"listDir", &Fs::listDir},
+        {"copyFile", &Fs::copyFile},
+        {"moveFile", &Fs::moveFile},
+        {"renameFile", &Fs::renameFile},
+        {"watch", &Fs::watch},
+    };
+    static std::unordered_map<std::string, void (BrowserWindow::*)(const rapidjson::Value&, JsonParsor&)> osFunc = {
         {"maximize", &BrowserWindow::maximize},
     };
-    static std::unordered_map<std::string, void (BrowserWindow::*)(const rapidjson::Value&, JsonParsor&)> fsFunc = {
-        {"maximize", &BrowserWindow::maximize},
-    };
-}
-
-void MsgProcessor::init() {
-    msgProcessor = std::make_unique<MsgProcessor>();
 }
 
 MsgProcessor* MsgProcessor::get() {
+    if (!msgProcessor) {
+        msgProcessor = std::make_unique<MsgProcessor>();
+    }
     return msgProcessor.get();
 }
 

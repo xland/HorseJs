@@ -62,7 +62,6 @@ void App::start()
     if (path.empty()) {
         return;
     }
-    Fs::init();
 
     //auto options = WRL::Make<CoreWebView2EnvironmentOptions>();
     //options->put_AdditionalBrowserArguments(L"--allow-file-access-from-files");

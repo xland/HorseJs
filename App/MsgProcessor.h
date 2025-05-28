@@ -10,7 +10,6 @@ class MsgProcessor
 public:
 	MsgProcessor();
 	~MsgProcessor();
-	static void init();
 	static MsgProcessor* get();
 	void processStr(const std::string& msgStr);
 public:
