@@ -86,13 +86,12 @@
             });
             $("#btnRestoreT").addEventListener("click",()=>{
                 horse.window.restore();
-
             })
             horse.window.addEventListener("stateChanged",async (result)=>{
-                if(result.state == 0){
+                if(result.state == "maximize"){
                     $("#btnMaximizeT").setAttribute('style', 'display:none;');
                     $("#btnRestoreT").setAttribute('style',"");
-                }else if(state == 2){
+                }else if(result.state == "restore"){
                     $("#btnMaximizeT").setAttribute('style', '');
                     $("#btnRestoreT").setAttribute('style', 'display:none;');
                 }
@@ -156,11 +155,13 @@
                     },2000);
                 },2000);                
             });
+            horse.window.addEventListener("sizePosChanged",(data)=>{
+                // console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
+            })
+            
             horse.window.show();
         });
-        horse.window.addEventListener("sizePosChanged",(data)=>{
-            console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
-        })
+
     </script>
     </body>
 </html>
