@@ -1,9 +1,7 @@
 import { Window } from "./Window";
-import { ClassId, HorseMethodId } from "./EnumId";
 import { Fs } from "./Fs";
 import { Eventer } from "./Eventer";
 class Horse extends Eventer {
-  id: number;
   window: Window;
   fs: Fs;
   webview;
@@ -15,15 +13,24 @@ class Horse extends Eventer {
     this.listenMsg();
   }
   getConfig() {
-    return this.call(ClassId.Horse, HorseMethodId.getConfig);
+    return this.callMethod("getConfig");
   }
   private listenMsg() {
     this.webview.addEventListener("message", (e) => {
-      if (e.data.classId === ClassId.Horse) {
+      if (e.data.className === "horse") {
         this.emit(e.data.eventId, e.data.data);
-      } else if (e.data.classId === ClassId.Window) {
+      } else if (e.data.className === "window") {
         this.window.emit(e.data.eventId, e.data.data);
       }
+    });
+  }
+  private callMethod(methodName: string, ...params: any[]) {
+    return this.call({
+      className: "horse",
+      srcId: globalThis.__HORSE_ID,
+      tarId: this.id,
+      methodName,
+      params,
     });
   }
 }

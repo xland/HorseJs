@@ -41,6 +41,11 @@ App* App::get()
     return app.get();
 }
 
+BrowserWindow* App::getWindow(const int& id)
+{
+    return winMap[id].get();
+}
+
 void App::init(HINSTANCE hInstance)
 {
     app = std::make_unique<App>(hInstance);

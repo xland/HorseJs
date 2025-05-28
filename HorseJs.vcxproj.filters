@@ -39,7 +39,7 @@
     <ClCompile Include="App\AppConfig.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Win\MsgProcessor.cpp">
+    <ClCompile Include="App\MsgProcessor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="App\Fs.cpp">
@@ -196,7 +196,7 @@
     <ClInclude Include="Win\EnumId.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Win\MsgProcessor.h">
+    <ClInclude Include="App\MsgProcessor.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="App\Fs.h">

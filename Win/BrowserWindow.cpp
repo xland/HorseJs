@@ -6,15 +6,17 @@
 #include "BrowserWindow.h"
 #include "BrowserWindowConfig.h"
 #include "Page.h"
-#include "MsgProcessor.h"
+#include "../App/MsgProcessor.h"
 #include "EnumId.h"
 
 using namespace Microsoft;
+
 
 BrowserWindow::BrowserWindow(rapidjson::Value& winConfig)
     : config{std::make_unique<BrowserWindowConfig>(winConfig)}
 {
     initWindow();
+
 }
 
 BrowserWindow::~BrowserWindow()
@@ -49,7 +51,7 @@ void BrowserWindow::unregEvent(const int& eventId)
     }
 }
 
-void BrowserWindow::maximize(JsonParsor& result)
+void BrowserWindow::maximize(const rapidjson::Value& params, JsonParsor& result)
 {
     if (!config->maximizable) {
         result.addString("err", "failed due to the maximizable or maxSize settings in config.json.");
@@ -58,7 +60,7 @@ void BrowserWindow::maximize(JsonParsor& result)
     ShowWindow(hwnd, SW_MAXIMIZE);
 }
 
-void BrowserWindow::minimize()
+void BrowserWindow::minimize(const rapidjson::Value& params, JsonParsor& result)
 {
     if (ctrlComp){
         //由于窗口最小化了，WebView2 内部的 Chromium 引擎判定视图不可见，不再处理鼠标事件。
@@ -68,37 +70,39 @@ void BrowserWindow::minimize()
     }
     ShowWindow(hwnd, SW_MINIMIZE);
 }
-void BrowserWindow::show()
+void BrowserWindow::show(const rapidjson::Value& params, JsonParsor& result)
 {
     ShowWindow(hwnd, SW_SHOW);
     SetForegroundWindow(hwnd);
     //ShowWindow(hwnd, SW_SHOWNORMAL);
 }
 
-void BrowserWindow::hide()
+void BrowserWindow::hide(const rapidjson::Value& params, JsonParsor& result)
 {
     ShowWindow(hwnd, SW_HIDE);
 }
 
-void BrowserWindow::restore()
+void BrowserWindow::restore(const rapidjson::Value& params, JsonParsor& result)
 {
     ShowWindow(hwnd, SW_RESTORE);
 }
 
-void BrowserWindow::close()
+void BrowserWindow::close(const rapidjson::Value& params, JsonParsor& result)
 {
     //CloseWindow(hwnd); 这相当于窗口最小化
     //不能用SendMessage，因为这回导致对象删除之后，MsgProcessor还在准备向页面发消息
     PostMessage(hwnd, WM_CLOSE, 0, 0);
 }
 
-void BrowserWindow::destroy()
+void BrowserWindow::destroy(const rapidjson::Value& params, JsonParsor& result)
 {
     PostMessage(hwnd, WM_DESTROY, 0, 0);
 }
 
-void BrowserWindow::flash(bool isStart)
+void BrowserWindow::flash(const rapidjson::Value& params, JsonParsor& result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    auto isStart = arr[0].GetBool();
     FLASHWINFO fwInfo = {};
     fwInfo.cbSize = sizeof(FLASHWINFO);
     fwInfo.hwnd = hwnd;
@@ -127,7 +131,7 @@ void BrowserWindow::setResizable(bool flag)
     SetWindowPos(hwnd, nullptr, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
 }
 
-void BrowserWindow::startDrag()
+void BrowserWindow::startDrag(const rapidjson::Value& params, JsonParsor& result)
 {
     ReleaseCapture();
     SendMessage(hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
@@ -272,7 +276,7 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     else if (msg == WM_CLOSE) {
         if (closingIsReg) {
-            msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::closing, 0);
+            //msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::closing, 0);
             return false; //阻止窗口关闭
         }
         DestroyWindow(hwnd);
@@ -280,8 +284,8 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     else if (msg == WM_DESTROY) {
         SetWindowLongPtr(hwnd, GWLP_USERDATA, 0);
-        msgProcessor->win = nullptr;
-        msgProcessor->page = nullptr;
+        //msgProcessor->win = nullptr;
+        //msgProcessor->page = nullptr;
         App::get()->onWindowDestroy(this);
         return false;
     }
@@ -310,13 +314,13 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     else if (msg == WM_SIZE) {
         if(!stateChangedIsReg) goto sysProcess;
         if (wParam == SIZE_MAXIMIZED) {
-            msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::stateChanged, 1, 0);
+            //msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::stateChanged, 1, 0);
         }
         else if (wParam == SIZE_MINIMIZED) {
-            msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::stateChanged, 1, 1);
+            //msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::stateChanged, 1, 1);
         }
         else if (wParam == SIZE_RESTORED) {
-            msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::stateChanged, 1, 2);
+            //msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::stateChanged, 1, 2);
         }
     }
     else if (msg == WM_WINDOWPOSCHANGED) {
@@ -330,7 +334,7 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         GetClientRect(hwnd, &bounds);
         ctrl->put_Bounds(bounds);
         if (sizePosChangedIsReg) {
-            msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::sizePosChanged, 4, config->x, config->y, config->w, config->h);
+            //msgProcessor->emit((int)ClassId::Window, (int)WindowEventId::sizePosChanged, 4, config->x, config->y, config->w, config->h);
         }        
     }
     sysProcess:
@@ -341,7 +345,7 @@ bool BrowserWindow::load(rapidjson::Value& pageConfig)
 {
     page = std::make_unique<Page>(this);
     page->init(pageConfig);
-    msgProcessor = std::make_unique<MsgProcessor>(this, page.get());
+    //msgProcessor = std::make_unique<MsgProcessor>(this, page.get());
     auto ctrlReadyCB = WRL::Callback<ICoreWebView2CreateCoreWebView2CompositionControllerCompletedHandler>(this, &BrowserWindow::ctrlReady);
     auto env3 = App::get()->env.try_query<ICoreWebView2Environment3>();
     auto result = env3->CreateCoreWebView2CompositionController(hwnd,ctrlReadyCB.Get());

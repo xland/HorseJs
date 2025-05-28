@@ -1,66 +1,52 @@
 import { Eventer } from "./Eventer";
-import { WindowMethodId, ClassId, WindowEventId } from "./EnumId";
 
 export class Window extends Eventer {
-  id: number;
   maximize() {
     return this.callMethod("maximize");
   }
   minimize() {
-    return this.call(ClassId.Window, WindowMethodId.minimize);
+    return this.callMethod("minimize");
   }
   hide() {
-    return this.call(ClassId.Window, WindowMethodId.hide);
+    return this.callMethod("hide");
   }
   show() {
-    return this.call(ClassId.Window, WindowMethodId.show);
+    return this.callMethod("show");
   }
   restore() {
-    return this.call(ClassId.Window, WindowMethodId.restore);
+    return this.callMethod("restore");
   }
   resize(w: number, h: number) {
-    return this.call(ClassId.Window, WindowMethodId.resize, w, h);
+    return this.callMethod("resize", w, h);
   }
   move(x: number, y: number) {
-    return this.call(ClassId.Window, WindowMethodId.move, x, y);
+    return this.callMethod("move", x, y);
   }
   close() {
-    return this.call(ClassId.Window, WindowMethodId.close);
+    return this.callMethod("close");
   }
   destroy() {
-    return this.call(ClassId.Window, WindowMethodId.destory);
+    return this.callMethod("destroy");
   }
   flash(flag: boolean) {
-    return this.call(ClassId.Window, WindowMethodId.flash, flag);
+    return this.callMethod("flash", flag);
   }
   startDrag() {
-    return this.call(ClassId.Window, WindowMethodId.startDrag);
+    return this.callMethod("startDrag");
   }
   setResizable(flag: boolean) {
-    return this.call(ClassId.Window, WindowMethodId.setResizable, flag);
+    return this.callMethod("setResizable", flag);
   }
   openWindow(config: object) {
-    return this.call(ClassId.Window, WindowMethodId.openWindow, config);
-  }
-  removeEventListener(eventName: string, cb: any) {
-    if (!(eventName in WindowEventId)) return;
-    let eId = WindowEventId[eventName as keyof typeof WindowEventId] as WindowEventId;
-    this.off(eId, cb);
-    return this.call(ClassId.Window, WindowMethodId.unregEvent, eId);
-  }
-  addEventListener(eventName: string, cb: (data: any) => void) {
-    if (!(eventName in WindowEventId)) return;
-    let eId = WindowEventId[eventName as keyof typeof WindowEventId] as WindowEventId;
-    this.on(eId, cb);
-    return this.call(ClassId.Window, WindowMethodId.regEvent, eId);
+    return this.callMethod("openWindow", config);
   }
   private callMethod(methodName: string, ...params: any[]) {
     return this.call({
       className: "window",
-      methodName,
-      params,
       srcId: globalThis.__HORSE_ID,
       tarId: this.id,
+      methodName,
+      params,
     });
   }
 }

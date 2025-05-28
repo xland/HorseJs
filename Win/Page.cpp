@@ -5,7 +5,7 @@
 #include "Page.h"
 #include "BrowserWindowConfig.h"
 #include "BrowserWindow.h"
-#include "MsgProcessor.h"
+#include "../App/MsgProcessor.h"
 #include "../Res/Res.h"
 #include "../App/App.h"
 
@@ -110,9 +110,8 @@ void Page::loadResource()
         std::wstring script = Util::convertToWStr(utf8Script.data());
         return script;
         }();
-    auto hr = webview->AddScriptToExecuteOnDocumentCreated(resScript.data(), nullptr);
-    auto script = std::format(L"horse.id={};__HORSE_ID={};", win->config->id, win->config->id);
-    hr = webview->AddScriptToExecuteOnDocumentCreated(script.data(), nullptr);
+    auto str = std::format(L"__HORSE_ID={};",win->config->id) + resScript;
+    auto hr = webview->AddScriptToExecuteOnDocumentCreated(str.data(), nullptr);
     if (FAILED(hr)) {
         auto a = 1;
     }
@@ -273,6 +272,6 @@ HRESULT Page::msgReceive(ICoreWebView2* webview, ICoreWebView2WebMessageReceived
     std::wstring message = messageRaw.get();
     messageRaw.reset();
     auto str = Util::convertToStr(message);
-    win->msgProcessor->processStr(str);
+    MsgProcessor::get()->processStr(str);
     return S_OK;
 }

@@ -20,17 +20,18 @@ public:
 	void resize(const int& w, const int& h);
 	void regEvent(const int& eventId);
 	void unregEvent(const int& eventId);
-	void maximize(JsonParsor& result);
-	void minimize();
-	void show();
-	void hide();
-	void restore();
-	void close();
-	void destroy();
-	void flash(bool isStart);
 	void setResizable(bool flag);
-	void startDrag();
 	void openWindow();
+public:
+	void show(const rapidjson::Value& params, JsonParsor& result);
+	void hide(const rapidjson::Value& params, JsonParsor& result);
+	void maximize(const rapidjson::Value& params, JsonParsor& result);
+	void minimize(const rapidjson::Value& params, JsonParsor& result);
+	void restore(const rapidjson::Value& params, JsonParsor& result);
+	void flash(const rapidjson::Value& params, JsonParsor& result);
+	void close(const rapidjson::Value& params, JsonParsor& result);
+	void destroy(const rapidjson::Value& params, JsonParsor& result);
+	void startDrag(const rapidjson::Value& params, JsonParsor& result);
 public:
 	wil::com_ptr<ICoreWebView2Controller> ctrl;
 	wil::com_ptr<ICoreWebView2CompositionController> ctrlComp;
@@ -43,7 +44,7 @@ public:
 	HWND hwnd;
 	wil::unique_hicon favicon;
 	std::unique_ptr<BrowserWindowConfig> config;
-	std::unique_ptr<MsgProcessor> msgProcessor;
+	//std::unique_ptr<MsgProcessor> msgProcessor;
 	std::unique_ptr<Page> page;
 public:
 	bool closingIsReg{ false };

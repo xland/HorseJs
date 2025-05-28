@@ -13,22 +13,33 @@
 
   // Eventer.ts
   var Eventer = class {
+    id;
     dic = {};
     constructor() {
+      this.id = globalThis.__HORSE_ID;
     }
     // 监听事件
-    on(eventId, callback) {
-      if (!this.dic[eventId]) {
-        this.dic[eventId] = [callback];
+    on(eventName, callback) {
+      if (!this.dic[eventName]) {
+        this.dic[eventName] = [callback];
+        if (!eventName.startsWith("once_")) {
+          return this.call({
+            className: "event",
+            srcId: globalThis.__HORSE_ID,
+            tarId: this.id,
+            methodName: "on",
+            params: [eventName]
+          });
+        }
       } else {
-        this.dic[eventId].push(callback);
+        this.dic[eventName].push(callback);
       }
     }
     // 发射事件
-    emit(eventId, result) {
-      const handlers = this.dic[eventId];
+    emit(eventName, result) {
+      const handlers = this.dic[eventName];
       if (!handlers || handlers.length === 0) {
-        console.warn(`\u6CA1\u6709\u627E\u5230\u8BE5\u4E8B\u4EF6\u7684\u76D1\u542C\u51FD\u6570\uFF1A${eventId}`);
+        console.warn(`\u6CA1\u6709\u627E\u5230\u8BE5\u4E8B\u4EF6\u7684\u76D1\u542C\u51FD\u6570\uFF1A${eventName}`);
         return;
       }
       handlers.forEach((handler) => {
@@ -36,111 +47,89 @@
       });
     }
     // 取消监听事件
-    off(eventId, callback) {
-      const handlers = this.dic[eventId];
+    off(eventName, callback) {
+      const handlers = this.dic[eventName];
       if (!handlers) return;
       if (!callback) {
-        delete this.dic[eventId];
+        delete this.dic[eventName];
         return;
       }
       const index = handlers.findIndex((h) => h === callback);
       if (index >= 0) handlers.splice(index, 1);
-      if (handlers.length === 0) delete this.dic[eventId];
+      if (handlers.length === 0) delete this.dic[eventName];
     }
     // 监听一次性事件
-    once(eventId, callback) {
+    once(eventName, callback) {
       const wrapper = (result) => {
-        this.off(eventId, wrapper);
+        this.off(eventName, wrapper);
         callback(result);
       };
-      this.on(eventId, wrapper);
+      this.on(eventName, wrapper);
     }
     // 调用原生方法并返回 Promise
     call(obj) {
       return new Promise((resolve, reject) => {
-        const eventId = util.randomNum();
-        this.once(eventId, (result) => {
+        obj.eventName = `once_${util.randomNum()}`;
+        this.once(obj.eventName, (result) => {
           if (result.err) {
             reject(new Error(result.err));
           } else {
             resolve(result);
           }
         });
-        obj.eventId = eventId;
         window.chrome.webview.postMessage(obj);
       });
     }
   };
 
-  // EnumId.ts
-  var WindowEventId = /* @__PURE__ */ ((WindowEventId2) => {
-    WindowEventId2[WindowEventId2["closing"] = 0] = "closing";
-    WindowEventId2[WindowEventId2["sizePosChanged"] = 1] = "sizePosChanged";
-    WindowEventId2[WindowEventId2["stateChanged"] = 2] = "stateChanged";
-    return WindowEventId2;
-  })(WindowEventId || {});
-
   // Window.ts
   var Window = class extends Eventer {
-    id;
     maximize() {
       return this.callMethod("maximize");
     }
     minimize() {
-      return this.call(3 /* Window */, 1 /* minimize */);
+      return this.callMethod("minimize");
     }
     hide() {
-      return this.call(3 /* Window */, 2 /* hide */);
+      return this.callMethod("hide");
     }
     show() {
-      return this.call(3 /* Window */, 3 /* show */);
+      return this.callMethod("show");
     }
     restore() {
-      return this.call(3 /* Window */, 4 /* restore */);
+      return this.callMethod("restore");
     }
     resize(w, h) {
-      return this.call(3 /* Window */, 5 /* resize */, w, h);
+      return this.callMethod("resize", w, h);
     }
     move(x, y) {
-      return this.call(3 /* Window */, 6 /* move */, x, y);
+      return this.callMethod("move", x, y);
     }
     close() {
-      return this.call(3 /* Window */, 7 /* close */);
+      return this.callMethod("close");
     }
     destroy() {
-      return this.call(3 /* Window */, 8 /* destory */);
+      return this.callMethod("destroy");
     }
     flash(flag) {
-      return this.call(3 /* Window */, 9 /* flash */, flag);
+      return this.callMethod("flash", flag);
     }
     startDrag() {
-      return this.call(3 /* Window */, 10 /* startDrag */);
+      return this.callMethod("startDrag");
     }
     setResizable(flag) {
-      return this.call(3 /* Window */, 11 /* setResizable */, flag);
+      return this.callMethod("setResizable", flag);
     }
     openWindow(config) {
-      return this.call(3 /* Window */, 12 /* openWindow */, config);
-    }
-    removeEventListener(eventName, cb) {
-      if (!(eventName in WindowEventId)) return;
-      let eId = WindowEventId[eventName];
-      this.off(eId, cb);
-      return this.call(3 /* Window */, 14 /* unregEvent */, eId);
-    }
-    addEventListener(eventName, cb) {
-      if (!(eventName in WindowEventId)) return;
-      let eId = WindowEventId[eventName];
-      this.on(eId, cb);
-      return this.call(3 /* Window */, 13 /* regEvent */, eId);
+      return this.callMethod("openWindow", config);
     }
     callMethod(methodName, ...params) {
       return this.call({
         className: "window",
-        methodName,
-        params,
         srcId: globalThis.__HORSE_ID,
-        tarId: this.id
+        tarId: this.id,
+        methodName,
+        params
       });
     }
   };
@@ -148,13 +137,11 @@
   // Fs.ts
   var Fs = class extends Eventer {
     addResToExe(dirPath, exePath) {
-      return this.call(1 /* Fs */, 0 /* addResToExe */, dirPath, exePath);
     }
   };
 
   // Horse.ts
   var Horse = class extends Eventer {
-    id;
     window;
     fs;
     webview;
@@ -166,15 +153,24 @@
       this.listenMsg();
     }
     getConfig() {
-      return this.call(2 /* Horse */, 0 /* getConfig */);
+      return this.callMethod("getConfig");
     }
     listenMsg() {
       this.webview.addEventListener("message", (e) => {
-        if (e.data.classId === 2 /* Horse */) {
+        if (e.data.className === "horse") {
           this.emit(e.data.eventId, e.data.data);
-        } else if (e.data.classId === 3 /* Window */) {
+        } else if (e.data.className === "window") {
           this.window.emit(e.data.eventId, e.data.data);
         }
+      });
+    }
+    callMethod(methodName, ...params) {
+      return this.call({
+        className: "horse",
+        srcId: globalThis.__HORSE_ID,
+        tarId: this.id,
+        methodName,
+        params
       });
     }
   };

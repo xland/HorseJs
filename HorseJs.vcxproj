@@ -157,7 +157,7 @@
     <ClCompile Include="App\App.cpp" />
     <ClCompile Include="App\JsonParsor.cpp" />
     <ClCompile Include="App\Fs.cpp" />
-    <ClCompile Include="Win\MsgProcessor.cpp" />
+    <ClCompile Include="App\MsgProcessor.cpp" />
     <ClCompile Include="Win\BrowserWindowConfig.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="App\Util.cpp" />
@@ -200,7 +200,7 @@
     <ClInclude Include="Win\EnumId.h" />
     <ClInclude Include="Res\Res.h" />
     <ClInclude Include="App\JsonParsor.h" />
-    <ClInclude Include="Win\MsgProcessor.h" />
+    <ClInclude Include="App\MsgProcessor.h" />
     <ClInclude Include="Win\BrowserWindowConfig.h" />
     <ClInclude Include="Lib\rapidjson\allocators.h" />
     <ClInclude Include="Lib\rapidjson\cursorstreamwrapper.h" />

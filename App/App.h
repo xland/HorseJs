@@ -22,6 +22,7 @@ public:
 	~App();
 	void onWindowDestroy(BrowserWindow* win);
 	static App* get();
+	BrowserWindow* getWindow(const int& id);
 	static void init(HINSTANCE hInstance);
 public:
 	std::unique_ptr<AppConfig> config;
