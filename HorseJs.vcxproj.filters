@@ -45,6 +45,30 @@
     <ClCompile Include="App\Fs.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="App\Net.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="App\Os.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="App\Process.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="App\Res.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="App\Screen.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="App\Tray.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="App\Lib.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="App\Clipboard.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -200,6 +224,30 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="App\Fs.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Tray.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Net.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Os.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Process.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Res.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Screen.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Lib.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Clipboard.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

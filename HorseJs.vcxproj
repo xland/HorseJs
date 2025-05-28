@@ -155,9 +155,17 @@
   <ItemGroup>
     <ClCompile Include="App\AppConfig.cpp" />
     <ClCompile Include="App\App.cpp" />
+    <ClCompile Include="App\Clipboard.cpp" />
     <ClCompile Include="App\JsonParsor.cpp" />
     <ClCompile Include="App\Fs.cpp" />
+    <ClCompile Include="App\Lib.cpp" />
     <ClCompile Include="App\MsgProcessor.cpp" />
+    <ClCompile Include="App\Net.cpp" />
+    <ClCompile Include="App\Os.cpp" />
+    <ClCompile Include="App\Process.cpp" />
+    <ClCompile Include="App\Res.cpp" />
+    <ClCompile Include="App\Screen.cpp" />
+    <ClCompile Include="App\Tray.cpp" />
     <ClCompile Include="Win\BrowserWindowConfig.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="App\Util.cpp" />
@@ -196,7 +204,15 @@
   <ItemGroup>
     <ClInclude Include="App\AppConfig.h" />
     <ClInclude Include="App\App.h" />
+    <ClInclude Include="App\Clipboard.h" />
     <ClInclude Include="App\Fs.h" />
+    <ClInclude Include="App\Lib.h" />
+    <ClInclude Include="App\Net.h" />
+    <ClInclude Include="App\Os.h" />
+    <ClInclude Include="App\Process.h" />
+    <ClInclude Include="App\Res.h" />
+    <ClInclude Include="App\Screen.h" />
+    <ClInclude Include="App\Tray.h" />
     <ClInclude Include="Win\EnumId.h" />
     <ClInclude Include="Res\Res.h" />
     <ClInclude Include="App\JsonParsor.h" />
