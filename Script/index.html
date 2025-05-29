@@ -71,6 +71,7 @@
             <div id="btnRegWinClose" class="btn">注册窗口关闭事件</div>
             <div id="btnUnregWinClose" class="btn">取消注册窗口关闭事件</div>
             <div id="btnNewWindow" class="btn">创建窗口</div>
+            <div id="btnReadFile" class="btn">读文件</div>
         </div>
 
     <script>
@@ -186,6 +187,9 @@
                         "url": "index.html"
                     }
                 });
+            });
+            $("#btnReadFile").addEventListener("click",()=>{
+                
             })
             horse.window.addEventListener("sizePosChanged",(data)=>{
                 // console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);

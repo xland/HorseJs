@@ -25,7 +25,7 @@ namespace {
         {"addEventListener", &BrowserWindow::addEventListener},
         {"removeEventListener", &BrowserWindow::removeEventListener},
     };
-    static std::unordered_map<std::string, void (Fs::*)(const rapidjson::Value&, JsonParsor&)> fsFunc = {
+    static std::unordered_map<std::string, void (Fs::*)(BrowserWindow*,const rapidjson::Value&, JsonParsor&)> fsFunc = {
         {"stat", &Fs::stat},
         {"exists", &Fs::exists},
         {"readFile", &Fs::readFile},
@@ -94,14 +94,20 @@ void MsgProcessor::processStr(const std::string& msgStr)
             (win->*it->second)(jsonDoc["params"], parsor);
         }
         else {
-            std::cout << "Method not found!" << std::endl;
+            parsor.addString("err", "Window Method not found!");
         }
     }
     else if (className == "page") {
         //processPage(methodName, jsonDoc["params"],parsor);
     }
     else if (className == "fs") {
-        //processFs(methodName, jsonDoc["params"], parsor);
+        auto it = fsFunc.find(methodName);
+        if (it != fsFunc.end()) {
+            (Fs::get()->*it->second)(win,jsonDoc["params"], parsor);
+        }
+        else {
+            parsor.addString("err", "Fs Method not found!");
+        }
     }
     //返回值，必须放在后面，因为win有可能被销毁
     std::wstring jsonStr = parsor.parse();

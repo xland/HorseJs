@@ -3,14 +3,10 @@
 #include <winrt/base.h>
 
 #include "../App/App.h"
+#include "../App/MsgProcessor.h"
 #include "BrowserWindow.h"
 #include "BrowserWindowConfig.h"
 #include "Page.h"
-#include "../App/MsgProcessor.h"
-#include "EnumId.h"
-
-
-
 
 BrowserWindow::BrowserWindow(const rapidjson::Value& winConfig)
     : config{std::make_unique<BrowserWindowConfig>(winConfig)},

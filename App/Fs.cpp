@@ -1,7 +1,8 @@
-#include <iostream>
-#include <filesystem>
-#include <regex>
+#include <future>
 #include "Fs.h"
+#include "../Win/BrowserWindow.h"
+#include "../Win/BrowserWindowConfig.h"
+#include "../Win/Page.h"
 
 namespace {
     std::unique_ptr<Fs> fs;
@@ -23,105 +24,67 @@ Fs* Fs::get()
     return fs.get();
 }
 
-void Fs::addDirAsExeRes(const std::wstring& dirPath, const std::wstring& exePath)
+void Fs::stat(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
 {
-    std::filesystem::path root{ dirPath };
-    if (dirPath.back() == L'\0') {
-        auto str = dirPath;
-        str.pop_back();
-        root = std::filesystem::path(str);
-    }
-    if (!std::filesystem::is_directory(root)) {
-        std::cerr << "不是一个有效的目录\n";
-        return;
-    }
-    HANDLE hResource = BeginUpdateResource(exePath.data(), FALSE);
-    try {
-        for (auto const& entry : std::filesystem::recursive_directory_iterator(root)) {
-            if (entry.is_regular_file()) {
-                std::filesystem::path relativePath = std::filesystem::relative(entry.path(), root);  //  images/logo.png
-                std::wstring resName = std::regex_replace(relativePath.wstring(), std::wregex(LR"(\\)"), L"/");
-                std::uintmax_t fileSize = std::filesystem::file_size(entry.path());
-                std::ifstream file(entry.path(), std::ios::binary);
-                std::vector<char> buffer(fileSize);
-                file.read(buffer.data(), fileSize);
-                buffer.erase(std::remove_if(buffer.begin(), buffer.end(),[](char c) {
-                            return c == ' ' || c == '\n' || c == '\r' || c == '\t';
-                        }),buffer.end());
-                auto langId = MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL);
-                BOOL ok = UpdateResource(hResource, RT_RCDATA, resName.data(), langId,(void*)buffer.data(), (DWORD)fileSize);
-                if (!ok) {
-                    std::wcerr << L"UpdateResource failed\n";
-                    EndUpdateResource(hResource, TRUE);
-                    return;
-                }
-            }
+}
+
+void Fs::exists(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+{
+}
+
+void Fs::readFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+{
+    std::async(std::launch::async, [win, &params, &result]() {
+        std::ifstream file(filePath, std::ios::binary | std::ios::ate);
+        json response;
+        if (!file.is_open()) {
+            response = { {"callbackId", callbackId}, {"error", "Failed to open file"} };
         }
-    }
-    catch (const std::filesystem::filesystem_error& e) {
-        std::cerr << "文件系统错误: " << e.what() << "\n";
-        return;
-    }
-    if (!EndUpdateResourceW(hResource, FALSE)) {  // FALSE = 保存修改
-        std::wcerr << L"EndUpdateResource failed\n";
-        return;
-    }
+        else {
+            std::streamsize size = file.tellg();
+            file.seekg(0, std::ios::beg);
+            std::vector<char> buffer(size);
+            file.read(buffer.data(), size);
+            file.close();
+            std::string content(buffer.begin(), buffer.end());
+            response = { {"callbackId", callbackId}, {"content", content} };
+        }
+        win->page->webview->PostWebMessageAsJson(std::wstring(response.dump().begin(), response.dump().end()).c_str());
+    });
 }
 
-void Fs::addFileAsExeRes()
-{
-
-}
-
-void Fs::addExeRes()
-{
-
-}
-
-void Fs::stat(const rapidjson::Value& params, JsonParsor& result)
+void Fs::writeFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
 {
 }
 
-void Fs::exists(const rapidjson::Value& params, JsonParsor& result)
+void Fs::removeFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
 {
 }
 
-void Fs::readFile(const rapidjson::Value& params, JsonParsor& result)
+void Fs::removeDir(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
 {
 }
 
-void Fs::writeFile(const rapidjson::Value& params, JsonParsor& result)
+void Fs::createDir(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
 {
 }
 
-void Fs::removeFile(const rapidjson::Value& params, JsonParsor& result)
+void Fs::listDir(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
 {
 }
 
-void Fs::removeDir(const rapidjson::Value& params, JsonParsor& result)
+void Fs::copyFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
 {
 }
 
-void Fs::createDir(const rapidjson::Value& params, JsonParsor& result)
+void Fs::moveFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
 {
 }
 
-void Fs::listDir(const rapidjson::Value& params, JsonParsor& result)
+void Fs::renameFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
 {
 }
 
-void Fs::copyFile(const rapidjson::Value& params, JsonParsor& result)
-{
-}
-
-void Fs::moveFile(const rapidjson::Value& params, JsonParsor& result)
-{
-}
-
-void Fs::renameFile(const rapidjson::Value& params, JsonParsor& result)
-{
-}
-
-void Fs::watch(const rapidjson::Value& params, JsonParsor& result)
+void Fs::watch(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
 {
 }

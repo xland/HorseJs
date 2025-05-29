@@ -213,7 +213,6 @@
     <ClInclude Include="App\Res.h" />
     <ClInclude Include="App\Screen.h" />
     <ClInclude Include="App\Tray.h" />
-    <ClInclude Include="Win\EnumId.h" />
     <ClInclude Include="Res\Res.h" />
     <ClInclude Include="App\JsonParsor.h" />
     <ClInclude Include="App\MsgProcessor.h" />
