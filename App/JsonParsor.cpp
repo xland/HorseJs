@@ -37,6 +37,13 @@ void JsonParsor::addNumber(const std::string& name, const double& value)
     doc.AddMember(getKey(name), val, allocator);
 }
 
+void JsonParsor::addNumber(const std::string& name, const long long& value)
+{
+    rapidjson::Value val;
+    val.SetInt64(value);
+    doc.AddMember(getKey(name), val, allocator);
+}
+
 void JsonParsor::addBool(const std::string& name, const bool& value)
 {
     rapidjson::Value val;

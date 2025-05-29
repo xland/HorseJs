@@ -14,6 +14,7 @@ class JsonParsor
 		void addString(const std::string& name, const std::string& value);
 		void addNumber(const std::string& name, const int& value);
 		void addNumber(const std::string& name, const double& value);
+		void addNumber(const std::string& name, const long long& value);
 		void addBool(const std::string& name, const bool& value);
 		void addValue(const std::string& name, rapidjson::Value&& value);
 		void addParsor(const std::string& name, const JsonParsor&& parsor);
