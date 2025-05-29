@@ -123,12 +123,48 @@ await horse.window.close();
 ```js
 await horse.window.destroy();
 ```
+- 让窗口闪烁
+```
+horse.window.flash(true);
+```
 - 开始通过拖拽改变窗口位置
 ```js
 //此方法常用于设置窗口的自定义标题栏
 $(".titleBar").addEventListener("mousedown",async ()=>{
     horse.window.startDrag();
 })
+```
+- 创建一个新窗口
+```js
+horse.window.openWindow({
+    "resizable": true,
+    "maximizable": false,
+    "minimizable":false,
+    "alwaysOnTop":false,
+    "skipTaskbar":false,
+    "visible": true,
+    "frame": false,
+    "shadow": true,
+    "title": "窗口标题！！！",
+    "size": {
+        "w": 1000,
+        "h": 800
+    },
+    "minSize": {
+        "w": 250,
+        "h": 200
+    },
+    "position": {
+        "x":200,
+        "y":200
+    },
+    "page": {
+        "areDefaultScriptDialogsEnabled": true,
+        "isScriptEnabled": true,
+        "isWebMessageEnabled": true,
+        "url": "index.html"
+    }
+});
 ```
 - 注册事件
 ```js
@@ -142,6 +178,8 @@ horse.window.addEventListener("sizePosChanged",(x,y,w,h)=>{
 //取消 注册的窗口关闭事件
 await horse.window.removeEventListener("closing");
 ```
+
+
 
 ## horse.window 的事件
 
@@ -161,8 +199,29 @@ horse.window.addEventListener("closing", async ()=>{
 });
 ```
 
-## horse.window.page的方法
-## horse.window.page的事件
+## horse.fs 的方法
+
+- 读取文件
+```
+let data = await horse.fs.readFile("D:\\index.html");
+const uint8Array = new Uint8Array(data.buffer); // 字节视图
+const decoder = new TextDecoder('utf-8'); // UTF-8 解码器
+const text = decoder.decode(uint8Array); // 转换为字符串
+console.log('Decoded string:', text);
+data.release(); //释放资源
+```
+- 读取文件的一部分
+```js
+//从第10个字节开始，读取100个字节
+let data = await horse.fs.readFileChunk("D:\\index.html",10,100);
+const uint8Array = new Uint8Array(data.buffer);
+const decoder = new TextDecoder('utf-8');
+const text = decoder.decode(uint8Array);
+console.log('Decoded string:', text);
+data.release();
+```
+
+## horse.fs 的事件
 
 ## FAQ
 
