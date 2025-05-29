@@ -26,12 +26,47 @@ Fs* Fs::get()
     return fs.get();
 }
 
-void Fs::stat(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+void Fs::getInfo(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
 {
+    WIN32_FILE_ATTRIBUTE_DATA fileData;
+
+    // 使用 GetFileAttributesEx 获取详细信息
+    if (!GetFileAttributesExA(path.c_str(), GetFileExInfoStandard, &fileData)) {
+        DWORD error = GetLastError();
+        if (error == ERROR_FILE_NOT_FOUND || error == ERROR_PATH_NOT_FOUND) {
+            return info; // isExists 保持 false
+        }
+        throw std::runtime_error("Failed to get file attributes, error code: " + std::to_string(error));
+    }
+
+    info.isExists = true;
+    info.isDir = (fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
+    info.attributes = fileData.dwFileAttributes;
+    info.fileSize = static_cast<uint64_t>(fileData.nFileSizeHigh) << 32 | fileData.nFileSizeLow;
+    info.creationTime = fileData.ftCreationTime;
+    info.lastWriteTime = fileData.ftLastWriteTime;
 }
 
 void Fs::exists(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring path = Util::convertToWStr(arr[0].GetString());
+    DWORD attributes = GetFileAttributes(path.c_str());
+    if (attributes == INVALID_FILE_ATTRIBUTES) { //无法获取文件或目录的属性
+        result.addBool("isExists", false);
+        DWORD error = GetLastError();
+        if (error != ERROR_FILE_NOT_FOUND && error != ERROR_PATH_NOT_FOUND) {
+            result.addString("err", "access error: " + std::to_string(error));
+        }
+    }
+    else if (attributes & FILE_ATTRIBUTE_DIRECTORY) {
+        result.addBool("isExists", true);
+        result.addBool("isDir", true);
+    }
+    else {
+        result.addBool("isExists", true);
+        result.addBool("isDir", false);
+    }
 }
 
 void Fs::readFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
@@ -45,14 +80,22 @@ void Fs::readFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor
     }
     std::streamsize totalSize = file.tellg();
     file.seekg(0, std::ios::beg);
+    if (file.fail()) {
+        result.addString("err", "Failed to seek file.");
+        return;
+    }
+    std::vector<char> buffer(totalSize);
+    file.read(buffer.data(), totalSize);
+    if (file.fail() && !file.eof()) {
+        result.addString("err", "Failed to read file.");
+        return;
+    }
+    file.close();
     auto env12 = App::get()->env.try_query<ICoreWebView2Environment12>();
     wil::com_ptr<ICoreWebView2SharedBuffer> sharedBuffer;
     auto hr = env12->CreateSharedBuffer(totalSize, &sharedBuffer);
     wil::com_ptr<IStream> stream;
     sharedBuffer->OpenStream(&stream);
-    std::vector<char> buffer(totalSize);
-    file.read(buffer.data(), totalSize);
-    file.close();
     stream->Write(buffer.data(), totalSize, nullptr);
     result.isSharedBuffer = true;
     result.addNumber("totalSize", totalSize);
@@ -80,8 +123,16 @@ void Fs::readFileChunk(BrowserWindow* win, const rapidjson::Value& params, JsonP
     std::streamsize totalSize = file.tellg();
     std::streamsize readSize = std::min(chunkSize, totalSize - start);
     file.seekg(start);
+    if (file.fail()) {
+        result.addString("err", "Failed to seek file.");
+        return;
+    }
     std::vector<char> buffer(readSize);
     file.read(buffer.data(), readSize);
+    if (file.fail() && !file.eof()) {
+        result.addString("err", "Failed to read file.");
+        return;
+    }
     file.close();
 
     auto env12 = App::get()->env.try_query<ICoreWebView2Environment12>();
@@ -90,7 +141,6 @@ void Fs::readFileChunk(BrowserWindow* win, const rapidjson::Value& params, JsonP
     wil::com_ptr<IStream> stream;
     sharedBuffer->OpenStream(&stream);    
     stream->Write(buffer.data(), readSize, nullptr);
-
     result.isSharedBuffer = true;
     result.addNumber("totalSize", totalSize);
     result.addNumber("readSize", readSize);
