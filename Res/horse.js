@@ -140,10 +140,11 @@
 
   // Fs.ts
   var Fs = class extends Eventer {
-    readFile(filePath, func) {
-      let eventName = `cb_${util.randomNum()}`;
-      this.on(eventName, func);
-      this.callMethod("readFile", filePath, eventName);
+    async readFile(filePath) {
+      return this.callMethod("readFile", filePath);
+    }
+    async readFileChunk(filePath, startPos, chunkSize) {
+      return this.callMethod("readFileChunk", filePath, startPos, chunkSize);
     }
     callMethod(methodName, ...params) {
       return this.call({
@@ -182,21 +183,18 @@
       });
       this.webview.addEventListener("sharedbufferreceived", (e) => {
         const buffer = e.getBuffer();
-        const metadata = e.additionalData;
-        chunks.push({ offset: metadata.offset, data: new Uint8Array(buffer) });
-        if (metadata.offset + buffer.byteLength >= metadata.totalSize) {
-          chunks.sort((a, b) => a.offset - b.offset);
-          const totalSize = metadata.totalSize;
-          const fullData = new Uint8Array(totalSize);
-          chunks.forEach((chunk) => {
-            fullData.set(chunk.data, chunk.offset);
+        let clsName = e.additionalData.className;
+        delete e.additionalData.className;
+        let evtName = e.additionalData.eventName;
+        delete e.additionalData.eventName;
+        if (clsName === "fs") {
+          this.fs.emit(evtName, {
+            buffer,
+            ...e.additionalData,
+            release: () => {
+              window.chrome.webview.releaseBuffer(buffer);
+            }
           });
-          console.log("Full file received:", fullData);
-          const blob = new Blob([fullData], { type: "application/octet-stream" });
-          chunks.forEach((chunk) => window.chrome.webview.releaseBuffer(chunk.data.buffer));
-          chunks = [];
-        } else {
-          window.chrome.webview.releaseBuffer(buffer);
         }
       });
     }

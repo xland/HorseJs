@@ -29,6 +29,7 @@ namespace {
         {"stat", &Fs::stat},
         {"exists", &Fs::exists},
         {"readFile", &Fs::readFile},
+        {"readFileChunk",&Fs::readFileChunk},
         {"writeFile", &Fs::writeFile},
         {"removeFile", &Fs::removeFile},
         {"removeDir", &Fs::removeDir},
@@ -109,8 +110,9 @@ void MsgProcessor::processStr(const std::string& msgStr)
             parsor.addString("err", "Fs Method not found!");
         }
     }
-    //返回值，必须放在后面，因为win有可能被销毁
-    std::wstring jsonStr = parsor.parse();
-    win->page->webview->PostWebMessageAsJson(jsonStr.data());
+    if (!parsor.isSharedBuffer) {
+        std::wstring jsonStr = parsor.parse();
+        win->page->webview->PostWebMessageAsJson(jsonStr.data());
+    }
 }
 

@@ -222,6 +222,9 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     else if (msg == WM_SIZE) {
         stateChanged(wParam);
     }
+    else if (msg == WM_SYSCOMMAND) {
+        return false;
+    }
     else if (msg == WM_WINDOWPOSCHANGED) {
         WINDOWPOS* winPos = reinterpret_cast<WINDOWPOS*>(lParam);
         sizePosChanged(winPos);

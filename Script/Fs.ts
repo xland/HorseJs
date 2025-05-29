@@ -1,10 +1,11 @@
 import { util } from "./Util";
 import { Eventer } from "./Eventer";
 export class Fs extends Eventer {
-  readFile(filePath: string, func) {
-    let eventName = `cb_${util.randomNum()}`;
-    this.on(eventName, func);
-    this.callMethod("readFile", filePath, eventName);
+  async readFile(filePath: string) {
+    return this.callMethod("readFile", filePath);
+  }
+  async readFileChunk(filePath: string, startPos: number, chunkSize: number) {
+    return this.callMethod("readFileChunk", filePath, startPos, chunkSize);
   }
   private callMethod(methodName: string, ...params: any[]) {
     return this.call({
