@@ -127,6 +127,7 @@ void Fs::readFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor
     stream->Write(buffer.data(), totalSize, nullptr);
     result.isSharedBuffer = true;
     result.addNumber("totalSize", totalSize);
+    result.addBool("ok", true);
     std::wstring jsonStr = result.parse();
     auto webview17 = win->page->webview.try_query<ICoreWebView2_17>();
     webview17->PostSharedBufferToScript(sharedBuffer.get(), COREWEBVIEW2_SHARED_BUFFER_ACCESS_READ_ONLY, jsonStr.data());
@@ -173,6 +174,7 @@ void Fs::readFileChunk(BrowserWindow* win, const rapidjson::Value& params, JsonP
     result.addNumber("totalSize", totalSize);
     result.addNumber("readSize", readSize);
     result.addNumber("startPos", start);
+    result.addBool("ok", true);
     std::wstring jsonStr = result.parse();
     auto webview17 = win->page->webview.try_query<ICoreWebView2_17>();
     webview17->PostSharedBufferToScript(sharedBuffer.get(), COREWEBVIEW2_SHARED_BUFFER_ACCESS_READ_ONLY, jsonStr.data());
@@ -180,6 +182,7 @@ void Fs::readFileChunk(BrowserWindow* win, const rapidjson::Value& params, JsonP
     //此时共享内存由渲染进程持有，不会立即销毁。
     //渲染进程通过 chrome.webview.releaseBuffer 释放缓冲区。
     sharedBuffer->Close();
+
 }
 
 void Fs::writeFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
@@ -249,7 +252,6 @@ void Fs::writeFileChunk(BrowserWindow* win, const rapidjson::Value& params, Json
     }
     LARGE_INTEGER newSize; // 计算插入后文件大小
     newSize.QuadPart = fileSize.QuadPart + fileContent.size();
-
     // 调整文件大小（扩展文件）
     if (!SetFilePointerEx(hFile, newSize, NULL, FILE_BEGIN) ||
         !SetEndOfFile(hFile)) {
@@ -257,21 +259,21 @@ void Fs::writeFileChunk(BrowserWindow* win, const rapidjson::Value& params, Json
         CloseHandle(hMap);
         CloseHandle(hFile);
         result.addString("err", "resize file error.");
+        return;
     }
 
     //重新映射文件（现在文件已扩展）
     UnmapViewOfFile(pMappedData);
-    pMappedData = MapViewOfFile(hMap,
-        FILE_MAP_ALL_ACCESS, 0, 0, 0);
+    pMappedData = MapViewOfFile(hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
     if (pMappedData == NULL) {
         CloseHandle(hMap);
         CloseHandle(hFile);
         result.addString("err", "remap view error.");
+        return;
     }
     // 移动插入位置后的数据（腾出空间）
     LPVOID pInsertPos = (LPVOID)((BYTE*)pMappedData + startPos);
-    memmove((BYTE*)pInsertPos + fileContent.size(),
-        pInsertPos, fileSize.QuadPart - startPos);
+    memmove((BYTE*)pInsertPos + fileContent.size(), pInsertPos, fileSize.QuadPart - startPos);    
     // 写入新文本
     memcpy(pInsertPos, fileContent.c_str(), fileContent.size());
     UnmapViewOfFile(pMappedData);
@@ -279,12 +281,44 @@ void Fs::writeFileChunk(BrowserWindow* win, const rapidjson::Value& params, Json
     CloseHandle(hFile);
 }
 
-void Fs::removeFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+void Fs::delPath(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring path = Util::convertToWStr(arr[0].GetString());
+    DWORD fileAttributes = GetFileAttributes(path.c_str());
+    if (fileAttributes == INVALID_FILE_ATTRIBUTES) {
+        result.addString("err", "access path error.");
+        return;
+    }
+    if (fileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+        if (delDirRecursive(path)) return;
+        result.addString("err", "recursive del error.");
+        return;
+    }
+    if (!DeleteFile(path.c_str())) {
+        result.addString("err", "del file error.");
+    }
 }
 
-void Fs::removeDir(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+void Fs::removePath(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring path = Util::convertToWStr(arr[0].GetString());
+    DWORD fileAttributes = GetFileAttributes(path.c_str());
+    if (fileAttributes == INVALID_FILE_ATTRIBUTES) {
+        result.addString("err", "access path error.");
+        return;
+    }
+    SHFILEOPSTRUCT fileOp = { 0 };
+    fileOp.hwnd = NULL;
+    fileOp.wFunc = FO_DELETE;
+    fileOp.pFrom = path.c_str();
+    fileOp.pTo = NULL;
+    fileOp.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_NOERRORUI | FOF_SILENT;
+    int val = SHFileOperation(&fileOp);
+    if (val != 0 || fileOp.fAnyOperationsAborted != FALSE) {
+        result.addString("err", "remove path error.");
+    }
 }
 
 void Fs::createDir(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
@@ -309,4 +343,37 @@ void Fs::renameFile(BrowserWindow* win, const rapidjson::Value& params, JsonPars
 
 void Fs::watch(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
 {
+}
+
+bool Fs::delDirRecursive(const std::wstring& dirPath)
+{
+    WIN32_FIND_DATA findData;
+    HANDLE hFind = FindFirstFile((dirPath + L"\\*").c_str(), &findData);
+    if (hFind == INVALID_HANDLE_VALUE) {
+        return false; // 目录不存在或访问失败
+    }
+    do {
+        const std::wstring name = findData.cFileName;
+        if (name == L"." || name == L"..") {
+            continue; // 跳过 "." 和 ".."
+        }
+        const std::wstring fullPath = dirPath + L"\\" + name;
+        if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+            // 是子目录：递归删除
+            if (!delDirRecursive(fullPath)) {
+                FindClose(hFind);
+                return false;
+            }
+        }
+        else {
+            // 是文件：直接删除
+            if (!DeleteFile(fullPath.c_str())) {
+                FindClose(hFind);
+                return false;
+            }
+        }
+    } while (FindNextFile(hFind, &findData) != 0);
+    FindClose(hFind);
+    // 删除空目录
+    return RemoveDirectory(dirPath.c_str()) != 0;
 }

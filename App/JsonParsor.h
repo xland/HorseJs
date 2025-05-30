@@ -11,6 +11,7 @@ class JsonParsor
 		JsonParsor();
 		~JsonParsor();
 		rapidjson::Document::AllocatorType& getAllocator();
+		void addErr(const std::string& value);
 		void addString(const std::string& name, const std::string& value);
 		void addNumber(const std::string& name, const int& value);
 		void addNumber(const std::string& name, const double& value);
@@ -20,6 +21,7 @@ class JsonParsor
 		void addParsor(const std::string& name, const JsonParsor&& parsor);
 		std::wstring parse();
 	public:
+		bool ok{ true };
 		bool isSharedBuffer{ false };
 	protected:
 	private:

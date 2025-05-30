@@ -16,8 +16,8 @@ public:
 	void writeFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);
 	void writeFileChunk(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);
 
-	void removeFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);
-	void removeDir(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);
+	void delPath(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);
+	void removePath(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);
 	void createDir(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);
 	void listDir(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);
 	void copyFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);
@@ -25,5 +25,6 @@ public:
 	void renameFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);
 	void watch(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);
 private:
+	bool delDirRecursive(const std::wstring& dirPath);
 };
 

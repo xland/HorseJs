@@ -225,6 +225,19 @@ data.release();
 //文件存在，则覆盖；文件不存在，则创建
 await horse.fs.writeFile("D:\\abc.txt", "Hello World \n 你好，世界");
 ```
+
+- 删除一个路径
+```js
+//路径可以是一个文件，也可以是一个目录
+await horse.fs.delPath("D:\\abc.txt");
+```
+
+- 把一个路径移入回收站
+```js
+//路径可以是一个文件，也可以是一个目录
+await horse.fs.delPath("D:\\abc.txt");
+```
+
 - 路径是否存在
 ```js
 let data = await horse.fs.exists("D:\\index.html");

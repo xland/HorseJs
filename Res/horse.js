@@ -158,6 +158,12 @@
     async writeFileChunk(filePath, content, startPos) {
       return this.callMethod("writeFileChunk", filePath, content, startPos);
     }
+    async delPath(filePath) {
+      return this.callMethod("delPath", filePath);
+    }
+    async removePath(filePath) {
+      return this.callMethod("removePath", filePath);
+    }
     callMethod(methodName, ...params) {
       return this.call({
         className: "fs",

@@ -32,8 +32,8 @@ namespace {
         {"readFileChunk",&Fs::readFileChunk},
         {"writeFile", &Fs::writeFile},
         {"writeFileChunk", &Fs::writeFileChunk},
-        {"removeFile", &Fs::removeFile},
-        {"removeDir", &Fs::removeDir},
+        {"delPath", &Fs::delPath},
+        {"removePath", &Fs::removePath},
         {"createDir", &Fs::createDir},
         {"listDir", &Fs::listDir},
         {"copyFile", &Fs::copyFile},
@@ -112,6 +112,9 @@ void MsgProcessor::processStr(const std::string& msgStr)
         }
     }
     if (!parsor.isSharedBuffer) {
+        if (parsor.ok) {
+            parsor.addBool("ok", true);
+        }
         std::wstring jsonStr = parsor.parse();
         win->page->webview->PostWebMessageAsJson(jsonStr.data());
     }

@@ -15,6 +15,13 @@ rapidjson::Document::AllocatorType& JsonParsor::getAllocator()
     return allocator;
 }
 
+void JsonParsor::addErr(const std::string& value)
+{
+    ok = false;
+    addBool("ok", false);
+    addString("err", value);
+}
+
 void JsonParsor::addString(const std::string& name, const std::string& value)
 {
     rapidjson::Value val;

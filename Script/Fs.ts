@@ -19,6 +19,12 @@ export class Fs extends Eventer {
   async writeFileChunk(filePath: string, content: string, startPos: number) {
     return this.callMethod("writeFileChunk", filePath, content, startPos);
   }
+  async delPath(filePath: string) {
+    return this.callMethod("delPath", filePath);
+  }
+  async removePath(filePath: string) {
+    return this.callMethod("removePath", filePath);
+  }
   private callMethod(methodName: string, ...params: any[]) {
     return this.call({
       className: "fs",
