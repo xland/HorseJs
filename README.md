@@ -220,6 +220,11 @@ const text = decoder.decode(uint8Array);
 console.log('Decoded string:', text);
 data.release();
 ```
+- 写文件
+```js
+//文件存在，则覆盖；文件不存在，则创建
+await horse.fs.writeFile("D:\\abc.txt", "Hello World \n 你好，世界");
+```
 - 路径是否存在
 ```js
 let data = await horse.fs.exists("D:\\index.html");
@@ -242,11 +247,6 @@ console.log(data);
 如果要实现此需求，发送任何一个消息时，都要遍历窗口列表。
 况且还要考虑在A窗口内，注册B窗口的事件。
 ```
-
-
-## 下载
-
-[Release](https://github.com/xland/HorseJs/releases) （100kb）
 
 ## 赞助
 <table>

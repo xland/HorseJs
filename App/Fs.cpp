@@ -184,6 +184,99 @@ void Fs::readFileChunk(BrowserWindow* win, const rapidjson::Value& params, JsonP
 
 void Fs::writeFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring filePath = Util::convertToWStr(arr[0].GetString());
+    std::string fileContent = arr[1].GetString();
+    std::ofstream file(filePath, std::ios::binary | std::ios::trunc);
+    if (!file.is_open()) {
+        result.addString("err", "Failed to open file.");
+        return;
+    }
+    file.write(fileContent.data(), fileContent.size());
+    file.flush();
+    if (file.fail()) {
+        result.addString("err", "Failed to write file.");
+        return;
+    }
+    file.close();
+}
+
+void Fs::writeFileChunk(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring filePath = Util::convertToWStr(arr[0].GetString());
+    std::string fileContent = arr[1].GetString();
+    std::streamsize startPos = arr[2].GetInt64();
+
+    HANDLE hFile = CreateFile(filePath.c_str(), GENERIC_READ | GENERIC_WRITE,
+        0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hFile == INVALID_HANDLE_VALUE) {
+        result.addString("err", "Failed to open file.");
+        return;
+    }
+    if (startPos == -1) {
+        SetFilePointer(hFile, 0, NULL, FILE_END);
+        DWORD bytesWritten;
+        BOOL result = WriteFile(hFile, fileContent.c_str(), fileContent.size(), &bytesWritten,NULL);
+        CloseHandle(hFile);
+        return;
+    }
+    LARGE_INTEGER fileSize;
+    if (!GetFileSizeEx(hFile, &fileSize)) {
+        CloseHandle(hFile);
+        result.addString("err", "can not get file size.");
+        return;
+    }
+    if (startPos < 0 || startPos > fileSize.QuadPart) {
+        CloseHandle(hFile);
+        result.addString("err", "startPos > file size.");
+        return;
+    }
+    HANDLE hMap = CreateFileMapping(hFile,NULL,
+        PAGE_READWRITE, 0, 0, NULL ); //创建文件映射（映射整个文件）
+    if (hMap == NULL) {
+        CloseHandle(hFile);
+        result.addString("err", "create file map error.");
+        return;
+    }
+    LPVOID pMappedData = MapViewOfFile(hMap, 
+        FILE_MAP_ALL_ACCESS, 0, 0, 0); //映射文件到内存
+    if (pMappedData == NULL) {
+        CloseHandle(hMap);
+        CloseHandle(hFile);
+        result.addString("err", "map view error.");
+        return;
+    }
+    LARGE_INTEGER newSize; // 计算插入后文件大小
+    newSize.QuadPart = fileSize.QuadPart + fileContent.size();
+
+    // 调整文件大小（扩展文件）
+    if (!SetFilePointerEx(hFile, newSize, NULL, FILE_BEGIN) ||
+        !SetEndOfFile(hFile)) {
+        UnmapViewOfFile(pMappedData);
+        CloseHandle(hMap);
+        CloseHandle(hFile);
+        result.addString("err", "resize file error.");
+    }
+
+    //重新映射文件（现在文件已扩展）
+    UnmapViewOfFile(pMappedData);
+    pMappedData = MapViewOfFile(hMap,
+        FILE_MAP_ALL_ACCESS, 0, 0, 0);
+    if (pMappedData == NULL) {
+        CloseHandle(hMap);
+        CloseHandle(hFile);
+        result.addString("err", "remap view error.");
+    }
+    // 移动插入位置后的数据（腾出空间）
+    LPVOID pInsertPos = (LPVOID)((BYTE*)pMappedData + startPos);
+    memmove((BYTE*)pInsertPos + fileContent.size(),
+        pInsertPos, fileSize.QuadPart - startPos);
+    // 写入新文本
+    memcpy(pInsertPos, fileContent.c_str(), fileContent.size());
+    UnmapViewOfFile(pMappedData);
+    CloseHandle(hMap);
+    CloseHandle(hFile);
 }
 
 void Fs::removeFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)

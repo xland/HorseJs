@@ -14,6 +14,8 @@ public:
 	void readFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);
 	void readFileChunk(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);
 	void writeFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);
+	void writeFileChunk(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);
+
 	void removeFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);
 	void removeDir(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);
 	void createDir(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);

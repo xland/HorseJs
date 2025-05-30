@@ -152,6 +152,12 @@
     async getFileInfo(filePath) {
       return this.callMethod("getFileInfo", filePath);
     }
+    async writeFile(filePath, content) {
+      return this.callMethod("writeFile", filePath, content);
+    }
+    async writeFileChunk(filePath, content, startPos) {
+      return this.callMethod("writeFileChunk", filePath, content, startPos);
+    }
     callMethod(methodName, ...params) {
       return this.call({
         className: "fs",

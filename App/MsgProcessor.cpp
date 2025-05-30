@@ -31,6 +31,7 @@ namespace {
         {"readFile", &Fs::readFile},
         {"readFileChunk",&Fs::readFileChunk},
         {"writeFile", &Fs::writeFile},
+        {"writeFileChunk", &Fs::writeFileChunk},
         {"removeFile", &Fs::removeFile},
         {"removeDir", &Fs::removeDir},
         {"createDir", &Fs::createDir},
