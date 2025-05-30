@@ -9,7 +9,7 @@ public:
 	~Fs();
 	static Fs* get();
 
-	void getInfo(BrowserWindow* win,const rapidjson::Value& params, JsonParsor& result);
+	void getFileInfo(BrowserWindow* win,const rapidjson::Value& params, JsonParsor& result);
 	void exists(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);
 	void readFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);
 	void readFileChunk(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result);

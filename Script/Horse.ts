@@ -17,12 +17,16 @@ class Horse extends Eventer {
   }
   private listenMsg() {
     this.webview.addEventListener("message", (e) => {
-      if (e.data.className === "horse") {
-        this.emit(e.data.eventName, e.data);
-      } else if (e.data.className === "window") {
-        this.window.emit(e.data.eventName, e.data);
-      } else if (e.data.className === "fs") {
-        this.fs.emit(e.data.eventName, e.data);
+      let clsName = e.data.className;
+      delete e.data.className;
+      let evtName = e.data.eventName;
+      delete e.data.eventName;
+      if (clsName === "horse") {
+        this.emit(evtName, e.data);
+      } else if (clsName === "window") {
+        this.window.emit(evtName, e.data);
+      } else if (clsName === "fs") {
+        this.fs.emit(evtName, e.data);
       }
     });
     this.webview.addEventListener("sharedbufferreceived", (e) => {

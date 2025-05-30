@@ -146,6 +146,12 @@
     async readFileChunk(filePath, startPos, chunkSize) {
       return this.callMethod("readFileChunk", filePath, startPos, chunkSize);
     }
+    async exists(filePath) {
+      return this.callMethod("exists", filePath);
+    }
+    async getFileInfo(filePath) {
+      return this.callMethod("getFileInfo", filePath);
+    }
     callMethod(methodName, ...params) {
       return this.call({
         className: "fs",
@@ -173,12 +179,16 @@
     }
     listenMsg() {
       this.webview.addEventListener("message", (e) => {
-        if (e.data.className === "horse") {
-          this.emit(e.data.eventName, e.data);
-        } else if (e.data.className === "window") {
-          this.window.emit(e.data.eventName, e.data);
-        } else if (e.data.className === "fs") {
-          this.fs.emit(e.data.eventName, e.data);
+        let clsName = e.data.className;
+        delete e.data.className;
+        let evtName = e.data.eventName;
+        delete e.data.eventName;
+        if (clsName === "horse") {
+          this.emit(evtName, e.data);
+        } else if (clsName === "window") {
+          this.window.emit(evtName, e.data);
+        } else if (clsName === "fs") {
+          this.fs.emit(evtName, e.data);
         }
       });
       this.webview.addEventListener("sharedbufferreceived", (e) => {

@@ -26,7 +26,7 @@ namespace {
         {"removeEventListener", &BrowserWindow::removeEventListener},
     };
     static std::unordered_map<std::string, void (Fs::*)(BrowserWindow*,const rapidjson::Value&, JsonParsor&)> fsFunc = {
-        {"getInfo", &Fs::getInfo},
+        {"getFileInfo", &Fs::getFileInfo},
         {"exists", &Fs::exists},
         {"readFile", &Fs::readFile},
         {"readFileChunk",&Fs::readFileChunk},

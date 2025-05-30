@@ -26,25 +26,53 @@ Fs* Fs::get()
     return fs.get();
 }
 
-void Fs::getInfo(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+void Fs::getFileInfo(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring path = Util::convertToWStr(arr[0].GetString());
     WIN32_FILE_ATTRIBUTE_DATA fileData;
-
-    // 使用 GetFileAttributesEx 获取详细信息
-    if (!GetFileAttributesExA(path.c_str(), GetFileExInfoStandard, &fileData)) {
+    if (!GetFileAttributesEx(path.c_str(), GetFileExInfoStandard, &fileData)) {
         DWORD error = GetLastError();
-        if (error == ERROR_FILE_NOT_FOUND || error == ERROR_PATH_NOT_FOUND) {
-            return info; // isExists 保持 false
+        if (error == ERROR_FILE_NOT_FOUND) {
+            result.addString("err", "file not found");
         }
-        throw std::runtime_error("Failed to get file attributes, error code: " + std::to_string(error));
+        else {
+            result.addString("err", "access error: " + std::to_string(error));
+        }
     }
+    else if (fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+        result.addString("err", "path is directory not file");
+    }
+    else {
+        long long fileSize = static_cast<uint64_t>(fileData.nFileSizeHigh) << 32 | fileData.nFileSizeLow;
+        result.addNumber("fileSize", fileSize);
 
-    info.isExists = true;
-    info.isDir = (fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
-    info.attributes = fileData.dwFileAttributes;
-    info.fileSize = static_cast<uint64_t>(fileData.nFileSizeHigh) << 32 | fileData.nFileSizeLow;
-    info.creationTime = fileData.ftCreationTime;
-    info.lastWriteTime = fileData.ftLastWriteTime;
+        const uint64_t EPOCH_OFFSET_MS = 11644473600000ULL;
+        ULARGE_INTEGER createTime;
+        createTime.LowPart = fileData.ftCreationTime.dwLowDateTime;
+        createTime.HighPart = fileData.ftCreationTime.dwHighDateTime;
+        long long ct = (createTime.QuadPart / 10000) - EPOCH_OFFSET_MS;
+        result.addNumber("createTime", ct);
+
+        ULARGE_INTEGER lastWriteTime;
+        lastWriteTime.LowPart = fileData.ftLastWriteTime.dwLowDateTime;
+        lastWriteTime.HighPart = fileData.ftLastWriteTime.dwHighDateTime;
+        long long lwt = (lastWriteTime.QuadPart / 10000) - EPOCH_OFFSET_MS;        
+        result.addNumber("lastWriteTime", lwt);
+
+        ULARGE_INTEGER lastAccessTime;
+        lastAccessTime.LowPart = fileData.ftLastAccessTime.dwLowDateTime;
+        lastAccessTime.HighPart = fileData.ftLastAccessTime.dwHighDateTime;
+        long long lat = (lastAccessTime.QuadPart / 10000) - EPOCH_OFFSET_MS;
+        result.addNumber("lastAccessTime", lat);
+
+        auto isReadOnly = (fileData.dwFileAttributes & FILE_ATTRIBUTE_READONLY) != 0;
+        result.addBool("isReadOnly", isReadOnly);
+        auto isHidden = (fileData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) != 0;
+        result.addBool("isHidden", isHidden);
+        auto isSystem = (fileData.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM) != 0;
+        result.addBool("isSystem", isSystem);
+    }
 }
 
 void Fs::exists(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)

@@ -1,217 +1,253 @@
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>HorseJs</title>
-        <link rel="stylesheet" href="css/iconfont.css">
-        <style>
-            html{
-                margin: 0px;padding: 0px;
-            }
-            body{
-                margin: 0px;padding: 0px;font-size: 12px;
-                display: flex;flex-direction: column; 
-                height: 100%; width: 100%;               
-            }
-            .btn{cursor: pointer; background: #eee; display: inline-block; user-select: none;
-                border-radius: 3px; margin: 6px; padding: 6px;}
-            .btn:hover{background: #888; color: #fff;}
-            #titleBar{
-                background: #CCD5F0;user-select: none;line-height: 32px;height: 32px;display: flex;
-            }
-            #titleBox{
-                padding-left: 12px;
-                flex: 1;
-            }
-            .titleBtn{
-                width: 38px;
-                text-align: center;
-                cursor: pointer;
-            }
-            .titleBtn:hover{
-                background: #E9EEFF;
-            }
-            #btnCloseT:hover{
-                background: red !important;
-                color: #fff !important;
-            }
-            i{
-                font-size: 12px !important;
-            }
-            .box{
-                padding: 12px;
-                flex: 1;
-                overflow-y: auto;
-            }
-
-        </style>
-    </head>
-    <body>
-        <div id="titleBar">
-            <div id="titleBox">html自定义窗口标题栏</div>
-            <div id="btnMinimizeT" class="titleBtn"><i class="iconfont horse-minimize"></i></div>
-            <div id="btnMaximizeT" class="titleBtn"><i class="iconfont horse-maximize"></i></div>
-            <div id="btnRestoreT" class="titleBtn" style="display:none;"><i class="iconfont horse-restore"></i></div>
-            <div id="btnCloseT" class="titleBtn"><i class="iconfont horse-close"></i></div>
-        </div>
-        <div class="box">
-            <p>horse</p>
-            <div id="btnGetConfig" class="btn">获取App配置</div>
-            <p>window</p>
-            <div id="btnMaximize" class="btn">最大化</div>
-            <div id="btnMinimize" class="btn">最小化</div>
-            <div id="btnShow" class="btn">显示</div>
-            <div id="btnHide" class="btn">隐藏</div>
-            <div id="btnRestore" class="btn">还原</div>
-            <div id="btnResize" class="btn">改变大小</div>
-            <div id="btnBindRes" class="btn">附加资源</div>
-            <div id="btnClose" class="btn">关闭窗口</div>
-            <div id="btnDestory" class="btn">销毁窗口</div>
-            <div id="btnFlash" class="btn">闪烁窗口</div>
-            <div id="btnSetResizable" class="btn">启用/禁止改变窗口大小</div>
-            <div id="btnRegWinClose" class="btn">注册窗口关闭事件</div>
-            <div id="btnUnregWinClose" class="btn">取消注册窗口关闭事件</div>
-            <div id="btnNewWindow" class="btn">创建窗口</div>
-            <div id="btnReadFile" class="btn">读文件</div>
-            <div id="btnReadFileChunk" class="btn">读文件的一部分</div>
-        </div>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HorseJs</title>
+    <link rel="stylesheet" href="css/iconfont.css" />
+    <style>
+      html {
+        margin: 0px;
+        padding: 0px;
+      }
+      body {
+        margin: 0px;
+        padding: 0px;
+        font-size: 12px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+      }
+      .btn {
+        cursor: pointer;
+        background: #eee;
+        display: inline-block;
+        user-select: none;
+        border-radius: 3px;
+        margin: 6px;
+        padding: 6px;
+      }
+      .btn:hover {
+        background: #888;
+        color: #fff;
+      }
+      #titleBar {
+        background: #ccd5f0;
+        user-select: none;
+        line-height: 32px;
+        height: 32px;
+        display: flex;
+      }
+      #titleBox {
+        padding-left: 12px;
+        flex: 1;
+      }
+      .titleBtn {
+        width: 38px;
+        text-align: center;
+        cursor: pointer;
+      }
+      .titleBtn:hover {
+        background: #e9eeff;
+      }
+      #btnCloseT:hover {
+        background: red !important;
+        color: #fff !important;
+      }
+      i {
+        font-size: 12px !important;
+      }
+      .box {
+        padding: 12px;
+        flex: 1;
+        overflow-y: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="titleBar">
+      <div id="titleBox">html自定义窗口标题栏</div>
+      <div id="btnMinimizeT" class="titleBtn"><i class="iconfont horse-minimize"></i></div>
+      <div id="btnMaximizeT" class="titleBtn"><i class="iconfont horse-maximize"></i></div>
+      <div id="btnRestoreT" class="titleBtn" style="display: none"><i class="iconfont horse-restore"></i></div>
+      <div id="btnCloseT" class="titleBtn"><i class="iconfont horse-close"></i></div>
+    </div>
+    <div class="box">
+      <p>horse</p>
+      <div id="btnGetConfig" class="btn">获取App配置</div>
+      <p>window</p>
+      <div id="btnMaximize" class="btn">最大化</div>
+      <div id="btnMinimize" class="btn">最小化</div>
+      <div id="btnShow" class="btn">显示</div>
+      <div id="btnHide" class="btn">隐藏</div>
+      <div id="btnRestore" class="btn">还原</div>
+      <div id="btnResize" class="btn">改变大小</div>
+      <div id="btnBindRes" class="btn">附加资源</div>
+      <div id="btnClose" class="btn">关闭窗口</div>
+      <div id="btnDestory" class="btn">销毁窗口</div>
+      <div id="btnFlash" class="btn">闪烁窗口</div>
+      <div id="btnSetResizable" class="btn">启用/禁止改变窗口大小</div>
+      <div id="btnRegWinClose" class="btn">注册窗口关闭事件</div>
+      <div id="btnUnregWinClose" class="btn">取消注册窗口关闭事件</div>
+      <div id="btnNewWindow" class="btn">创建窗口</div>
+      <p>fs</p>
+      <div id="btnReadFile" class="btn">读文件</div>
+      <div id="btnReadFileChunk" class="btn">读文件的一部分</div>
+      <div id="btnPathExists" class="btn">路径是否存在</div>
+      <div id="btnFileInfo" class="btn">获取文件信息</div>
+    </div>
 
     <script>
-        let $ = (selector)=>document.querySelector(selector);
-        let initTitleBar = ()=>{
-            $("#btnMaximizeT").addEventListener("click",async ()=>{
-                await horse.window.maximize();
-            })
-            $("#btnMinimizeT").addEventListener("click",()=>{
-                horse.window.minimize();
-            })
-            $("#btnCloseT").addEventListener("click", () => {
-                horse.window.close();
-            });
-            $("#btnRestoreT").addEventListener("click",()=>{
-                horse.window.restore();
-            })
-            horse.window.addEventListener("stateChanged",async (result)=>{
-                if(result.state == "maximize"){
-                    $("#btnMaximizeT").setAttribute('style', 'display:none;');
-                    $("#btnRestoreT").setAttribute('style',"");
-                }else if(result.state == "restore"){
-                    $("#btnMaximizeT").setAttribute('style', '');
-                    $("#btnRestoreT").setAttribute('style', 'display:none;');
-                }
-            })
-        }
-        window.addEventListener("DOMContentLoaded", async () => {
-            initTitleBar();
-            $("#titleBox").addEventListener("mousedown",async ()=>{
-                horse.window.startDrag();
-            })
-            $("#btnGetConfig").addEventListener("click",async ()=>{
-                let config = await horse.getConfig();
-                console.log(config);
-            })
-            $("#btnMaximize").addEventListener("click",async ()=>{
-                await horse.window.maximize();
-            })
-            $("#btnMinimize").addEventListener("click",()=>{
-                horse.window.minimize();
-            })
-            $("#btnHide").addEventListener("click",()=>{
-                horse.window.hide();
-                setTimeout(()=>{
-                    horse.window.show();
-                },2000)
-            })
-            $("#btnRestore").addEventListener("click",()=>{
-                horse.window.restore();
-            })
-            $("#btnRegWinClose").addEventListener("click",()=>{
-                horse.window.addEventListener("closing", async ()=>{
-                    alert("现在你只能用销毁窗口关闭此窗口了");
-                });
-            });
-            $("#btnUnregWinClose").addEventListener("click",async ()=>{
-                await horse.window.removeEventListener("closing");
-                alert("现在你可以正常关闭窗口了");
-            });
-            $("#btnResize").addEventListener("click",async ()=>{
-                await horse.window.resize(1200, 600);
-            });
-            let isResizalbe = true;
-            $("#btnSetResizable").addEventListener("click",async ()=>{
-                isResizalbe = !isResizalbe;
-                await horse.window.setResizable(isResizalbe);
-            });
-            $("#btnBindRes").addEventListener("click", async () => {
-                horse.fs.addResToExe("D:\\project\\HorseJs\\x64\\Release\\UI\\", "D:\\project\\HorseJs\\x64\\Release\\HorseJs.exe");
-            });
-            $("#btnClose").addEventListener("click", () => {
-                horse.window.close();
-            });
-            $("#btnDestory").addEventListener("click", () => {
-                horse.window.destroy();
-            });
-            $("#btnFlash").addEventListener("click", () => {
-                setTimeout(()=>{
-                    horse.window.flash(true);
-                    setTimeout(()=>{
-                        horse.window.flash(false);
-                    },2000);
-                },2000);                
-            });
-            $("#btnNewWindow").addEventListener("click",()=>{
-                horse.window.openWindow({
-                    "resizable": true,
-                    "maximizable": false,
-                    "minimizable":false,
-                    "alwaysOnTop":false,
-                    "skipTaskbar":false,
-                    "visible": true,
-                    "frame": false,
-                    "shadow": true,
-                    "title": "窗口标题！！！",
-                    "size": {
-                        "w": 1000,
-                        "h": 800
-                    },
-                    "minSize": {
-                        "w": 250,
-                        "h": 200
-                    },
-                    "position": {
-                        "x":200,
-                        "y":200
-                    },
-                    "page": {
-                        "areDefaultScriptDialogsEnabled": true,
-                        "isScriptEnabled": true,
-                        "isWebMessageEnabled": true,
-                        "url": "index.html"
-                    }
-                });
-            });
-            $("#btnReadFile").addEventListener("click",async ()=>{
-                let data = await horse.fs.readFile("D:\\project\\HorseJs\\Script\\index.html");
-                const uint8Array = new Uint8Array(data.buffer); // 字节视图
-                const decoder = new TextDecoder('utf-8'); // UTF-8 解码器
-                const text = decoder.decode(uint8Array); // 转换为字符串
-                console.log('Decoded string:', text);
-                data.release();
-            })
-            $("#btnReadFileChunk").addEventListener("click",async ()=>{
-                let data = await horse.fs.readFileChunk("D:\\project\\HorseJs\\Script\\index.html",10,100);
-                const uint8Array = new Uint8Array(data.buffer); // 字节视图
-                const decoder = new TextDecoder('utf-8'); // UTF-8 解码器
-                const text = decoder.decode(uint8Array); // 转换为字符串
-                console.log('Decoded string:', text);
-                data.release();
-            })
-            horse.window.addEventListener("sizePosChanged",(data)=>{
-                // console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
-            })
-            
-            horse.window.show();
+      let $ = (selector) => document.querySelector(selector);
+      let initHorse = () => {
+        $("#btnGetConfig").addEventListener("click", async () => {
+          let config = await horse.getConfig();
+          console.log(config);
         });
-
+      };
+      let initTitleBar = () => {
+        $("#titleBox").addEventListener("mousedown", async () => {
+          horse.window.startDrag();
+        });
+        $("#btnMaximizeT").addEventListener("click", async () => {
+          await horse.window.maximize();
+        });
+        $("#btnMinimizeT").addEventListener("click", () => {
+          horse.window.minimize();
+        });
+        $("#btnCloseT").addEventListener("click", () => {
+          horse.window.close();
+        });
+        $("#btnRestoreT").addEventListener("click", () => {
+          horse.window.restore();
+        });
+        horse.window.addEventListener("stateChanged", async (result) => {
+          if (result.state == "maximize") {
+            $("#btnMaximizeT").setAttribute("style", "display:none;");
+            $("#btnRestoreT").setAttribute("style", "");
+          } else if (result.state == "restore") {
+            $("#btnMaximizeT").setAttribute("style", "");
+            $("#btnRestoreT").setAttribute("style", "display:none;");
+          }
+        });
+        horse.window.addEventListener("sizePosChanged", (data) => {
+          // console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
+        });
+      };
+      let initWindow = () => {
+        $("#btnMaximize").addEventListener("click", async () => {
+          await horse.window.maximize();
+        });
+        $("#btnMinimize").addEventListener("click", () => {
+          horse.window.minimize();
+        });
+        $("#btnHide").addEventListener("click", () => {
+          horse.window.hide();
+          setTimeout(() => {
+            horse.window.show();
+          }, 2000);
+        });
+        $("#btnRestore").addEventListener("click", () => {
+          horse.window.restore();
+        });
+        $("#btnRegWinClose").addEventListener("click", () => {
+          horse.window.addEventListener("closing", async () => {
+            alert("现在你只能用销毁窗口关闭此窗口了");
+          });
+        });
+        $("#btnUnregWinClose").addEventListener("click", async () => {
+          await horse.window.removeEventListener("closing");
+          alert("现在你可以正常关闭窗口了");
+        });
+        $("#btnResize").addEventListener("click", async () => {
+          await horse.window.resize(1200, 600);
+        });
+        let isResizalbe = true;
+        $("#btnSetResizable").addEventListener("click", async () => {
+          isResizalbe = !isResizalbe;
+          await horse.window.setResizable(isResizalbe);
+        });
+        $("#btnBindRes").addEventListener("click", async () => {
+          horse.fs.addResToExe("D:\\project\\HorseJs\\x64\\Release\\UI\\", "D:\\project\\HorseJs\\x64\\Release\\HorseJs.exe");
+        });
+        $("#btnClose").addEventListener("click", () => {
+          horse.window.close();
+        });
+        $("#btnDestory").addEventListener("click", () => {
+          horse.window.destroy();
+        });
+        $("#btnFlash").addEventListener("click", () => {
+          setTimeout(() => {
+            horse.window.flash(true);
+            setTimeout(() => {
+              horse.window.flash(false);
+            }, 2000);
+          }, 2000);
+        });
+        $("#btnNewWindow").addEventListener("click", () => {
+          horse.window.openWindow({
+            resizable: true,
+            maximizable: false,
+            minimizable: false,
+            alwaysOnTop: false,
+            skipTaskbar: false,
+            visible: true,
+            frame: false,
+            shadow: true,
+            title: "窗口标题！！！",
+            size: {
+              w: 1000,
+              h: 800,
+            },
+            minSize: {
+              w: 250,
+              h: 200,
+            },
+            position: {
+              x: 200,
+              y: 200,
+            },
+            page: {
+              areDefaultScriptDialogsEnabled: true,
+              isScriptEnabled: true,
+              isWebMessageEnabled: true,
+              url: "index.html",
+            },
+          });
+        });
+      };
+      let initFs = () => {
+        $("#btnReadFile").addEventListener("click", async () => {
+          let data = await horse.fs.readFile("D:\\project\\HorseJs\\Script\\index.html");
+          const uint8Array = new Uint8Array(data.buffer); // 字节视图
+          const decoder = new TextDecoder("utf-8"); // UTF-8 解码器
+          const text = decoder.decode(uint8Array); // 转换为字符串
+          console.log("Decoded string:", text);
+          data.release();
+        });
+        $("#btnReadFileChunk").addEventListener("click", async () => {
+          let data = await horse.fs.readFileChunk("D:\\project\\HorseJs\\Script\\index.html", 10, 100);
+          const uint8Array = new Uint8Array(data.buffer); // 字节视图
+          const decoder = new TextDecoder("utf-8"); // UTF-8 解码器
+          const text = decoder.decode(uint8Array); // 转换为字符串
+          console.log("Decoded string:", text);
+          data.release();
+        });
+        $("#btnPathExists").addEventListener("click", async () => {
+          let data = await horse.fs.exists("D:\\project\\HorseJs\\Script\\index.html");
+          console.log(data);
+        });
+        $("#btnFileInfo").addEventListener("click", async () => {
+          let data = await horse.fs.getFileInfo("D:\\project\\HorseJs\\Script\\index.html");
+          console.log(data);
+        });
+      };
+      window.addEventListener("DOMContentLoaded", async () => {
+        initTitleBar();
+        initHorse();
+        initWindow();
+        initFs();
+        horse.window.show();
+      });
     </script>
-    </body>
+  </body>
 </html>

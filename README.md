@@ -201,7 +201,7 @@ horse.window.addEventListener("closing", async ()=>{
 
 ## horse.fs 的方法
 
-- 读取文件
+- 读取文件全部内容
 ```
 let data = await horse.fs.readFile("D:\\index.html");
 const uint8Array = new Uint8Array(data.buffer); // 字节视图
@@ -220,7 +220,18 @@ const text = decoder.decode(uint8Array);
 console.log('Decoded string:', text);
 data.release();
 ```
-
+- 路径是否存在
+```js
+let data = await horse.fs.exists("D:\\index.html");
+console.log(data);
+// 输出：{isDir: false, isExists: true}
+```
+- 获取文件信息
+```js
+let data = await horse.fs.getFileInfo("D:\\index.html");
+console.log(data);
+// 输出：{createTime:1747615428326,fileSize:9190,isHidden:false,isReadOnly:false,isSystem:false,lastAccessTime:1748565302829,lastWriteTime:1748565107113}
+```
 ## horse.fs 的事件
 
 ## FAQ
