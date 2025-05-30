@@ -6,7 +6,7 @@
 #include "JsonParsor.h"
 #include "../Win/BrowserWindow.h"
 #include "../Win/Page.h"
-#include "Fs.h"
+#include "Dialog.h"
 
 namespace {
     std::unique_ptr<MsgProcessor> msgProcessor;
@@ -43,6 +43,9 @@ namespace {
     };
     static std::unordered_map<std::string, void (BrowserWindow::*)(const rapidjson::Value&, JsonParsor&)> osFunc = {
         {"maximize", &BrowserWindow::maximize},
+    };
+    static std::unordered_map<std::string, void (Dialog::*)(BrowserWindow*, const rapidjson::Value&, JsonParsor&)> dialogFunc = {
+        {"openPathDialog", &Dialog::openPathDialog},
     };
 }
 
@@ -109,6 +112,15 @@ void MsgProcessor::processStr(const std::string& msgStr)
         }
         else {
             parsor.addString("err", "Fs Method not found!");
+        }
+    }
+    else if (className == "dialog") {
+        auto it = dialogFunc.find(methodName);
+        if (it != dialogFunc.end()) {
+            (Dialog::get()->*it->second)(win, jsonDoc["params"], parsor);
+        }
+        else {
+            parsor.addString("err", "Dialog Method not found!");
         }
     }
     if (!parsor.isSharedBuffer) {

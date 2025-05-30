@@ -1,15 +1,18 @@
 import { Window } from "./Window";
 import { Fs } from "./Fs";
 import { Eventer } from "./Eventer";
+import { Dialog } from "./Dialog";
 class Horse extends Eventer {
   window: Window;
   fs: Fs;
+  dialog: Dialog;
   webview;
   constructor() {
     super();
     this.webview = window.chrome.webview;
     this.window = new Window(); // 初始化 window 实例
     this.fs = new Fs();
+    this.dialog = new Dialog();
     this.listenMsg();
   }
   getConfig() {

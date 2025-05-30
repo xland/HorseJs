@@ -174,16 +174,33 @@
     }
   };
 
+  // Dialog.ts
+  var Dialog = class extends Eventer {
+    async openPathDialog(isOpenDir) {
+      return this.callMethod("openPathDialog", isOpenDir);
+    }
+    callMethod(methodName, ...params) {
+      return this.call({
+        className: "dialog",
+        winId: globalThis.__WIN_ID,
+        methodName,
+        params
+      });
+    }
+  };
+
   // Horse.ts
   var Horse = class extends Eventer {
     window;
     fs;
+    dialog;
     webview;
     constructor() {
       super();
       this.webview = window.chrome.webview;
       this.window = new Window();
       this.fs = new Fs();
+      this.dialog = new Dialog();
       this.listenMsg();
     }
     getConfig() {

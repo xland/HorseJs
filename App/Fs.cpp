@@ -38,7 +38,7 @@ void Fs::getFileInfo(BrowserWindow* win, const rapidjson::Value& params, JsonPar
         }
         else {
             result.addString("err", "access error: " + std::to_string(error));
-        }
+        }        
     }
     else if (fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
         result.addString("err", "path is directory not file");

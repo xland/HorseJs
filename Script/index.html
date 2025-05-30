@@ -81,7 +81,6 @@
       <div id="btnHide" class="btn">隐藏</div>
       <div id="btnRestore" class="btn">还原</div>
       <div id="btnResize" class="btn">改变大小</div>
-      <div id="btnBindRes" class="btn">附加资源</div>
       <div id="btnClose" class="btn">关闭窗口</div>
       <div id="btnDestory" class="btn">销毁窗口</div>
       <div id="btnFlash" class="btn">闪烁窗口</div>
@@ -98,6 +97,9 @@
       <div id="btnRemovePath" class="btn">把路径移入回收站</div>
       <div id="btnPathExists" class="btn">路径是否存在</div>
       <div id="btnFileInfo" class="btn">获取文件信息</div>
+      <p>dialog</p>
+      <div id="btnOpenPathDialog" class="btn">打开一个文件路径</div>
+      <p>res</p>
     </div>
 
     <script>
@@ -169,9 +171,6 @@
         $("#btnSetResizable").addEventListener("click", async () => {
           isResizalbe = !isResizalbe;
           await horse.window.setResizable(isResizalbe);
-        });
-        $("#btnBindRes").addEventListener("click", async () => {
-          horse.fs.addResToExe("D:\\project\\HorseJs\\x64\\Release\\UI\\", "D:\\project\\HorseJs\\x64\\Release\\HorseJs.exe");
         });
         $("#btnClose").addEventListener("click", () => {
           horse.window.close();
@@ -261,11 +260,24 @@
           console.log(data);
         });
       };
+      let initRes = () => {
+        // $("#btnBindRes").addEventListener("click", async () => {
+        //   horse.fs.addResToExe("D:\\project\\HorseJs\\x64\\Release\\UI\\", "D:\\project\\HorseJs\\x64\\Release\\HorseJs.exe");
+        // });
+      };
+      let initDialog = () => {
+        $("#btnOpenPathDialog").addEventListener("click", async () => {
+          let data = await horse.dialog.openPathDialog(true);
+          console.log(data);
+        });
+      };
       window.addEventListener("DOMContentLoaded", async () => {
         initTitleBar();
         initHorse();
         initWindow();
         initFs();
+        initRes();
+        initDialog();
         horse.window.show();
       });
     </script>

@@ -156,6 +156,7 @@
     <ClCompile Include="App\AppConfig.cpp" />
     <ClCompile Include="App\App.cpp" />
     <ClCompile Include="App\Clipboard.cpp" />
+    <ClCompile Include="App\Dialog.cpp" />
     <ClCompile Include="App\JsonParsor.cpp" />
     <ClCompile Include="App\Fs.cpp" />
     <ClCompile Include="App\Lib.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="App\AppConfig.h" />
     <ClInclude Include="App\App.h" />
     <ClInclude Include="App\Clipboard.h" />
+    <ClInclude Include="App\Dialog.h" />
     <ClInclude Include="App\Fs.h" />
     <ClInclude Include="App\Lib.h" />
     <ClInclude Include="App\Net.h" />
