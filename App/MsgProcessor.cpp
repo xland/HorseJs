@@ -1,31 +1,32 @@
 ﻿#include <memory>
 
 #include "MsgProcessor.h"
+#include "JsonResult.h"
 #include "App.h"
 #include "Fs.h"
-#include "JsonParsor.h"
+#include "Win.h"
+#include "Dialog.h"
 #include "../Win/BrowserWindow.h"
 #include "../Win/Page.h"
-#include "Dialog.h"
 
 namespace {
     std::unique_ptr<MsgProcessor> msgProcessor;
-    static std::unordered_map<std::string, void (BrowserWindow::*)(const rapidjson::Value&, JsonParsor&)> winFunc = {
-        {"show", &BrowserWindow::show},
-        {"hide", &BrowserWindow::hide},
-        {"maximize", &BrowserWindow::maximize},
-        {"minimize", &BrowserWindow::minimize},
-        {"restore", &BrowserWindow::restore},
-        {"close", &BrowserWindow::close},
-        {"destroy", &BrowserWindow::destroy},
-        {"startDrag", &BrowserWindow::startDrag},
-        {"openWindow", &BrowserWindow::openWindow},
-        {"setResizable", &BrowserWindow::setResizable},
-        {"resize", &BrowserWindow::resize},
-        {"addEventListener", &BrowserWindow::addEventListener},
-        {"removeEventListener", &BrowserWindow::removeEventListener},
+    static std::unordered_map<std::string, void (Win::*)(BrowserWindow*, const rapidjson::Value&, JsonResult&)> winFunc = {
+        {"show", &Win::show},
+        {"hide", &Win::hide},
+        {"maximize", &Win::maximize},
+        {"minimize", &Win::minimize},
+        {"restore", &Win::restore},
+        {"close", &Win::close},
+        {"destroy", &Win::destroy},
+        {"startDrag", &Win::startDrag},
+        {"openWindow", &Win::openWindow},
+        {"setResizable", &Win::setResizable},
+        {"resize", &Win::resize},
+        {"addEventListener", &Win::addEventListener},
+        {"removeEventListener", &Win::removeEventListener},
     };
-    static std::unordered_map<std::string, void (Fs::*)(BrowserWindow*,const rapidjson::Value&, JsonParsor&)> fsFunc = {
+    static std::unordered_map<std::string, void (Fs::*)(BrowserWindow*,const rapidjson::Value&, JsonResult&)> fsFunc = {
         {"getFileInfo", &Fs::getFileInfo},
         {"exists", &Fs::exists},
         {"readFile", &Fs::readFile},
@@ -41,10 +42,10 @@ namespace {
         {"renameFile", &Fs::renameFile},
         {"watch", &Fs::watch},
     };
-    static std::unordered_map<std::string, void (BrowserWindow::*)(const rapidjson::Value&, JsonParsor&)> osFunc = {
-        {"maximize", &BrowserWindow::maximize},
+    static std::unordered_map<std::string, void (BrowserWindow::*)(const rapidjson::Value&, JsonResult&)> osFunc = {
+        /*{"maximize", &BrowserWindow::maximize},*/
     };
-    static std::unordered_map<std::string, void (Dialog::*)(BrowserWindow*, const rapidjson::Value&, JsonParsor&)> dialogFunc = {
+    static std::unordered_map<std::string, void (Dialog::*)(BrowserWindow*, const rapidjson::Value&, JsonResult&)> dialogFunc = {
         {"openPathDialog", &Dialog::openPathDialog},
     };
 }
@@ -87,7 +88,7 @@ void MsgProcessor::processStr(const std::string& msgStr)
         return;
     }
     auto win = App::get()->getWindow(winId);
-    JsonParsor parsor;
+    JsonResult parsor;
     parsor.addString("className", className);
     parsor.addString("eventName", eventName);
     if (className == "horse") {
@@ -96,7 +97,7 @@ void MsgProcessor::processStr(const std::string& msgStr)
     else if (className == "window") {
         auto it = winFunc.find(methodName);
         if (it != winFunc.end()) {
-            (win->*it->second)(jsonDoc["params"], parsor);
+            (Win::get()->*it->second)(win,jsonDoc["params"], parsor);
         }
         else {
             parsor.addString("err", "Window Method not found!");
@@ -123,7 +124,7 @@ void MsgProcessor::processStr(const std::string& msgStr)
             parsor.addString("err", "Dialog Method not found!");
         }
     }
-    if (!parsor.isSharedBuffer) {
+    if (!parsor.isAsync) {
         if (parsor.ok) {
             parsor.addBool("ok", true);
         }

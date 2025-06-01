@@ -1,6 +1,6 @@
 #pragma once
 #include "Util.h"
-#include "JsonParsor.h"
+#include "JsonResult.h"
 class Screen
 {
 public:

@@ -1,6 +1,4 @@
-#include <future>
 #include "Fs.h"
-#include "Util.h"
 #include "App.h"
 #include "../Win/BrowserWindow.h"
 #include "../Win/BrowserWindowConfig.h"
@@ -26,7 +24,7 @@ Fs* Fs::get()
     return fs.get();
 }
 
-void Fs::getFileInfo(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+void Fs::getFileInfo(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::wstring path = Util::convertToWStr(arr[0].GetString());
@@ -75,7 +73,7 @@ void Fs::getFileInfo(BrowserWindow* win, const rapidjson::Value& params, JsonPar
     }
 }
 
-void Fs::exists(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+void Fs::exists(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::wstring path = Util::convertToWStr(arr[0].GetString());
@@ -97,7 +95,7 @@ void Fs::exists(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& 
     }
 }
 
-void Fs::readFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+void Fs::readFile(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::wstring filePath = Util::convertToWStr(arr[0].GetString());
@@ -125,7 +123,7 @@ void Fs::readFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor
     wil::com_ptr<IStream> stream;
     sharedBuffer->OpenStream(&stream);
     stream->Write(buffer.data(), totalSize, nullptr);
-    result.isSharedBuffer = true;
+    result.isAsync = true;
     result.addNumber("totalSize", totalSize);
     result.addBool("ok", true);
     std::wstring jsonStr = result.parse();
@@ -137,7 +135,7 @@ void Fs::readFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor
     sharedBuffer->Close();
 }
 
-void Fs::readFileChunk(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+void Fs::readFileChunk(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::wstring filePath = Util::convertToWStr(arr[0].GetString());
@@ -170,7 +168,7 @@ void Fs::readFileChunk(BrowserWindow* win, const rapidjson::Value& params, JsonP
     wil::com_ptr<IStream> stream;
     sharedBuffer->OpenStream(&stream);    
     stream->Write(buffer.data(), readSize, nullptr);
-    result.isSharedBuffer = true;
+    result.isAsync = true;
     result.addNumber("totalSize", totalSize);
     result.addNumber("readSize", readSize);
     result.addNumber("startPos", start);
@@ -185,7 +183,7 @@ void Fs::readFileChunk(BrowserWindow* win, const rapidjson::Value& params, JsonP
 
 }
 
-void Fs::writeFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+void Fs::writeFile(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::wstring filePath = Util::convertToWStr(arr[0].GetString());
@@ -204,7 +202,7 @@ void Fs::writeFile(BrowserWindow* win, const rapidjson::Value& params, JsonParso
     file.close();
 }
 
-void Fs::writeFileChunk(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+void Fs::writeFileChunk(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::wstring filePath = Util::convertToWStr(arr[0].GetString());
@@ -281,7 +279,7 @@ void Fs::writeFileChunk(BrowserWindow* win, const rapidjson::Value& params, Json
     CloseHandle(hFile);
 }
 
-void Fs::delPath(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+void Fs::delPath(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::wstring path = Util::convertToWStr(arr[0].GetString());
@@ -300,7 +298,7 @@ void Fs::delPath(BrowserWindow* win, const rapidjson::Value& params, JsonParsor&
     }
 }
 
-void Fs::removePath(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+void Fs::removePath(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::wstring path = Util::convertToWStr(arr[0].GetString());
@@ -321,27 +319,27 @@ void Fs::removePath(BrowserWindow* win, const rapidjson::Value& params, JsonPars
     }
 }
 
-void Fs::createDir(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+void Fs::createDir(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result)
 {
 }
 
-void Fs::listDir(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+void Fs::listDir(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result)
 {
 }
 
-void Fs::copyFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+void Fs::copyFile(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result)
 {
 }
 
-void Fs::moveFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+void Fs::moveFile(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result)
 {
 }
 
-void Fs::renameFile(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+void Fs::renameFile(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result)
 {
 }
 
-void Fs::watch(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+void Fs::watch(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result)
 {
 }
 

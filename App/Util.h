@@ -9,6 +9,8 @@
 #include <wrl.h>
 #include <wil/com.h>
 #include <gdiplus.h>
+#include <memory>
+#include <unordered_map>
 #include <map>
 #include "../Lib/rapidjson/document.h"
 #include "../Lib/rapidjson/writer.h"

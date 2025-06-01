@@ -7,8 +7,6 @@
 #include <wrl.h>
 #include <wil/com.h>
 #include <WebView2.h>
-#include <memory>
-#include <unordered_map>
 #include "Util.h"
 #include "AppConfig.h"
 #include "../Lib/rapidjson/document.h"

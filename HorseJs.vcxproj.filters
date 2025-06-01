@@ -69,6 +69,18 @@
     <ClCompile Include="App\Clipboard.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="App\Dialog.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="App\ThreadManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="App\JsonResult.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="App\Win.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -217,9 +229,6 @@
     <ClInclude Include="App\AppConfig.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Win\EnumId.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="App\MsgProcessor.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -248,6 +257,18 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="App\Clipboard.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Dialog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="App\ThreadManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="App\JsonResult.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Win.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

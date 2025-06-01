@@ -168,6 +168,8 @@
     <ClCompile Include="App\Screen.cpp" />
     <ClCompile Include="App\Tray.cpp" />
     <ClCompile Include="App\ThreadManager.cpp" />
+    <ClCompile Include="App\JsonResult.cpp" />
+    <ClCompile Include="App\Win.cpp" />
     <ClCompile Include="Win\BrowserWindowConfig.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="App\Util.cpp" />
@@ -216,10 +218,12 @@
     <ClInclude Include="App\Res.h" />
     <ClInclude Include="App\Screen.h" />
     <ClInclude Include="App\Tray.h" />
+    <ClInclude Include="App\JsonResult.h" />
     <ClInclude Include="Res\Res.h" />
     <ClInclude Include="App\JsonParsor.h" />
     <ClInclude Include="App\MsgProcessor.h" />
     <ClInclude Include="App\ThreadManager.h" />
+    <ClInclude Include="App\Win.h" />
     <ClInclude Include="Win\BrowserWindowConfig.h" />
     <ClInclude Include="Lib\rapidjson\allocators.h" />
     <ClInclude Include="Lib\rapidjson\cursorstreamwrapper.h" />

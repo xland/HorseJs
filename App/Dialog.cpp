@@ -26,7 +26,7 @@ Dialog* Dialog::get()
     return dialog.get();
 }
 
-void Dialog::openPathDialog(BrowserWindow* win, const rapidjson::Value& params, JsonParsor& result)
+void Dialog::openPathDialog(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result)
 {
     IFileOpenDialog* pFileOpen;
     auto hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pFileOpen));

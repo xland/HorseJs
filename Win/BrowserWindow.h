@@ -6,7 +6,7 @@
 #include <wil/com.h>
 #include <WebView2.h>
 #include "../App/Util.h"
-#include "../App/JsonParsor.h"
+#include "../App/JsonResult.h"
 
 using namespace Microsoft;
 using namespace winrt::Windows;
@@ -20,21 +20,8 @@ public:
 	~BrowserWindow();
 	bool load(const rapidjson::Value& pageConfig);
 public:
-	void show(const rapidjson::Value& params, JsonParsor& result);
-	void hide(const rapidjson::Value& params, JsonParsor& result);
-	void maximize(const rapidjson::Value& params, JsonParsor& result);
-	void minimize(const rapidjson::Value& params, JsonParsor& result);
-	void restore(const rapidjson::Value& params, JsonParsor& result);
-	void flash(const rapidjson::Value& params, JsonParsor& result);
-	void close(const rapidjson::Value& params, JsonParsor& result);
-	void destroy(const rapidjson::Value& params, JsonParsor& result);
-	void startDrag(const rapidjson::Value& params, JsonParsor& result);
-	void openWindow(const rapidjson::Value& params, JsonParsor& result);
-	void setResizable(const rapidjson::Value& params, JsonParsor& result);
-	void resize(const rapidjson::Value& params, JsonParsor& result);
-	void addEventListener(const rapidjson::Value& params, JsonParsor& result);
-	void removeEventListener(const rapidjson::Value& params, JsonParsor& result);
-public:
+	bool framelessResizable{ true };
+
 	wil::com_ptr<ICoreWebView2Controller> ctrl;
 	wil::com_ptr<ICoreWebView2CompositionController> ctrlComp;
 
@@ -66,6 +53,6 @@ private:
 	HRESULT ctrlReady(HRESULT result, ICoreWebView2CompositionController* ctrl);
 	HRESULT cursorChange(ICoreWebView2CompositionController*, IUnknown*);
 private:
-	bool isMouseTracking{ false }, framelessResizable{true};
+	bool isMouseTracking{ false };
 };
 

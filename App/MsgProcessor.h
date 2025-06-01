@@ -1,10 +1,5 @@
 ﻿#pragma once
-#include <cstdarg>
 #include "Util.h"
-
-class BrowserWindow;
-class Page;
-class JsonParsor;
 class MsgProcessor
 {
 public:
