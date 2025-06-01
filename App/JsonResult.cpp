@@ -38,6 +38,7 @@ void JsonResult::returnBack()
         }
         std::wstring jsonStr = parse();
         win->page->webview->PostWebMessageAsJson(jsonStr.data());
+        delete this;
     }
     else {
         PostMessage(win->hwnd, WM_THREADRESULT, 0, (LPARAM)this);
