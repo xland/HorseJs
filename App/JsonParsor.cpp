@@ -65,6 +65,11 @@ void JsonParsor::addParsor(const std::string& name, const JsonParsor&& parsor)
     doc.AddMember(getKey(name), std::move(copiedValue), doc.GetAllocator());
 }
 
+void JsonParsor::addArrString(const std::string& name, const std::string& value)
+{
+
+}
+
 std::wstring JsonParsor::parse()
 {
     rapidjson::StringBuffer buffer;

@@ -273,10 +273,13 @@
             okBtnText: "选择文件",
             // dir: "C:\\Users\\liulun\\AppData\\Roaming\\HorseJs",
             defaultDir: "C:\\Users\\liulun\\AppData\\Roaming\\HorseJs",
-            type: "file", //"dir"
-            filters: [],
-            multiSelections: true,
-            showHiddenFiles: true,
+            type: "file", //或"dir"，默认值为file
+            filter: [
+              ["All Files", "*.*"],
+              ["Image Files", "*.jpg;*.png"],
+            ], //只有type是file的时候才有效
+            multiSelection: true, //默认值false
+            showHiddenFile: true, //默认值false
           });
           console.log(data);
         });

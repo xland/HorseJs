@@ -35,7 +35,61 @@ void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
     if (obj.HasMember("title") && obj["title"].IsString()) {
         title = Util::convertToWStr(obj["title"].GetString());
     }
-    std::jthread worker([result,title = std::move(title)]() {
+
+    std::wstring okBtnText;
+    if (obj.HasMember("okBtnText") && obj["okBtnText"].IsString()) {
+        okBtnText = Util::convertToWStr(obj["okBtnText"].GetString());
+    }
+
+    std::wstring defaultDir;
+    if (obj.HasMember("defaultDir") && obj["defaultDir"].IsString()) {
+        defaultDir = Util::convertToWStr(obj["defaultDir"].GetString());
+    }
+
+    FILEOPENDIALOGOPTIONS option{ FOS_FORCEFILESYSTEM };
+    std::string type{"file"};
+    if (obj.HasMember("type") && obj["type"].IsString()) {
+        type = obj["type"].GetString();
+        if (type == "dir") {
+            option = FOS_PICKFOLDERS;
+        }
+    }
+    std::vector<std::pair<std::wstring, std::wstring>> filters;
+    if (type == "file") {
+        if (obj.HasMember("filter") && obj["filter"].IsArray()) {
+            const rapidjson::Value::ConstArray arr = obj["filter"].GetArray();
+            for (const auto& filter : arr) {
+                const rapidjson::Value::ConstArray arr = filter.GetArray();
+                auto name = Util::convertToWStr(arr[0].GetString());
+                auto val = Util::convertToWStr(arr[1].GetString());
+                filters.push_back({ name, val });
+            }
+        }
+    }
+
+    bool multiSelection{false};
+    if (obj.HasMember("multiSelection") && obj["multiSelection"].IsBool()) {
+        multiSelection = obj["multiSelection"].GetBool();
+        if (multiSelection) {
+            option |= FOS_ALLOWMULTISELECT;
+        }
+    }
+
+    bool showHiddenFile{false};
+    if (obj.HasMember("showHiddenFile") && obj["showHiddenFile"].IsBool()) {
+        showHiddenFile = obj["showHiddenFile"].GetBool();
+        if (showHiddenFile) {
+            option |= FOS_FORCESHOWHIDDEN;
+        }
+    }
+
+    std::jthread worker([result,
+        title = std::move(title),
+        okBtnText = std::move(okBtnText),
+        defaultDir = std::move(defaultDir),
+        option = std::move(option),
+        filters = std::move(filters)
+    ]() {
         IFileOpenDialog* pFileOpen;
         auto hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pFileOpen));
         if (FAILED(hr)) {
@@ -49,77 +103,142 @@ void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
             result->addString("err", "pFileOpen GetOptions err");
             return;
         }
-        hr = pFileOpen->SetOptions(dwOptions | FOS_PICKFOLDERS);  //FOS_FORCEFILESYSTEM | FOS_ALLOWMULTISELECT | FOS_FORCESHOWHIDDEN
+        hr = pFileOpen->SetOptions(dwOptions | option);
         if (FAILED(hr)) {
             pFileOpen->Release();
             result->addString("err", "pFileOpen SetOptions err");
             return;
         }
-        hr = pFileOpen->SetTitle(title.data());
-        if (FAILED(hr)) {
-            pFileOpen->Release();
-            result->addString("err", "set title err");
-            return;
+        if(!title.empty()) {
+            hr = pFileOpen->SetTitle(title.data());
+            if (FAILED(hr)) {
+                pFileOpen->Release();
+                result->addString("err", "set title err");
+                return;
+            }
+		}
+        if (!okBtnText.empty()) {
+            hr = pFileOpen->SetOkButtonLabel(okBtnText.data());
+            if (FAILED(hr)) {
+                pFileOpen->Release();
+                result->addString("err", "set ok button lable err");
+                return;
+            }
         }
-        hr = pFileOpen->SetOkButtonLabel(L"选择");
-        if (FAILED(hr)) {
-            pFileOpen->Release();
-            result->addString("err", "set ok button lable err");
-            return;
+        if (!defaultDir.empty()) {
+            IShellItem* pDefaultFolder = nullptr;
+            hr = SHCreateItemFromParsingName(defaultDir.c_str(), nullptr, IID_PPV_ARGS(&pDefaultFolder));
+            if (FAILED(hr)) {
+                pFileOpen->Release();
+                result->addString("err", "set default dir err");
+                return;
+            }
+            hr = pFileOpen->SetDefaultFolder(pDefaultFolder);  //todo SetFolder
+            pDefaultFolder->Release();
+            if (FAILED(hr)) {
+                pFileOpen->Release();
+                result->addString("err", "set default dir err");
+                return;
+            }
         }
-        std::wstring defaultPath = L"C:\\Users\\liulun\\AppData\\Roaming\\HorseJs"; // 替换为你的默认路径
-        IShellItem* pDefaultFolder = nullptr;
-        hr = SHCreateItemFromParsingName(defaultPath.c_str(), nullptr, IID_PPV_ARGS(&pDefaultFolder));
-        if (FAILED(hr)) {
-            pFileOpen->Release();
-            result->addString("err", "set default dir err");
-            return;
+
+        if (!filters.empty()) {
+            std::vector<COMDLG_FILTERSPEC> fs;
+            for (const auto& f : filters) {
+                fs.push_back({ f.first.c_str(), f.second.c_str() });
+            }
+            hr = pFileOpen->SetFileTypes(fs.size(), fs.data());
+            if (FAILED(hr)) {
+                pFileOpen->Release();
+                result->addString("err", "set filter err");
+                return;
+            }
         }
-        hr = pFileOpen->SetDefaultFolder(pDefaultFolder);  //todo SetFolder
-        pDefaultFolder->Release();
-        if (FAILED(hr)) {
-            pFileOpen->Release();
-            result->addString("err", "set default dir err");
-            return;
-        }
-        COMDLG_FILTERSPEC fileTypes[] = {
-            { L"All Files", L"*.*" },           // 所有文件
-            { L"Text Files", L"*.txt" },        // 文本文件
-            { L"Image Files", L"*.jpg;*.png" }  // 图片文件
-        };
-        hr = pFileOpen->SetFileTypes(_countof(fileTypes), fileTypes);
-        if (FAILED(hr)) {
-            pFileOpen->Release();
-            result->addString("err", "set filter err");
-            return;
-        }
+
         hr = pFileOpen->Show(result->win->hwnd);
+        if (hr == HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
+            pFileOpen->Release();
+            result->addBool("cancel", true);
+            result->returnBack();
+            return;
+        }
+        result->addBool("cancel", false);
         if (FAILED(hr)) {
             pFileOpen->Release();
             result->addString("err", "pFileOpen Show err");
             return;
         }
-        IShellItem* pItem;
-        hr = pFileOpen->GetResult(&pItem);
-        if (FAILED(hr)) {
-            pFileOpen->Release();
-            result->addString("err", "pFileOpen GetResult err");
-            return;
+        bool multiSelection = (option & FOS_ALLOWMULTISELECT) == FOS_ALLOWMULTISELECT;
+        if (multiSelection) {
+            IShellItemArray* pResults = nullptr;
+            hr = pFileOpen->GetResults(&pResults);
+            if (FAILED(hr)) {
+                pFileOpen->Release();
+                result->addString("err", "get multi results err");
+                return;
+            }
+            // 遍历选中的文件
+            DWORD count = 0;
+            hr = pResults->GetCount(&count);
+            if(FAILED(hr)) {
+                pResults->Release();
+                pFileOpen->Release();
+                result->addString("err", "get multi results count err");
+                return;
+            }
+            rapidjson::Value array(rapidjson::kArrayType);
+            for (DWORD i = 0; i < count; ++i) {
+                IShellItem* pItem = nullptr;
+                hr = pResults->GetItemAt(i, &pItem);
+                if (FAILED(hr)) {
+                    pResults->Release();
+                    pFileOpen->Release();
+                    result->addString("err", "get multi results count err");
+                    return;
+                }
+                PWSTR pszFilePath = nullptr;
+                hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+                if (FAILED(hr)) {
+                    pItem->Release();
+                    pResults->Release();
+                    pFileOpen->Release();
+                    result->addString("err", "get multi results name err");
+                    return;
+                }
+                auto str = Util::convertToStr(pszFilePath);
+                rapidjson::Value val;
+                val.SetString(str.data(), str.length(), result->getAllocator());
+                array.PushBack(val, result->getAllocator());
+                CoTaskMemFree(pszFilePath);
+                pItem->Release();
+            }
+            pResults->Release();
+            pFileOpen->Release(); 
+            result->addValue("path", std::move(array));
         }
-        PWSTR pszFolderPath;
-        hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFolderPath);
-        if (FAILED(hr)) {
+        else {
+            IShellItem* pItem;
+            hr = pFileOpen->GetResult(&pItem);
+            if (FAILED(hr)) {
+                pFileOpen->Release();
+                result->addString("err", "pFileOpen GetResult err");
+                return;
+            }
+            PWSTR pszFolderPath;
+            hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFolderPath);
+            if (FAILED(hr)) {
+                CoTaskMemFree(pszFolderPath);
+                pFileOpen->Release();
+                result->addString("err", "GetDisplayName err");
+                return;
+            }
+            std::wstring pathStr(pszFolderPath);
             CoTaskMemFree(pszFolderPath);
+            pItem->Release();
             pFileOpen->Release();
-            result->addString("err", "GetDisplayName err");
-            return;
+            auto str = Util::convertToStr(pathStr);
+            result->addString("path", str);
         }
-        std::wstring pathStr(pszFolderPath);
-        CoTaskMemFree(pszFolderPath);
-        pItem->Release();
-        pFileOpen->Release();
-        auto str = Util::convertToStr(pathStr);
-        result->addString("path", str);
         result->returnBack();
         
         });
