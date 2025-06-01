@@ -1,4 +1,4 @@
-﻿#include <memory>
+﻿#include <pch.h>
 
 #include "MsgProcessor.h"
 #include "JsonResult.h"
@@ -11,7 +11,7 @@
 
 namespace {
     std::unique_ptr<MsgProcessor> msgProcessor;
-    static std::unordered_map<std::string, void (Win::*)(BrowserWindow*, const rapidjson::Value&, JsonResult&)> winFunc = {
+    static std::unordered_map<std::string, void (Win::*)(const rapidjson::Value&, JsonResult*)> winFunc = {
         {"show", &Win::show},
         {"hide", &Win::hide},
         {"maximize", &Win::maximize},
@@ -26,7 +26,7 @@ namespace {
         {"addEventListener", &Win::addEventListener},
         {"removeEventListener", &Win::removeEventListener},
     };
-    static std::unordered_map<std::string, void (Fs::*)(BrowserWindow*,const rapidjson::Value&, JsonResult&)> fsFunc = {
+    static std::unordered_map<std::string, void (Fs::*)(const rapidjson::Value&, JsonResult*)> fsFunc = {
         {"getFileInfo", &Fs::getFileInfo},
         {"exists", &Fs::exists},
         {"readFile", &Fs::readFile},
@@ -42,10 +42,7 @@ namespace {
         {"renameFile", &Fs::renameFile},
         {"watch", &Fs::watch},
     };
-    static std::unordered_map<std::string, void (BrowserWindow::*)(const rapidjson::Value&, JsonResult&)> osFunc = {
-        /*{"maximize", &BrowserWindow::maximize},*/
-    };
-    static std::unordered_map<std::string, void (Dialog::*)(BrowserWindow*, const rapidjson::Value&, JsonResult&)> dialogFunc = {
+    static std::unordered_map<std::string, void (Dialog::*)(const rapidjson::Value&, JsonResult*)> dialogFunc = {
         {"openPathDialog", &Dialog::openPathDialog},
     };
 }
@@ -69,6 +66,14 @@ void MsgProcessor::processStr(const std::string& msgStr)
 {    
     rapidjson::Document jsonDoc;
     jsonDoc.Parse(msgStr.data());
+    int winId{ -1 };
+    if (jsonDoc.HasMember("winId") && jsonDoc["winId"].IsInt()) {
+        winId = jsonDoc["winId"].GetInt();
+    }
+    if (winId < 0) {
+        MessageBox(nullptr, L"winId为空", L"错误", MB_OK | MB_ICONERROR);
+        return;
+    }
     std::string className, methodName, eventName;
     if (jsonDoc.HasMember("className") && jsonDoc["className"].IsString()) {
         className = jsonDoc["className"].GetString();
@@ -79,57 +84,45 @@ void MsgProcessor::processStr(const std::string& msgStr)
     if (jsonDoc.HasMember("eventName") && jsonDoc["eventName"].IsString()) {
         eventName = jsonDoc["eventName"].GetString();
     }
-    int winId{ -1 };
-    if (jsonDoc.HasMember("winId") && jsonDoc["winId"].IsInt()) {
-        winId = jsonDoc["winId"].GetInt();
-    }
     if (className.empty() || methodName.empty() || eventName.empty()) {
-        MessageBox(nullptr, L"className,methodName,eventName,tarId,srcId为空", L"错误", MB_OK | MB_ICONERROR);
+        MessageBox(nullptr, L"className,methodName或eventName", L"错误", MB_OK | MB_ICONERROR);
         return;
     }
     auto win = App::get()->getWindow(winId);
-    JsonResult parsor;
-    parsor.addString("className", className);
-    parsor.addString("eventName", eventName);
-    if (className == "horse") {
-        //processHorse(methodName, jsonDoc["params"], parsor);
-    }
-    else if (className == "window") {
+    auto result = JsonResult::create(win, className, eventName);
+    if (className == "win") {
         auto it = winFunc.find(methodName);
         if (it != winFunc.end()) {
-            (Win::get()->*it->second)(win,jsonDoc["params"], parsor);
+            (Win::get()->*it->second)(jsonDoc["params"], result);
         }
         else {
-            parsor.addString("err", "Window Method not found!");
+            result->addString("err", std::format("Window Method:{} not found!",methodName));
+            result->returnBack();
         }
-    }
-    else if (className == "page") {
-        //processPage(methodName, jsonDoc["params"],parsor);
     }
     else if (className == "fs") {
         auto it = fsFunc.find(methodName);
         if (it != fsFunc.end()) {
-            (Fs::get()->*it->second)(win,jsonDoc["params"], parsor);
+            (Fs::get()->*it->second)(jsonDoc["params"], result);
         }
         else {
-            parsor.addString("err", "Fs Method not found!");
+            result->addString("err", std::format("Fs Method:{} not found!",methodName));
+            result->returnBack();
         }
     }
     else if (className == "dialog") {
         auto it = dialogFunc.find(methodName);
         if (it != dialogFunc.end()) {
-            (Dialog::get()->*it->second)(win, jsonDoc["params"], parsor);
+            (Dialog::get()->*it->second)(jsonDoc["params"], result);
         }
         else {
-            parsor.addString("err", "Dialog Method not found!");
+            result->addString("err", std::format("Dialog Method:{} not found!",methodName));
+            result->returnBack();
         }
     }
-    if (!parsor.isAsync) {
-        if (parsor.ok) {
-            parsor.addBool("ok", true);
-        }
-        std::wstring jsonStr = parsor.parse();
-        win->page->webview->PostWebMessageAsJson(jsonStr.data());
+    else {
+        result->addString("err", std::format("className:{} not found!", className)); 
+        result->returnBack();
     }
 }
 

@@ -1,4 +1,5 @@
-﻿#include "AppConfig.h"
+﻿#include <pch.h>
+#include "AppConfig.h"
 
 AppConfig::AppConfig()
 {

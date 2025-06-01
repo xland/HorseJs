@@ -81,6 +81,9 @@
     <ClCompile Include="App\Win.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Lib\pch.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -269,6 +272,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="App\Win.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\pch.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

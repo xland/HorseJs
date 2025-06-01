@@ -1,7 +1,4 @@
-#include <wil/com.h>
-#include <winrt/base.h>
-#include <winrt/Windows.Foundation.h>
-
+#include <pch.h>
 #include "Page.h"
 #include "BrowserWindowConfig.h"
 #include "BrowserWindow.h"

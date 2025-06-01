@@ -1,6 +1,4 @@
-#include <iostream>
-#include <filesystem>
-#include <regex>
+#include <pch.h>
 
 #include "Res.h"
 

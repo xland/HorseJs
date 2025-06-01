@@ -1,3 +1,4 @@
+#include <pch.h>
 #include "Util.h"
 
 std::string Util::readFile(const std::wstring& filePath)

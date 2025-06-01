@@ -9,7 +9,8 @@ public:
 	Dialog();
 	~Dialog();
 	static Dialog* get();
-	void openPathDialog(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
+	void openPathDialog(const rapidjson::Value& params, JsonResult* result);
 private:
+
 };
 

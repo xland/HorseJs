@@ -112,21 +112,21 @@
       };
       let initTitleBar = () => {
         $("#titleBox").addEventListener("mousedown", async () => {
-          horse.window.startDrag();
+          horse.win.startDrag();
         });
         $("#btnMaximizeT").addEventListener("click", async () => {
-          await horse.window.maximize();
+          await horse.win.maximize();
         });
         $("#btnMinimizeT").addEventListener("click", () => {
-          horse.window.minimize();
+          horse.win.minimize();
         });
         $("#btnCloseT").addEventListener("click", () => {
-          horse.window.close();
+          horse.win.close();
         });
         $("#btnRestoreT").addEventListener("click", () => {
-          horse.window.restore();
+          horse.win.restore();
         });
-        horse.window.addEventListener("stateChanged", async (result) => {
+        horse.win.addEventListener("stateChanged", async (result) => {
           if (result.state == "maximize") {
             $("#btnMaximizeT").setAttribute("style", "display:none;");
             $("#btnRestoreT").setAttribute("style", "");
@@ -135,59 +135,59 @@
             $("#btnRestoreT").setAttribute("style", "display:none;");
           }
         });
-        horse.window.addEventListener("sizePosChanged", (data) => {
+        horse.win.addEventListener("sizePosChanged", (data) => {
           // console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
         });
       };
-      let initWindow = () => {
+      let initWin = () => {
         $("#btnMaximize").addEventListener("click", async () => {
-          await horse.window.maximize();
+          await horse.win.maximize();
         });
         $("#btnMinimize").addEventListener("click", () => {
-          horse.window.minimize();
+          horse.win.minimize();
         });
         $("#btnHide").addEventListener("click", () => {
-          horse.window.hide();
+          horse.win.hide();
           setTimeout(() => {
-            horse.window.show();
+            horse.win.show();
           }, 2000);
         });
         $("#btnRestore").addEventListener("click", () => {
-          horse.window.restore();
+          horse.win.restore();
         });
         $("#btnRegWinClose").addEventListener("click", () => {
-          horse.window.addEventListener("closing", async () => {
+          horse.win.addEventListener("closing", async () => {
             alert("现在你只能用销毁窗口关闭此窗口了");
           });
         });
         $("#btnUnregWinClose").addEventListener("click", async () => {
-          await horse.window.removeEventListener("closing");
+          await horse.win.removeEventListener("closing");
           alert("现在你可以正常关闭窗口了");
         });
         $("#btnResize").addEventListener("click", async () => {
-          await horse.window.resize(1200, 600);
+          await horse.win.resize(1200, 600);
         });
         let isResizalbe = true;
         $("#btnSetResizable").addEventListener("click", async () => {
           isResizalbe = !isResizalbe;
-          await horse.window.setResizable(isResizalbe);
+          await horse.win.setResizable(isResizalbe);
         });
         $("#btnClose").addEventListener("click", () => {
-          horse.window.close();
+          horse.win.close();
         });
         $("#btnDestory").addEventListener("click", () => {
-          horse.window.destroy();
+          horse.win.destroy();
         });
         $("#btnFlash").addEventListener("click", () => {
           setTimeout(() => {
-            horse.window.flash(true);
+            horse.win.flash(true);
             setTimeout(() => {
-              horse.window.flash(false);
+              horse.win.flash(false);
             }, 2000);
           }, 2000);
         });
         $("#btnNewWindow").addEventListener("click", () => {
-          horse.window.openWindow({
+          horse.win.openWindow({
             resizable: true,
             maximizable: false,
             minimizable: false,
@@ -274,11 +274,11 @@
       window.addEventListener("DOMContentLoaded", async () => {
         initTitleBar();
         initHorse();
-        initWindow();
+        initWin();
         initFs();
         initRes();
         initDialog();
-        horse.window.show();
+        horse.win.show();
       });
     </script>
   </body>

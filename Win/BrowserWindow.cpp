@@ -1,6 +1,5 @@
-﻿#include <windowsx.h>
-#include <dwmapi.h>
-#include <winrt/base.h>
+﻿
+#include <pch.h>
 
 #include "../App/App.h"
 #include "../App/MsgProcessor.h"
@@ -95,6 +94,10 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     else if (msg == WM_WINDOWPOSCHANGED) {
         WINDOWPOS* winPos = reinterpret_cast<WINDOWPOS*>(lParam);
         sizePosChanged(winPos);
+    }
+    else if (msg == WM_THREADRESULT) {
+        auto result = reinterpret_cast<JsonResult*>(lParam);
+        result->returnBack();
     }
     sysProcess:
     return DefWindowProc(hwnd, msg, wParam, lParam);

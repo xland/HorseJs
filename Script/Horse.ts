@@ -1,16 +1,16 @@
-import { Window } from "./Window";
+import { Win } from "./Win";
 import { Fs } from "./Fs";
 import { Eventer } from "./Eventer";
 import { Dialog } from "./Dialog";
 class Horse extends Eventer {
-  window: Window;
+  win: Win;
   fs: Fs;
   dialog: Dialog;
   webview;
   constructor() {
     super();
     this.webview = window.chrome.webview;
-    this.window = new Window(); // 初始化 window 实例
+    this.win = new Win(); // 初始化 window 实例
     this.fs = new Fs();
     this.dialog = new Dialog();
     this.listenMsg();
@@ -26,8 +26,8 @@ class Horse extends Eventer {
       delete e.data.eventName;
       if (clsName === "horse") {
         this.emit(evtName, e.data);
-      } else if (clsName === "window") {
-        this.window.emit(evtName, e.data);
+      } else if (clsName === "win") {
+        this.win.emit(evtName, e.data);
       } else if (clsName === "fs") {
         this.fs.emit(evtName, e.data);
       }

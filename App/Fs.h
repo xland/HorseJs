@@ -9,21 +9,21 @@ public:
 	~Fs();
 	static Fs* get();
 
-	void getFileInfo(BrowserWindow* win,const rapidjson::Value& params, JsonResult& result);
-	void exists(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void readFile(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void readFileChunk(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void writeFile(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void writeFileChunk(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
+	void getFileInfo(const rapidjson::Value& params, JsonResult* result);
+	void exists(const rapidjson::Value& params, JsonResult* result);
+	void readFile(const rapidjson::Value& params, JsonResult* result);
+	void readFileChunk(const rapidjson::Value& params, JsonResult* result);
+	void writeFile(const rapidjson::Value& params, JsonResult* result);
+	void writeFileChunk(const rapidjson::Value& params, JsonResult* result);
 
-	void delPath(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void removePath(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void createDir(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void listDir(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void copyFile(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void moveFile(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void renameFile(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void watch(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
+	void delPath(const rapidjson::Value& params, JsonResult* result);
+	void removePath(const rapidjson::Value& params, JsonResult* result);
+	void createDir(const rapidjson::Value& params, JsonResult* result);
+	void listDir(const rapidjson::Value& params, JsonResult* result);
+	void copyFile(const rapidjson::Value& params, JsonResult* result);
+	void moveFile(const rapidjson::Value& params, JsonResult* result);
+	void renameFile(const rapidjson::Value& params, JsonResult* result);
+	void watch(const rapidjson::Value& params, JsonResult* result);
 private:
 	bool delDirRecursive(const std::wstring& dirPath);
 };

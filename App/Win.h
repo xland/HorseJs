@@ -9,19 +9,19 @@ public:
 	~Win();
 	static Win* get();
 
-	void show(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void hide(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void maximize(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void minimize(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void restore(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void flash(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void close(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void destroy(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void startDrag(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void openWindow(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void setResizable(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void resize(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void addEventListener(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
-	void removeEventListener(BrowserWindow* win, const rapidjson::Value& params, JsonResult& result);
+	void show(const rapidjson::Value& params, JsonResult* result);
+	void hide(const rapidjson::Value& params, JsonResult* result);
+	void maximize(const rapidjson::Value& params, JsonResult* result);
+	void minimize(const rapidjson::Value& params, JsonResult* result);
+	void restore(const rapidjson::Value& params, JsonResult* result);
+	void flash(const rapidjson::Value& params, JsonResult* result);
+	void close(const rapidjson::Value& params, JsonResult* result);
+	void destroy(const rapidjson::Value& params, JsonResult* result);
+	void startDrag(const rapidjson::Value& params, JsonResult* result);
+	void openWindow(const rapidjson::Value& params, JsonResult* result);
+	void setResizable(const rapidjson::Value& params, JsonResult* result);
+	void resize(const rapidjson::Value& params, JsonResult* result);
+	void addEventListener(const rapidjson::Value& params, JsonResult* result);
+	void removeEventListener(const rapidjson::Value& params, JsonResult* result);
 };
 

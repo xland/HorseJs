@@ -75,8 +75,8 @@
     }
   };
 
-  // Window.ts
-  var Window = class extends Eventer {
+  // Win.ts
+  var Win = class extends Eventer {
     maximize() {
       return this.callMethod("maximize");
     }
@@ -130,7 +130,7 @@
     }
     callMethod(methodName, ...params) {
       return this.call({
-        className: "window",
+        className: "win",
         winId: globalThis.__WIN_ID,
         methodName,
         params
@@ -191,14 +191,14 @@
 
   // Horse.ts
   var Horse = class extends Eventer {
-    window;
+    win;
     fs;
     dialog;
     webview;
     constructor() {
       super();
       this.webview = window.chrome.webview;
-      this.window = new Window();
+      this.win = new Win();
       this.fs = new Fs();
       this.dialog = new Dialog();
       this.listenMsg();
@@ -214,8 +214,8 @@
         delete e.data.eventName;
         if (clsName === "horse") {
           this.emit(evtName, e.data);
-        } else if (clsName === "window") {
-          this.window.emit(evtName, e.data);
+        } else if (clsName === "win") {
+          this.win.emit(evtName, e.data);
         } else if (clsName === "fs") {
           this.fs.emit(evtName, e.data);
         }

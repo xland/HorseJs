@@ -1,3 +1,4 @@
+#include <pch.h>
 #include "BrowserWindowConfig.h"
 
 BrowserWindowConfig::BrowserWindowConfig(const rapidjson::Value& config)

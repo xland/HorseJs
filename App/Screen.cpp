@@ -1,3 +1,4 @@
+#include <pch.h>
 #include "Screen.h"
 
 namespace {
@@ -19,3 +20,7 @@ Screen* Screen::get()
 	}
     return screen.get();
 }
+
+//获取屏幕上某个点的颜色
+//获取分辨率和DPI
+//

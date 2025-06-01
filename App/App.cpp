@@ -1,12 +1,4 @@
-#include <Shlobj.h>
-#include <shellapi.h>
-#include <fstream>
-#include <filesystem>
-#include <functional>
-#include <wrl.h>
-#include <wil/com.h>
-#include <WebView2.h>
-#include <WebView2EnvironmentOptions.h>
+#include <pch.h>
 
 #include "App.h"
 #include "AppConfig.h"
@@ -54,7 +46,6 @@ void App::init(HINSTANCE hInstance)
 
 void App::start()
 {
-
     if (!checkRuntime()) {
         return;
     }

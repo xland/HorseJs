@@ -1,15 +1,7 @@
 #pragma once
-#include <windows.h>
-#include <Shlobj.h>
-#include <shellapi.h>
-#include <fstream>
-#include <filesystem>
-#include <wrl.h>
-#include <wil/com.h>
-#include <WebView2.h>
+#include <pch.h>
 #include "Util.h"
 #include "AppConfig.h"
-#include "../Lib/rapidjson/document.h"
 #include "JsonParsor.h"
 
 class BrowserWindow;
