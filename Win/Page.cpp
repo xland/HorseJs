@@ -86,13 +86,15 @@ void Page::load()
     webview->add_WebMessageReceived(msgReceivedCB.Get(), &msgReceivedToken);
 
     loadResource();    
-
+    //webview->OpenDevToolsWindow();
     webview->Navigate(L"https://HorseJs/index.html");
     //webview->Navigate(L"https://www.baidu.com");
+    //webview->Navigate(L"file://D:\\project\\HorseJs\\x64\\Release\\UI\\index.html");
 }
 
 void Page::loadResource()
 {
+    auto a = 1;
     const static std::wstring resScript = []() {
         auto hInstance = App::get()->hInstance;
         HRSRC hResource = FindResourceW(hInstance, MAKEINTRESOURCEW(IDR_JS), RT_RCDATA);

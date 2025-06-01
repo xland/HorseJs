@@ -30,6 +30,8 @@ class Horse extends Eventer {
         this.win.emit(evtName, e.data);
       } else if (clsName === "fs") {
         this.fs.emit(evtName, e.data);
+      } else if (clsName === "dialog") {
+        this.dialog.emit(evtName, e.data);
       }
     });
     this.webview.addEventListener("sharedbufferreceived", (e) => {
