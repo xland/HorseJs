@@ -202,7 +202,7 @@ horse.window.addEventListener("closing", async ()=>{
 ## horse.fs 的方法
 
 - 读取文件全部内容
-```
+```js
 let data = await horse.fs.readFile("D:\\index.html");
 const uint8Array = new Uint8Array(data.buffer); // 字节视图
 const decoder = new TextDecoder('utf-8'); // UTF-8 解码器
