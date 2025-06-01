@@ -1,4 +1,4 @@
-#include <pch.h>
+﻿#include <pch.h>
 
 #include "Dialog.h"
 #include "../Win/BrowserWindow.h"
@@ -27,8 +27,15 @@ Dialog* Dialog::get()
 
 void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    auto flag = arr[0].IsObject();
+    const rapidjson::Value& obj = arr[0].GetObj();
 
-    std::jthread worker([result]() {
+    std::wstring title;
+    if (obj.HasMember("title") && obj["title"].IsString()) {
+        title = Util::convertToWStr(obj["title"].GetString());
+    }
+    std::jthread worker([result,title = std::move(title)]() {
         IFileOpenDialog* pFileOpen;
         auto hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pFileOpen));
         if (FAILED(hr)) {
@@ -42,13 +49,51 @@ void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
             result->addString("err", "pFileOpen GetOptions err");
             return;
         }
-        hr = pFileOpen->SetOptions(dwOptions | FOS_PICKFOLDERS);
+        hr = pFileOpen->SetOptions(dwOptions | FOS_PICKFOLDERS);  //FOS_FORCEFILESYSTEM | FOS_ALLOWMULTISELECT | FOS_FORCESHOWHIDDEN
         if (FAILED(hr)) {
             pFileOpen->Release();
             result->addString("err", "pFileOpen SetOptions err");
             return;
         }
-        hr = pFileOpen->Show(NULL);
+        hr = pFileOpen->SetTitle(title.data());
+        if (FAILED(hr)) {
+            pFileOpen->Release();
+            result->addString("err", "set title err");
+            return;
+        }
+        hr = pFileOpen->SetOkButtonLabel(L"选择");
+        if (FAILED(hr)) {
+            pFileOpen->Release();
+            result->addString("err", "set ok button lable err");
+            return;
+        }
+        std::wstring defaultPath = L"C:\\Users\\liulun\\AppData\\Roaming\\HorseJs"; // 替换为你的默认路径
+        IShellItem* pDefaultFolder = nullptr;
+        hr = SHCreateItemFromParsingName(defaultPath.c_str(), nullptr, IID_PPV_ARGS(&pDefaultFolder));
+        if (FAILED(hr)) {
+            pFileOpen->Release();
+            result->addString("err", "set default dir err");
+            return;
+        }
+        hr = pFileOpen->SetDefaultFolder(pDefaultFolder);  //todo SetFolder
+        pDefaultFolder->Release();
+        if (FAILED(hr)) {
+            pFileOpen->Release();
+            result->addString("err", "set default dir err");
+            return;
+        }
+        COMDLG_FILTERSPEC fileTypes[] = {
+            { L"All Files", L"*.*" },           // 所有文件
+            { L"Text Files", L"*.txt" },        // 文本文件
+            { L"Image Files", L"*.jpg;*.png" }  // 图片文件
+        };
+        hr = pFileOpen->SetFileTypes(_countof(fileTypes), fileTypes);
+        if (FAILED(hr)) {
+            pFileOpen->Release();
+            result->addString("err", "set filter err");
+            return;
+        }
+        hr = pFileOpen->Show(result->win->hwnd);
         if (FAILED(hr)) {
             pFileOpen->Release();
             result->addString("err", "pFileOpen Show err");

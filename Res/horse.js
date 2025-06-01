@@ -176,8 +176,8 @@
 
   // Dialog.ts
   var Dialog = class extends Eventer {
-    async openPathDialog(isOpenDir) {
-      return this.callMethod("openPathDialog", isOpenDir);
+    async openPathDialog(config) {
+      return this.callMethod("openPathDialog", config);
     }
     callMethod(methodName, ...params) {
       return this.call({

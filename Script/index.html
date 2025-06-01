@@ -268,7 +268,16 @@
       };
       let initDialog = () => {
         $("#btnOpenPathDialog").addEventListener("click", async () => {
-          let data = await horse.dialog.openPathDialog(true);
+          let data = await horse.dialog.openPathDialog({
+            title: "我的窗口标题",
+            okBtnText: "选择文件",
+            // dir: "C:\\Users\\liulun\\AppData\\Roaming\\HorseJs",
+            defaultDir: "C:\\Users\\liulun\\AppData\\Roaming\\HorseJs",
+            type: "file", //"dir"
+            filters: [],
+            multiSelections: true,
+            showHiddenFiles: true,
+          });
           console.log(data);
         });
       };
