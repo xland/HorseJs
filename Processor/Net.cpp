@@ -20,3 +20,7 @@ Net* Net::get()
 	}
     return net.get();
 }
+
+void Net::getAddress(const rapidjson::Value& params, JsonResult* result)
+{
+}

@@ -225,12 +225,29 @@
     }
   };
 
+  // Net.ts
+  var Net = class extends Eventer {
+    async getAddress() {
+      return this.callMethod("getAddress");
+    }
+    callMethod(methodName, ...params) {
+      return this.call({
+        className: "net",
+        winId: globalThis.__WIN_ID,
+        tarId: globalThis.__WIN_ID,
+        methodName,
+        params
+      });
+    }
+  };
+
   // Horse.ts
   var Horse = class extends Eventer {
     win;
     fs;
     dialog;
     clipboard;
+    net;
     webview;
     constructor() {
       super();
@@ -239,6 +256,7 @@
       this.fs = new Fs();
       this.dialog = new Dialog();
       this.clipboard = new Clipboard();
+      this.net = new Net();
       this.listenMsg();
     }
     getConfig() {
@@ -256,14 +274,16 @@
         delete e.data.eventName;
         if (clsName === "clipboard") {
           this.clipboard.emit(evtName, e.data);
-        } else if (clsName === "horse") {
-          this.emit(evtName, e.data);
-        } else if (clsName === "win") {
-          this.win.emit(evtName, e.data);
-        } else if (clsName === "fs") {
-          this.fs.emit(evtName, e.data);
         } else if (clsName === "dialog") {
           this.dialog.emit(evtName, e.data);
+        } else if (clsName === "fs") {
+          this.fs.emit(evtName, e.data);
+        } else if (clsName === "horse") {
+          this.emit(evtName, e.data);
+        } else if (clsName === "net") {
+          this.net.emit(evtName, e.data);
+        } else if (clsName === "win") {
+          this.win.emit(evtName, e.data);
         }
       });
       this.webview.addEventListener("sharedbufferreceived", (e) => {

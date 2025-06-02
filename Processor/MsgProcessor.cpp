@@ -4,11 +4,12 @@
 #include "../Win/Page.h"
 #include "MsgProcessor.h"
 #include "JsonResult.h"
+#include "Clipboard.h"
+#include "Dialog.h"
 #include "Horse.h"
+#include "Net.h"
 #include "Fs.h"
 #include "Win.h"
-#include "Dialog.h"
-#include "Clipboard.h"
 
 namespace {
     std::unique_ptr<MsgProcessor> msgProcessor;
@@ -16,25 +17,8 @@ namespace {
         {"readText", &Clipboard::readText},
         {"writeText", &Clipboard::writeText},
     };
-    static std::unordered_map<std::string, void (Horse::*)(const rapidjson::Value&, JsonResult*)> horseFunc = {
-        {"getConfig", &Horse::getConfig},
-        {"createWindow", &Horse::createWindow},
-    };
-    static std::unordered_map<std::string, void (Win::*)(const rapidjson::Value&, JsonResult*)> winFunc = {
-        {"show", &Win::show},
-        {"hide", &Win::hide},
-        {"maximize", &Win::maximize},
-        {"minimize", &Win::minimize},
-        {"restore", &Win::restore},
-        {"close", &Win::close},
-        {"destroy", &Win::destroy},
-        {"startDrag", &Win::startDrag},
-        {"openWindow", &Win::openWindow},
-        {"setResizable", &Win::setResizable},
-        {"resize", &Win::resize},
-        {"flash", &Win::flash},
-        {"addEventListener", &Win::addEventListener},
-        {"removeEventListener", &Win::removeEventListener},
+    static std::unordered_map<std::string, void (Dialog::*)(const rapidjson::Value&, JsonResult*)> dialogFunc = {
+        {"openPathDialog", &Dialog::openPathDialog},
     };
     static std::unordered_map<std::string, void (Fs::*)(const rapidjson::Value&, JsonResult*)> fsFunc = {
         {"getFileInfo", &Fs::getFileInfo},
@@ -52,8 +36,28 @@ namespace {
         {"renameFile", &Fs::renameFile},
         {"watch", &Fs::watch},
     };
-    static std::unordered_map<std::string, void (Dialog::*)(const rapidjson::Value&, JsonResult*)> dialogFunc = {
-        {"openPathDialog", &Dialog::openPathDialog},
+    static std::unordered_map<std::string, void (Horse::*)(const rapidjson::Value&, JsonResult*)> horseFunc = {
+        {"getConfig", &Horse::getConfig},
+        {"createWindow", &Horse::createWindow},
+    };
+    static std::unordered_map<std::string, void (Net::*)(const rapidjson::Value&, JsonResult*)> netFunc = {
+        {"getAddress", &Net::getAddress},
+    };
+    static std::unordered_map<std::string, void (Win::*)(const rapidjson::Value&, JsonResult*)> winFunc = {
+        {"show", &Win::show},
+        {"hide", &Win::hide},
+        {"maximize", &Win::maximize},
+        {"minimize", &Win::minimize},
+        {"restore", &Win::restore},
+        {"close", &Win::close},
+        {"destroy", &Win::destroy},
+        {"startDrag", &Win::startDrag},
+        {"openWindow", &Win::openWindow},
+        {"setResizable", &Win::setResizable},
+        {"resize", &Win::resize},
+        {"flash", &Win::flash},
+        {"addEventListener", &Win::addEventListener},
+        {"removeEventListener", &Win::removeEventListener},
     };
 }
 
@@ -110,7 +114,7 @@ void MsgProcessor::processStr(const std::string& msgStr)
             (Clipboard::get()->*it->second)(jsonDoc["params"], result);
         }
         else {
-            result->addErr(std::format("clipboard Method:{} not found!", methodName));
+            result->addErr(std::format("clipboard method:{} not found!", methodName));
         }
     }
     else if (className == "dialog") {
@@ -119,7 +123,7 @@ void MsgProcessor::processStr(const std::string& msgStr)
             (Dialog::get()->*it->second)(jsonDoc["params"], result);
         }
         else {
-            result->addErr(std::format("dialog Method:{} not found!", methodName));
+            result->addErr(std::format("dialog method:{} not found!", methodName));
         }
     }
     else if (className == "fs") {
@@ -128,7 +132,7 @@ void MsgProcessor::processStr(const std::string& msgStr)
             (Fs::get()->*it->second)(jsonDoc["params"], result);
         }
         else {
-            result->addErr(std::format("fs Method:{} not found!", methodName));
+            result->addErr(std::format("fs method:{} not found!", methodName));
         }
     }
     else if (className == "horse") {
@@ -137,7 +141,16 @@ void MsgProcessor::processStr(const std::string& msgStr)
             (Horse::get()->*it->second)(jsonDoc["params"], result);
         }
         else {
-            result->addErr(std::format("horse Method:{} not found!", methodName));
+            result->addErr(std::format("horse method:{} not found!", methodName));
+        }
+    }
+    else if (className == "net") {
+        auto it = netFunc.find(methodName);
+        if (it != netFunc.end()) {
+            (Net::get()->*it->second)(jsonDoc["params"], result);
+        }
+        else {
+            result->addErr(std::format("net method:{} not found!", methodName));
         }
     }
     else if (className == "win") {
@@ -146,11 +159,11 @@ void MsgProcessor::processStr(const std::string& msgStr)
             (Win::get()->*it->second)(jsonDoc["params"], result);
         }
         else {
-            result->addErr(std::format("win Method:{} not found!",methodName));
+            result->addErr(std::format("win method:{} not found!",methodName));
         }
     }
     else {
-        result->addErr(std::format("className:{} not found!", className)); 
+        result->addErr(std::format("class name:{} not found!", className)); 
     }
 }
 

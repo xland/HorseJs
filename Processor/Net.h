@@ -7,6 +7,7 @@ public:
 	Net();
 	~Net();
 	static Net* get();
+	void getAddress(const rapidjson::Value& params, JsonResult* result);
 private:
 };
 
