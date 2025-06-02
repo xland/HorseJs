@@ -86,7 +86,7 @@ console.log(config);  //config是一个json对象
 
 - 创建一个新窗口
 ```js
-await horse.openWindow({
+let proxyWin = await horse.openWindow({
     "resizable": true,
     "maximizable": false,
     "minimizable":false,
@@ -111,6 +111,10 @@ await horse.openWindow({
         "isWebMessageEnabled": true,
         "url": "index.html"
     }
+});
+//监听新开窗口的事件
+await proxyWin.addEventListener("sizePosChanged", (data) => {
+  console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
 });
 ```
 ## horse 的事件

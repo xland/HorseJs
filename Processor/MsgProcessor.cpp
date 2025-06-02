@@ -28,6 +28,7 @@ namespace {
         {"openWindow", &Win::openWindow},
         {"setResizable", &Win::setResizable},
         {"resize", &Win::resize},
+        {"flash", &Win::flash},
         {"addEventListener", &Win::addEventListener},
         {"removeEventListener", &Win::removeEventListener},
     };
@@ -106,7 +107,6 @@ void MsgProcessor::processStr(const std::string& msgStr)
         }
         else {
             result->addErr(std::format("horse Method:{} not found!", methodName));
-            result->returnBack();
         }
     }
     else if (className == "win") {
@@ -116,7 +116,6 @@ void MsgProcessor::processStr(const std::string& msgStr)
         }
         else {
             result->addErr(std::format("win Method:{} not found!",methodName));
-            result->returnBack();
         }
     }
     else if (className == "fs") {
@@ -126,7 +125,6 @@ void MsgProcessor::processStr(const std::string& msgStr)
         }
         else {
             result->addErr(std::format("fs Method:{} not found!",methodName));
-            result->returnBack();
         }
     }
     else if (className == "dialog") {
@@ -136,12 +134,10 @@ void MsgProcessor::processStr(const std::string& msgStr)
         }
         else {
             result->addErr(std::format("dialog Method:{} not found!",methodName));
-            result->returnBack();
         }
     }
     else {
         result->addErr(std::format("className:{} not found!", className)); 
-        result->returnBack();
     }
 }
 

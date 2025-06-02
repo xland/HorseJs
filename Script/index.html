@@ -8,15 +8,18 @@
       html {
         margin: 0px;
         padding: 0px;
+        height: 100%;
+        width: 100%;
       }
       body {
         margin: 0px;
         padding: 0px;
+        height: 100vh;
+        width: 100%;
+        overflow: hidden;
         font-size: 12px;
         display: flex;
         flex-direction: column;
-        height: 100%;
-        width: 100%;
       }
       .btn {
         cursor: pointer;
@@ -102,7 +105,6 @@
       <div id="btnOpenPathDialog" class="btn">打开一个文件路径</div>
       <p>res</p>
     </div>
-
     <script>
       let $ = (selector) => document.querySelector(selector);
       let initHorse = () => {
@@ -140,10 +142,10 @@
               url: "index.html",
             },
           });
-          let obj = await proxy.addEventListener("sizePosChanged", (data) => {
-            console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
-          });
-          console.log(obj);
+          // let obj = await proxy.addEventListener("sizePosChanged", (data) => {
+          // console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
+          // });
+          await proxy.minimize();
         });
       };
       let initTitleBar = () => {
@@ -172,7 +174,7 @@
           }
         });
         horse.win.addEventListener("sizePosChanged", (data) => {
-          console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
+          // console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
         });
       };
       let initWin = () => {
