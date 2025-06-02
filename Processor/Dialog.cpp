@@ -93,27 +93,27 @@ void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
         IFileOpenDialog* pFileOpen;
         auto hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pFileOpen));
         if (FAILED(hr)) {
-            result->addString("err", "CoCreateInstance false");
+            result->addErr("CoCreateInstance false");
             return;
         }
         DWORD dwOptions;
         hr = pFileOpen->GetOptions(&dwOptions);
         if (FAILED(hr)) {
             pFileOpen->Release();
-            result->addString("err", "pFileOpen GetOptions err");
+            result->addErr("pFileOpen GetOptions err");
             return;
         }
         hr = pFileOpen->SetOptions(dwOptions | option);
         if (FAILED(hr)) {
             pFileOpen->Release();
-            result->addString("err", "pFileOpen SetOptions err");
+            result->addErr("pFileOpen SetOptions err");
             return;
         }
         if(!title.empty()) {
             hr = pFileOpen->SetTitle(title.data());
             if (FAILED(hr)) {
                 pFileOpen->Release();
-                result->addString("err", "set title err");
+                result->addErr("set title err");
                 return;
             }
 		}
@@ -121,7 +121,7 @@ void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
             hr = pFileOpen->SetOkButtonLabel(okBtnText.data());
             if (FAILED(hr)) {
                 pFileOpen->Release();
-                result->addString("err", "set ok button lable err");
+                result->addErr("set ok button lable err");
                 return;
             }
         }
@@ -130,14 +130,14 @@ void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
             hr = SHCreateItemFromParsingName(defaultDir.c_str(), nullptr, IID_PPV_ARGS(&pDefaultFolder));
             if (FAILED(hr)) {
                 pFileOpen->Release();
-                result->addString("err", "set default dir err");
+                result->addErr("set default dir err");
                 return;
             }
             hr = pFileOpen->SetDefaultFolder(pDefaultFolder);  //todo SetFolder
             pDefaultFolder->Release();
             if (FAILED(hr)) {
                 pFileOpen->Release();
-                result->addString("err", "set default dir err");
+                result->addErr("set default dir err");
                 return;
             }
         }
@@ -150,22 +150,22 @@ void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
             hr = pFileOpen->SetFileTypes(fs.size(), fs.data());
             if (FAILED(hr)) {
                 pFileOpen->Release();
-                result->addString("err", "set filter err");
+                result->addErr("set filter err");
                 return;
             }
         }
 
-        hr = pFileOpen->Show(result->win->hwnd);
+        hr = pFileOpen->Show(result->tar->hwnd);
         if (hr == HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
             pFileOpen->Release();
             result->addBool("cancel", true);
-            result->returnBack();
+            result->returnBackThread();
             return;
         }
         result->addBool("cancel", false);
         if (FAILED(hr)) {
             pFileOpen->Release();
-            result->addString("err", "pFileOpen Show err");
+            result->addErr("pFileOpen Show err");
             return;
         }
         bool multiSelection = (option & FOS_ALLOWMULTISELECT) == FOS_ALLOWMULTISELECT;
@@ -174,7 +174,7 @@ void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
             hr = pFileOpen->GetResults(&pResults);
             if (FAILED(hr)) {
                 pFileOpen->Release();
-                result->addString("err", "get multi results err");
+                result->addErr("get multi results err");
                 return;
             }
             // 遍历选中的文件
@@ -183,7 +183,7 @@ void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
             if(FAILED(hr)) {
                 pResults->Release();
                 pFileOpen->Release();
-                result->addString("err", "get multi results count err");
+                result->addErr("get multi results count err");
                 return;
             }
             rapidjson::Value array(rapidjson::kArrayType);
@@ -193,7 +193,7 @@ void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
                 if (FAILED(hr)) {
                     pResults->Release();
                     pFileOpen->Release();
-                    result->addString("err", "get multi results count err");
+                    result->addErr("get multi results count err");
                     return;
                 }
                 PWSTR pszFilePath = nullptr;
@@ -202,7 +202,7 @@ void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
                     pItem->Release();
                     pResults->Release();
                     pFileOpen->Release();
-                    result->addString("err", "get multi results name err");
+                    result->addErr("get multi results name err");
                     return;
                 }
                 auto str = Util::convertToStr(pszFilePath);
@@ -221,7 +221,7 @@ void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
             hr = pFileOpen->GetResult(&pItem);
             if (FAILED(hr)) {
                 pFileOpen->Release();
-                result->addString("err", "pFileOpen GetResult err");
+                result->addErr("pFileOpen GetResult err");
                 return;
             }
             PWSTR pszFolderPath;
@@ -229,7 +229,7 @@ void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
             if (FAILED(hr)) {
                 CoTaskMemFree(pszFolderPath);
                 pFileOpen->Release();
-                result->addString("err", "GetDisplayName err");
+                result->addErr("GetDisplayName err");
                 return;
             }
             std::wstring pathStr(pszFolderPath);
@@ -239,7 +239,7 @@ void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
             auto str = Util::convertToStr(pathStr);
             result->addString("path", str);
         }
-        result->returnBack();
+        result->returnBackThread();
         
         });
     worker.detach();

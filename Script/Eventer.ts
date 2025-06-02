@@ -48,7 +48,7 @@ export class Eventer {
     this.on(eventName, wrapper);
   }
   // 调用原生方法并返回 Promise
-  call(obj: any) {
+  call(obj: any): Promise<any> {
     return new Promise((resolve, reject) => {
       obj.eventName = `once_${util.randomNum()}`;
       this.once(obj.eventName, (result: any) => {

@@ -83,6 +83,36 @@
 let config = await horse.getConfig();
 console.log(config);  //config是一个json对象
 ```
+
+- 创建一个新窗口
+```js
+await horse.openWindow({
+    "resizable": true,
+    "maximizable": false,
+    "minimizable":false,
+    "alwaysOnTop":false,
+    "skipTaskbar":false,
+    "visible": true,
+    "frame": false,
+    "shadow": true,
+    "title": "窗口标题！！！",
+    "size": {
+        "w": 1000,
+        "h": 800
+    },
+    "minSize": {
+        "w": 250,
+        "h": 200
+    },
+    "position": "centerScreen",
+    "page": {
+        "areDefaultScriptDialogsEnabled": true,
+        "isScriptEnabled": true,
+        "isWebMessageEnabled": true,
+        "url": "index.html"
+    }
+});
+```
 ## horse 的事件
 
 
@@ -135,38 +165,7 @@ $(".titleBar").addEventListener("mousedown",async ()=>{
     horse.window.startDrag();
 })
 ```
-- 创建一个新窗口
-```js
-horse.window.openWindow({
-    "resizable": true,
-    "maximizable": false,
-    "minimizable":false,
-    "alwaysOnTop":false,
-    "skipTaskbar":false,
-    "visible": true,
-    "frame": false,
-    "shadow": true,
-    "title": "窗口标题！！！",
-    "size": {
-        "w": 1000,
-        "h": 800
-    },
-    "minSize": {
-        "w": 250,
-        "h": 200
-    },
-    "position": {
-        "x":200,
-        "y":200
-    },
-    "page": {
-        "areDefaultScriptDialogsEnabled": true,
-        "isScriptEnabled": true,
-        "isWebMessageEnabled": true,
-        "url": "index.html"
-    }
-});
-```
+
 - 注册事件
 ```js
 //注册窗口位置或大小改变事件
@@ -279,6 +278,9 @@ console.log(data);
 方法执行完是有返回值的，返回值是通过消息发送给目标窗口的。
 如果要实现此需求，发送任何一个消息时，都要遍历窗口列表。
 况且还要考虑在A窗口内，注册B窗口的事件。
+A窗口监听B窗口的事件，
+这个事件的回调函数是存储在B窗口对象的Eventer容器中的，
+C++把回调消息发送给A窗口时，A窗口是找不到这个回调函数的。
 ```
 
 ## 赞助

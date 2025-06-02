@@ -1,18 +1,11 @@
 #pragma once
-#include <windows.h>
-#include <DispatcherQueue.h>
-#include <windows.ui.composition.interop.h>
-#include <winrt/Windows.UI.Composition.Desktop.h>
-#include <wil/com.h>
-#include <WebView2.h>
+#include <pch.h>
 #include "../App/Util.h"
-#include "../App/JsonResult.h"
+#include "../Processor/JsonResult.h"
 
-using namespace Microsoft;
-using namespace winrt::Windows;
 class Page;
 class BrowserWindowConfig;
-class MsgProcessor;
+class JsonResult;
 class BrowserWindow
 {
 public:
@@ -34,7 +27,7 @@ public:
 	HWND hwnd;
 	wil::unique_hicon favicon;
 	std::unique_ptr<BrowserWindowConfig> config;
-	std::unordered_map<std::string, bool> eventFlag;
+	std::unordered_map<std::string, std::vector<JsonResult*>> events;
 	std::unique_ptr<Page> page;
 protected:
 private:

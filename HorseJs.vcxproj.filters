@@ -39,49 +39,52 @@
     <ClCompile Include="App\AppConfig.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="App\MsgProcessor.cpp">
+    <ClCompile Include="Processor\MsgProcessor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="App\Fs.cpp">
+    <ClCompile Include="Processor\Fs.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="App\Net.cpp">
+    <ClCompile Include="Processor\Net.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="App\Os.cpp">
+    <ClCompile Include="Processor\Os.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="App\Process.cpp">
+    <ClCompile Include="Processor\Process.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="App\Res.cpp">
+    <ClCompile Include="Processor\Res.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="App\Screen.cpp">
+    <ClCompile Include="Processor\Screen.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="App\Tray.cpp">
+    <ClCompile Include="Processor\Tray.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="App\Lib.cpp">
+    <ClCompile Include="Processor\Lib.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="App\Clipboard.cpp">
+    <ClCompile Include="Processor\Clipboard.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="App\Dialog.cpp">
+    <ClCompile Include="Processor\Dialog.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="App\ThreadManager.cpp">
+    <ClCompile Include="Processor\JsonResult.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="App\JsonResult.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="App\Win.cpp">
+    <ClCompile Include="Processor\Win.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Lib\pch.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Processor\Notification.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Processor\Horse.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -232,49 +235,52 @@
     <ClInclude Include="App\AppConfig.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="App\MsgProcessor.h">
+    <ClInclude Include="Processor\MsgProcessor.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="App\Fs.h">
+    <ClInclude Include="Processor\Fs.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="App\Tray.h">
+    <ClInclude Include="Processor\Tray.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="App\Net.h">
+    <ClInclude Include="Processor\Net.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="App\Os.h">
+    <ClInclude Include="Processor\Os.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="App\Process.h">
+    <ClInclude Include="Processor\Process.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="App\Res.h">
+    <ClInclude Include="Processor\Res.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="App\Screen.h">
+    <ClInclude Include="Processor\Screen.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="App\Lib.h">
+    <ClInclude Include="Processor\Lib.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="App\Clipboard.h">
+    <ClInclude Include="Processor\Clipboard.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="App\Dialog.h">
+    <ClInclude Include="Processor\Dialog.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="App\ThreadManager.h">
+    <ClInclude Include="Processor\JsonResult.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="App\JsonResult.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="App\Win.h">
+    <ClInclude Include="Processor\Win.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Lib\pch.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Processor\Notification.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Processor\Horse.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

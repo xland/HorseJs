@@ -20,12 +20,18 @@
 #include <shobjidl.h>
 #include <windowsx.h>
 #include <dwmapi.h>
+#include <DispatcherQueue.h>
 #include <winrt/base.h>
 #include <winrt/Windows.Foundation.h>
+#include <windows.ui.composition.interop.h>
+#include <winrt/Windows.UI.Composition.Desktop.h>
 
 
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
+
+using namespace Microsoft;
+using namespace winrt::Windows;
 
 #define WM_THREADRESULT (WM_USER + 100)

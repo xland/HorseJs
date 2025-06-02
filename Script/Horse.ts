@@ -1,3 +1,4 @@
+import { WinProx } from "./WinProxy";
 import { Win } from "./Win";
 import { Fs } from "./Fs";
 import { Eventer } from "./Eventer";
@@ -17,6 +18,10 @@ class Horse extends Eventer {
   }
   getConfig() {
     return this.callMethod("getConfig");
+  }
+  async createWindow(config: object) {
+    let obj = await this.callMethod("createWindow", config);
+    return new WinProx(obj.id, this.win);
   }
   private listenMsg() {
     this.webview.addEventListener("message", (e) => {
@@ -55,6 +60,7 @@ class Horse extends Eventer {
     return this.call({
       className: "horse",
       winId: globalThis.__WIN_ID,
+      tarId: globalThis.__WIN_ID,
       methodName,
       params,
     });

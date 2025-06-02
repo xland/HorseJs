@@ -2,7 +2,6 @@
 
 #include "App.h"
 #include "AppConfig.h"
-#include "Fs.h"
 #include "../Win/BrowserWindow.h"
 #include "../Win/BrowserWindowConfig.h"
 using namespace Microsoft;
@@ -24,8 +23,7 @@ void App::onWindowDestroy(BrowserWindow* win)
     winMap.erase(win->config->id);
     if (config->quitWhenAllWindowClosed && winMap.empty()) {
         PostQuitMessage(0);
-    }
-    
+    }    
 }
 
 App* App::get()

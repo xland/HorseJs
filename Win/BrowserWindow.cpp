@@ -2,18 +2,13 @@
 #include <pch.h>
 
 #include "../App/App.h"
-#include "../App/MsgProcessor.h"
+#include "../Processor/MsgProcessor.h"
 #include "BrowserWindow.h"
 #include "BrowserWindowConfig.h"
 #include "Page.h"
 
 BrowserWindow::BrowserWindow(const rapidjson::Value& winConfig)
-    : config{std::make_unique<BrowserWindowConfig>(winConfig)},
-    eventFlag{
-        {"closing",false},
-        {"sizePosChanged",false},
-        {"stateChanged",false},
-    }
+    : config{std::make_unique<BrowserWindowConfig>(winConfig)}
 {
     initWindow();
 }
@@ -113,43 +108,44 @@ void BrowserWindow::sizePosChanged(WINDOWPOS* winPos)
     RECT bounds;
     GetClientRect(hwnd, &bounds);
     ctrl->put_Bounds(bounds);
-    if (!eventFlag["sizePosChanged"]) return;
-    JsonParsor eventData;
-    eventData.addString("className", "window");
-    eventData.addString("eventName", "sizePosChanged");
-    eventData.addNumber("x", config->x);
-    eventData.addNumber("y", config->y);
-    eventData.addNumber("w", config->w);
-    eventData.addNumber("h", config->h);
-    std::wstring jsonStr = eventData.parse();
-    page->webview->PostWebMessageAsJson(jsonStr.data());
+    auto& vec = events["sizePosChanged"];
+    if (vec.size() == 0) return;
+    for (auto& e:vec)
+    {
+        e->addNumber("x", config->x);
+        e->addNumber("y", config->y);
+        e->addNumber("w", config->w);
+        e->addNumber("h", config->h);
+        e->returnBack(false);
+    }
 }
 void BrowserWindow::stateChanged(const int& state)
 {
-    if (!ctrl || !eventFlag["stateChanged"]) return;
-    JsonParsor eventData;
-    eventData.addString("className", "window");
-    eventData.addString("eventName", "stateChanged");
-    if (state == SIZE_MAXIMIZED) {
-        eventData.addString("state", "maximize");
+    if (!ctrl) return;
+    auto& vec = events["sizePosChanged"];
+    if (vec.size() == 0) return;
+    for (auto& e : vec)
+    {
+        if (state == SIZE_MAXIMIZED) {
+            e->addString("state", "maximize");
+        }
+        else if (state == SIZE_MINIMIZED) {
+            e->addString("state", "minimize");
+        }
+        else if (state == SIZE_RESTORED) {
+            e->addString("state", "restore");
+        }
+        e->returnBack(false);
     }
-    else if (state == SIZE_MINIMIZED) {
-        eventData.addString("state", "minimize");
-    }
-    else if (state == SIZE_RESTORED) {
-        eventData.addString("state", "restore");
-    }
-    std::wstring jsonStr = eventData.parse();
-    page->webview->PostWebMessageAsJson(jsonStr.data());
 }
 void BrowserWindow::closing()
 {
-    if (eventFlag["closing"]) {
-        JsonParsor eventData;
-        eventData.addString("className", "window");
-        eventData.addString("eventName", "closing");
-        std::wstring jsonStr = eventData.parse();
-        page->webview->PostWebMessageAsJson(jsonStr.data());
+    auto& vec = events["closing"];
+    if (vec.size() > 0) {
+        for (auto& e : vec)
+        {
+            e->returnBack(false);
+        }
         return; //阻止窗口关闭
     }
     DestroyWindow(hwnd);

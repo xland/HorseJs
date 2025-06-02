@@ -37,9 +37,6 @@ export class Win extends Eventer {
   setResizable(flag: boolean) {
     return this.callMethod("setResizable", flag);
   }
-  openWindow(config: object) {
-    return this.callMethod("openWindow", config);
-  }
   addEventListener(eventName, func) {
     let flag = this.on(eventName, func);
     if (flag) {
@@ -52,10 +49,11 @@ export class Win extends Eventer {
       this.callMethod("removeEventListener", eventName);
     }
   }
-  private callMethod(methodName: string, ...params: any[]) {
+  protected callMethod(methodName: string, ...params: any[]) {
     return this.call({
       className: "win",
       winId: globalThis.__WIN_ID,
+      tarId: globalThis.__WIN_ID,
       methodName,
       params,
     });

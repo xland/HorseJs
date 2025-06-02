@@ -113,9 +113,6 @@
     setResizable(flag) {
       return this.callMethod("setResizable", flag);
     }
-    openWindow(config) {
-      return this.callMethod("openWindow", config);
-    }
     addEventListener(eventName, func) {
       let flag = this.on(eventName, func);
       if (flag) {
@@ -132,6 +129,27 @@
       return this.call({
         className: "win",
         winId: globalThis.__WIN_ID,
+        tarId: globalThis.__WIN_ID,
+        methodName,
+        params
+      });
+    }
+  };
+
+  // WinProxy.ts
+  var WinProx = class extends Win {
+    id;
+    parent;
+    constructor(id, parent) {
+      super();
+      this.id = id;
+      this.parent = parent;
+    }
+    callMethod(methodName, ...params) {
+      return this.parent.call({
+        className: "win",
+        winId: globalThis.__WIN_ID,
+        tarId: this.id,
         methodName,
         params
       });
@@ -168,6 +186,7 @@
       return this.call({
         className: "fs",
         winId: globalThis.__WIN_ID,
+        tarId: globalThis.__WIN_ID,
         methodName,
         params
       });
@@ -183,6 +202,7 @@
       return this.call({
         className: "dialog",
         winId: globalThis.__WIN_ID,
+        tarId: globalThis.__WIN_ID,
         methodName,
         params
       });
@@ -205,6 +225,10 @@
     }
     getConfig() {
       return this.callMethod("getConfig");
+    }
+    async createWindow(config) {
+      let obj = await this.callMethod("createWindow", config);
+      return new WinProx(obj.id, this.win);
     }
     listenMsg() {
       this.webview.addEventListener("message", (e) => {
@@ -243,6 +267,7 @@
       return this.call({
         className: "horse",
         winId: globalThis.__WIN_ID,
+        tarId: globalThis.__WIN_ID,
         methodName,
         params
       });

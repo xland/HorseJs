@@ -2,7 +2,7 @@
 #include "Page.h"
 #include "BrowserWindowConfig.h"
 #include "BrowserWindow.h"
-#include "../App/MsgProcessor.h"
+#include "../Processor/MsgProcessor.h"
 #include "../Res/Res.h"
 #include "../App/App.h"
 
@@ -87,7 +87,7 @@ void Page::load()
 
     loadResource();    
     //webview->OpenDevToolsWindow();
-    webview->Navigate(L"https://HorseJs/index.html");
+	webview->Navigate(L"https://HorseJs/index.html"); //todo: 替换为实际的资源路径
     //webview->Navigate(L"https://www.baidu.com");
     //webview->Navigate(L"file://D:\\project\\HorseJs\\x64\\Release\\UI\\index.html");
 }
