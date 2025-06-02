@@ -1,18 +1,18 @@
-## horse.dialog µÄ·½·¨
+ï»¿## horse.dialog çš„æ–¹æ³•
 
-- ´ò¿ªÂ·¾¶¶Ô»°¿ò
+- æ‰“å¼€è·¯å¾„å¯¹è¯æ¡†
 ```js
 let data = await horse.dialog.openPathDialog({
-  title: "ÎÒµÄ´°¿Ú±êÌâ",
-  okBtnText: "Ñ¡ÔñÎÄ¼ş",
+  title: "æˆ‘çš„çª—å£æ ‡é¢˜",
+  okBtnText: "é€‰æ‹©æ–‡ä»¶",
   defaultDir: "C:\\Users\\liulun\\AppData\\Roaming\\HorseJs",
-  type: "file", //»ò"dir"£¬Ä¬ÈÏÖµÎªfile
+  type: "file", //æˆ–"dir"ï¼Œé»˜è®¤å€¼ä¸ºfile
   filter: [
     ["All Files", "*.*"],
     ["Image Files", "*.jpg;*.png"],
-  ], //Ö»ÓĞtypeÊÇfileµÄÊ±ºò²ÅÓĞĞ§
-  multiSelection: true, //Ä¬ÈÏÖµfalse
-  showHiddenFile: true, //Ä¬ÈÏÖµfalse
+  ], //åªæœ‰typeæ˜¯fileçš„æ—¶å€™æ‰æœ‰æ•ˆ
+  multiSelection: true, //é»˜è®¤å€¼false
+  showHiddenFile: true, //é»˜è®¤å€¼false
 });
 console.log(data);
 ```

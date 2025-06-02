@@ -1,4 +1,4 @@
-此项目前正在积极开发中...
+﻿此项目前正在积极开发中...
 
 ## HorseJs
 
@@ -11,32 +11,22 @@
 
 [Release](https://github.com/xland/HorseJs/releases) （小于1M）
 
-## 目录结构
-
-```shell
-├─ HorseJs.exe          # 你可以随意修改此文件的文件名
-├─ UI                   # 此目录放置配置文件和HTML/CSS/JS文件，必须叫这个名字
-   ├─ css/              # 网页样式目录，只要在UI目录下即可，叫什么名字都可以
-   ├─ js/               # 网页脚本目录，只要在UI目录下即可，叫什么名字都可以
-   ├─ index.html        # 网页入口文件，只要在UI目录下即可，叫什么名字都可以
-   ├─ config.json       # 应用程序配置文件，必须叫这个名字
-```
-
 ## 文档
 
+- [快速入门](./Doc/start.md)
 - [配置说明 config.json](./Doc/config.md)
 - [全局对象 horse](./Doc/horse.md)
-- [窗口对象 horse.window](./Doc/window.md)
-- [文件系统 horse.fs](./Doc/fs.md)
-- [对话框 horse.dialog](./Doc/dialog.md)
-- [剪切板 horse.clipboard](./Doc/clipboard.md)
-- [第三方库 horse.lib](./Doc/lib.md)
-- [网络 horse.lib](./Doc/net.md)
-- [通知 horse.notification](./Doc/notification.md)
-- [系统 horse.os](./Doc/os.md)
-- [进程 horse.process](./Doc/process.md)
-- [屏幕 horse.screen](./Doc/screen.md)
-- [托盘 horse.tray](./Doc/tray.md)
+    - [窗口对象 horse.window](./Doc/window.md)
+    - [文件系统 horse.fs](./Doc/fs.md)
+    - [对话框 horse.dialog](./Doc/dialog.md)
+    - [剪切板 horse.clipboard](./Doc/clipboard.md)
+    - [第三方库 horse.lib](./Doc/lib.md)
+    - [网络 horse.lib](./Doc/net.md)
+    - [通知 horse.notification](./Doc/notification.md)
+    - [系统 horse.os](./Doc/os.md)
+    - [进程 horse.process](./Doc/process.md)
+    - [屏幕 horse.screen](./Doc/screen.md)
+    - [托盘 horse.tray](./Doc/tray.md)
 - [FAQ](./Doc/FAQ.md)
 
 

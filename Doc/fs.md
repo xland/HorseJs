@@ -1,17 +1,17 @@
-## horse.fs µÄ·½·¨
+ï»¿## horse.fs çš„æ–¹æ³•
 
-- ¶ÁÈ¡ÎÄ¼şÈ«²¿ÄÚÈİ
+- è¯»å–æ–‡ä»¶å…¨éƒ¨å†…å®¹
 ```js
 let data = await horse.fs.readFile("D:\\index.html");
-const uint8Array = new Uint8Array(data.buffer); // ×Ö½ÚÊÓÍ¼
-const decoder = new TextDecoder('utf-8'); // UTF-8 ½âÂëÆ÷
-const text = decoder.decode(uint8Array); // ×ª»»Îª×Ö·û´®
+const uint8Array = new Uint8Array(data.buffer); // å­—èŠ‚è§†å›¾
+const decoder = new TextDecoder('utf-8'); // UTF-8 è§£ç å™¨
+const text = decoder.decode(uint8Array); // è½¬æ¢ä¸ºå­—ç¬¦ä¸²
 console.log('Decoded string:', text);
-data.release(); //ÊÍ·Å×ÊÔ´
+data.release(); //é‡Šæ”¾èµ„æº
 ```
-- ¶ÁÈ¡ÎÄ¼şµÄÒ»²¿·Ö
+- è¯»å–æ–‡ä»¶çš„ä¸€éƒ¨åˆ†
 ```js
-//´ÓµÚ10¸ö×Ö½Ú¿ªÊ¼£¬¶ÁÈ¡100¸ö×Ö½Ú
+//ä»ç¬¬10ä¸ªå­—èŠ‚å¼€å§‹ï¼Œè¯»å–100ä¸ªå­—èŠ‚
 let data = await horse.fs.readFileChunk("D:\\index.html",10,100);
 const uint8Array = new Uint8Array(data.buffer);
 const decoder = new TextDecoder('utf-8');
@@ -19,34 +19,34 @@ const text = decoder.decode(uint8Array);
 console.log('Decoded string:', text);
 data.release();
 ```
-- Ğ´ÎÄ¼ş
+- å†™æ–‡ä»¶
 ```js
-//ÎÄ¼ş´æÔÚ£¬Ôò¸²¸Ç£»ÎÄ¼ş²»´æÔÚ£¬Ôò´´½¨
-await horse.fs.writeFile("D:\\abc.txt", "Hello World \n ÄãºÃ£¬ÊÀ½ç");
+//æ–‡ä»¶å­˜åœ¨ï¼Œåˆ™è¦†ç›–ï¼›æ–‡ä»¶ä¸å­˜åœ¨ï¼Œåˆ™åˆ›å»º
+await horse.fs.writeFile("D:\\abc.txt", "Hello World \n ä½ å¥½ï¼Œä¸–ç•Œ");
 ```
 
-- É¾³ıÒ»¸öÂ·¾¶
+- åˆ é™¤ä¸€ä¸ªè·¯å¾„
 ```js
-//Â·¾¶¿ÉÒÔÊÇÒ»¸öÎÄ¼ş£¬Ò²¿ÉÒÔÊÇÒ»¸öÄ¿Â¼
+//è·¯å¾„å¯ä»¥æ˜¯ä¸€ä¸ªæ–‡ä»¶ï¼Œä¹Ÿå¯ä»¥æ˜¯ä¸€ä¸ªç›®å½•
 await horse.fs.delPath("D:\\abc.txt");
 ```
 
-- °ÑÒ»¸öÂ·¾¶ÒÆÈë»ØÊÕÕ¾
+- æŠŠä¸€ä¸ªè·¯å¾„ç§»å…¥å›æ”¶ç«™
 ```js
-//Â·¾¶¿ÉÒÔÊÇÒ»¸öÎÄ¼ş£¬Ò²¿ÉÒÔÊÇÒ»¸öÄ¿Â¼
+//è·¯å¾„å¯ä»¥æ˜¯ä¸€ä¸ªæ–‡ä»¶ï¼Œä¹Ÿå¯ä»¥æ˜¯ä¸€ä¸ªç›®å½•
 await horse.fs.delPath("D:\\abc.txt");
 ```
 
-- Â·¾¶ÊÇ·ñ´æÔÚ
+- è·¯å¾„æ˜¯å¦å­˜åœ¨
 ```js
 let data = await horse.fs.exists("D:\\index.html");
 console.log(data);
-// Êä³ö£º{isDir: false, isExists: true}
+// è¾“å‡ºï¼š{isDir: false, isExists: true}
 ```
-- »ñÈ¡ÎÄ¼şĞÅÏ¢
+- è·å–æ–‡ä»¶ä¿¡æ¯
 ```js
 let data = await horse.fs.getFileInfo("D:\\index.html");
 console.log(data);
-// Êä³ö£º{createTime:1747615428326,fileSize:9190,isHidden:false,isReadOnly:false,isSystem:false,lastAccessTime:1748565302829,lastWriteTime:1748565107113}
+// è¾“å‡ºï¼š{createTime:1747615428326,fileSize:9190,isHidden:false,isReadOnly:false,isSystem:false,lastAccessTime:1748565302829,lastWriteTime:1748565107113}
 ```
-## horse.fs µÄÊÂ¼ş
+## horse.fs çš„äº‹ä»¶
