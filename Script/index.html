@@ -103,10 +103,17 @@
       <div id="btnFileInfo" class="btn">获取文件信息</div>
       <p>dialog</p>
       <div id="btnOpenPathDialog" class="btn">打开一个文件路径</div>
-      <p>res</p>
+      <p>clipboard</p>
+      <div id="btnGetClipBoardText" class="btn">读取剪切板内的文本</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
+      let initClipboard = () => {
+        $("#btnGetClipBoardText").addEventListener("click", async () => {
+          let data = await horse.clipboard.readText();
+          console.log(data);
+        });
+      };
       let initHorse = () => {
         $("#btnGetConfig").addEventListener("click", async () => {
           let config = await horse.getConfig();
@@ -292,6 +299,7 @@
       };
       window.addEventListener("DOMContentLoaded", async () => {
         initTitleBar();
+        initClipboard();
         initHorse();
         initWin();
         initFs();

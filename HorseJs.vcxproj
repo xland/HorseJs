@@ -196,9 +196,23 @@
     </CopyFileToFolders>
     <None Include="Doc\API.md" />
     <None Include="Doc\ChangeLog.md" />
-    <None Include="Doc\Config.md" />
+    <None Include="Doc\clipboard.md" />
+    <None Include="Doc\config.md" />
     <None Include="Doc\Deploy.md" />
+    <None Include="Doc\dialog.md" />
+    <None Include="Doc\FAQ.md" />
+    <None Include="Doc\fs.md" />
+    <None Include="Doc\horse.md" />
+    <None Include="Doc\lib.md" />
+    <None Include="Doc\net.md" />
+    <None Include="Doc\notification.md" />
+    <None Include="Doc\os.md" />
+    <None Include="Doc\process.md" />
     <None Include="Doc\ReadWriteRes.md" />
+    <None Include="Doc\screen.md" />
+    <None Include="Doc\start.md" />
+    <None Include="Doc\tray.md" />
+    <None Include="Doc\window.md" />
     <None Include="packages.config" />
     <CopyFileToFolders Include="Script\index.html">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>

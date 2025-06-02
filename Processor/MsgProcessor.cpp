@@ -1,17 +1,21 @@
 ﻿#include <pch.h>
-
+#include "../App/App.h"
+#include "../Win/BrowserWindow.h"
+#include "../Win/Page.h"
 #include "MsgProcessor.h"
 #include "JsonResult.h"
-#include "../App/App.h"
 #include "Horse.h"
 #include "Fs.h"
 #include "Win.h"
 #include "Dialog.h"
-#include "../Win/BrowserWindow.h"
-#include "../Win/Page.h"
+#include "Clipboard.h"
 
 namespace {
     std::unique_ptr<MsgProcessor> msgProcessor;
+    static std::unordered_map<std::string, void (Clipboard::*)(const rapidjson::Value&, JsonResult*)> clipboardFunc = {
+        {"readText", &Clipboard::readText},
+        {"writeText", &Clipboard::writeText},
+    };
     static std::unordered_map<std::string, void (Horse::*)(const rapidjson::Value&, JsonResult*)> horseFunc = {
         {"getConfig", &Horse::getConfig},
         {"createWindow", &Horse::createWindow},
@@ -100,7 +104,34 @@ void MsgProcessor::processStr(const std::string& msgStr)
     auto win = App::get()->getWindow(winId);
     auto tar = App::get()->getWindow(tarId);
     auto result = JsonResult::create(win, tar,className, eventName);
-    if (className == "horse") {
+    if (className == "clipboard") {
+        auto it = clipboardFunc.find(methodName);
+        if (it != clipboardFunc.end()) {
+            (Clipboard::get()->*it->second)(jsonDoc["params"], result);
+        }
+        else {
+            result->addErr(std::format("clipboard Method:{} not found!", methodName));
+        }
+    }
+    else if (className == "dialog") {
+        auto it = dialogFunc.find(methodName);
+        if (it != dialogFunc.end()) {
+            (Dialog::get()->*it->second)(jsonDoc["params"], result);
+        }
+        else {
+            result->addErr(std::format("dialog Method:{} not found!", methodName));
+        }
+    }
+    else if (className == "fs") {
+        auto it = fsFunc.find(methodName);
+        if (it != fsFunc.end()) {
+            (Fs::get()->*it->second)(jsonDoc["params"], result);
+        }
+        else {
+            result->addErr(std::format("fs Method:{} not found!", methodName));
+        }
+    }
+    else if (className == "horse") {
         auto it = horseFunc.find(methodName);
         if (it != horseFunc.end()) {
             (Horse::get()->*it->second)(jsonDoc["params"], result);
@@ -116,24 +147,6 @@ void MsgProcessor::processStr(const std::string& msgStr)
         }
         else {
             result->addErr(std::format("win Method:{} not found!",methodName));
-        }
-    }
-    else if (className == "fs") {
-        auto it = fsFunc.find(methodName);
-        if (it != fsFunc.end()) {
-            (Fs::get()->*it->second)(jsonDoc["params"], result);
-        }
-        else {
-            result->addErr(std::format("fs Method:{} not found!",methodName));
-        }
-    }
-    else if (className == "dialog") {
-        auto it = dialogFunc.find(methodName);
-        if (it != dialogFunc.end()) {
-            (Dialog::get()->*it->second)(jsonDoc["params"], result);
-        }
-        else {
-            result->addErr(std::format("dialog Method:{} not found!",methodName));
         }
     }
     else {

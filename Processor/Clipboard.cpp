@@ -23,6 +23,27 @@ Clipboard* Clipboard::get()
 
 void Clipboard::readText(const rapidjson::Value& params, JsonResult* result)
 {
+    if (!OpenClipboard(NULL)) {
+        result->addErr("open clipboard err");
+        return;
+    }
+    HANDLE hData = GetClipboardData(CF_UNICODETEXT);
+    if (hData == NULL) {
+        CloseClipboard();
+        result->addErr("clipboard doesn't have text data");
+        return;
+    }
+    wchar_t* pszText = (wchar_t*)GlobalLock(hData);
+    if (pszText == NULL) {
+        CloseClipboard();
+        result->addErr("can not get clipboard text");
+        return;
+    }
+    auto str = Util::convertToStr(pszText);
+    GlobalUnlock(hData);
+    CloseClipboard();
+    result->addString("result", str);
+    result->returnBack();
 }
 
 void Clipboard::writeText(const rapidjson::Value& params, JsonResult* result)

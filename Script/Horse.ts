@@ -3,10 +3,12 @@ import { Win } from "./Win";
 import { Fs } from "./Fs";
 import { Eventer } from "./Eventer";
 import { Dialog } from "./Dialog";
+import { Clipboard } from "./Clipboard";
 class Horse extends Eventer {
   win: Win;
   fs: Fs;
   dialog: Dialog;
+  clipboard: Clipboard;
   webview;
   constructor() {
     super();
@@ -14,6 +16,7 @@ class Horse extends Eventer {
     this.win = new Win(); // 初始化 window 实例
     this.fs = new Fs();
     this.dialog = new Dialog();
+    this.clipboard = new Clipboard();
     this.listenMsg();
   }
   getConfig() {
@@ -29,7 +32,9 @@ class Horse extends Eventer {
       delete e.data.className;
       let evtName = e.data.eventName;
       delete e.data.eventName;
-      if (clsName === "horse") {
+      if (clsName === "clipboard") {
+        this.clipboard.emit(evtName, e.data);
+      } else if (clsName === "horse") {
         this.emit(evtName, e.data);
       } else if (clsName === "win") {
         this.win.emit(evtName, e.data);
