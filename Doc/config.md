@@ -1,7 +1,9 @@
+应用程序的配置文件 `config.json` 应保存在 UI 目录下。
+
 - appId
-> - 应用程序的Id。必须是英文，不能包含特殊符号
+> 应用程序的Id。必须是英文，不能包含特殊符号
 - quitWhenNoWindow
-> - 类型：布尔，默认值：`true`
+> 类型：布尔，默认值：`true` <br />
 > 当所有窗口关闭时，退出应用程序。
 - window.resizable
 > - 类型：布尔，默认值：`true`
