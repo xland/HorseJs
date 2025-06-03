@@ -13,7 +13,7 @@
 
 ## 文档
 
-- [快速入门](./Doc/start.md)
+- <a href="./Doc/start.md" target="_blank">快速入门</a>
 - [配置说明 config.json](./Doc/config.md)
 - [全局对象 horse](./Doc/horse.md)
     - [窗口对象 horse.window](./Doc/window.md)
