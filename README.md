@@ -38,19 +38,19 @@
 <table>
   <tr>
     <td align="center">
-      <img src="./Doc/alipay.jpg" width="160" height="160">
+      <img src="./Doc/img/alipay.jpg" width="160" height="160">
       <p>支付宝赞助</p>
     </td>
     <td align="center">
-      <img src="./Doc/wechat.png" width="160" height="160">
+      <img src="./Doc/img/wechat.png" width="160" height="160">
       <p>微信赞助</p>
     </td>
     <td align="center">
-      <img src="./Doc/author.jpg" width="160" height="160">
+      <img src="./Doc/img/author.jpg" width="160" height="160">
       <p>作者微信</p>
     </td>
     <td align="center">
-      <img src="./Doc/gongzhonghao.jpg" width="160" height="160">
+      <img src="./Doc/img/gongzhonghao.jpg" width="160" height="160">
       <p>公众号：桌面软件</p>
     </td>
   </tr>

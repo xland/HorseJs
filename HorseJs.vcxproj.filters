@@ -92,9 +92,7 @@
     <None Include="packages.config" />
     <None Include="Doc\config.md" />
     <None Include="Doc\Deploy.md" />
-    <None Include="Doc\API.md" />
-    <None Include="Doc\ChangeLog.md" />
-    <None Include="Doc\ReadWriteRes.md" />
+    <None Include="Doc\dev\ReadWriteRes.md" />
     <None Include="Doc\horse.md" />
     <None Include="Doc\window.md" />
     <None Include="Doc\fs.md" />
@@ -109,6 +107,10 @@
     <None Include="Doc\screen.md" />
     <None Include="Doc\tray.md" />
     <None Include="Doc\start.md" />
+    <None Include="Doc\dev\ChangeLog.md" />
+    <None Include="README.md" />
+    <None Include="LICENSE" />
+    <None Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Win\BrowserWindow.h">
