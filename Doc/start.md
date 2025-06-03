@@ -1,4 +1,4 @@
-﻿1. [下载 HorseJs](https://github.com/xland/HorseJs/releases)
+﻿1. [下载 HorseJs](https://github.com/xland/HorseJs/releases)，并解压缩 Release.7z
 
 1. 使用以下目录结构配置你的项目
 
@@ -11,3 +11,5 @@
    ├─ config.json  # 应用程序配置文件，必须叫这个名字
 ```
 3. 现在你可以启动HorseJs.exe查看你的应用了 
+1. 你可以使用 [Resource Hacker](https://www.angusj.com/resourcehacker/) 修改 HorseJs.exe 的图标
+1. 你可以使用 [Windows Installer](https://learn.microsoft.com/en-us/windows/win32/msi/windows-installer-portal), [NSIS](http://nsis.sourceforge.net/Main_Page) 或 [Inno Setup](http://www.jrsoftware.org/isinfo.php) 制作应用程序安装包.
