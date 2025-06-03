@@ -1,14 +1,14 @@
 ## 说明
 
-HorseJs框架会为每个窗口的页面注入一个JavaScript对象：horse
+HorseJs 框架会为每个窗口的页面注入一个JavaScript 对象：`horse`
 
-开发者与HorseJs交互的大部分操作都是通过这个对象（及其子对象）完成的。
+开发者与 HorseJs 交互的大部分操作都是通过这个对象（及其子对象）完成的。
+
+horse对象（及其子对象）公开的每个方法都是异步的。
 
 ## horse 的方法
 
-> horse对象（及其子对象）公开的每个方法都是异步的。
-
-- 获取应用程序配置信息 config.json中的信息
+- 获取应用程序配置信息 ( config.json 中的信息)
 ```js
 let config = await horse.getConfig();
 console.log(config);  //config是一个json对象
@@ -16,8 +16,7 @@ console.log(config);  //config是一个json对象
 
 - 创建一个新窗口
 
-> 新窗口创建成功后，将得到一个窗口代理对象（是Win的子类型），
->
+> 新窗口创建成功后，将得到一个窗口代理对象（是 [Win](./win.md) 的子类型），<br />
 > 你可以使用这个对象来操作你刚刚创建的窗口（包括监听这个窗口上的事件）。
 
 ```js

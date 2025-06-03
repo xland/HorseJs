@@ -1,2 +1,0 @@
-# Edit Icon
-# Installer

@@ -16,7 +16,7 @@
 - [快速入门](./Doc/start.md)
 - [配置说明 config.json](./Doc/config.md)
 - [全局对象 horse](./Doc/horse.md)
-    - [窗口对象 horse.window](./Doc/window.md)
+    - [窗口对象 horse.win](./Doc/win.md)
     - [文件系统 horse.fs](./Doc/fs.md)
     - [对话框 horse.dialog](./Doc/dialog.md)
     - [剪切板 horse.clipboard](./Doc/clipboard.md)
