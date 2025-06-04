@@ -84,6 +84,8 @@
       <div id="btnReadClipBoardText" class="btn">读取剪切板内的文本</div>
       <div id="btnWriteClipBoardText" class="btn">向剪切板内写入文本</div>
       <div id="btnReadClipBoardHtml" class="btn">读取剪切板内的html</div>
+      <p>net</p>
+      <div id="btnGetAddress" class="btn">获取IP地址</div>
       <p>window</p>
       <div id="btnMaximize" class="btn">最大化</div>
       <div id="btnMinimize" class="btn">最小化</div>
@@ -199,7 +201,12 @@
           await proxy.minimize();
         });
       };
-
+      let initNet = () => {
+        $("#btnGetAddress").addEventListener("click", async () => {
+          let data = await horse.net.getAddress();
+          console.log(data);
+        });
+      };
       let initWin = () => {
         $("#btnMaximize").addEventListener("click", async () => {
           await horse.win.maximize();
@@ -318,6 +325,7 @@
         initClipboard();
         initHorse();
         initWin();
+        initNet();
         initFs();
         initRes();
         initDialog();

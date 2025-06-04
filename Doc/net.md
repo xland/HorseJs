@@ -1,3 +1,7 @@
-用于获取IP地址、网络联通情况等信息
+- 获取Ip地址
 
-目前此模块尚未开发完成
+```js
+let data = await horse.net.getAddress();
+console.log(data);
+//{data:['fe80::4068:7357:62bc:a3df', '10.26.54.55'],ok:true}
+```

@@ -12,15 +12,16 @@
 
 #include <windows.h>
 #include <winuser.h>
-#include <WebView2.h>
-#include <WebView2EnvironmentOptions.h>
-#include <wrl.h>
-#include <wil/com.h>
 #include <Shlobj.h>
 #include <shellapi.h>
 #include <shobjidl.h>
 #include <windowsx.h>
 #include <dwmapi.h>
+
+#include <WebView2.h>
+#include <WebView2EnvironmentOptions.h>
+#include <wrl.h>
+#include <wil/com.h>
 #include <DispatcherQueue.h>
 #include <winrt/base.h>
 #include <winrt/Windows.Foundation.h>
