@@ -214,7 +214,7 @@ void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
             }
             pResults->Release();
             pFileOpen->Release(); 
-            result->addValue("path", std::move(array));
+            result->addValue("data", std::move(array));
         }
         else {
             IShellItem* pItem;
@@ -237,7 +237,7 @@ void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
             pItem->Release();
             pFileOpen->Release();
             auto str = Util::convertToStr(pathStr);
-            result->addString("path", str);
+            result->addString("data", str);
         }
         result->returnBackThread();
         

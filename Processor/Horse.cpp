@@ -32,7 +32,7 @@ void Horse::getConfig(const rapidjson::Value& params, JsonResult* result)
     rapidjson::Document doc;
     doc.Parse(str.data());
     rapidjson::Value copiedValue(doc, result->getAllocator());
-	result->addValue("result", std::move(copiedValue));
+	result->addValue("data", std::move(copiedValue));
     result->returnBack();
 }
 

@@ -52,11 +52,7 @@ export class Eventer {
     return new Promise((resolve, reject) => {
       obj.eventName = `once_${util.randomNum()}`;
       this.once(obj.eventName, (result: any) => {
-        if (result.err) {
-          reject(new Error(result.err));
-        } else {
-          resolve(result);
-        }
+        resolve(result);
       });
       window.chrome.webview.postMessage(obj);
     });

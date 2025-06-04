@@ -32,19 +32,19 @@ void Clipboard::getDataType(const rapidjson::Value& params, JsonResult* result)
         return;
     }
     if (IsClipboardFormatAvailable(CF_HDROP)) {        
-        result->addString("result", "file");
+        result->addString("data", "file");
     }
     else if (IsClipboardFormatAvailable(CF_HTML)) {
-        result->addString("result", "html");
+        result->addString("data", "html");
     }
     else if (IsClipboardFormatAvailable(CF_TEXT) || IsClipboardFormatAvailable(CF_UNICODETEXT)) {
-        result->addString("result", "text");
+        result->addString("data", "text");
     }
     else if (IsClipboardFormatAvailable(CF_BITMAP) || IsClipboardFormatAvailable(CF_DIB)) {
-        result->addString("result", "img");
+        result->addString("data", "img");
     }
     else {
-        result->addString("result", "unknown");
+        result->addString("data", "unknown");
     }
     CloseClipboard();
     result->returnBack();
@@ -71,7 +71,7 @@ void Clipboard::readText(const rapidjson::Value& params, JsonResult* result)
     auto str = Util::convertToStr(pszText);
     GlobalUnlock(hData);
     CloseClipboard();
-    result->addString("result", str);
+    result->addString("data", str);
     result->returnBack();
 }
 
@@ -169,7 +169,7 @@ void Clipboard::readHtml(const rapidjson::Value& params, JsonResult* result)
     }
     // 提取 <!--StartFragment--> 和 <!--EndFragment--> 之间的内容
     std::string fragment = data.substr(contentStart, endFragmentPos - contentStart);
-    result->addString("result", fragment);
+    result->addString("data", fragment);
     result->returnBack();
 }
 

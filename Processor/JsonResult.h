@@ -16,7 +16,7 @@ class JsonResult : public JsonParsor
 		std::string className,eventName;
         BrowserWindow* win;
         BrowserWindow* tar;
-        ICoreWebView2SharedBuffer* sharedBuffer; //todo´ó²¿·Öresult¶¼²»ĞèÒªÕâ¸öÖ¸Õë£¬µ¼ÖÂ¶àÁË8¸ö×Ö½Ú
+        ICoreWebView2SharedBuffer* sharedBuffer; //todoå¤§éƒ¨åˆ†resultéƒ½ä¸éœ€è¦è¿™ä¸ªæŒ‡é’ˆï¼Œå¯¼è‡´å¤šäº†8ä¸ªå­—èŠ‚
     private:
         JsonResult(BrowserWindow* win, BrowserWindow* tar, std::string& className, std::string& eventName);
     private:
