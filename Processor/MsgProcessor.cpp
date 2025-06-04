@@ -12,6 +12,7 @@
 #include "Fs.h"
 #include "Notify.h"
 #include "Win.h"
+#include "Os.h"
 
 namespace {
     std::unique_ptr<MsgProcessor> msgProcessor;
@@ -54,6 +55,9 @@ namespace {
     };
     static std::unordered_map<std::string, void (Notify::*)(const rapidjson::Value&, JsonResult*)> notifyFunc = {
         {"show", &Notify::show},
+    };
+    static std::unordered_map<std::string, void (Os::*)(const rapidjson::Value&, JsonResult*)> osFunc = {
+        {"getVersion", &Os::getVersion},
     };
     static std::unordered_map<std::string, void (Win::*)(const rapidjson::Value&, JsonResult*)> winFunc = {
         {"show", &Win::show},
@@ -181,6 +185,15 @@ void MsgProcessor::processStr(const std::string& msgStr)
         }
         else {
             result->addErr(std::format("net method:{} not found!", methodName));
+        }
+    }
+    else if (className == "os") {
+        auto it = osFunc.find(methodName);
+        if (it != osFunc.end()) {
+            (Os::get()->*it->second)(jsonDoc["params"], result);
+        }
+        else {
+            result->addErr(std::format("os method:{} not found!", methodName));
         }
     }
     else if (className == "win") {
