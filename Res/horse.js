@@ -71,6 +71,22 @@
     }
   };
 
+  // Notification.ts
+  var Notification = class extends Eventer {
+    async show() {
+      return this.callMethod("show");
+    }
+    callMethod(methodName, ...params) {
+      return this.call({
+        className: "notification",
+        winId: globalThis.__WIN_ID,
+        tarId: globalThis.__WIN_ID,
+        methodName,
+        params
+      });
+    }
+  };
+
   // Win.ts
   var Win = class extends Eventer {
     maximize() {
@@ -252,6 +268,7 @@
     fs;
     dialog;
     clipboard;
+    notification;
     lib;
     net;
     webview;
@@ -263,6 +280,7 @@
       this.dialog = new Dialog();
       this.clipboard = new Clipboard();
       this.net = new Net();
+      this.notification = new Notification();
       this.listenMsg();
     }
     getConfig() {

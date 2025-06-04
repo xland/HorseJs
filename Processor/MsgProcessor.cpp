@@ -10,6 +10,7 @@
 #include "Lib.h"
 #include "Net.h"
 #include "Fs.h"
+#include "Notification.h"
 #include "Win.h"
 
 namespace {
@@ -50,6 +51,9 @@ namespace {
     };
     static std::unordered_map<std::string, void (Net::*)(const rapidjson::Value&, JsonResult*)> netFunc = {
         {"getAddress", &Net::getAddress},
+    };
+    static std::unordered_map<std::string, void (Notification::*)(const rapidjson::Value&, JsonResult*)> notifyFunc = {
+        {"show", &Notification::show},
     };
     static std::unordered_map<std::string, void (Win::*)(const rapidjson::Value&, JsonResult*)> winFunc = {
         {"show", &Win::show},
@@ -138,6 +142,15 @@ void MsgProcessor::processStr(const std::string& msgStr)
         auto it = fsFunc.find(methodName);
         if (it != fsFunc.end()) {
             (Fs::get()->*it->second)(jsonDoc["params"], result);
+        }
+        else {
+            result->addErr(std::format("fs method:{} not found!", methodName));
+        }
+    }
+    else if (className == "notification") {
+        auto it = notifyFunc.find(methodName);
+        if (it != notifyFunc.end()) {
+            (Notification::get()->*it->second)(jsonDoc["params"], result);
         }
         else {
             result->addErr(std::format("fs method:{} not found!", methodName));

@@ -110,6 +110,8 @@
       <div id="btnFileInfo" class="btn">获取文件信息</div>
       <p>dialog</p>
       <div id="btnOpenPathDialog" class="btn">打开一个文件路径</div>
+      <p>notify</p>
+      <div id="btnNotifyShow" class="btn">显示一个通知</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
@@ -204,6 +206,12 @@
       let initNet = () => {
         $("#btnGetAddress").addEventListener("click", async () => {
           let data = await horse.net.getAddress();
+          console.log(data);
+        });
+      };
+      let initNotify = () => {
+        $("#btnNotifyShow").addEventListener("click", async () => {
+          let data = await horse.notification.show();
           console.log(data);
         });
       };
@@ -329,6 +337,7 @@
         initFs();
         initRes();
         initDialog();
+        initNotify();
         horse.win.show();
       });
     </script>

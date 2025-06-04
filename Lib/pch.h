@@ -12,8 +12,8 @@
 
 #include <windows.h>
 #include <winuser.h>
-#include <Shlobj.h>
 #include <shellapi.h>
+#include <shlobj.h>
 #include <shobjidl.h>
 #include <windowsx.h>
 #include <dwmapi.h>
