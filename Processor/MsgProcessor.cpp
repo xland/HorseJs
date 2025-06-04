@@ -45,6 +45,8 @@ namespace {
     };
     static std::unordered_map<std::string, void (Lib::*)(const rapidjson::Value&, JsonResult*)> libFunc = {
         {"load", &Lib::load},
+        {"free", &Lib::free},
+        {"call", &Lib::call},
     };
     static std::unordered_map<std::string, void (Net::*)(const rapidjson::Value&, JsonResult*)> netFunc = {
         {"getAddress", &Net::getAddress},
@@ -148,6 +150,15 @@ void MsgProcessor::processStr(const std::string& msgStr)
         }
         else {
             result->addErr(std::format("horse method:{} not found!", methodName));
+        }
+    }
+    else if (className == "lib") {
+        auto it = libFunc.find(methodName);
+        if (it != libFunc.end()) {
+            (Lib::get()->*it->second)(jsonDoc["params"], result);
+        }
+        else {
+            result->addErr(std::format("lib method:{} not found!", methodName));
         }
     }
     else if (className == "net") {

@@ -5,11 +5,13 @@ import { Eventer } from "./Eventer";
 import { Dialog } from "./Dialog";
 import { Clipboard } from "./Clipboard";
 import { Net } from "./Net";
+import { Lib } from "./Lib";
 class Horse extends Eventer {
   win: Win;
   fs: Fs;
   dialog: Dialog;
   clipboard: Clipboard;
+  lib: Lib;
   net: Net;
   webview;
   constructor() {
@@ -43,6 +45,8 @@ class Horse extends Eventer {
         this.fs.emit(evtName, e.data);
       } else if (clsName === "horse") {
         this.emit(evtName, e.data);
+      } else if (clsName === "lib") {
+        this.lib.emit(evtName, e.data);
       } else if (clsName === "net") {
         this.net.emit(evtName, e.data);
       } else if (clsName === "win") {

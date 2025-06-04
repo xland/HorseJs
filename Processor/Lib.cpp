@@ -3,6 +3,8 @@
 
 namespace {
     std::unique_ptr<Lib> lib;
+    std::unordered_map<int,HMODULE> dllModules;
+    typedef const char* (*FuncPtr)(const char*);
 }
 
 Lib::Lib()
@@ -15,6 +17,7 @@ Lib::~Lib()
 
 Lib* Lib::get()
 {
+    //todo 这个类  可能会涉及到  sharedBuffer
     if(!lib) {
         lib = std::make_unique<Lib>();
 	}
@@ -23,4 +26,45 @@ Lib* Lib::get()
 
 void Lib::load(const rapidjson::Value& params, JsonResult* result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring dllPath = Util::convertToWStr(arr[0].GetString());
+    HMODULE hDll = LoadLibrary(dllPath.data());
+    if (hDll == NULL) {
+        result->addErr("load dll error.");
+        return;
+    }
+    static int id{ 0 };
+    dllModules.insert({ id,hDll });
+    id += 1;
+    result->addNumber("id", id);
+    result->returnBack();
+}
+
+void Lib::free(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    auto id = arr[0].GetInt();
+    auto flag = FreeLibrary(dllModules[id]);
+    if (!flag) {
+        result->addErr("free dll error.");
+        return;
+    }
+    dllModules.erase(id);
+    result->returnBack();
+}
+
+void Lib::call(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    auto id = arr[0].GetInt();
+    auto funcName = arr[1].GetString();
+    auto funcParam = arr[2].GetString();
+    FuncPtr func = reinterpret_cast<FuncPtr>(GetProcAddress(dllModules[id], funcName));
+    if (func == NULL) {
+        result->addErr("failed to get function address.");
+        return;
+    }
+    auto data = func(funcParam);
+    result->addString("data", data);
+    result->returnBack();
 }

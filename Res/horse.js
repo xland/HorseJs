@@ -252,6 +252,7 @@
     fs;
     dialog;
     clipboard;
+    lib;
     net;
     webview;
     constructor() {
@@ -285,6 +286,8 @@
           this.fs.emit(evtName, e.data);
         } else if (clsName === "horse") {
           this.emit(evtName, e.data);
+        } else if (clsName === "lib") {
+          this.lib.emit(evtName, e.data);
         } else if (clsName === "net") {
           this.net.emit(evtName, e.data);
         } else if (clsName === "win") {
