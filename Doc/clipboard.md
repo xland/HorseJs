@@ -12,7 +12,7 @@ console.log(data);
 ```js
 let data = await horse.clipboard.readText();
 console.log(data);
-// {ok: true, result: '剪切板内的文本'}
+// {ok: true, data: '剪切板内的文本'}
 ```
 
 - 向剪切板内写入文本

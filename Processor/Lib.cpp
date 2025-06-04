@@ -18,6 +18,7 @@ Lib::~Lib()
 Lib* Lib::get()
 {
     //todo 这个类  可能会涉及到  sharedBuffer
+    //todo 可能还涉及到事件
     if(!lib) {
         lib = std::make_unique<Lib>();
 	}
