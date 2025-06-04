@@ -11,6 +11,7 @@
 #include <regex>
 
 #include <windows.h>
+#include <winuser.h>
 #include <WebView2.h>
 #include <WebView2EnvironmentOptions.h>
 #include <wrl.h>

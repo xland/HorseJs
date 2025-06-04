@@ -211,11 +211,17 @@
 
   // Clipboard.ts
   var Clipboard = class extends Eventer {
+    getDataType() {
+      return this.callMethod("getDataType");
+    }
     readText() {
       return this.callMethod("readText");
     }
     writeText(text) {
       return this.callMethod("writeText", text);
+    }
+    readHtml() {
+      return this.callMethod("readHtml");
     }
     callMethod(methodName, ...params) {
       return this.call({

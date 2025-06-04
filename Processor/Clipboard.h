@@ -8,6 +8,7 @@ public:
 	~Clipboard();
 	static Clipboard* get();
 	
+	void getDataType(const rapidjson::Value& params, JsonResult* result);
 	void readText(const rapidjson::Value& params, JsonResult* result);
 	void writeText(const rapidjson::Value& params, JsonResult* result);
 	void readImage(const rapidjson::Value& params, JsonResult* result);

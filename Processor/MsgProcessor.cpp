@@ -14,8 +14,10 @@
 namespace {
     std::unique_ptr<MsgProcessor> msgProcessor;
     static std::unordered_map<std::string, void (Clipboard::*)(const rapidjson::Value&, JsonResult*)> clipboardFunc = {
+        {"getDataType", &Clipboard::getDataType},
         {"readText", &Clipboard::readText},
         {"writeText", &Clipboard::writeText},
+        {"readHtml", &Clipboard::readHtml},
     };
     static std::unordered_map<std::string, void (Dialog::*)(const rapidjson::Value&, JsonResult*)> dialogFunc = {
         {"openPathDialog", &Dialog::openPathDialog},

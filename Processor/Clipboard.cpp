@@ -3,6 +3,7 @@
 
 namespace {
     std::unique_ptr<Clipboard> clipboard;
+    UINT CF_HTML;
 }
 
 Clipboard::Clipboard()
@@ -16,9 +17,37 @@ Clipboard::~Clipboard()
 Clipboard* Clipboard::get()
 {
     if(!clipboard) {
+        CF_HTML = RegisterClipboardFormat(L"HTML Format");
         clipboard = std::make_unique<Clipboard>();
 	}
     return clipboard.get();
+}
+
+
+
+void Clipboard::getDataType(const rapidjson::Value& params, JsonResult* result)
+{
+    if (!OpenClipboard(NULL)) {
+        result->addErr("open clipboard err");
+        return;
+    }
+    if (IsClipboardFormatAvailable(CF_HDROP)) {        
+        result->addString("result", "file");
+    }
+    else if (IsClipboardFormatAvailable(CF_HTML)) {
+        result->addString("result", "html");
+    }
+    else if (IsClipboardFormatAvailable(CF_TEXT) || IsClipboardFormatAvailable(CF_UNICODETEXT)) {
+        result->addString("result", "text");
+    }
+    else if (IsClipboardFormatAvailable(CF_BITMAP) || IsClipboardFormatAvailable(CF_DIB)) {
+        result->addString("result", "img");
+    }
+    else {
+        result->addString("result", "unknown");
+    }
+    CloseClipboard();
+    result->returnBack();
 }
 
 void Clipboard::readText(const rapidjson::Value& params, JsonResult* result)
@@ -93,6 +122,55 @@ void Clipboard::writeFile(const rapidjson::Value& params, JsonResult* result)
 
 void Clipboard::readHtml(const rapidjson::Value& params, JsonResult* result)
 {
+    // 打开剪切板
+    if (!OpenClipboard(NULL)) {
+        result->addErr("Open clipboard error: " + std::to_string(GetLastError()));
+        return;
+    }
+
+    // 检查 HTML 格式
+    if (!IsClipboardFormatAvailable(CF_HTML)) {
+        result->addErr("No HTML data in clipboard");
+        CloseClipboard();
+        return;
+    }
+
+    // 获取 HTML 数据句柄
+    HGLOBAL hData = GetClipboardData(CF_HTML);
+    if (hData == NULL) {
+        result->addErr("Cannot get HTML data: " + std::to_string(GetLastError()));
+        CloseClipboard();
+        return;
+    }
+    // 锁定内存
+    const char* htmlData = static_cast<const char*>(GlobalLock(hData));
+    if (htmlData == NULL) {
+        result->addErr("Cannot lock memory: " + std::to_string(GetLastError()));
+        CloseClipboard();
+        return;
+    }
+    // 构造字符串
+    std::string data(htmlData);
+    // 解锁内存并关闭剪切板
+    GlobalUnlock(hData);
+    CloseClipboard();
+    // 查找 StartFragment 和 EndFragment
+    size_t startFragmentPos = data.find("<!--StartFragment-->");
+    size_t endFragmentPos = data.find("<!--EndFragment-->");
+    if (startFragmentPos == std::string::npos || endFragmentPos == std::string::npos) {
+        result->addErr("Failed to find StartFragment or EndFragment markers");
+        return;
+    }
+    // 计算起始和结束位置
+    size_t contentStart = startFragmentPos + 20; // 跳过 "<!--StartFragment-->" 的长度
+    if (contentStart >= endFragmentPos) {
+        result->addErr("Invalid fragment positions: start >= end");
+        return;
+    }
+    // 提取 <!--StartFragment--> 和 <!--EndFragment--> 之间的内容
+    std::string fragment = data.substr(contentStart, endFragmentPos - contentStart);
+    result->addString("result", fragment);
+    result->returnBack();
 }
 
 void Clipboard::writeHtml(const rapidjson::Value& params, JsonResult* result)
