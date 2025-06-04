@@ -71,14 +71,14 @@
     }
   };
 
-  // Notification.ts
-  var Notification = class extends Eventer {
-    async show() {
-      return this.callMethod("show");
+  // Notify.ts
+  var Notify = class extends Eventer {
+    async show(appName, title, content) {
+      return this.callMethod("show", appName, title, content);
     }
     callMethod(methodName, ...params) {
       return this.call({
-        className: "notification",
+        className: "notify",
         winId: globalThis.__WIN_ID,
         tarId: globalThis.__WIN_ID,
         methodName,
@@ -268,7 +268,7 @@
     fs;
     dialog;
     clipboard;
-    notification;
+    notify;
     lib;
     net;
     webview;
@@ -280,7 +280,7 @@
       this.dialog = new Dialog();
       this.clipboard = new Clipboard();
       this.net = new Net();
-      this.notification = new Notification();
+      this.notify = new Notify();
       this.listenMsg();
     }
     getConfig() {
@@ -308,6 +308,8 @@
           this.lib.emit(evtName, e.data);
         } else if (clsName === "net") {
           this.net.emit(evtName, e.data);
+        } else if (clsName === "notify") {
+          this.notify.emit(evtName, e.data);
         } else if (clsName === "win") {
           this.win.emit(evtName, e.data);
         }

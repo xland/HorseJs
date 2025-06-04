@@ -1,12 +1,12 @@
 #pragma once
 #include "../App/Util.h"
 #include "JsonResult.h"
-class Notification
+class Notify
 {
 public:
-	Notification();
-	~Notification();
-	static Notification* get();
+	Notify();
+	~Notify();
+	static Notify* get();
 	void show(const rapidjson::Value& params, JsonResult* result);
 private:
 };

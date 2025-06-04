@@ -15,10 +15,12 @@ std::string Util::readFile(const std::wstring& filePath)
 
 std::wstring Util::convertToWStr(const char* str)
 {
+    if (!str) return std::wstring();
     int count = MultiByteToWideChar(CP_UTF8, 0, str, -1, 0, 0);
-    std::wstring wstr(count, 0);
-    MultiByteToWideChar(CP_UTF8, 0, str, -1, &wstr[0], count);
-    return wstr;
+    if (count == 0) return std::wstring();
+    std::vector<wchar_t> buffer(count);
+    MultiByteToWideChar(CP_UTF8, 0, str, -1, buffer.data(), count);
+    return std::wstring(buffer.data(), buffer.size() - 1);
 }
 
 std::string Util::convertToStr(const std::wstring& wstr)

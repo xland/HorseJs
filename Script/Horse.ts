@@ -1,4 +1,4 @@
-import { Notification } from "./Notification";
+import { Notify } from "./Notify";
 import { WinProx } from "./WinProxy";
 import { Win } from "./Win";
 import { Fs } from "./Fs";
@@ -12,7 +12,7 @@ class Horse extends Eventer {
   fs: Fs;
   dialog: Dialog;
   clipboard: Clipboard;
-  notification: Notification;
+  notify: Notify;
   lib: Lib;
   net: Net;
   webview;
@@ -24,7 +24,7 @@ class Horse extends Eventer {
     this.dialog = new Dialog();
     this.clipboard = new Clipboard();
     this.net = new Net();
-    this.notification = new Notification();
+    this.notify = new Notify();
     this.listenMsg();
   }
   getConfig() {
@@ -52,6 +52,8 @@ class Horse extends Eventer {
         this.lib.emit(evtName, e.data);
       } else if (clsName === "net") {
         this.net.emit(evtName, e.data);
+      } else if (clsName === "notify") {
+        this.notify.emit(evtName, e.data);
       } else if (clsName === "win") {
         this.win.emit(evtName, e.data);
       }

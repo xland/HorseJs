@@ -169,7 +169,7 @@
     <ClCompile Include="Processor\Lib.cpp" />
     <ClCompile Include="Processor\MsgProcessor.cpp" />
     <ClCompile Include="Processor\Net.cpp" />
-    <ClCompile Include="Processor\Notification.cpp" />
+    <ClCompile Include="Processor\Notify.cpp" />
     <ClCompile Include="Processor\Os.cpp" />
     <ClCompile Include="Processor\Process.cpp" />
     <ClCompile Include="Processor\Res.cpp" />
@@ -204,7 +204,7 @@
     <None Include="Doc\horse.md" />
     <None Include="Doc\lib.md" />
     <None Include="Doc\net.md" />
-    <None Include="Doc\notification.md" />
+    <None Include="Doc\notify.md" />
     <None Include="Doc\os.md" />
     <None Include="Doc\process.md" />
     <None Include="Doc\dev\ReadWriteRes.md" />
@@ -240,7 +240,7 @@
     <ClInclude Include="Processor\Horse.h" />
     <ClInclude Include="Processor\Lib.h" />
     <ClInclude Include="Processor\Net.h" />
-    <ClInclude Include="Processor\Notification.h" />
+    <ClInclude Include="Processor\Notify.h" />
     <ClInclude Include="Processor\Os.h" />
     <ClInclude Include="Processor\Process.h" />
     <ClInclude Include="Processor\Res.h" />

@@ -81,7 +81,7 @@
     <ClCompile Include="Lib\pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Processor\Notification.cpp">
+    <ClCompile Include="Processor\Notify.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Processor\Horse.cpp">
@@ -100,7 +100,7 @@
     <None Include="Doc\clipboard.md" />
     <None Include="Doc\lib.md" />
     <None Include="Doc\net.md" />
-    <None Include="Doc\notification.md" />
+    <None Include="Doc\notify.md" />
     <None Include="Doc\os.md" />
     <None Include="Doc\process.md" />
     <None Include="Doc\screen.md" />
@@ -292,7 +292,7 @@
     <ClInclude Include="Lib\pch.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Processor\Notification.h">
+    <ClInclude Include="Processor\Notify.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Processor\Horse.h">
