@@ -1,7 +1,10 @@
 import { Eventer } from "./Eventer";
 export class Clipboard extends Eventer {
-  async readText() {
+  readText() {
     return this.callMethod("readText");
+  }
+  writeText(text: string) {
+    return this.callMethod("writeText", text);
   }
   private callMethod(methodName: string, ...params: any[]) {
     return this.call({

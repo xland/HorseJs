@@ -79,6 +79,9 @@
       <p>horse</p>
       <div id="btnGetConfig" class="btn">获取App配置</div>
       <div id="btnNewWindow" class="btn">创建窗口</div>
+      <p>clipboard</p>
+      <div id="btnReadClipBoardText" class="btn">读取剪切板内的文本</div>
+      <div id="btnWriteClipBoardText" class="btn">向剪切板内写入文本</div>
       <p>window</p>
       <div id="btnMaximize" class="btn">最大化</div>
       <div id="btnMinimize" class="btn">最小化</div>
@@ -103,14 +106,45 @@
       <div id="btnFileInfo" class="btn">获取文件信息</div>
       <p>dialog</p>
       <div id="btnOpenPathDialog" class="btn">打开一个文件路径</div>
-      <p>clipboard</p>
-      <div id="btnGetClipBoardText" class="btn">读取剪切板内的文本</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
+      let initTitleBar = () => {
+        $("#titleBox").addEventListener("mousedown", async () => {
+          horse.win.startDrag();
+        });
+        $("#btnMaximizeT").addEventListener("click", async () => {
+          await horse.win.maximize();
+        });
+        $("#btnMinimizeT").addEventListener("click", () => {
+          horse.win.minimize();
+        });
+        $("#btnCloseT").addEventListener("click", () => {
+          horse.win.close();
+        });
+        $("#btnRestoreT").addEventListener("click", () => {
+          horse.win.restore();
+        });
+        horse.win.addEventListener("stateChanged", async (result) => {
+          if (result.state == "maximize") {
+            $("#btnMaximizeT").setAttribute("style", "display:none;");
+            $("#btnRestoreT").setAttribute("style", "");
+          } else if (result.state == "restore") {
+            $("#btnMaximizeT").setAttribute("style", "");
+            $("#btnRestoreT").setAttribute("style", "display:none;");
+          }
+        });
+        horse.win.addEventListener("sizePosChanged", (data) => {
+          // console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
+        });
+      };
       let initClipboard = () => {
-        $("#btnGetClipBoardText").addEventListener("click", async () => {
+        $("#btnReadClipBoardText").addEventListener("click", async () => {
           let data = await horse.clipboard.readText();
+          console.log(data);
+        });
+        $("#btnWriteClipBoardText").addEventListener("click", async () => {
+          let data = await horse.clipboard.writeText("待写入的文本");
           console.log(data);
         });
       };
@@ -155,35 +189,7 @@
           await proxy.minimize();
         });
       };
-      let initTitleBar = () => {
-        $("#titleBox").addEventListener("mousedown", async () => {
-          horse.win.startDrag();
-        });
-        $("#btnMaximizeT").addEventListener("click", async () => {
-          await horse.win.maximize();
-        });
-        $("#btnMinimizeT").addEventListener("click", () => {
-          horse.win.minimize();
-        });
-        $("#btnCloseT").addEventListener("click", () => {
-          horse.win.close();
-        });
-        $("#btnRestoreT").addEventListener("click", () => {
-          horse.win.restore();
-        });
-        horse.win.addEventListener("stateChanged", async (result) => {
-          if (result.state == "maximize") {
-            $("#btnMaximizeT").setAttribute("style", "display:none;");
-            $("#btnRestoreT").setAttribute("style", "");
-          } else if (result.state == "restore") {
-            $("#btnMaximizeT").setAttribute("style", "");
-            $("#btnRestoreT").setAttribute("style", "display:none;");
-          }
-        });
-        horse.win.addEventListener("sizePosChanged", (data) => {
-          // console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
-        });
-      };
+
       let initWin = () => {
         $("#btnMaximize").addEventListener("click", async () => {
           await horse.win.maximize();

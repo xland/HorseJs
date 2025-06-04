@@ -91,10 +91,9 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Doc\config.md" />
-    <None Include="Doc\Deploy.md" />
     <None Include="Doc\dev\ReadWriteRes.md" />
     <None Include="Doc\horse.md" />
-    <None Include="Doc\window.md" />
+    <None Include="Doc\win.md" />
     <None Include="Doc\fs.md" />
     <None Include="Doc\dialog.md" />
     <None Include="Doc\FAQ.md" />

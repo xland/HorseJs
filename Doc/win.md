@@ -1,9 +1,9 @@
 ## horse.win 的方法
 
 - 最大化
+> horse.win是当前页面所在窗口的对象。<br />
+> maximize方法用于控制当前页面所在窗口最大化。
 ```js
-// horse.win是当前页面所在窗口的对象。
-// maximize方法用于控制当前页面所在窗口最大化。
 await horse.win.maximize();
 ```
 - 最小化
@@ -39,23 +39,23 @@ await horse.win.destroy();
 horse.win.flash(true);
 ```
 - 开始通过拖拽改变窗口位置
+> 此方法常用于设置窗口的自定义标题栏
 ```js
-//此方法常用于设置窗口的自定义标题栏
 $(".titleBar").addEventListener("mousedown",async ()=>{
     horse.win.startDrag();
 })
 ```
 
 - 注册事件
+> 注册窗口位置或大小改变事件
 ```js
-//注册窗口位置或大小改变事件
 horse.win.addEventListener("sizePosChanged",(x,y,w,h)=>{
     console.log(`x:${x},y:${y},w:${w},h:${h}`);
 })
 ```
 - 取消注册事件
+> 取消 注册的窗口关闭事件
 ```js
-//取消 注册的窗口关闭事件
 await horse.window.removeEventListener("closing");
 ```
 
