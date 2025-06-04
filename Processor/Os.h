@@ -7,6 +7,7 @@ public:
 	Os();
 	~Os();
 	static Os* get();
+	void getVersion(const rapidjson::Value& params, JsonResult* result);
 private:
 };
 

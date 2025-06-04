@@ -3,6 +3,7 @@
 
 namespace {
     std::unique_ptr<Os> os;
+    typedef LONG(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
 }
 
 Os::Os()
@@ -21,15 +22,58 @@ Os* Os::get()
     return os.get();
 }
 
-// ±£´æÊı¾İµ½ÓÃ»§Æ¾¾İÇø
+void Os::getVersion(const rapidjson::Value& params, JsonResult* result) 
+{
+    RTL_OSVERSIONINFOW osInfo = { 0 };
+    osInfo.dwOSVersionInfoSize = sizeof(osInfo);
+
+    // åŠ¨æ€åŠ è½½ ntdll.dll ä¸­çš„ RtlGetVersion
+    HMODULE hNtDll = GetModuleHandleW(L"ntdll.dll");
+    if (hNtDll == NULL) {
+        printf("Failed to load ntdll.dll\n");
+        return;
+    }
+
+    RtlGetVersionPtr RtlGetVersion = (RtlGetVersionPtr)GetProcAddress(hNtDll, "RtlGetVersion");
+    if (RtlGetVersion == NULL) {
+        printf("Failed to get RtlGetVersion function\n");
+        return;
+    }
+
+    // è°ƒç”¨ RtlGetVersion è·å–ç‰ˆæœ¬ä¿¡æ¯
+    if (RtlGetVersion(&osInfo) == 0) { // 0 è¡¨ç¤ºæˆåŠŸ
+        printf("OS Version: %lu.%lu, Build: %lu\n", osInfo.dwMajorVersion, osInfo.dwMinorVersion, osInfo.dwBuildNumber);
+
+        // åˆ¤æ–­ Windows 10 æˆ– Windows 11
+        if (osInfo.dwMajorVersion == 10 && osInfo.dwMinorVersion == 0) {
+            if (osInfo.dwBuildNumber >= 22000) {
+                printf("Current System: Windows 11\n");
+            }
+            else if (osInfo.dwBuildNumber >= 10240) {
+                printf("Current System: Windows 10\n");
+            }
+            else {
+                printf("Unknown Windows version\n");
+            }
+        }
+        else {
+            printf("Not Windows 10 or Windows 11\n");
+        }
+    }
+    else {
+        printf("Failed to get version information\n");
+    }
+}
+
+// ä¿å­˜æ•°æ®åˆ°ç”¨æˆ·å‡­æ®åŒº
 // https://zhuanlan.zhihu.com/p/679219628?share_code=NzSd6ri8efPP&utm_psn=1912465887958639333
 
-// »ñÈ¡µ±Ç°ÓÃ»§µÄÆ¤·ôÑÕÉ« Theme
+// è·å–å½“å‰ç”¨æˆ·çš„çš®è‚¤é¢œè‰² Theme
 
-//×èÖ¹ËøÆÁ
+//é˜»æ­¢é”å±
 
-//²åÈëµçÔ´£¬Ê¹ÓÃµç³Ø
+//æ’å…¥ç”µæºï¼Œä½¿ç”¨ç”µæ± 
 
 //getSystemIdleTime
 
-//±éÀú´°¿Ú¾ä±ú
+//éå†çª—å£å¥æŸ„
