@@ -7,6 +7,7 @@ public:
 	Lib();
 	~Lib();
 	static Lib* get();
+	void load(const rapidjson::Value& params, JsonResult* result);
 private:
 };
 

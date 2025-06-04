@@ -20,3 +20,7 @@ Lib* Lib::get()
 	}
     return lib.get();
 }
+
+void Lib::load(const rapidjson::Value& params, JsonResult* result)
+{
+}

@@ -7,6 +7,7 @@
 #include "Clipboard.h"
 #include "Dialog.h"
 #include "Horse.h"
+#include "Lib.h"
 #include "Net.h"
 #include "Fs.h"
 #include "Win.h"
@@ -41,6 +42,9 @@ namespace {
     static std::unordered_map<std::string, void (Horse::*)(const rapidjson::Value&, JsonResult*)> horseFunc = {
         {"getConfig", &Horse::getConfig},
         {"createWindow", &Horse::createWindow},
+    };
+    static std::unordered_map<std::string, void (Lib::*)(const rapidjson::Value&, JsonResult*)> libFunc = {
+        {"load", &Lib::load},
     };
     static std::unordered_map<std::string, void (Net::*)(const rapidjson::Value&, JsonResult*)> netFunc = {
         {"getAddress", &Net::getAddress},
