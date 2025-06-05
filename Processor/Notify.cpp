@@ -9,6 +9,9 @@ using namespace winrt::Windows::UI;
 using namespace winrt::Windows::Data::Xml::Dom;
 namespace {
     std::unique_ptr<Notify> notify;
+    static std::unordered_map<std::string, void (Notify::*)(const rapidjson::Value&, JsonResult*)> notifyFunc{
+    {"show", &Notify::show},
+    };
 }
 
 Notify::Notify()
@@ -25,6 +28,13 @@ Notify* Notify::get()
         notify = std::make_unique<Notify>();
 	}
     return notify.get();
+}
+bool Notify::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+{
+    auto it = notifyFunc.find(methodName);
+    if (it == notifyFunc.end()) return false;
+    (Notify::get()->*it->second)(param, result);
+    return true;
 }
 void Notify::show(const rapidjson::Value& params, JsonResult* result)
 {

@@ -8,6 +8,9 @@
 
 namespace {
     std::unique_ptr<Net> net;
+    static std::unordered_map<std::string, void (Net::*)(const rapidjson::Value&, JsonResult*)> netFunc{
+    {"getAddress", &Net::getAddress},
+    };
 }
 
 Net::Net()
@@ -25,7 +28,13 @@ Net* Net::get()
 	}
     return net.get();
 }
-
+bool Net::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+{
+    auto it = netFunc.find(methodName);
+    if (it == netFunc.end()) return false;
+    (Net::get()->*it->second)(param, result);
+    return true;
+}
 void Net::getAddress(const rapidjson::Value& params, JsonResult* result)
 {
     WSADATA wsaData;

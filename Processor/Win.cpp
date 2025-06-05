@@ -6,6 +6,22 @@
 #include "../Win/Page.h"
 namespace {
     std::unique_ptr<Win> win;
+    static std::unordered_map<std::string, void (Win::*)(const rapidjson::Value&, JsonResult*)> winFunc{
+    {"show", &Win::show},
+    {"hide", &Win::hide},
+    {"maximize", &Win::maximize},
+    {"minimize", &Win::minimize},
+    {"restore", &Win::restore},
+    {"close", &Win::close},
+    {"destroy", &Win::destroy},
+    {"startDrag", &Win::startDrag},
+    {"openWindow", &Win::openWindow},
+    {"setResizable", &Win::setResizable},
+    {"resize", &Win::resize},
+    {"flash", &Win::flash},
+    {"addEventListener", &Win::addEventListener},
+    {"removeEventListener", &Win::removeEventListener},
+    };
 }
 
 Win::Win()
@@ -23,7 +39,13 @@ Win* Win::get()
     }
     return win.get();
 }
-
+bool Win::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+{
+    auto it = winFunc.find(methodName);
+    if (it == winFunc.end()) return false;
+    (Win::get()->*it->second)(param, result);
+    return true;
+}
 void Win::addEventListener(const rapidjson::Value& params, JsonResult* result)
 {
     auto win = result->tar;
@@ -73,8 +95,8 @@ void Win::minimize(const rapidjson::Value& params, JsonResult* result)
 {
     auto win = result->tar;
     if (win->ctrlComp) {
-        //ÓÉÓÚ´°¿Ú×îÐ¡»¯ÁË£¬WebView2 ÄÚ²¿µÄ Chromium ÒýÇæÅÐ¶¨ÊÓÍ¼²»¿É¼û£¬²»ÔÙ´¦ÀíÊó±êÊÂ¼þ¡£
-        //todo »¹µÃÀ¹½ØÕâ¸öÏûÏ¢£º case WM_SYSCOMMAND: switch (wParam & 0xFFF0) { case SC_MINIMIZE:
+        //ç”±äºŽçª—å£æœ€å°åŒ–äº†ï¼ŒWebView2 å†…éƒ¨çš„ Chromium å¼•æ“Žåˆ¤å®šè§†å›¾ä¸å¯è§ï¼Œä¸å†å¤„ç†é¼ æ ‡äº‹ä»¶ã€‚
+        //todo è¿˜å¾—æ‹¦æˆªè¿™ä¸ªæ¶ˆæ¯ï¼š case WM_SYSCOMMAND: switch (wParam & 0xFFF0) { case SC_MINIMIZE:
         win->ctrlComp->SendMouseInput(COREWEBVIEW2_MOUSE_EVENT_KIND_LEAVE,
             COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS_NONE, 0, POINT{});
     }
@@ -107,8 +129,8 @@ void Win::restore(const rapidjson::Value& params, JsonResult* result)
 void Win::close(const rapidjson::Value& params, JsonResult* result)
 {
     auto win = result->tar;
-    //CloseWindow(hwnd); ÕâÏàµ±ÓÚ´°¿Ú×îÐ¡»¯
-    //²»ÄÜÓÃSendMessage£¬ÒòÎªÕâ»Øµ¼ÖÂ¶ÔÏóÉ¾³ýÖ®ºó£¬MsgProcessor»¹ÔÚ×¼±¸ÏòÒ³Ãæ·¢ÏûÏ¢
+    //CloseWindow(hwnd); è¿™ç›¸å½“äºŽçª—å£æœ€å°åŒ–
+    //ä¸èƒ½ç”¨SendMessageï¼Œå› ä¸ºè¿™å›žå¯¼è‡´å¯¹è±¡åˆ é™¤ä¹‹åŽï¼ŒMsgProcessorè¿˜åœ¨å‡†å¤‡å‘é¡µé¢å‘æ¶ˆæ¯
     PostMessage(win->hwnd, WM_CLOSE, 0, 0);
     result->returnBack();
 }
@@ -135,8 +157,8 @@ void Win::flash(const rapidjson::Value& params, JsonResult* result)
     {
         fwInfo.dwFlags = FLASHW_STOP;
     }
-    fwInfo.uCount = 0;                   // uCount = 0 ÇÒÉèÖÃÁË FLASHW_TIMERNOFG Ê±£¬»á³ÖÐøÉÁË¸Ö±µ½´°¿Ú±äÎªÇ°Ì¨£»
-    fwInfo.dwTimeout = 0;                 // Ê¹ÓÃÄ¬ÈÏÉÁË¸Ê±¼ä
+    fwInfo.uCount = 0;                   // uCount = 0 ä¸”è®¾ç½®äº† FLASHW_TIMERNOFG æ—¶ï¼Œä¼šæŒç»­é—ªçƒç›´åˆ°çª—å£å˜ä¸ºå‰å°ï¼›
+    fwInfo.dwTimeout = 0;                 // ä½¿ç”¨é»˜è®¤é—ªçƒæ—¶é—´
     FlashWindowEx(&fwInfo);
     result->returnBack();
 }

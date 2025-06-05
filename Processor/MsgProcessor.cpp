@@ -13,67 +13,26 @@
 #include "Notify.h"
 #include "Win.h"
 #include "Os.h"
+#include "Screen.h"
+#include "Tray.h"
+#include "Process.h"
 
 namespace {
     std::unique_ptr<MsgProcessor> msgProcessor;
-    static std::unordered_map<std::string, void (Clipboard::*)(const rapidjson::Value&, JsonResult*)> clipboardFunc = {
-        {"getDataType", &Clipboard::getDataType},
-        {"readText", &Clipboard::readText},
-        {"writeText", &Clipboard::writeText},
-        {"readHtml", &Clipboard::readHtml},
-    };
-    static std::unordered_map<std::string, void (Dialog::*)(const rapidjson::Value&, JsonResult*)> dialogFunc = {
-        {"openPathDialog", &Dialog::openPathDialog},
-    };
-    static std::unordered_map<std::string, void (Fs::*)(const rapidjson::Value&, JsonResult*)> fsFunc = {
-        {"getFileInfo", &Fs::getFileInfo},
-        {"exists", &Fs::exists},
-        {"readFile", &Fs::readFile},
-        {"readFileChunk",&Fs::readFileChunk},
-        {"writeFile", &Fs::writeFile},
-        {"writeFileChunk", &Fs::writeFileChunk},
-        {"delPath", &Fs::delPath},
-        {"removePath", &Fs::removePath},
-        {"createDir", &Fs::createDir},
-        {"listDir", &Fs::listDir},
-        {"copyFile", &Fs::copyFile},
-        {"moveFile", &Fs::moveFile},
-        {"renameFile", &Fs::renameFile},
-        {"watch", &Fs::watch},
-    };
-    static std::unordered_map<std::string, void (Horse::*)(const rapidjson::Value&, JsonResult*)> horseFunc = {
-        {"getConfig", &Horse::getConfig},
-        {"createWindow", &Horse::createWindow},
-    };
-    static std::unordered_map<std::string, void (Lib::*)(const rapidjson::Value&, JsonResult*)> libFunc = {
-        {"load", &Lib::load},
-        {"free", &Lib::free},
-        {"call", &Lib::call},
-    };
-    static std::unordered_map<std::string, void (Net::*)(const rapidjson::Value&, JsonResult*)> netFunc = {
-        {"getAddress", &Net::getAddress},
-    };
-    static std::unordered_map<std::string, void (Notify::*)(const rapidjson::Value&, JsonResult*)> notifyFunc = {
-        {"show", &Notify::show},
-    };
-    static std::unordered_map<std::string, void (Os::*)(const rapidjson::Value&, JsonResult*)> osFunc = {
-        {"getVersion", &Os::getVersion},
-    };
-    static std::unordered_map<std::string, void (Win::*)(const rapidjson::Value&, JsonResult*)> winFunc = {
-        {"show", &Win::show},
-        {"hide", &Win::hide},
-        {"maximize", &Win::maximize},
-        {"minimize", &Win::minimize},
-        {"restore", &Win::restore},
-        {"close", &Win::close},
-        {"destroy", &Win::destroy},
-        {"startDrag", &Win::startDrag},
-        {"openWindow", &Win::openWindow},
-        {"setResizable", &Win::setResizable},
-        {"resize", &Win::resize},
-        {"flash", &Win::flash},
-        {"addEventListener", &Win::addEventListener},
-        {"removeEventListener", &Win::removeEventListener},
+
+    static std::unordered_map<std::string, std::function<bool(std::string&, const rapidjson::Value&, JsonResult*)>> processFunc{
+        {"clipboard",Clipboard::excute},
+        {"dialog",Dialog::excute},
+        {"horse",Horse::excute},
+        {"lib",Lib::excute},
+        {"net",Net::excute},
+        {"fs",Fs::excute},
+        {"notify",Notify::excute},
+        {"win",Win::excute},
+        {"os",Os::excute},
+        {"screen",Screen::excute},
+        {"tray",Tray::excute},
+        {"process",Process::excute},
     };
 }
 
@@ -124,89 +83,14 @@ void MsgProcessor::processStr(const std::string& msgStr)
     auto win = App::get()->getWindow(winId);
     auto tar = App::get()->getWindow(tarId);
     auto result = JsonResult::create(win, tar,className, eventName);
-    if (className == "clipboard") {
-        auto it = clipboardFunc.find(methodName);
-        if (it != clipboardFunc.end()) {
-            (Clipboard::get()->*it->second)(jsonDoc["params"], result);
-        }
-        else {
-            result->addErr(std::format("clipboard method:{} not found!", methodName));
-        }
+    auto it = processFunc.find(className);
+    if (it == processFunc.end()) {
+        result->addErr(std::format("class {} not found!", className));
+        return;
     }
-    else if (className == "dialog") {
-        auto it = dialogFunc.find(methodName);
-        if (it != dialogFunc.end()) {
-            (Dialog::get()->*it->second)(jsonDoc["params"], result);
-        }
-        else {
-            result->addErr(std::format("dialog method:{} not found!", methodName));
-        }
-    }
-    else if (className == "fs") {
-        auto it = fsFunc.find(methodName);
-        if (it != fsFunc.end()) {
-            (Fs::get()->*it->second)(jsonDoc["params"], result);
-        }
-        else {
-            result->addErr(std::format("fs method:{} not found!", methodName));
-        }
-    }
-    else if (className == "notify") {
-        auto it = notifyFunc.find(methodName);
-        if (it != notifyFunc.end()) {
-            (Notify::get()->*it->second)(jsonDoc["params"], result);
-        }
-        else {
-            result->addErr(std::format("fs method:{} not found!", methodName));
-        }
-    }
-    else if (className == "horse") {
-        auto it = horseFunc.find(methodName);
-        if (it != horseFunc.end()) {
-            (Horse::get()->*it->second)(jsonDoc["params"], result);
-        }
-        else {
-            result->addErr(std::format("horse method:{} not found!", methodName));
-        }
-    }
-    else if (className == "lib") {
-        auto it = libFunc.find(methodName);
-        if (it != libFunc.end()) {
-            (Lib::get()->*it->second)(jsonDoc["params"], result);
-        }
-        else {
-            result->addErr(std::format("lib method:{} not found!", methodName));
-        }
-    }
-    else if (className == "net") {
-        auto it = netFunc.find(methodName);
-        if (it != netFunc.end()) {
-            (Net::get()->*it->second)(jsonDoc["params"], result);
-        }
-        else {
-            result->addErr(std::format("net method:{} not found!", methodName));
-        }
-    }
-    else if (className == "os") {
-        auto it = osFunc.find(methodName);
-        if (it != osFunc.end()) {
-            (Os::get()->*it->second)(jsonDoc["params"], result);
-        }
-        else {
-            result->addErr(std::format("os method:{} not found!", methodName));
-        }
-    }
-    else if (className == "win") {
-        auto it = winFunc.find(methodName);
-        if (it != winFunc.end()) {
-            (Win::get()->*it->second)(jsonDoc["params"], result);
-        }
-        else {
-            result->addErr(std::format("win method:{} not found!",methodName));
-        }
-    }
-    else {
-        result->addErr(std::format("class name:{} not found!", className)); 
+    auto flag = (*it).second(methodName, jsonDoc["params"], result);
+    if (!flag) {
+        result->addErr(std::format("method {} not found!", methodName));
     }
 }
 

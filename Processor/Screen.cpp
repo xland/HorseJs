@@ -3,6 +3,8 @@
 
 namespace {
     std::unique_ptr<Screen> screen;
+    static std::unordered_map<std::string, void (Screen::*)(const rapidjson::Value&, JsonResult*)> screenFunc{
+    };
 }
 
 Screen::Screen()
@@ -20,7 +22,13 @@ Screen* Screen::get()
 	}
     return screen.get();
 }
-
-//»ñÈ¡ÆÁÄ»ÉÏÄ³¸öµãµÄÑÕÉ«
-//»ñÈ¡·Ö±æÂÊºÍDPI
+bool Screen::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+{
+    auto it = screenFunc.find(methodName);
+    if (it == screenFunc.end()) return false;
+    (Screen::get()->*it->second)(param, result);
+    return true;
+}
+//è·å–å±å¹•ä¸ŠæŸä¸ªç‚¹çš„é¢œè‰²
+//è·å–åˆ†è¾¨ç‡å’ŒDPI
 //

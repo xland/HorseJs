@@ -7,6 +7,10 @@
 
 namespace {
     std::unique_ptr<Horse> horse;
+    static std::unordered_map<std::string, void (Horse::*)(const rapidjson::Value&, JsonResult*)> horseFunc{
+    {"getConfig", &Horse::getConfig},
+    {"createWindow", &Horse::createWindow},
+    };
 }
 
 Horse::Horse()
@@ -24,7 +28,13 @@ Horse* Horse::get()
 	}
     return horse.get();
 }
-
+bool Horse::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+{
+    auto it = horseFunc.find(methodName);
+    if (it == horseFunc.end()) return false;
+    (Horse::get()->*it->second)(param, result);
+    return true;
+}
 void Horse::getConfig(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();

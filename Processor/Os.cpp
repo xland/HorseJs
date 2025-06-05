@@ -3,6 +3,10 @@
 
 namespace {
     std::unique_ptr<Os> os;
+    static std::unordered_map<std::string, void (Os::*)(const rapidjson::Value&, JsonResult*)> osFunc{
+    {"getVersion", &Os::getVersion},
+    };
+
     typedef LONG(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
 }
 
@@ -21,7 +25,13 @@ Os* Os::get()
 	}
     return os.get();
 }
-
+bool Os::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+{
+    auto it = osFunc.find(methodName);
+    if (it == osFunc.end()) return false;
+    (Os::get()->*it->second)(param, result);
+    return true;
+}
 void Os::getVersion(const rapidjson::Value& params, JsonResult* result) 
 {
     RTL_OSVERSIONINFOW osInfo = { 0 };

@@ -7,6 +7,22 @@
 
 namespace {
     std::unique_ptr<Fs> fs;
+    static std::unordered_map<std::string, void (Fs::*)(const rapidjson::Value&, JsonResult*)> fsFunc{
+    {"getFileInfo", &Fs::getFileInfo},
+    {"exists", &Fs::exists},
+    {"readFile", &Fs::readFile},
+    {"readFileChunk",&Fs::readFileChunk},
+    {"writeFile", &Fs::writeFile},
+    {"writeFileChunk", &Fs::writeFileChunk},
+    {"delPath", &Fs::delPath},
+    {"removePath", &Fs::removePath},
+    {"createDir", &Fs::createDir},
+    {"listDir", &Fs::listDir},
+    {"copyFile", &Fs::copyFile},
+    {"moveFile", &Fs::moveFile},
+    {"renameFile", &Fs::renameFile},
+    {"watch", &Fs::watch},
+    };
 }
 
 Fs::Fs()
@@ -24,7 +40,13 @@ Fs* Fs::get()
 	}
     return fs.get();
 }
-
+bool Fs::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+{
+    auto it = fsFunc.find(methodName);
+    if (it == fsFunc.end()) return false;
+    (Fs::get()->*it->second)(param, result);
+    return true;
+}
 void Fs::getFileInfo(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();

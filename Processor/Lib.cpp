@@ -3,6 +3,11 @@
 
 namespace {
     std::unique_ptr<Lib> lib;
+    static std::unordered_map<std::string, void (Lib::*)(const rapidjson::Value&, JsonResult*)> libFunc{
+    {"load", &Lib::load},
+    {"free", &Lib::free},
+    {"call", &Lib::call},
+    };
     std::unordered_map<int,HMODULE> dllModules;
     typedef const char* (*FuncPtr)(const char*);
 }
@@ -24,7 +29,13 @@ Lib* Lib::get()
 	}
     return lib.get();
 }
-
+bool Lib::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+{
+    auto it = libFunc.find(methodName);
+    if (it == libFunc.end()) return false;
+    (Lib::get()->*it->second)(param, result);
+    return true;
+}
 void Lib::load(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();

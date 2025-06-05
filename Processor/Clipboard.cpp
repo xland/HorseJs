@@ -3,6 +3,14 @@
 
 namespace {
     std::unique_ptr<Clipboard> clipboard;
+
+    static std::unordered_map<std::string, void (Clipboard::*)(const rapidjson::Value&, JsonResult*)> clipboardFunc{
+        {"getDataType", &Clipboard::getDataType},
+        {"readText", &Clipboard::readText},
+        {"writeText", &Clipboard::writeText},
+        {"readHtml", &Clipboard::readHtml},
+    };
+
     UINT CF_HTML;
 }
 
@@ -21,6 +29,14 @@ Clipboard* Clipboard::get()
         clipboard = std::make_unique<Clipboard>();
 	}
     return clipboard.get();
+}
+
+bool Clipboard::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+{
+    auto it = clipboardFunc.find(methodName);
+    if (it == clipboardFunc.end()) return false;
+    (Clipboard::get()->*it->second)(param, result);
+    return true;
 }
 
 

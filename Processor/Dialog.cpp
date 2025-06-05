@@ -7,6 +7,9 @@
 
 namespace {
     std::unique_ptr<Dialog> dialog;
+    static std::unordered_map<std::string, void (Dialog::*)(const rapidjson::Value&, JsonResult*)> dialogFunc{
+    {"openPathDialog", &Dialog::openPathDialog},
+    };
 }
 
 Dialog::Dialog()
@@ -24,7 +27,13 @@ Dialog* Dialog::get()
 	}
     return dialog.get();
 }
-
+bool Dialog::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+{
+    auto it = dialogFunc.find(methodName);
+    if (it == dialogFunc.end()) return false;
+    (Dialog::get()->*it->second)(param, result);
+    return true;
+}
 void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
