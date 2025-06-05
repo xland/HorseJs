@@ -36,9 +36,6 @@
     <ClCompile Include="App\BrowserWindowConfig.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="App\AppConfig.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Processor\MsgProcessor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -239,9 +236,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="App\JsonParsor.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="App\AppConfig.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Processor\MsgProcessor.h">

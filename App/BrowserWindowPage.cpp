@@ -18,9 +18,9 @@ void BrowserWindow::loadPage()
 
     wil::com_ptr<ICoreWebView2Settings> settings;
     webview->get_Settings(&settings);
-    settings->put_IsScriptEnabled(isScriptEnabled);
-    settings->put_AreDefaultScriptDialogsEnabled(areDefaultScriptDialogsEnabled);
-    settings->put_IsWebMessageEnabled(isWebMessageEnabled);
+    settings->put_IsScriptEnabled(scriptEnable);
+    settings->put_AreDefaultScriptDialogsEnabled(scriptDialogEnable);
+    settings->put_IsWebMessageEnabled(webMessageEnable);
 
 
     auto navigateStartCB = WRL::Callback<ICoreWebView2NavigationStartingEventHandler>(this, &BrowserWindow::navigateStart);
@@ -39,6 +39,10 @@ void BrowserWindow::loadPage()
     EventRegistrationToken statusToken;
     auto webView12 = webview.try_query<ICoreWebView2_12>();
     hr = webView12->add_StatusBarTextChanged(statusChangeCB.Get(), &statusToken);
+
+    auto contextMenuCB = WRL::Callback<ICoreWebView2ContextMenuRequestedEventHandler>(this, &BrowserWindow::contextMenuRequested);
+    EventRegistrationToken contextMenuToken;
+    webView12->add_ContextMenuRequested(contextMenuCB.Get(), &contextMenuToken);
 
     //todo
     // ICoreWebView2Controller::put_IsDefaultContextMenuEnabled(false)
@@ -149,6 +153,14 @@ HRESULT BrowserWindow::faviconChange(ICoreWebView2* sender, IUnknown* args)
     //            return S_OK;
     //        }).Get());
     return S_OK;
+}
+
+HRESULT BrowserWindow::contextMenuRequested(ICoreWebView2* sender, ICoreWebView2ContextMenuRequestedEventArgs* args)
+{
+    if (!contextMenuEnable) {
+        args->put_Handled(TRUE);
+        return S_OK;
+    }
 }
 
 HRESULT BrowserWindow::newWindowRequeste(ICoreWebView2* sender, ICoreWebView2NewWindowRequestedEventArgs* args)

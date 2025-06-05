@@ -17,7 +17,7 @@ public:
 	bool maximize{ false }, visible{ true }, frame{ true }, shadow{ true }, skipTaskbar{ false };
 	bool maximizable{ true }, resizable{ true }, minimizable{ true }, alwaysOnTop{ false };  //todo closable
 	std::wstring title{ L"HorseJs" };
-	bool areDefaultScriptDialogsEnabled{ true },isWebMessageEnabled{ true },isScriptEnabled{ true };
+	bool scriptDialogEnable{ true }, webMessageEnable{ true }, scriptEnable{ true }, contextMenuEnable{true};
 public:
 	bool framelessResizable{ true };
 
@@ -61,6 +61,7 @@ private:
 	HRESULT titleChange(ICoreWebView2* sender, IUnknown* args);
 	HRESULT statusChange(ICoreWebView2* sender, IUnknown* args);
 	HRESULT faviconChange(ICoreWebView2* sender, IUnknown* args);
+	HRESULT contextMenuRequested(ICoreWebView2* sender, ICoreWebView2ContextMenuRequestedEventArgs* args);
 	HRESULT newWindowRequeste(ICoreWebView2* sender, ICoreWebView2NewWindowRequestedEventArgs* args);
 	HRESULT msgReceive(ICoreWebView2* webview, ICoreWebView2WebMessageReceivedEventArgs* args);
 	void loadResource();

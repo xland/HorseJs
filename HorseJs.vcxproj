@@ -159,7 +159,6 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="App\AppConfig.cpp" />
     <ClCompile Include="App\App.cpp" />
     <ClCompile Include="Processor\Clipboard.cpp" />
     <ClCompile Include="Processor\Dialog.cpp" />
@@ -232,7 +231,6 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="App\AppConfig.h" />
     <ClInclude Include="App\App.h" />
     <ClInclude Include="Processor\Clipboard.h" />
     <ClInclude Include="Processor\Dialog.h" />

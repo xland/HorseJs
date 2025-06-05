@@ -1,7 +1,6 @@
 #pragma once
 #include <pch.h>
 #include "Util.h"
-#include "AppConfig.h"
 #include "JsonParsor.h"
 
 class BrowserWindow;

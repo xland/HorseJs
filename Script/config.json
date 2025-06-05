@@ -3,10 +3,10 @@
   "quitWhenAllWindowClosed": true,
   "window": {
     "resizable": true,
-    "maximizable": false,
-    "minimizable":false,
-    "alwaysOnTop":false,
-    "skipTaskbar":false,
+    "maximizable": true,
+    "minimizable": false,
+    "alwaysOnTop": false,
+    "skipTaskbar": false,
     "visible": true,
     "frame": false,
     "shadow": true,
@@ -20,14 +20,13 @@
       "h": 200
     },
     "position": {
-      "x":200,
-      "y":200
+      "x": 200,
+      "y": 200
     },
-    "page": {
-      "areDefaultScriptDialogsEnabled": true,
-      "isScriptEnabled": true,
-      "isWebMessageEnabled": true,
-      "url": "index.html"
-    }
+    "scriptDialogEnable": true,
+    "scriptEnable": true,
+    "webMessageEnable": true,
+    "contextMenuEnable": false,
+    "url": "index.html"
   }
 }

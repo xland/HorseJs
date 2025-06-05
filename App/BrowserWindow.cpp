@@ -9,16 +9,14 @@ BrowserWindow::BrowserWindow(const rapidjson::Value& winConfig)
 {
     configSize(winConfig);
     configPos(winConfig);
+    configPage(winConfig);
     configOther(winConfig);
-    configPage(winConfig["page"]);
     initWindow();
 }
 
 BrowserWindow::~BrowserWindow()
 {
 }
-
-
 
 void BrowserWindow::initWindow()
 {
@@ -35,7 +33,6 @@ void BrowserWindow::initWindow()
         DwmSetWindowAttribute(hwnd, DWMWA_NCRENDERING_POLICY, &value, sizeof(value));
         DwmSetWindowAttribute(hwnd, DWMWA_ALLOW_NCPAINT, &value, sizeof(value));
     }
-
 }
 LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {

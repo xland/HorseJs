@@ -107,16 +107,20 @@ void BrowserWindow::configPos(const rapidjson::Value& config)
 }
 void BrowserWindow::configPage(const rapidjson::Value& config)
 {
-    if (config.HasMember("areDefaultScriptDialogsEnabled") && config["areDefaultScriptDialogsEnabled"].IsBool())
+    if (config.HasMember("scriptDialogEnable") && config["scriptDialogEnable"].IsBool())
     {
-        areDefaultScriptDialogsEnabled = config["areDefaultScriptDialogsEnabled"].GetBool();
+        scriptDialogEnable = config["scriptDialogEnable"].GetBool();
     }
-    if (config.HasMember("isWebMessageEnabled") && config["isWebMessageEnabled"].IsBool())
+    if (config.HasMember("webMessageEnable") && config["webMessageEnable"].IsBool())
     {
-        isWebMessageEnabled = config["isWebMessageEnabled"].GetBool();
+        webMessageEnable = config["webMessageEnable"].GetBool();
     }
-    if (config.HasMember("isScriptEnabled") && config["isScriptEnabled"].IsBool())
+    if (config.HasMember("scriptEnable") && config["scriptEnable"].IsBool())
     {
-        isScriptEnabled = config["isScriptEnabled"].GetBool();
+        scriptEnable = config["scriptEnable"].GetBool();
+    }
+    if (config.HasMember("contextMenuEnable") && config["contextMenuEnable"].IsBool())
+    {
+        contextMenuEnable = config["contextMenuEnable"].GetBool();
     }
 }
