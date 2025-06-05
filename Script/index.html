@@ -114,9 +114,12 @@
       <div id="btnNotifyShow" class="btn">显示一个通知</div>
       <p>os</p>
       <div id="btnGetVersion" class="btn">获取系统版本号</div>
+      <p>screen</p>
+      <div id="btnGetAllScreenInfo" class="btn">获取所有屏幕信息</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
+      let log = (data) => console.log(JSON.stringify(data));
       let initTitleBar = () => {
         $("#titleBox").addEventListener("mousedown", async () => {
           horse.win.startDrag();
@@ -220,7 +223,13 @@
       let initOs = () => {
         $("#btnGetVersion").addEventListener("click", async () => {
           let data = await horse.os.getVersion();
-          console.log(data);
+          log(data);
+        });
+      };
+      let initScreen = () => {
+        $("#btnGetAllScreenInfo").addEventListener("click", async () => {
+          let data = await horse.screen.getAll();
+          log(data);
         });
       };
       let initWin = () => {
@@ -347,6 +356,7 @@
         initDialog();
         initNotify();
         initOs();
+        initScreen();
       });
     </script>
   </body>

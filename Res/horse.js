@@ -278,6 +278,22 @@
     }
   };
 
+  // Screen.ts
+  var Screen = class extends Eventer {
+    async getAll() {
+      return this.callMethod("getAll");
+    }
+    callMethod(methodName, ...params) {
+      return this.call({
+        className: "screen",
+        winId: globalThis.__WIN_ID,
+        tarId: globalThis.__WIN_ID,
+        methodName,
+        params
+      });
+    }
+  };
+
   // Horse.ts
   var Horse = class extends Eventer {
     win;
@@ -288,6 +304,7 @@
     lib;
     net;
     os;
+    screen;
     webview;
     constructor() {
       super();
@@ -299,6 +316,7 @@
       this.net = new Net();
       this.notify = new Notify();
       this.os = new Os();
+      this.screen = new Screen();
       this.listenMsg();
     }
     getConfig() {
@@ -314,25 +332,7 @@
         delete e.data.className;
         let evtName = e.data.eventName;
         delete e.data.eventName;
-        if (clsName === "clipboard") {
-          this.clipboard.emit(evtName, e.data);
-        } else if (clsName === "dialog") {
-          this.dialog.emit(evtName, e.data);
-        } else if (clsName === "fs") {
-          this.fs.emit(evtName, e.data);
-        } else if (clsName === "horse") {
-          this.emit(evtName, e.data);
-        } else if (clsName === "lib") {
-          this.lib.emit(evtName, e.data);
-        } else if (clsName === "net") {
-          this.net.emit(evtName, e.data);
-        } else if (clsName === "notify") {
-          this.notify.emit(evtName, e.data);
-        } else if (clsName === "win") {
-          this.win.emit(evtName, e.data);
-        } else if (clsName === "os") {
-          this.os.emit(evtName, e.data);
-        }
+        this[clsName].emit(evtName, e.data);
       });
       this.webview.addEventListener("sharedbufferreceived", (e) => {
         const buffer = e.getBuffer();
@@ -340,15 +340,13 @@
         delete e.additionalData.className;
         let evtName = e.additionalData.eventName;
         delete e.additionalData.eventName;
-        if (clsName === "fs") {
-          this.fs.emit(evtName, {
-            buffer,
-            ...e.additionalData,
-            release: () => {
-              window.chrome.webview.releaseBuffer(buffer);
-            }
-          });
-        }
+        this[clsName].emit(evtName, {
+          buffer,
+          ...e.additionalData,
+          release: () => {
+            window.chrome.webview.releaseBuffer(buffer);
+          }
+        });
       });
     }
     callMethod(methodName, ...params) {

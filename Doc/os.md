@@ -1,3 +1,7 @@
-用于获取系统信息
+- 获得系统版本号
 
-目前此模块尚未开发完成
+```js
+let data = await horse.os.getVersion();
+console.log(data);
+//{"buildNumber":19044,"majorVersion":10,"minorVersion":0,"ok":true,"versionName":"win10"}
+```

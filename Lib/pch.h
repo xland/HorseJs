@@ -17,6 +17,7 @@
 #include <shobjidl.h>
 #include <windowsx.h>
 #include <dwmapi.h>
+#include <shellscalingapi.h>
 
 #include <WebView2.h>
 #include <WebView2EnvironmentOptions.h>

@@ -8,6 +8,7 @@ import { Clipboard } from "./Clipboard";
 import { Net } from "./Net";
 import { Lib } from "./Lib";
 import { Os } from "./Os";
+import { Screen } from "./Screen";
 class Horse extends Eventer {
   win: Win;
   fs: Fs;
@@ -17,17 +18,19 @@ class Horse extends Eventer {
   lib: Lib;
   net: Net;
   os: Os;
+  screen: Screen;
   webview;
   constructor() {
     super();
     this.webview = window.chrome.webview;
-    this.win = new Win(); // 初始化 window 实例
+    this.win = new Win();
     this.fs = new Fs();
     this.dialog = new Dialog();
     this.clipboard = new Clipboard();
     this.net = new Net();
     this.notify = new Notify();
     this.os = new Os();
+    this.screen = new Screen();
     this.listenMsg();
   }
   getConfig() {
@@ -43,25 +46,7 @@ class Horse extends Eventer {
       delete e.data.className;
       let evtName = e.data.eventName;
       delete e.data.eventName;
-      if (clsName === "clipboard") {
-        this.clipboard.emit(evtName, e.data);
-      } else if (clsName === "dialog") {
-        this.dialog.emit(evtName, e.data);
-      } else if (clsName === "fs") {
-        this.fs.emit(evtName, e.data);
-      } else if (clsName === "horse") {
-        this.emit(evtName, e.data);
-      } else if (clsName === "lib") {
-        this.lib.emit(evtName, e.data);
-      } else if (clsName === "net") {
-        this.net.emit(evtName, e.data);
-      } else if (clsName === "notify") {
-        this.notify.emit(evtName, e.data);
-      } else if (clsName === "win") {
-        this.win.emit(evtName, e.data);
-      } else if (clsName === "os") {
-        this.os.emit(evtName, e.data);
-      }
+      this[clsName].emit(evtName, e.data);
     });
     this.webview.addEventListener("sharedbufferreceived", (e) => {
       const buffer = e.getBuffer();
@@ -69,15 +54,13 @@ class Horse extends Eventer {
       delete e.additionalData.className;
       let evtName = e.additionalData.eventName;
       delete e.additionalData.eventName;
-      if (clsName === "fs") {
-        this.fs.emit(evtName, {
-          buffer,
-          ...e.additionalData,
-          release: () => {
-            window.chrome.webview.releaseBuffer(buffer);
-          },
-        });
-      }
+      this[clsName].emit(evtName, {
+        buffer,
+        ...e.additionalData,
+        release: () => {
+          window.chrome.webview.releaseBuffer(buffer);
+        },
+      });
     });
   }
   private callMethod(methodName: string, ...params: any[]) {
