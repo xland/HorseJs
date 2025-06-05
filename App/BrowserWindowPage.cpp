@@ -1,4 +1,4 @@
-#include <pch.h>
+﻿#include <pch.h>
 
 #include "BrowserWindow.h"
 #include "../Processor/MsgProcessor.h"
@@ -161,6 +161,51 @@ HRESULT BrowserWindow::contextMenuRequested(ICoreWebView2* sender, ICoreWebView2
         args->put_Handled(TRUE);
         return S_OK;
     }
+
+    // 获取默认菜单项列表
+    wil::com_ptr<ICoreWebView2ContextMenuItemCollection> menuItems;
+    auto hr = args->get_MenuItems(&menuItems);
+    if (FAILED(hr)) {
+        return hr;
+    }
+
+    // 获取菜单项数量
+    UINT32 itemCount;
+    menuItems->get_Count(&itemCount);
+
+    // 遍历菜单项并移除“复制”和“粘贴”
+    for (UINT32 i = itemCount; i > 0; --i) {
+        wil::com_ptr<ICoreWebView2ContextMenuItem> menuItem;
+        hr = menuItems->GetValueAtIndex(i - 1, &menuItem);
+        if (FAILED(hr)) {
+            continue;
+        }
+        wil::unique_cotaskmem_string itemName;
+        menuItem->get_Name(&itemName);
+        //std::wstring str = itemName.get();
+        // 检查是否为“复制”或“粘贴”项
+        if (itemName && (wcscmp(itemName.get(), L"copy") == 0 || wcscmp(itemName.get(), L"paste") == 0)) {
+            menuItems->RemoveValueAtIndex(i - 1);
+        }
+        itemName.reset();
+    }
+
+    auto env10 = App::get()->env.try_query<ICoreWebView2Environment10>();
+    wil::com_ptr<ICoreWebView2ContextMenuItem> customItem;
+    hr = env10->CreateContextMenuItem(L"自定义选项", nullptr, COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND_COMMAND, &customItem);
+    if (SUCCEEDED(hr)) {
+        // 为自定义项绑定点击事件
+        customItem->add_CustomItemSelected(
+            WRL::Callback<ICoreWebView2CustomItemSelectedEventHandler>(
+                [](ICoreWebView2ContextMenuItem* sender, IUnknown* args) -> HRESULT {
+                    MessageBox(nullptr, L"选择了自定义选项！", L"提示", MB_OK | MB_ICONINFORMATION);
+                    return S_OK;
+                }).Get(),
+                    nullptr);
+        // 将自定义项添加到菜单
+        menuItems->InsertValueAtIndex(itemCount, customItem.get());
+    }
+    return S_OK;
 }
 
 HRESULT BrowserWindow::newWindowRequeste(ICoreWebView2* sender, ICoreWebView2NewWindowRequestedEventArgs* args)
