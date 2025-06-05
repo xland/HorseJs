@@ -181,11 +181,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Win\BrowserWindowConfig.cpp" />
+    <ClCompile Include="App\BrowserWindowConfig.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="App\Util.cpp" />
-    <ClCompile Include="Win\Page.cpp" />
-    <ClCompile Include="Win\BrowserWindow.cpp" />
+    <ClCompile Include="App\BrowserWindowPage.cpp" />
+    <ClCompile Include="App\BrowserWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Script\config.json">
@@ -252,7 +252,6 @@
     <ClInclude Include="App\JsonParsor.h" />
     <ClInclude Include="Processor\MsgProcessor.h" />
     <ClInclude Include="Processor\Win.h" />
-    <ClInclude Include="Win\BrowserWindowConfig.h" />
     <ClInclude Include="Lib\rapidjson\allocators.h" />
     <ClInclude Include="Lib\rapidjson\cursorstreamwrapper.h" />
     <ClInclude Include="Lib\rapidjson\document.h" />
@@ -292,8 +291,7 @@
     <ClInclude Include="Lib\rapidjson\uri.h" />
     <ClInclude Include="Lib\rapidjson\writer.h" />
     <ClInclude Include="App\Util.h" />
-    <ClInclude Include="Win\Page.h" />
-    <ClInclude Include="Win\BrowserWindow.h" />
+    <ClInclude Include="App\BrowserWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Res\Res.rc" />

@@ -1,7 +1,6 @@
 ﻿#include <pch.h>
 #include "../App/App.h"
-#include "../Win/BrowserWindow.h"
-#include "../Win/Page.h"
+#include "../App/BrowserWindow.h"
 #include "MsgProcessor.h"
 #include "JsonResult.h"
 #include "Clipboard.h"

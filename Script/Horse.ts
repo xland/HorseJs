@@ -1,3 +1,4 @@
+import { Tray } from "./Tray";
 import { Notify } from "./Notify";
 import { WinProx } from "./WinProxy";
 import { Win } from "./Win";
@@ -19,6 +20,7 @@ class Horse extends Eventer {
   net: Net;
   os: Os;
   screen: Screen;
+  tray: Tray;
   webview;
   constructor() {
     super();
@@ -31,6 +33,7 @@ class Horse extends Eventer {
     this.notify = new Notify();
     this.os = new Os();
     this.screen = new Screen();
+    this.tray = new Tray();
     this.listenMsg();
   }
   getConfig() {

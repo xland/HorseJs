@@ -1,9 +1,7 @@
 ﻿#include <pch.h>
 #include "Fs.h"
 #include "../App/App.h"
-#include "../Win/BrowserWindow.h"
-#include "../Win/BrowserWindowConfig.h"
-#include "../Win/Page.h"
+#include "../App/BrowserWindow.h"
 
 namespace {
     std::unique_ptr<Fs> fs;

@@ -71,6 +71,22 @@
     }
   };
 
+  // Tray.ts
+  var Tray = class extends Eventer {
+    async create() {
+      return this.callMethod("create");
+    }
+    callMethod(methodName, ...params) {
+      return this.call({
+        className: "create",
+        winId: globalThis.__WIN_ID,
+        tarId: globalThis.__WIN_ID,
+        methodName,
+        params
+      });
+    }
+  };
+
   // Notify.ts
   var Notify = class extends Eventer {
     async show(appName, title, content) {
@@ -305,6 +321,7 @@
     net;
     os;
     screen;
+    tray;
     webview;
     constructor() {
       super();
@@ -317,6 +334,7 @@
       this.notify = new Notify();
       this.os = new Os();
       this.screen = new Screen();
+      this.tray = new Tray();
       this.listenMsg();
     }
     getConfig() {

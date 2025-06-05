@@ -18,7 +18,7 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Win\BrowserWindow.cpp">
+    <ClCompile Include="App\BrowserWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="App\Util.cpp">
@@ -27,13 +27,13 @@
     <ClCompile Include="App\App.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Win\Page.cpp">
+    <ClCompile Include="App\BrowserWindowPage.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="App\JsonParsor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Win\BrowserWindowConfig.cpp">
+    <ClCompile Include="App\BrowserWindowConfig.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="App\AppConfig.cpp">
@@ -112,7 +112,7 @@
     <None Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Win\BrowserWindow.h">
+    <ClInclude Include="App\BrowserWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="App\Util.h">
@@ -235,16 +235,10 @@
     <ClInclude Include="Lib\rapidjson\writer.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Win\Page.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Res\Res.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="App\JsonParsor.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Win\BrowserWindowConfig.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="App\AppConfig.h">

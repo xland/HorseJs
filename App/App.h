@@ -15,16 +15,21 @@ public:
 	BrowserWindow* getWindow(const int& id);
 	static void init(HINSTANCE hInstance);
 public:
-	std::unique_ptr<AppConfig> config;
+	bool quitWhenAllWindowClosed{ true };
+	std::string appId;
+
 	wil::com_ptr<ICoreWebView2Environment> env;
 	HINSTANCE hInstance;
 	std::unordered_map<int, std::unique_ptr<BrowserWindow>> winMap;
 private:
-private:
+	void loadConfig();
+	void createEnv();
 	void start();
-	bool checkRuntime();
+	void checkRuntime();
 	bool checkRegKey(const HKEY& key, const std::wstring& subKey);
-	std::filesystem::path ensureAppFolder();
+	void ensureAppFolder();
 	HRESULT envReady(HRESULT result, ICoreWebView2Environment* env);
+private:
+	std::filesystem::path appDir;
 };
 

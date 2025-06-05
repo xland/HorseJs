@@ -1,9 +1,7 @@
 ﻿#include <pch.h>
 
 #include "Dialog.h"
-#include "../Win/BrowserWindow.h"
-#include "../Win/BrowserWindowConfig.h"
-#include "../Win/Page.h"
+#include "../App/BrowserWindow.h"
 
 namespace {
     std::unique_ptr<Dialog> dialog;

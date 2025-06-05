@@ -116,6 +116,8 @@
       <div id="btnGetVersion" class="btn">获取系统版本号</div>
       <p>screen</p>
       <div id="btnGetAllScreenInfo" class="btn">获取所有屏幕信息</div>
+      <p>tray</p>
+      <div id="btnCreateTray" class="btn">创建托盘图标</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
@@ -229,6 +231,12 @@
       let initScreen = () => {
         $("#btnGetAllScreenInfo").addEventListener("click", async () => {
           let data = await horse.screen.getAll();
+          log(data);
+        });
+      };
+      let initTray = () => {
+        $("#btnCreateTray").addEventListener("click", async () => {
+          let data = await horse.tray.create({});
           log(data);
         });
       };
@@ -357,6 +365,7 @@
         initNotify();
         initOs();
         initScreen();
+        initTray();
       });
     </script>
   </body>

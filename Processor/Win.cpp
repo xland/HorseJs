@@ -1,9 +1,7 @@
 #include <pch.h>
 #include "Win.h"
 #include "../App/App.h"
-#include "../Win/BrowserWindow.h"
-#include "../Win/BrowserWindowConfig.h"
-#include "../Win/Page.h"
+#include "../App/BrowserWindow.h"
 namespace {
     std::unique_ptr<Win> win;
     static std::unordered_map<std::string, void (Win::*)(const rapidjson::Value&, JsonResult*)> winFunc{
@@ -15,7 +13,6 @@ namespace {
     {"close", &Win::close},
     {"destroy", &Win::destroy},
     {"startDrag", &Win::startDrag},
-    {"openWindow", &Win::openWindow},
     {"setResizable", &Win::setResizable},
     {"resize", &Win::resize},
     {"flash", &Win::flash},
@@ -83,7 +80,7 @@ void Win::removeEventListener(const rapidjson::Value& params, JsonResult* result
 void Win::maximize(const rapidjson::Value& params, JsonResult* result)
 {
     auto win = result->tar;
-    if (!win->config->maximizable) {
+    if (!win->maximizable) {
         result->addErr("failed due to the maximizable or maxSize settings in config.json.");
         return;
     }
@@ -168,7 +165,7 @@ void Win::setResizable(const rapidjson::Value& params, JsonResult* result)
     auto win = result->tar;
     const rapidjson::Value::ConstArray arr = params.GetArray();
     auto flag = arr[0].GetBool();
-    if (!win->config->frame) {
+    if (!win->frame) {
         win->framelessResizable = flag;
         result->returnBack();
         return;
@@ -193,20 +190,6 @@ void Win::startDrag(const rapidjson::Value& params, JsonResult* result)
     result->returnBack();
 }
 
-void Win::openWindow(const rapidjson::Value& params, JsonResult* result)
-{
-    const rapidjson::Value::ConstArray arr = params.GetArray();
-    const rapidjson::Value& value = arr[0];
-    auto winIns = std::make_unique<BrowserWindow>(value);
-    if (value.HasMember("page") && value["page"].IsObject()) {
-        const rapidjson::Value& pageObject = value["page"];
-        winIns->load(pageObject);
-    }
-    result->addNumber("id", winIns->config->id);
-    App::get()->winMap.insert({ winIns->config->id,std::move(winIns) });
-    result->returnBack();
-}
-
 void Win::resize(const rapidjson::Value& params, JsonResult* result)
 {
     auto win = result->tar;
@@ -215,4 +198,12 @@ void Win::resize(const rapidjson::Value& params, JsonResult* result)
     auto h = arr[0].GetInt();
     SetWindowPos(win->hwnd, nullptr, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER);
     result->returnBack();
+}
+
+void Win::insertMenu(const rapidjson::Value& params, JsonResult* result)
+{
+}
+
+void Win::removeMenu(const rapidjson::Value& params, JsonResult* result)
+{
 }

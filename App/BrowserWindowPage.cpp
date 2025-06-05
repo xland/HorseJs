@@ -1,0 +1,253 @@
+#include <pch.h>
+
+#include "BrowserWindow.h"
+#include "../Processor/MsgProcessor.h"
+#include "../Res/Res.h"
+#include "../App/App.h"
+
+using namespace Microsoft;
+
+
+void BrowserWindow::loadPage()
+{
+    HRESULT hr = ctrl->get_CoreWebView2(&webview);
+    auto app = App::get();
+    auto appId = Util::convertToWStr(app->appId.data());
+    auto webView3 = webview.try_query<ICoreWebView2_3>();
+    webView3->SetVirtualHostNameToFolderMapping(appId.data(),L"UI",COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_ALLOW);
+
+    wil::com_ptr<ICoreWebView2Settings> settings;
+    webview->get_Settings(&settings);
+    settings->put_IsScriptEnabled(isScriptEnabled);
+    settings->put_AreDefaultScriptDialogsEnabled(areDefaultScriptDialogsEnabled);
+    settings->put_IsWebMessageEnabled(isWebMessageEnabled);
+
+
+    auto navigateStartCB = WRL::Callback<ICoreWebView2NavigationStartingEventHandler>(this, &BrowserWindow::navigateStart);
+    EventRegistrationToken navigateStartToken;
+    webview->add_NavigationStarting(navigateStartCB.Get(), &navigateStartToken);
+
+    auto navigateEndCB = WRL::Callback<ICoreWebView2NavigationCompletedEventHandler>(this, &BrowserWindow::navigateEnd);
+    EventRegistrationToken navigateEndToken;
+    webview->add_NavigationCompleted(navigateEndCB.Get(),&navigateEndToken);
+
+    auto titleChangedCB = WRL::Callback<ICoreWebView2DocumentTitleChangedEventHandler>(this, &BrowserWindow::titleChange);
+    EventRegistrationToken titleToken;
+    hr = webview->add_DocumentTitleChanged(titleChangedCB.Get(), &titleToken);
+
+    auto statusChangeCB = WRL::Callback<ICoreWebView2StatusBarTextChangedEventHandler>(this, &BrowserWindow::statusChange);
+    EventRegistrationToken statusToken;
+    auto webView12 = webview.try_query<ICoreWebView2_12>();
+    hr = webView12->add_StatusBarTextChanged(statusChangeCB.Get(), &statusToken);
+
+    //todo
+    // ICoreWebView2Controller::put_IsDefaultContextMenuEnabled(false)
+    //todo
+    //ICoreWebView2Controller::put_DefaultBackgroundColor + ICoreWebView2CompositionController::SetCursor 等接口实现透明窗口支持（可选）
+
+    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+    ULONG_PTR gdiplusToken_;
+    Gdiplus::GdiplusStartup(&gdiplusToken_, &gdiplusStartupInput, NULL);
+    auto webView15 = webview.try_query<ICoreWebView2_15>();
+    EventRegistrationToken faviconToken;
+    auto faviconChangeCB = WRL::Callback<ICoreWebView2FaviconChangedEventHandler>(this, &BrowserWindow::faviconChange);
+    hr = webView15->add_FaviconChanged(faviconChangeCB.Get(), &faviconToken);
+
+    auto newWindowCB = WRL::Callback<ICoreWebView2NewWindowRequestedEventHandler>(this, &BrowserWindow::newWindowRequeste);
+    EventRegistrationToken newWindowToken;
+    hr = webView15->add_NewWindowRequested(newWindowCB.Get(), &newWindowToken);
+
+    EventRegistrationToken msgReceivedToken;
+    auto msgReceivedCB = WRL::Callback<ICoreWebView2WebMessageReceivedEventHandler>(this, &BrowserWindow::msgReceive);
+    webview->add_WebMessageReceived(msgReceivedCB.Get(), &msgReceivedToken);
+
+    loadResource();    
+    //webview->OpenDevToolsWindow();
+	webview->Navigate(L"https://HorseJs/index.html"); //todo: 替换为实际的资源路径
+    //webview->Navigate(L"https://www.baidu.com");
+    //webview->Navigate(L"file://D:\\project\\HorseJs\\x64\\Release\\UI\\index.html");
+}
+
+void BrowserWindow::loadResource()
+{
+    auto a = 1;
+    const static std::wstring resScript = []() {
+        auto hInstance = App::get()->hInstance;
+        HRSRC hResource = FindResourceW(hInstance, MAKEINTRESOURCEW(IDR_JS), RT_RCDATA);
+        if (!hResource) throw std::runtime_error("Failed to find resource");
+        HGLOBAL hLoadedResource = LoadResource(hInstance, hResource);
+        if (!hLoadedResource) throw std::runtime_error("Failed to load resource");
+        DWORD resourceSize = SizeofResource(hInstance, hResource);
+        if (resourceSize == 0) throw std::runtime_error("Resource size is zero");
+        void* pResourceData = LockResource(hLoadedResource);
+        if (!pResourceData) throw std::runtime_error("Failed to lock resource");
+        std::string utf8Script((char*)pResourceData, resourceSize);
+        std::wstring script = Util::convertToWStr(utf8Script.data());
+        return script;
+        }();
+    auto str = std::format(L"__WIN_ID={};",id);
+    auto hr = webview->AddScriptToExecuteOnDocumentCreated(str.data(), nullptr);
+    hr = webview->AddScriptToExecuteOnDocumentCreated(resScript.data(), nullptr);
+    if (FAILED(hr)) {
+        auto a = 1;
+    }
+}
+
+HRESULT BrowserWindow::navigateStart(ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args)
+{
+    return S_OK;
+}
+
+HRESULT BrowserWindow::navigateEnd(ICoreWebView2* webview, ICoreWebView2NavigationCompletedEventArgs* args)
+{
+    //JsonParsor parsor;
+    //parsor.addString("eventName", "window_close");
+    //rapidjson::Value items(rapidjson::kArrayType);
+    //parsor.addValue("param", std::move(items));
+    //std::wstring jsonStr = parsor.parse();
+    //webview->PostWebMessageAsJson(jsonStr.data());
+    return S_OK;
+}
+
+HRESULT BrowserWindow::titleChange(ICoreWebView2* sender, IUnknown* args)
+{
+    //wil::unique_cotaskmem_string titleData;
+    //HRESULT hr = webview->get_DocumentTitle(&titleData);
+    //win->title = titleData.get();
+    //SetWindowText(win->hwnd, win->title.data());
+    return S_OK;
+}
+
+HRESULT BrowserWindow::statusChange(ICoreWebView2* sender, IUnknown* args)
+{
+    //wil::unique_cotaskmem_string statusData;
+    //auto m_webView2_12 = webview.try_query<ICoreWebView2_12>();
+    //HRESULT hr = m_webView2_12->get_StatusBarText(&statusData);
+    return S_OK;
+}
+
+HRESULT BrowserWindow::faviconChange(ICoreWebView2* sender, IUnknown* args)
+{
+    //auto webView15 = webview.try_query<ICoreWebView2_15>();
+    //wil::unique_cotaskmem_string urlData;
+    //webView15->get_FaviconUri(&urlData);
+    //webView15->GetFavicon(COREWEBVIEW2_FAVICON_IMAGE_FORMAT_PNG,
+    //    WRL::Callback<ICoreWebView2GetFaviconCompletedHandler>([this](HRESULT errorCode, IStream* iconStream)
+    //        {
+    //            Gdiplus::Bitmap iconBitmap(iconStream);
+    //            wil::unique_hicon icon;
+    //            auto hr = iconBitmap.GetHICON(&icon);
+    //            if (hr == Gdiplus::Status::Ok)
+    //            {
+    //                win->favicon = std::move(icon);
+    //                SendMessage(win->hwnd, WM_SETICON, ICON_SMALL, (LPARAM)win->favicon.get());
+    //            }
+    //            else
+    //            {
+    //                SendMessage(win->hwnd, WM_SETICON, ICON_SMALL, (LPARAM)IDC_NO);
+    //            }
+    //            return S_OK;
+    //        }).Get());
+    return S_OK;
+}
+
+HRESULT BrowserWindow::newWindowRequeste(ICoreWebView2* sender, ICoreWebView2NewWindowRequestedEventArgs* args)
+{
+    //if (!m_shouldHandleNewWindowRequest)
+    //{
+    //    args->put_Handled(FALSE);
+    //    return S_OK;
+    //}
+    //wil::com_ptr<ICoreWebView2NewWindowRequestedEventArgs> args_as_comptr = args;
+    //auto args3 = args_as_comptr.try_query<ICoreWebView2NewWindowRequestedEventArgs3>();
+    //if (args3)
+    //{
+    //    wil::com_ptr<ICoreWebView2FrameInfo> frame_info;
+    //    CHECK_FAILURE(args3->get_OriginalSourceFrameInfo(&frame_info));
+    //    wil::unique_cotaskmem_string source;
+    //    CHECK_FAILURE(frame_info->get_Source(&source));
+    //    // The host can decide how to open based on source frame info,
+    //    // such as URI.
+    //    static const wchar_t* browser_launching_domain = L"www.example.com";
+    //    wil::unique_bstr source_domain = GetDomainOfUri(source.get());
+    //    const wchar_t* source_domain_as_wchar = source_domain.get();
+    //    if (source_domain_as_wchar &&
+    //        wcscmp(browser_launching_domain, source_domain_as_wchar) == 0)
+    //    {
+    //        // Open the URI in the default browser.
+    //        wil::unique_cotaskmem_string target_uri;
+    //        CHECK_FAILURE(args->get_Uri(&target_uri));
+    //        ShellExecute(
+    //            nullptr, L"open", target_uri.get(), nullptr, nullptr,
+    //            SW_SHOWNORMAL);
+    //        CHECK_FAILURE(args->put_Handled(TRUE));
+    //        return S_OK;
+    //    }
+    //}
+
+    //wil::com_ptr<ICoreWebView2Deferral> deferral;
+    //CHECK_FAILURE(args->GetDeferral(&deferral));
+    //AppWindow* newAppWindow;
+
+    //wil::com_ptr<ICoreWebView2WindowFeatures> windowFeatures;
+    //CHECK_FAILURE(args->get_WindowFeatures(&windowFeatures));
+
+    //RECT windowRect = { 0 };
+    //UINT32 left = 0;
+    //UINT32 top = 0;
+    //UINT32 height = 0;
+    //UINT32 width = 0;
+    //BOOL shouldHaveToolbar = true;
+
+    //BOOL hasPosition = FALSE;
+    //BOOL hasSize = FALSE;
+    //CHECK_FAILURE(windowFeatures->get_HasPosition(&hasPosition));
+    //CHECK_FAILURE(windowFeatures->get_HasSize(&hasSize));
+
+    //bool useDefaultWindow = true;
+
+    //if (!!hasPosition && !!hasSize)
+    //{
+    //    CHECK_FAILURE(windowFeatures->get_Left(&left));
+    //    CHECK_FAILURE(windowFeatures->get_Top(&top));
+    //    CHECK_FAILURE(windowFeatures->get_Height(&height));
+    //    CHECK_FAILURE(windowFeatures->get_Width(&width));
+    //    useDefaultWindow = false;
+    //}
+    //CHECK_FAILURE(windowFeatures->get_ShouldDisplayToolbar(&shouldHaveToolbar));
+
+    //windowRect.left = left;
+    //windowRect.right = left + (width < s_minNewWindowSize ? s_minNewWindowSize : width);
+    //windowRect.top = top;
+    //windowRect.bottom = top + (height < s_minNewWindowSize ? s_minNewWindowSize : height);
+
+    //// passing "none" as uri as its a noinitialnavigation
+    //if (!useDefaultWindow)
+    //{
+    //    newAppWindow = new AppWindow(m_creationModeId, GetWebViewOption(), L"none", m_userDataFolder, false,
+    //        nullptr, true, windowRect, !!shouldHaveToolbar);
+    //}
+    //else
+    //{
+    //    newAppWindow = new AppWindow(m_creationModeId, GetWebViewOption(), L"none");
+    //}
+    //newAppWindow->m_isPopupWindow = true;
+    //newAppWindow->m_onWebViewFirstInitialized = [args, deferral, newAppWindow]()
+    //    {
+    //        CHECK_FAILURE(args->put_NewWindow(newAppWindow->m_webView.get()));
+    //        CHECK_FAILURE(args->put_Handled(TRUE));
+    //        CHECK_FAILURE(deferral->Complete());
+    //    };
+    return S_OK;
+}
+
+HRESULT BrowserWindow::msgReceive(ICoreWebView2* webview, ICoreWebView2WebMessageReceivedEventArgs* args)
+{
+    wil::unique_cotaskmem_string messageRaw;
+    args->get_WebMessageAsJson(&messageRaw);
+    std::wstring message = messageRaw.get();
+    messageRaw.reset();
+    auto str = Util::convertToStr(message);
+    MsgProcessor::get()->processStr(str);
+    return S_OK;
+}

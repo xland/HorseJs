@@ -8,6 +8,7 @@ public:
 	~Tray();
 	static Tray* get();
 	static bool excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result);
+	void create(const rapidjson::Value& params, JsonResult* result);
 private:
 };
 

@@ -18,9 +18,10 @@ public:
 	void close(const rapidjson::Value& params, JsonResult* result);
 	void destroy(const rapidjson::Value& params, JsonResult* result);
 	void startDrag(const rapidjson::Value& params, JsonResult* result);
-	void openWindow(const rapidjson::Value& params, JsonResult* result);
 	void setResizable(const rapidjson::Value& params, JsonResult* result);
 	void resize(const rapidjson::Value& params, JsonResult* result);
+	void insertMenu(const rapidjson::Value& params, JsonResult* result);
+	void removeMenu(const rapidjson::Value& params, JsonResult* result);
 	void addEventListener(const rapidjson::Value& params, JsonResult* result);
 	void removeEventListener(const rapidjson::Value& params, JsonResult* result);
 };

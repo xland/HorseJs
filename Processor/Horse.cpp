@@ -1,9 +1,7 @@
 #include <pch.h>
 #include "Horse.h"
 #include "../App/App.h"
-#include "../Win/BrowserWindow.h"
-#include "../Win/BrowserWindowConfig.h"
-#include "../Win/Page.h"
+#include "../App/BrowserWindow.h"
 
 namespace {
     std::unique_ptr<Horse> horse;
@@ -51,11 +49,8 @@ void Horse::createWindow(const rapidjson::Value& params, JsonResult* result)
     const rapidjson::Value::ConstArray arr = params.GetArray();
     const rapidjson::Value& value = arr[0];
     auto winIns = std::make_unique<BrowserWindow>(value);
-    if (value.HasMember("page") && value["page"].IsObject()) {
-        const rapidjson::Value& pageObject = value["page"];
-        winIns->load(pageObject);
-    }
-    result->addNumber("id", winIns->config->id);
-    App::get()->winMap.insert({ winIns->config->id,std::move(winIns) });
+    winIns->load();
+    result->addNumber("id", winIns->id);
+    App::get()->winMap.insert({ winIns->id,std::move(winIns) });
     result->returnBack();
 }
