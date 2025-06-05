@@ -59,3 +59,11 @@
  - window.title
 > 类型：字符串，默认值：`Window - HorseJs`。  <br />
 > 窗口标题，HTML的title将覆盖此设置。
+- window.scriptDialogEnable
+> 是否允许脚本打开alert、confirm等对话框
+- window.scriptEnable
+> 是否允许窗口中的页面执行脚本
+- window.webMessageEnable
+> 是否允许窗口中的页面与C++后端通信
+- window.contextMenuEnable
+> 是否启用窗口上的右键菜单
