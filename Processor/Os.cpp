@@ -36,43 +36,32 @@ void Os::getVersion(const rapidjson::Value& params, JsonResult* result)
 {
     RTL_OSVERSIONINFOW osInfo = { 0 };
     osInfo.dwOSVersionInfoSize = sizeof(osInfo);
-
-    // 动态加载 ntdll.dll 中的 RtlGetVersion
-    HMODULE hNtDll = GetModuleHandleW(L"ntdll.dll");
+    HMODULE hNtDll = GetModuleHandle(L"ntdll.dll");
     if (hNtDll == NULL) {
-        printf("Failed to load ntdll.dll\n");
+        result->addErr("Failed to load ntdll.dll");
         return;
     }
-
     RtlGetVersionPtr RtlGetVersion = (RtlGetVersionPtr)GetProcAddress(hNtDll, "RtlGetVersion");
     if (RtlGetVersion == NULL) {
-        printf("Failed to get RtlGetVersion function\n");
+        result->addErr("Failed to get RtlGetVersion function");
         return;
     }
-
-    // 调用 RtlGetVersion 获取版本信息
-    if (RtlGetVersion(&osInfo) == 0) { // 0 表示成功
-        printf("OS Version: %lu.%lu, Build: %lu\n", osInfo.dwMajorVersion, osInfo.dwMinorVersion, osInfo.dwBuildNumber);
-
-        // 判断 Windows 10 或 Windows 11
-        if (osInfo.dwMajorVersion == 10 && osInfo.dwMinorVersion == 0) {
-            if (osInfo.dwBuildNumber >= 22000) {
-                printf("Current System: Windows 11\n");
-            }
-            else if (osInfo.dwBuildNumber >= 10240) {
-                printf("Current System: Windows 10\n");
-            }
-            else {
-                printf("Unknown Windows version\n");
-            }
+    if (RtlGetVersion(&osInfo) != 0) {
+        result->addErr("Failed to get version information");
+        return;
+    }
+    if (osInfo.dwMajorVersion == 10 && osInfo.dwMinorVersion == 0) {
+        if (osInfo.dwBuildNumber >= 22000) {
+            result->addString("versionName", "win11");
         }
-        else {
-            printf("Not Windows 10 or Windows 11\n");
+        else if (osInfo.dwBuildNumber >= 10240) {
+            result->addString("versionName", "win10");
         }
     }
-    else {
-        printf("Failed to get version information\n");
-    }
+    result->addNumber("majorVersion", (long long)osInfo.dwMajorVersion);
+    result->addNumber("minorVersion", (long long)osInfo.dwMinorVersion);
+    result->addNumber("buildNumber", (long long)osInfo.dwBuildNumber);
+    result->returnBack();
 }
 
 // 保存数据到用户凭据区

@@ -39,7 +39,8 @@ void Net::getAddress(const rapidjson::Value& params, JsonResult* result)
 {
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-        std::cerr << "WSAStartup failed: " << WSAGetLastError() << std::endl;
+        result->addErr("WSAStartup failed");
+        return;
     }
     // 设置初始缓冲区大小
     ULONG bufferSize = 15000; // 初始估计
@@ -54,8 +55,9 @@ void Net::getAddress(const rapidjson::Value& params, JsonResult* result)
         dr = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, nullptr, adapters, &bufferSize);
     }
     if (dr != ERROR_SUCCESS) {
-        std::cerr << "GetAdaptersAddresses failed: " << dr << std::endl;
+        result->addErr("GetAdaptersAddresses failed");
         WSACleanup();
+        return;
     }
     rapidjson::Value array(rapidjson::kArrayType);
     // 遍历适配器

@@ -7,6 +7,7 @@ import { Dialog } from "./Dialog";
 import { Clipboard } from "./Clipboard";
 import { Net } from "./Net";
 import { Lib } from "./Lib";
+import { Os } from "./Os";
 class Horse extends Eventer {
   win: Win;
   fs: Fs;
@@ -15,6 +16,7 @@ class Horse extends Eventer {
   notify: Notify;
   lib: Lib;
   net: Net;
+  os: Os;
   webview;
   constructor() {
     super();
@@ -25,6 +27,7 @@ class Horse extends Eventer {
     this.clipboard = new Clipboard();
     this.net = new Net();
     this.notify = new Notify();
+    this.os = new Os();
     this.listenMsg();
   }
   getConfig() {
@@ -56,6 +59,8 @@ class Horse extends Eventer {
         this.notify.emit(evtName, e.data);
       } else if (clsName === "win") {
         this.win.emit(evtName, e.data);
+      } else if (clsName === "os") {
+        this.os.emit(evtName, e.data);
       }
     });
     this.webview.addEventListener("sharedbufferreceived", (e) => {

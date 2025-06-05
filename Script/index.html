@@ -112,6 +112,8 @@
       <div id="btnOpenPathDialog" class="btn">打开一个文件路径</div>
       <p>notify</p>
       <div id="btnNotifyShow" class="btn">显示一个通知</div>
+      <p>os</p>
+      <div id="btnGetVersion" class="btn">获取系统版本号</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
@@ -131,18 +133,18 @@
         $("#btnRestoreT").addEventListener("click", () => {
           horse.win.restore();
         });
-        // horse.win.addEventListener("stateChanged", async (result) => {
-        //   if (result.state == "maximize") {
-        //     $("#btnMaximizeT").setAttribute("style", "display:none;");
-        //     $("#btnRestoreT").setAttribute("style", "");
-        //   } else if (result.state == "restore") {
-        //     $("#btnMaximizeT").setAttribute("style", "");
-        //     $("#btnRestoreT").setAttribute("style", "display:none;");
-        //   }
-        // });
-        // horse.win.addEventListener("sizePosChanged", (data) => {
-        //   // console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
-        // });
+        horse.win.addEventListener("stateChanged", async (result) => {
+          if (result.state == "maximize") {
+            $("#btnMaximizeT").setAttribute("style", "display:none;");
+            $("#btnRestoreT").setAttribute("style", "");
+          } else if (result.state == "restore") {
+            $("#btnMaximizeT").setAttribute("style", "");
+            $("#btnRestoreT").setAttribute("style", "display:none;");
+          }
+        });
+        horse.win.addEventListener("sizePosChanged", (data) => {
+          // console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
+        });
       };
       let initClipboard = () => {
         $("#btnGetDataType").addEventListener("click", async () => {
@@ -212,6 +214,12 @@
       let initNotify = () => {
         $("#btnNotifyShow").addEventListener("click", async () => {
           let data = await horse.notify.show("HorseJs", "通知标题", "通知内容\n换行\n换行");
+          console.log(data);
+        });
+      };
+      let initOs = () => {
+        $("#btnGetVersion").addEventListener("click", async () => {
+          let data = await horse.os.getVersion();
           console.log(data);
         });
       };
@@ -338,6 +346,7 @@
         initRes();
         initDialog();
         initNotify();
+        initOs();
       });
     </script>
   </body>
