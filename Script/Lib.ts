@@ -16,7 +16,6 @@ export class Lib extends Eventer {
     return this.call({
       className: "lib",
       winId: globalThis.__WIN_ID,
-      tarId: globalThis.__WIN_ID,
       methodName,
       params,
     });

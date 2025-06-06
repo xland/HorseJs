@@ -7,7 +7,6 @@ export class Net extends Eventer {
     return this.call({
       className: "net",
       winId: globalThis.__WIN_ID,
-      tarId: globalThis.__WIN_ID,
       methodName,
       params,
     });

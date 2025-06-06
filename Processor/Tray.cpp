@@ -51,5 +51,6 @@ void Tray::create(const rapidjson::Value& params, JsonResult* result)
     wcscpy_s(nid.szTip, L"System Tray Icon Demo");
     Shell_NotifyIcon(NIM_ADD, &nid);
     hMenu = CreatePopupMenu();
+    
     AppendMenu(hMenu, MF_STRING, ID_TRAY_EXIT, L"Exit");
 }

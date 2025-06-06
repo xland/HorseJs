@@ -50,7 +50,7 @@ export class Eventer {
   // 调用原生方法并返回 Promise
   call(obj: any): Promise<any> {
     return new Promise((resolve, reject) => {
-      obj.eventName = `once_${util.randomNum()}`;
+      obj.eventName = `${util.randomNum()}`;
       this.once(obj.eventName, (result: any) => {
         resolve(result);
       });

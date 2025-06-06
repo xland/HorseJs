@@ -7,7 +7,6 @@ export class Notify extends Eventer {
     return this.call({
       className: "notify",
       winId: globalThis.__WIN_ID,
-      tarId: globalThis.__WIN_ID,
       methodName,
       params,
     });

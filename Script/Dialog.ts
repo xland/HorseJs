@@ -7,7 +7,6 @@ export class Dialog extends Eventer {
     return this.call({
       className: "dialog",
       winId: globalThis.__WIN_ID,
-      tarId: globalThis.__WIN_ID,
       methodName,
       params,
     });

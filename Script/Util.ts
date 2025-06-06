@@ -2,9 +2,8 @@ class Util {
   postMsg(json: any) {
     window.chrome.webview.postMessage(json);
   }
-  //生成一个12位的随机数字
-  randomNum(len: number = 9): number {
-    return Math.floor(Math.pow(10, len) * Math.random());
+  randomNum(): number {
+    return Math.floor(Math.random() * 1000000000); //最多9位，避免超过C++ int的最大值
   }
 }
 export let util = new Util();

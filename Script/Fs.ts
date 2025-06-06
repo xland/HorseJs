@@ -29,7 +29,6 @@ export class Fs extends Eventer {
     return this.call({
       className: "fs",
       winId: globalThis.__WIN_ID,
-      tarId: globalThis.__WIN_ID,
       methodName,
       params,
     });

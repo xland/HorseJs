@@ -7,7 +7,6 @@ export class Os extends Eventer {
     return this.call({
       className: "os",
       winId: globalThis.__WIN_ID,
-      tarId: globalThis.__WIN_ID,
       methodName,
       params,
     });

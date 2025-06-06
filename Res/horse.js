@@ -4,9 +4,8 @@
     postMsg(json) {
       window.chrome.webview.postMessage(json);
     }
-    //生成一个12位的随机数字
-    randomNum(len = 9) {
-      return Math.floor(Math.pow(10, len) * Math.random());
+    randomNum() {
+      return Math.floor(Math.random() * 1e9);
     }
   };
   var util = new Util();
@@ -62,7 +61,7 @@
     // 调用原生方法并返回 Promise
     call(obj) {
       return new Promise((resolve, reject) => {
-        obj.eventName = `once_${util.randomNum()}`;
+        obj.eventName = `${util.randomNum()}`;
         this.once(obj.eventName, (result) => {
           resolve(result);
         });
@@ -71,10 +70,39 @@
     }
   };
 
+  // Menu.ts
+  var Menu = class extends Eventer {
+    async create(config) {
+      let id = util.randomNum();
+      config.menu.forEach((item) => {
+        item.id = util.randomNum();
+        if (item.click) {
+          this.on(item.id, item.click);
+          delete item.click;
+        }
+      });
+      return this.callMethod("create", config, id);
+    }
+    callMethod(methodName, ...params) {
+      return this.call({
+        className: "menu",
+        winId: globalThis.__WIN_ID,
+        methodName,
+        params
+      });
+    }
+  };
+
   // Tray.ts
   var Tray = class extends Eventer {
     async create(config) {
       config.id = util.randomNum();
+      this.on(config.id, () => {
+        if (config.rightBtnDown) {
+          this.on("trayRightBtnDown", config.rightBtnDown);
+          delete config.rightBtnDown;
+        }
+      });
       if (config.rightBtnDown) {
         this.on("trayRightBtnDown", config.rightBtnDown);
         delete config.rightBtnDown;
@@ -86,8 +114,9 @@
       let i = 0;
       config.menu.forEach((item) => {
         if (item.click) {
-          this.on("trayMenuClick" + i, config.leftBtnDown);
-          delete config.leftBtnDown;
+          this.on("trayMenuClick" + i, item.click);
+          delete item.click;
+          i += 1;
         }
       });
       return this.callMethod("create");
@@ -96,7 +125,6 @@
       return this.call({
         className: "create",
         winId: globalThis.__WIN_ID,
-        tarId: globalThis.__WIN_ID,
         methodName,
         params
       });
@@ -112,7 +140,6 @@
       return this.call({
         className: "notify",
         winId: globalThis.__WIN_ID,
-        tarId: globalThis.__WIN_ID,
         methodName,
         params
       });
@@ -229,7 +256,6 @@
       return this.call({
         className: "fs",
         winId: globalThis.__WIN_ID,
-        tarId: globalThis.__WIN_ID,
         methodName,
         params
       });
@@ -245,7 +271,6 @@
       return this.call({
         className: "dialog",
         winId: globalThis.__WIN_ID,
-        tarId: globalThis.__WIN_ID,
         methodName,
         params
       });
@@ -270,7 +295,6 @@
       return this.call({
         className: "clipboard",
         winId: globalThis.__WIN_ID,
-        tarId: globalThis.__WIN_ID,
         methodName,
         params
       });
@@ -286,7 +310,6 @@
       return this.call({
         className: "net",
         winId: globalThis.__WIN_ID,
-        tarId: globalThis.__WIN_ID,
         methodName,
         params
       });
@@ -302,7 +325,6 @@
       return this.call({
         className: "os",
         winId: globalThis.__WIN_ID,
-        tarId: globalThis.__WIN_ID,
         methodName,
         params
       });
@@ -318,7 +340,6 @@
       return this.call({
         className: "screen",
         winId: globalThis.__WIN_ID,
-        tarId: globalThis.__WIN_ID,
         methodName,
         params
       });
@@ -337,6 +358,7 @@
     os;
     screen;
     tray;
+    menu;
     webview;
     constructor() {
       super();
@@ -350,6 +372,7 @@
       this.os = new Os();
       this.screen = new Screen();
       this.tray = new Tray();
+      this.menu = new Menu();
       this.listenMsg();
     }
     getConfig() {
@@ -386,7 +409,6 @@
       return this.call({
         className: "horse",
         winId: globalThis.__WIN_ID,
-        tarId: globalThis.__WIN_ID,
         methodName,
         params
       });
