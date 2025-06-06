@@ -73,7 +73,23 @@
 
   // Tray.ts
   var Tray = class extends Eventer {
-    async create() {
+    async create(config) {
+      config.id = util.randomNum();
+      if (config.rightBtnDown) {
+        this.on("trayRightBtnDown", config.rightBtnDown);
+        delete config.rightBtnDown;
+      }
+      if (config.leftBtnDown) {
+        this.on("trayLeftBtnDown", config.leftBtnDown);
+        delete config.leftBtnDown;
+      }
+      let i = 0;
+      config.menu.forEach((item) => {
+        if (item.click) {
+          this.on("trayMenuClick" + i, config.leftBtnDown);
+          delete config.leftBtnDown;
+        }
+      });
       return this.callMethod("create");
     }
     callMethod(methodName, ...params) {
@@ -157,7 +173,6 @@
       return this.call({
         className: "win",
         winId: globalThis.__WIN_ID,
-        tarId: globalThis.__WIN_ID,
         methodName,
         params
       });

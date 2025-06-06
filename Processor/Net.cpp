@@ -96,5 +96,4 @@ void Net::getAddress(const rapidjson::Value& params, JsonResult* result)
     }
     WSACleanup();
     result->addValue("data", std::move(array));
-    result->returnBack();
 }

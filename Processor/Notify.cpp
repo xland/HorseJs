@@ -53,5 +53,4 @@ void Notify::show(const rapidjson::Value& params, JsonResult* result)
     xmlDoc.LoadXml(xmlString);
     Notifications::ToastNotification toast(xmlDoc);
     notifier.Show(toast);
-    result->returnBack();
 }

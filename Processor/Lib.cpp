@@ -49,7 +49,6 @@ void Lib::load(const rapidjson::Value& params, JsonResult* result)
     dllModules.insert({ id,hDll });
     id += 1;
     result->addNumber("id", id);
-    result->returnBack();
 }
 
 void Lib::free(const rapidjson::Value& params, JsonResult* result)
@@ -62,7 +61,6 @@ void Lib::free(const rapidjson::Value& params, JsonResult* result)
         return;
     }
     dllModules.erase(id);
-    result->returnBack();
 }
 
 void Lib::call(const rapidjson::Value& params, JsonResult* result)
@@ -78,5 +76,4 @@ void Lib::call(const rapidjson::Value& params, JsonResult* result)
     }
     auto data = func(funcParam);
     result->addString("data", data);
-    result->returnBack();
 }

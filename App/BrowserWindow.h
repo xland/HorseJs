@@ -32,7 +32,7 @@ public:
 
 	HWND hwnd;
 	wil::unique_hicon favicon;
-	std::unordered_map<std::string, std::vector<JsonResult*>> events;
+	std::unordered_map<std::string, std::set<int>> events;
 	wil::com_ptr<ICoreWebView2> webview;
 protected:
 private:

@@ -63,7 +63,6 @@ void Clipboard::getDataType(const rapidjson::Value& params, JsonResult* result)
         result->addString("data", "unknown");
     }
     CloseClipboard();
-    result->returnBack();
 }
 
 void Clipboard::readText(const rapidjson::Value& params, JsonResult* result)
@@ -88,7 +87,6 @@ void Clipboard::readText(const rapidjson::Value& params, JsonResult* result)
     GlobalUnlock(hData);
     CloseClipboard();
     result->addString("data", str);
-    result->returnBack();
 }
 
 void Clipboard::writeText(const rapidjson::Value& params, JsonResult* result)
@@ -117,7 +115,6 @@ void Clipboard::writeText(const rapidjson::Value& params, JsonResult* result)
     GlobalUnlock(hGlobal);
     SetClipboardData(CF_UNICODETEXT, hGlobal);
     CloseClipboard();
-    result->returnBack();
 }
 
 void Clipboard::readImage(const rapidjson::Value& params, JsonResult* result)
@@ -186,7 +183,6 @@ void Clipboard::readHtml(const rapidjson::Value& params, JsonResult* result)
     // 提取 <!--StartFragment--> 和 <!--EndFragment--> 之间的内容
     std::string fragment = data.substr(contentStart, endFragmentPos - contentStart);
     result->addString("data", fragment);
-    result->returnBack();
 }
 
 void Clipboard::writeHtml(const rapidjson::Value& params, JsonResult* result)

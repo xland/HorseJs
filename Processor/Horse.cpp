@@ -41,7 +41,6 @@ void Horse::getConfig(const rapidjson::Value& params, JsonResult* result)
     doc.Parse(str.data());
     rapidjson::Value copiedValue(doc, result->getAllocator());
 	result->addValue("data", std::move(copiedValue));
-    result->returnBack();
 }
 
 void Horse::createWindow(const rapidjson::Value& params, JsonResult* result)
@@ -52,5 +51,4 @@ void Horse::createWindow(const rapidjson::Value& params, JsonResult* result)
     winIns->load();
     result->addNumber("id", winIns->id);
     App::get()->winMap.insert({ winIns->id,std::move(winIns) });
-    result->returnBack();
 }

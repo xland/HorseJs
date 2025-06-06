@@ -61,7 +61,6 @@ void Os::getVersion(const rapidjson::Value& params, JsonResult* result)
     result->addNumber("majorVersion", (long long)osInfo.dwMajorVersion);
     result->addNumber("minorVersion", (long long)osInfo.dwMinorVersion);
     result->addNumber("buildNumber", (long long)osInfo.dwBuildNumber);
-    result->returnBack();
 }
 
 // 保存数据到用户凭据区

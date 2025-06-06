@@ -39,7 +39,6 @@ void Screen::getAll(const rapidjson::Value& params, JsonResult* result)
     Context* ptr = &context;
     EnumDisplayMonitors(NULL, NULL, Screen::enumProc, (LPARAM)ptr);
     result->addValue("data", std::move(array));
-    result->returnBack();
 }
 BOOL Screen::enumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
 {

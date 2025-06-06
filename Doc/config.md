@@ -66,4 +66,18 @@
 - window.webMessageEnable
 > 是否允许窗口中的页面与C++后端通信
 - window.contextMenuEnable
-> 是否启用窗口上的右键菜单
+> 是否启用窗口上的右键菜单 <br />
+> 以下是几个常见的右键菜单<br />
+> inspectElement      ：默认启用   <br />
+> other				  ：默认禁用   <br />
+> webCapture		  ：默认禁用   <br />
+> saveAs			  ：默认禁用   <br />
+> reload			  ：默认禁用   <br />
+> forward			  ：默认禁用   <br />
+> back				  ：默认禁用   <br />
+> selectAll			  ：默认启用   <br />
+> pasteAndMatchStyle  ：默认启用   <br />
+> paste				  ：默认启用   <br />
+> copy				  ：默认启用   <br />
+> cut				  ：默认启用   <br />
+> print				  ：默认禁用   <br />

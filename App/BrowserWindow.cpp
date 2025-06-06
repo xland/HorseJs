@@ -91,6 +91,7 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     else if (msg == WM_THREADRESULT) {
         auto result = reinterpret_cast<JsonResult*>(lParam);
         result->returnBack();
+        delete result;
     }
     sysProcess:
     return DefWindowProc(hwnd, msg, wParam, lParam);
@@ -108,13 +109,14 @@ void BrowserWindow::sizePosChanged(WINDOWPOS* winPos)
     ctrl->put_Bounds(bounds);
     auto& vec = events["sizePosChanged"];
     if (vec.size() == 0) return;
-    for (auto& e:vec)
+    for (auto& id:vec)
     {
-        e->addNumber("x", x);
-        e->addNumber("y", y);
-        e->addNumber("w", w);
-        e->addNumber("h", h);
-        e->returnBack(false);
+        JsonResult result(id, "win", "sizePosChanged");
+        result.addNumber("x", x);
+        result.addNumber("y", y);
+        result.addNumber("w", w);
+        result.addNumber("h", h);
+        result.returnBack();
     }
 }
 void BrowserWindow::stateChanged(const int& state)
@@ -122,27 +124,29 @@ void BrowserWindow::stateChanged(const int& state)
     if (!ctrl) return;
     auto& vec = events["sizePosChanged"];
     if (vec.size() == 0) return;
-    for (auto& e : vec)
+    for (auto& id : vec)
     {
+        JsonResult result(id, "win", "sizePosChanged");
         if (state == SIZE_MAXIMIZED) {
-            e->addString("state", "maximize");
+            result.addString("state", "maximize");
         }
         else if (state == SIZE_MINIMIZED) {
-            e->addString("state", "minimize");
+            result.addString("state", "minimize");
         }
         else if (state == SIZE_RESTORED) {
-            e->addString("state", "restore");
+            result.addString("state", "restore");
         }
-        e->returnBack(false);
+        result.returnBack();
     }
 }
 void BrowserWindow::closing()
 {
     auto& vec = events["closing"];
     if (vec.size() > 0) {
-        for (auto& e : vec)
+        for (auto& id : vec)
         {
-            e->returnBack(false);
+            JsonResult result(id, "win", "sizePosChanged");
+            result.returnBack();
         }
         return; //阻止窗口关闭
     }

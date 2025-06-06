@@ -4,6 +4,7 @@
 
 namespace {
     std::unique_ptr<Tray> tray;
+    std::unordered_map<int, std::vector<JsonResult*>> events;
     static std::unordered_map<std::string, void (Tray::*)(const rapidjson::Value&, JsonResult*)> trayFunc{
         {"create", &Tray::create},
     };
@@ -42,7 +43,7 @@ void Tray::create(const rapidjson::Value& params, JsonResult* result)
 
 
     nid.cbSize = sizeof(NOTIFYICONDATA);
-    nid.hWnd = result->win->hwnd;
+    nid.hWnd = result->getTar()->hwnd;
     nid.uID = id;
     nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
     nid.uCallbackMessage = WM_TRAY;

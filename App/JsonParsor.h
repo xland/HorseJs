@@ -12,6 +12,7 @@ class JsonParsor
 		~JsonParsor();
 		rapidjson::Document::AllocatorType& getAllocator();
 		void addString(const std::string& name, const std::string& value);
+		std::string getString(const std::string& name);
 		void addNumber(const std::string& name, const int& value);
 		void addNumber(const std::string& name, const double& value);
 		void addNumber(const std::string& name, const long long& value);
@@ -19,7 +20,6 @@ class JsonParsor
 		void addValue(const std::string& name, rapidjson::Value&& value);
 		void addParsor(const std::string& name, const JsonParsor&& parsor);
 		std::wstring parse();
-	protected:
 	private:
 		rapidjson::Value getKey(const std::string& name);
 	private:

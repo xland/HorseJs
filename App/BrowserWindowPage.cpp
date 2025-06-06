@@ -161,19 +161,15 @@ HRESULT BrowserWindow::contextMenuRequested(ICoreWebView2* sender, ICoreWebView2
         args->put_Handled(TRUE);
         return S_OK;
     }
-
-    // 获取默认菜单项列表
     wil::com_ptr<ICoreWebView2ContextMenuItemCollection> menuItems;
     auto hr = args->get_MenuItems(&menuItems);
     if (FAILED(hr)) {
         return hr;
     }
-
-    // 获取菜单项数量
     UINT32 itemCount;
     menuItems->get_Count(&itemCount);
 
-    // 遍历菜单项并移除“复制”和“粘贴”
+    static std::unordered_set<std::wstring> menuNames{L"inspectElement",L"selectAll",L"pasteAndMatchStyle",L"paste",L"copy",L"cut"};    
     for (UINT32 i = itemCount; i > 0; --i) {
         wil::com_ptr<ICoreWebView2ContextMenuItem> menuItem;
         hr = menuItems->GetValueAtIndex(i - 1, &menuItem);
@@ -182,14 +178,13 @@ HRESULT BrowserWindow::contextMenuRequested(ICoreWebView2* sender, ICoreWebView2
         }
         wil::unique_cotaskmem_string itemName;
         menuItem->get_Name(&itemName);
-        //std::wstring str = itemName.get();
-        // 检查是否为“复制”或“粘贴”项
-        if (itemName && (wcscmp(itemName.get(), L"copy") == 0 || wcscmp(itemName.get(), L"paste") == 0)) {
-            menuItems->RemoveValueAtIndex(i - 1);
-        }
+        std::wstring str = itemName.get();
         itemName.reset();
+        if (!menuNames.contains(str)) {
+            menuItems->RemoveValueAtIndex(i-1); //必须倒着删，不然会删错
+        }
     }
-
+    menuItems->get_Count(&itemCount);
     auto env10 = App::get()->env.try_query<ICoreWebView2Environment10>();
     wil::com_ptr<ICoreWebView2ContextMenuItem> customItem;
     hr = env10->CreateContextMenuItem(L"自定义选项", nullptr, COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND_COMMAND, &customItem);

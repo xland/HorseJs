@@ -91,7 +91,6 @@ void Fs::getFileInfo(const rapidjson::Value& params, JsonResult* result)
         result->addBool("isHidden", isHidden);
         auto isSystem = (fileData.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM) != 0;
         result->addBool("isSystem", isSystem);
-        result->returnBack();
     }
 }
 
@@ -115,7 +114,6 @@ void Fs::exists(const rapidjson::Value& params, JsonResult* result)
         result->addBool("isExists", true);
         result->addBool("isDir", false);
     }
-    result->returnBack();
 }
 
 void Fs::readFile(const rapidjson::Value& params, JsonResult* result)
@@ -217,7 +215,6 @@ void Fs::writeFile(const rapidjson::Value& params, JsonResult* result)
         return;
     }
     file.close();
-    result->returnBack();
 }
 
 void Fs::writeFileChunk(const rapidjson::Value& params, JsonResult* result)
@@ -295,7 +292,6 @@ void Fs::writeFileChunk(const rapidjson::Value& params, JsonResult* result)
     UnmapViewOfFile(pMappedData);
     CloseHandle(hMap);
     CloseHandle(hFile);
-    result->returnBack();
 }
 
 void Fs::delPath(const rapidjson::Value& params, JsonResult* result)
@@ -315,7 +311,6 @@ void Fs::delPath(const rapidjson::Value& params, JsonResult* result)
     if (!DeleteFile(path.c_str())) {
         result->addErr("del file error.");
     }
-    result->returnBack();
 }
 
 void Fs::removePath(const rapidjson::Value& params, JsonResult* result)
@@ -337,7 +332,6 @@ void Fs::removePath(const rapidjson::Value& params, JsonResult* result)
     if (val != 0 || fileOp.fAnyOperationsAborted != FALSE) {
         result->addErr("remove path error.");
     }
-    result->returnBack();
 }
 
 void Fs::createDir(const rapidjson::Value& params, JsonResult* result)

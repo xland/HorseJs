@@ -54,14 +54,11 @@ void MsgProcessor::processStr(const std::string& msgStr)
 {    
     rapidjson::Document jsonDoc;
     jsonDoc.Parse(msgStr.data());
-    int winId{ -1 }, tarId{-1};
+    int winId{ -1 };
     if (jsonDoc.HasMember("winId") && jsonDoc["winId"].IsInt()) {
         winId = jsonDoc["winId"].GetInt();
     }
-    if (jsonDoc.HasMember("tarId") && jsonDoc["tarId"].IsInt()) {
-        tarId = jsonDoc["tarId"].GetInt();
-    }
-    if (winId < 0 || tarId < 0) {
+    if (winId < 0) {
         MessageBox(nullptr, L"winId为空或tarId为空", L"错误", MB_OK | MB_ICONERROR);
         return;
     }
@@ -79,17 +76,20 @@ void MsgProcessor::processStr(const std::string& msgStr)
         MessageBox(nullptr, L"className,methodName或eventName", L"错误", MB_OK | MB_ICONERROR);
         return;
     }
-    auto win = App::get()->getWindow(winId);
-    auto tar = App::get()->getWindow(tarId);
-    auto result = JsonResult::create(win, tar,className, eventName);
+    JsonResult result(winId,className, eventName);
+    if (jsonDoc.HasMember("tarId") && jsonDoc["tarId"].IsInt()) {
+        result.tarId = jsonDoc["tarId"].GetInt();
+    }
     auto it = processFunc.find(className);
     if (it == processFunc.end()) {
-        result->addErr(std::format("class {} not found!", className));
-        return;
+        result.addErr(std::format("class {} not found!", className));
     }
-    auto flag = (*it).second(methodName, jsonDoc["params"], result);
-    if (!flag) {
-        result->addErr(std::format("method {} not found!", methodName));
+    else {
+        auto flag = (*it).second(methodName, jsonDoc["params"], &result);
+        if (!flag) {
+            result.addErr(std::format("method {} not found!", methodName));
+        }
     }
+    result.returnBack();
 }
 

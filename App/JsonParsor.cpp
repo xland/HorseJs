@@ -23,6 +23,11 @@ void JsonParsor::addString(const std::string& name, const std::string& value)
     doc.AddMember(getKey(name), val, doc.GetAllocator());
 }
 
+std::string JsonParsor::getString(const std::string& name)
+{
+    return doc[name.data()].GetString();
+}
+
 void JsonParsor::addNumber(const std::string& name, const int& value)
 {
 
