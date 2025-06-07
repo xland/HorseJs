@@ -2,34 +2,21 @@ import { Eventer } from "./Eventer";
 import { util } from "./Util";
 export class Tray extends Eventer {
   async create(config: any) {
-    config.id = util.randomNum(); //给它附加一个id
-    this.on(config.id, () => {
-      if (config.rightBtnDown) {
-        this.on("trayRightBtnDown", config.rightBtnDown);
-        delete config.rightBtnDown;
-      }
+    config.__id = util.randomNum();
+    this.on(config.__id, (data) => {
+      let type = data.type;
+      delete data.type;
+      config[type]();
     });
-    if (config.rightBtnDown) {
-      this.on("trayRightBtnDown", config.rightBtnDown);
-      delete config.rightBtnDown;
-    }
-    if (config.leftBtnDown) {
-      this.on("trayLeftBtnDown", config.leftBtnDown);
-      delete config.leftBtnDown;
-    }
-    let i = 0;
     config.menu.forEach((item) => {
-      if (item.click) {
-        this.on("trayMenuClick" + i, item.click);
-        delete item.click;
-        i += 1;
-      }
+      item.__id = util.randomNum();
+      this.on(item.__id, item.click);
     });
-    return this.callMethod("create");
+    return this.callMethod("create", config);
   }
   private callMethod(methodName: string, ...params: any[]) {
     return this.call({
-      className: "create",
+      className: "tray",
       winId: globalThis.__WIN_ID,
       methodName,
       params,

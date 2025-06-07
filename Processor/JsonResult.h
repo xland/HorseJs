@@ -12,6 +12,7 @@ class JsonResult : public JsonParsor
         void returnBack();
         void returnBackSharedBuffer();
         BrowserWindow* getTar();
+        BrowserWindow* getWin();
     public:
         bool ok{ true },cancel{false};
         int winId, tarId{-1};

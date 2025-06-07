@@ -4,7 +4,7 @@
 #include "../App/BrowserWindow.h"
 namespace {
     std::unique_ptr<Win> win;
-    static std::unordered_map<std::string, void (Win::*)(const rapidjson::Value&, JsonResult*)> winFunc{
+    static std::unordered_map<std::string, void (Win::*)(const rapidjson::Value&, JsonResult*)> funcs{
     {"show", &Win::show},
     {"hide", &Win::hide},
     {"maximize", &Win::maximize},
@@ -38,8 +38,8 @@ Win* Win::get()
 }
 bool Win::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
-    auto it = winFunc.find(methodName);
-    if (it == winFunc.end()) return false;
+    auto it = funcs.find(methodName);
+    if (it == funcs.end()) return false;
     (Win::get()->*it->second)(param, result);
     return true;
 }

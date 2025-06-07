@@ -3,7 +3,7 @@
 
 namespace {
     std::unique_ptr<Screen> screen;
-    static std::unordered_map<std::string, void (Screen::*)(const rapidjson::Value&, JsonResult*)> screenFunc{
+    static std::unordered_map<std::string, void (Screen::*)(const rapidjson::Value&, JsonResult*)> funcs{
         {"getAll", &Screen::getAll},
     };
     using Context = std::pair<rapidjson::Value&, rapidjson::Document::AllocatorType&>;
@@ -26,8 +26,8 @@ Screen* Screen::get()
 }
 bool Screen::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
-    auto it = screenFunc.find(methodName);
-    if (it == screenFunc.end()) return false;
+    auto it = funcs.find(methodName);
+    if (it == funcs.end()) return false;
     (Screen::get()->*it->second)(param, result);
     return true;
 }

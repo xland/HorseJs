@@ -84,6 +84,8 @@
       <div id="btnReadClipBoardText" class="btn">读取剪切板内的文本</div>
       <div id="btnWriteClipBoardText" class="btn">向剪切板内写入文本</div>
       <div id="btnReadClipBoardHtml" class="btn">读取剪切板内的html</div>
+      <p>menu</p>
+      <div id="btnCreateMenu" class="btn">创建菜单</div>
       <p>net</p>
       <div id="btnGetAddress" class="btn">获取IP地址</div>
       <p>window</p>
@@ -210,6 +212,19 @@
           // console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
           // });
           await proxy.minimize();
+        });
+      };
+      let initMenu = () => {
+        $("#btnCreateMenu").addEventListener("click", async () => {
+          let data = await horse.menu.create([
+            {
+              text: "退出",
+              click: () => {
+                console.log("tray menu item click");
+              },
+            },
+          ]);
+          console.log(data);
         });
       };
       let initNet = () => {
@@ -374,6 +389,7 @@
         initClipboard();
         initHorse();
         initWin();
+        initMenu();
         initNet();
         initFs();
         initRes();

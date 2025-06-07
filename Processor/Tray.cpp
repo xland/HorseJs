@@ -4,10 +4,10 @@
 
 namespace {
     std::unique_ptr<Tray> tray;
-    std::unordered_map<int, std::vector<JsonResult*>> events;
-    static std::unordered_map<std::string, void (Tray::*)(const rapidjson::Value&, JsonResult*)> trayFunc{
+    static std::unordered_map<std::string, void (Tray::*)(const rapidjson::Value&, JsonResult*)> funcs{
         {"create", &Tray::create},
     };
+
 }
 
 Tray::Tray()
@@ -27,30 +27,39 @@ Tray* Tray::get()
 }
 bool Tray::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
-    auto it = trayFunc.find(methodName);
-    if (it == trayFunc.end()) return false;
+    auto it = funcs.find(methodName);
+    if (it == funcs.end()) return false;
     (Tray::get()->*it->second)(param, result);
     return true;
 }
 
 void Tray::create(const rapidjson::Value& params, JsonResult* result)
 {
-    static NOTIFYICONDATA nid = { 0 }; //全局的
-    static HMENU hMenu = nullptr;
-    static const UINT ID_TRAY_EXIT = 1001;
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    const rapidjson::Value& config = arr[0];
+    auto win = result->getWin();
+    NOTIFYICONDATA* tray = new NOTIFYICONDATA();
+    ZeroMemory(tray, sizeof(NOTIFYICONDATA));
+    tray->cbSize = sizeof(NOTIFYICONDATA);
+    tray->hWnd = win->hwnd;
+    tray->uID = config["__id"].GetInt();
+    tray->uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+    tray->uCallbackMessage = WM_TRAY;
+    tray->hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+    wcscpy_s(tray->szTip, L"System Tray Icon Demo");
+    Shell_NotifyIcon(NIM_ADD, tray);
+    win->trays.push_back(tray);
 
-    static unsigned id = 0;
-
-
-    nid.cbSize = sizeof(NOTIFYICONDATA);
-    nid.hWnd = result->getTar()->hwnd;
-    nid.uID = id;
-    nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
-    nid.uCallbackMessage = WM_TRAY;
-    nid.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
-    wcscpy_s(nid.szTip, L"System Tray Icon Demo");
-    Shell_NotifyIcon(NIM_ADD, &nid);
-    hMenu = CreatePopupMenu();
-    
-    AppendMenu(hMenu, MF_STRING, ID_TRAY_EXIT, L"Exit");
+    if(config.HasMember("menu") && config["menu"].IsArray()){
+        HMENU menu = CreatePopupMenu();    
+        const rapidjson::Value::ConstArray menuArr = config["menu"].GetArray();
+        for (size_t i = 0; i < menuArr.Size(); i++)
+        {
+            const rapidjson::Value& value = menuArr[i];
+            auto id = value["__id"].GetInt();
+            auto text = Util::convertToWStr(value["text"].GetString());
+            AppendMenu(menu, MF_STRING, id, text.data());
+        }
+        win->menus.insert({ tray->uID,std::move(menu) });
+    }
 }

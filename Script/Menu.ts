@@ -1,16 +1,15 @@
 import { util } from "./Util";
 import { Eventer } from "./Eventer";
 export class Menu extends Eventer {
-  async create(config: any) {
-    let id = util.randomNum();
-    config.menu.forEach((item) => {
-      item.id = util.randomNum();
+  async create(arr: any) {
+    arr.forEach((item) => {
+      item.__id = util.randomNum();
       if (item.click) {
-        this.on(item.id, item.click);
+        this.on(item.__id, item.click);
         delete item.click;
       }
     });
-    return this.callMethod("create", config, id);
+    return this.callMethod("create", ...arr);
   }
   private callMethod(methodName: string, ...params: any[]) {
     return this.call({

@@ -5,7 +5,7 @@
 
 namespace {
     std::unique_ptr<Fs> fs;
-    static std::unordered_map<std::string, void (Fs::*)(const rapidjson::Value&, JsonResult*)> fsFunc{
+    static std::unordered_map<std::string, void (Fs::*)(const rapidjson::Value&, JsonResult*)> funcs{
     {"getFileInfo", &Fs::getFileInfo},
     {"exists", &Fs::exists},
     {"readFile", &Fs::readFile},
@@ -40,8 +40,8 @@ Fs* Fs::get()
 }
 bool Fs::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
-    auto it = fsFunc.find(methodName);
-    if (it == fsFunc.end()) return false;
+    auto it = funcs.find(methodName);
+    if (it == funcs.end()) return false;
     (Fs::get()->*it->second)(param, result);
     return true;
 }

@@ -1,10 +1,10 @@
-#include <pch.h>
+﻿#include <pch.h>
 #include "Clipboard.h"
 
 namespace {
     std::unique_ptr<Clipboard> clipboard;
 
-    static std::unordered_map<std::string, void (Clipboard::*)(const rapidjson::Value&, JsonResult*)> clipboardFunc{
+    static std::unordered_map<std::string, void (Clipboard::*)(const rapidjson::Value&, JsonResult*)> funcs{
         {"getDataType", &Clipboard::getDataType},
         {"readText", &Clipboard::readText},
         {"writeText", &Clipboard::writeText},
@@ -33,8 +33,8 @@ Clipboard* Clipboard::get()
 
 bool Clipboard::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
-    auto it = clipboardFunc.find(methodName);
-    if (it == clipboardFunc.end()) return false;
+    auto it = funcs.find(methodName);
+    if (it == funcs.end()) return false;
     (Clipboard::get()->*it->second)(param, result);
     return true;
 }

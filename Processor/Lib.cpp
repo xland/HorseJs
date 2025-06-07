@@ -3,7 +3,7 @@
 
 namespace {
     std::unique_ptr<Lib> lib;
-    static std::unordered_map<std::string, void (Lib::*)(const rapidjson::Value&, JsonResult*)> libFunc{
+    static std::unordered_map<std::string, void (Lib::*)(const rapidjson::Value&, JsonResult*)> funcs{
     {"load", &Lib::load},
     {"free", &Lib::free},
     {"call", &Lib::call},
@@ -31,8 +31,8 @@ Lib* Lib::get()
 }
 bool Lib::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
-    auto it = libFunc.find(methodName);
-    if (it == libFunc.end()) return false;
+    auto it = funcs.find(methodName);
+    if (it == funcs.end()) return false;
     (Lib::get()->*it->second)(param, result);
     return true;
 }

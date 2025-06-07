@@ -184,22 +184,22 @@ HRESULT BrowserWindow::contextMenuRequested(ICoreWebView2* sender, ICoreWebView2
             menuItems->RemoveValueAtIndex(i-1); //必须倒着删，不然会删错
         }
     }
-    menuItems->get_Count(&itemCount);
-    auto env10 = App::get()->env.try_query<ICoreWebView2Environment10>();
-    wil::com_ptr<ICoreWebView2ContextMenuItem> customItem;
-    hr = env10->CreateContextMenuItem(L"自定义选项", nullptr, COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND_COMMAND, &customItem);
-    if (SUCCEEDED(hr)) {
-        // 为自定义项绑定点击事件
-        customItem->add_CustomItemSelected(
-            WRL::Callback<ICoreWebView2CustomItemSelectedEventHandler>(
-                [](ICoreWebView2ContextMenuItem* sender, IUnknown* args) -> HRESULT {
-                    MessageBox(nullptr, L"选择了自定义选项！", L"提示", MB_OK | MB_ICONINFORMATION);
-                    return S_OK;
-                }).Get(),
-                    nullptr);
-        // 将自定义项添加到菜单
-        menuItems->InsertValueAtIndex(itemCount, customItem.get());
-    }
+    //menuItems->get_Count(&itemCount);
+    //auto env10 = App::get()->env.try_query<ICoreWebView2Environment10>();
+    //wil::com_ptr<ICoreWebView2ContextMenuItem> customItem;
+    //hr = env10->CreateContextMenuItem(L"自定义选项", nullptr, COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND_COMMAND, &customItem);
+    //if (SUCCEEDED(hr)) {
+    //    // 为自定义项绑定点击事件
+    //    customItem->add_CustomItemSelected(
+    //        WRL::Callback<ICoreWebView2CustomItemSelectedEventHandler>(
+    //            [](ICoreWebView2ContextMenuItem* sender, IUnknown* args) -> HRESULT {
+    //                MessageBox(nullptr, L"选择了自定义选项！", L"提示", MB_OK | MB_ICONINFORMATION);
+    //                return S_OK;
+    //            }).Get(),
+    //                nullptr);
+    //    // 将自定义项添加到菜单
+    //    menuItems->InsertValueAtIndex(itemCount, customItem.get());
+    //}
     return S_OK;
 }
 

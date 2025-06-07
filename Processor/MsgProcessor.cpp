@@ -15,6 +15,7 @@
 #include "Screen.h"
 #include "Tray.h"
 #include "Process.h"
+#include "Menu.h"
 
 namespace {
     std::unique_ptr<MsgProcessor> msgProcessor;
@@ -25,6 +26,7 @@ namespace {
         {"horse",Horse::excute},
         {"lib",Lib::excute},
         {"net",Net::excute},
+        {"menu",Menu::excute},
         {"fs",Fs::excute},
         {"notify",Notify::excute},
         {"win",Win::excute},

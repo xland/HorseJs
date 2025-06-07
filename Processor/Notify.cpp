@@ -9,7 +9,7 @@ using namespace winrt::Windows::UI;
 using namespace winrt::Windows::Data::Xml::Dom;
 namespace {
     std::unique_ptr<Notify> notify;
-    static std::unordered_map<std::string, void (Notify::*)(const rapidjson::Value&, JsonResult*)> notifyFunc{
+    static std::unordered_map<std::string, void (Notify::*)(const rapidjson::Value&, JsonResult*)> funcs{
     {"show", &Notify::show},
     };
 }
@@ -31,8 +31,8 @@ Notify* Notify::get()
 }
 bool Notify::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
-    auto it = notifyFunc.find(methodName);
-    if (it == notifyFunc.end()) return false;
+    auto it = funcs.find(methodName);
+    if (it == funcs.end()) return false;
     (Notify::get()->*it->second)(param, result);
     return true;
 }

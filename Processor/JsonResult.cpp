@@ -55,3 +55,8 @@ BrowserWindow* JsonResult::getTar()
         return App::get()->getWindow(tarId);
     }
 }
+
+BrowserWindow* JsonResult::getWin()
+{
+    return App::get()->getWindow(winId);
+}

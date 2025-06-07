@@ -166,6 +166,7 @@
     <ClCompile Include="Processor\Fs.cpp" />
     <ClCompile Include="Processor\Horse.cpp" />
     <ClCompile Include="Processor\Lib.cpp" />
+    <ClCompile Include="Processor\Menu.cpp" />
     <ClCompile Include="Processor\MsgProcessor.cpp" />
     <ClCompile Include="Processor\Net.cpp" />
     <ClCompile Include="Processor\Notify.cpp" />
@@ -237,6 +238,7 @@
     <ClInclude Include="Processor\Fs.h" />
     <ClInclude Include="Processor\Horse.h" />
     <ClInclude Include="Processor\Lib.h" />
+    <ClInclude Include="Processor\Menu.h" />
     <ClInclude Include="Processor\Net.h" />
     <ClInclude Include="Processor\Notify.h" />
     <ClInclude Include="Processor\Os.h" />

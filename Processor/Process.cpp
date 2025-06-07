@@ -4,7 +4,7 @@
 
 namespace {
     std::unique_ptr<Process> process;
-    static std::unordered_map<std::string, void (Process::*)(const rapidjson::Value&, JsonResult*)> processFunc{
+    static std::unordered_map<std::string, void (Process::*)(const rapidjson::Value&, JsonResult*)> funcs{
     };
 }
 
@@ -25,8 +25,8 @@ Process* Process::get()
 }
 bool Process::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
-    auto it = processFunc.find(methodName);
-    if (it == processFunc.end()) return false;
+    auto it = funcs.find(methodName);
+    if (it == funcs.end()) return false;
     (Process::get()->*it->second)(param, result);
     return true;
 }

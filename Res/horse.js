@@ -5,7 +5,9 @@
       window.chrome.webview.postMessage(json);
     }
     randomNum() {
-      return Math.floor(Math.random() * 1e9);
+      const min = 2e3;
+      const max = 999999999;
+      return Math.floor(Math.random() * (max - min + 1)) + min;
     }
   };
   var util = new Util();
@@ -72,16 +74,15 @@
 
   // Menu.ts
   var Menu = class extends Eventer {
-    async create(config) {
-      let id = util.randomNum();
-      config.menu.forEach((item) => {
-        item.id = util.randomNum();
+    async create(arr) {
+      arr.forEach((item) => {
+        item.__id = util.randomNum();
         if (item.click) {
-          this.on(item.id, item.click);
+          this.on(item.__id, item.click);
           delete item.click;
         }
       });
-      return this.callMethod("create", config, id);
+      return this.callMethod("create", ...arr);
     }
     callMethod(methodName, ...params) {
       return this.call({
@@ -96,34 +97,21 @@
   // Tray.ts
   var Tray = class extends Eventer {
     async create(config) {
-      config.id = util.randomNum();
-      this.on(config.id, () => {
-        if (config.rightBtnDown) {
-          this.on("trayRightBtnDown", config.rightBtnDown);
-          delete config.rightBtnDown;
-        }
+      config.__id = util.randomNum();
+      this.on(config.__id, (data) => {
+        let type = data.type;
+        delete data.type;
+        config[type]();
       });
-      if (config.rightBtnDown) {
-        this.on("trayRightBtnDown", config.rightBtnDown);
-        delete config.rightBtnDown;
-      }
-      if (config.leftBtnDown) {
-        this.on("trayLeftBtnDown", config.leftBtnDown);
-        delete config.leftBtnDown;
-      }
-      let i = 0;
       config.menu.forEach((item) => {
-        if (item.click) {
-          this.on("trayMenuClick" + i, item.click);
-          delete item.click;
-          i += 1;
-        }
+        item.__id = util.randomNum();
+        this.on(item.__id, item.click);
       });
-      return this.callMethod("create");
+      return this.callMethod("create", config);
     }
     callMethod(methodName, ...params) {
       return this.call({
-        className: "create",
+        className: "tray",
         winId: globalThis.__WIN_ID,
         methodName,
         params

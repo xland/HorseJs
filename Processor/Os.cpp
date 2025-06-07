@@ -3,7 +3,7 @@
 
 namespace {
     std::unique_ptr<Os> os;
-    static std::unordered_map<std::string, void (Os::*)(const rapidjson::Value&, JsonResult*)> osFunc{
+    static std::unordered_map<std::string, void (Os::*)(const rapidjson::Value&, JsonResult*)> funcs{
     {"getVersion", &Os::getVersion},
     };
 
@@ -27,8 +27,8 @@ Os* Os::get()
 }
 bool Os::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
-    auto it = osFunc.find(methodName);
-    if (it == osFunc.end()) return false;
+    auto it = funcs.find(methodName);
+    if (it == funcs.end()) return false;
     (Os::get()->*it->second)(param, result);
     return true;
 }

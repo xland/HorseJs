@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../App/Util.h"
 #include "JsonResult.h"
 class Clipboard

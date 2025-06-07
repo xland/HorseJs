@@ -5,7 +5,7 @@
 
 namespace {
     std::unique_ptr<Horse> horse;
-    static std::unordered_map<std::string, void (Horse::*)(const rapidjson::Value&, JsonResult*)> horseFunc{
+    static std::unordered_map<std::string, void (Horse::*)(const rapidjson::Value&, JsonResult*)> funcs{
     {"getConfig", &Horse::getConfig},
     {"createWindow", &Horse::createWindow},
     };
@@ -28,8 +28,8 @@ Horse* Horse::get()
 }
 bool Horse::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
-    auto it = horseFunc.find(methodName);
-    if (it == horseFunc.end()) return false;
+    auto it = funcs.find(methodName);
+    if (it == funcs.end()) return false;
     (Horse::get()->*it->second)(param, result);
     return true;
 }

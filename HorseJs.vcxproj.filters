@@ -84,6 +84,9 @@
     <ClCompile Include="Processor\Horse.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Processor\Menu.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -284,6 +287,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Processor\Horse.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Processor\Menu.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
