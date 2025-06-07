@@ -46,18 +46,7 @@ void HelperWindow::createTray(TrayData* trayData)
     tray->hIcon = LoadIcon(nullptr, IDI_APPLICATION);
     wcscpy_s(tray->szTip, trayData->tip.data());
     Shell_NotifyIcon(NIM_ADD, tray);
-    trays.push_back(tray);
-    auto& ms = trayData->menus;
-    if(!ms.empty()){
-        HMENU menu = CreatePopupMenu();
-        for (const auto& pair : ms)
-        {
-            auto str = pair.second;
-            AppendMenu(menu, MF_STRING, pair.first, L"测试数据测试");
-        }
-        menus.insert({ tray->uID,menu });
-    }
-    trayWinId.insert({ tray->uID,trayData->winId });
+
     //delete trayData;
 }
 
@@ -90,42 +79,14 @@ LRESULT HelperWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         return true;
     }
     else if (msg == WM_TRAY) {
-        auto trayId = (int)wParam;
-        auto winId = trayWinId[trayId];
-        if (lParam == WM_RBUTTONDOWN) {
-            //JsonResult result(winId, "tray", std::to_string(trayId));
-            //result.addString("type", "rightBtnDown");
-            //result.returnBack();
-            SetForegroundWindow(hwnd);
-            POINT pt;
-            GetCursorPos(&pt);
-            HMENU menu = CreatePopupMenu();
-            AppendMenu(menu, MF_STRING, 1000000, L"测试数据测试");
-            TrackPopupMenu(menu, TPM_RIGHTBUTTON, pt.x, pt.y, 0, hwnd, nullptr);
-
-
-
-            //if (menus.contains(trayId)) {
-            //    auto menu = menus[trayId];
-            //    SetForegroundWindow(hwnd);
-            //    TrackPopupMenu(menu, TPM_RIGHTBUTTON, pt.x, pt.y, 0, hwnd, nullptr);
-            //}
-        }
-        else if (lParam == WM_LBUTTONDOWN) {
-            POINT pt;
-            GetCursorPos(&pt);
-            //SetForegroundWindow(hwnd);
-            //JsonResult result(winId, "tray", std::to_string(wParam));
-            //result.addString("type", "leftBtnDown");
-            //result.returnBack();
-        }
+        
     }
-    else if (msg == WM_COMMAND) {
-        auto trayId = (int)wParam;
-        auto winId = trayWinId[trayId];
-        //JsonResult result(winId, "tray", std::to_string(trayId));
-        //result.returnBack();
-    }
+    //else if (msg == WM_COMMAND) {
+    //    auto trayId = (int)wParam;
+    //    auto winId = trayWinId[trayId];
+    //    //JsonResult result(winId, "tray", std::to_string(trayId));
+    //    //result.returnBack();
+    //}
 }
 void HelperWindow::startCreateTray(TrayData* trayData)
 {

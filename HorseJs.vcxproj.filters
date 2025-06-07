@@ -90,6 +90,9 @@
     <ClCompile Include="App\HelperWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="App\MenuWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -296,6 +299,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="App\HelperWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="App\MenuWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

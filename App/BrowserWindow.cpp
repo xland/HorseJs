@@ -2,6 +2,7 @@
 #include <pch.h>
 
 #include "../App/App.h"
+#include "../App/MenuWindow.h"
 #include "../Processor/MsgProcessor.h"
 #include "../Processor/Tray.h"
 #include "BrowserWindow.h"
@@ -90,6 +91,27 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         auto result = reinterpret_cast<JsonResult*>(lParam);
         result->returnBack();
         delete result;
+    }
+    else if (msg == WM_TRAY) {
+        int trayId = (int)wParam;
+        if (lParam == WM_RBUTTONDOWN) {
+            //JsonResult result(winId, "tray", std::to_string(trayId));
+            //result.addString("type", "rightBtnDown");
+            //result.returnBack();
+            POINT pt;
+            GetCursorPos(&pt);
+            if (trayMenus.contains(trayId)) {
+                MenuWindow::get()->show(pt, trayMenus[trayId]);
+            }
+        }
+        else if (lParam == WM_LBUTTONDOWN) {
+            POINT pt;
+            GetCursorPos(&pt);
+            //SetForegroundWindow(hwnd);
+            //JsonResult result(winId, "tray", std::to_string(wParam));
+            //result.addString("type", "leftBtnDown");
+            //result.returnBack();
+        }
     }
     sysProcess:
     return DefWindowProc(hwnd, msg, wParam, lParam);

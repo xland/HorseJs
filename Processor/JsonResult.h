@@ -1,4 +1,4 @@
-#pragma once  
+﻿#pragma once  
 #include "../App/JsonParsor.h"  
 
 class BrowserWindow;
