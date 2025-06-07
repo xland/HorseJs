@@ -34,8 +34,6 @@ public:
 	wil::unique_hicon favicon;
 	std::unordered_map<std::string, std::set<int>> events;
 	wil::com_ptr<ICoreWebView2> webview;
-	std::vector<NOTIFYICONDATA*> trays;
-	std::unordered_map<int, HMENU> menus;
 protected:
 private:
 	void setWindowStyle(long& exStyle, long& style);

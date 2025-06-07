@@ -22,7 +22,7 @@ void JsonResult::addErr(const std::string& value)
 }
 void JsonResult::returnBackThread() {
     auto win = App::get()->getWindow(winId);
-    PostMessage(win->hwnd, WM_THREADRESULT, 0, (LPARAM)this);
+    PostMessage(win->hwnd, WM_THREAD_RESULT, 0, (LPARAM)this);
 }
 void JsonResult::returnBack()
 {

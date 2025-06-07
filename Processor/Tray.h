@@ -1,6 +1,16 @@
 #pragma once
 #include "../App/Util.h"
 #include "JsonResult.h"
+class TrayData
+{
+public:
+	int id;
+	std::map<int, std::wstring> menus;
+	std::wstring tip;
+	int winId;
+private:
+
+};
 class Tray
 {
 public:

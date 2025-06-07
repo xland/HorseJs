@@ -254,6 +254,7 @@
       let initTray = () => {
         $("#btnCreateTray").addEventListener("click", async () => {
           let data = await horse.tray.create({
+            tip: "托盘图标的Tip",
             rightBtnDown: () => {
               console.log("rightBtnDown");
             },

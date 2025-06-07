@@ -39,5 +39,6 @@
 using namespace Microsoft;
 using namespace winrt::Windows;
 
-#define WM_THREADRESULT (WM_USER + 100)
+#define WM_THREAD_RESULT (WM_USER + 100)
 #define WM_TRAY (WM_USER + 101)
+#define WM_TRAY_CREATE (WM_USER + 102)

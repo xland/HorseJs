@@ -82,35 +82,11 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     else if (msg == WM_SIZE) {
         stateChanged(wParam);
     }
-    else if (msg == WM_COMMAND) {
-        JsonResult result(id, "tray", std::to_string(wParam));
-        result.returnBack();
-    }
     else if (msg == WM_WINDOWPOSCHANGED) {
         WINDOWPOS* winPos = reinterpret_cast<WINDOWPOS*>(lParam);
         sizePosChanged(winPos);
     }
-    else if (msg == WM_TRAY) {
-        if (lParam == WM_RBUTTONDOWN) {
-            JsonResult result(id, "tray", std::to_string(wParam));
-            result.addString("type", "rightBtnDown");
-            result.returnBack();
-            POINT pt;
-            GetCursorPos(&pt);
-            if (menus.contains(wParam)) {
-                TrackPopupMenu(menus[wParam], TPM_RIGHTBUTTON, pt.x, pt.y, 0, hwnd, nullptr);
-            }
-        }
-        else if (lParam == WM_LBUTTONDOWN) {
-            POINT pt;
-            GetCursorPos(&pt);
-            SetForegroundWindow(hwnd);
-            JsonResult result(id, "tray", std::to_string(wParam));
-            result.addString("type", "leftBtnDown");
-            result.returnBack();
-        }
-    }
-    else if (msg == WM_THREADRESULT) {
+    else if (msg == WM_THREAD_RESULT) {
         auto result = reinterpret_cast<JsonResult*>(lParam);
         result->returnBack();
         delete result;
