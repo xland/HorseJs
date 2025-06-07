@@ -13,6 +13,7 @@ public:
 	std::vector<int> ids;
 	std::vector<std::wstring> texts;
 	int hoverIndex{ -1 };
+	int lineHeight{ 50 };
 private:
 	void createWindow();
 	static LRESULT CALLBACK winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
