@@ -35,7 +35,7 @@ public:
 	std::unordered_map<std::string, std::set<int>> events;
 	wil::com_ptr<ICoreWebView2> webview;
 	std::vector<NOTIFYICONDATA*> trays;
-	std::map<int, std::map<int, std::wstring>> trayMenus;
+	std::map<int, HMENU> trayMenus;
 protected:
 private:
 	void setWindowStyle(long& exStyle, long& style);

@@ -2,7 +2,6 @@
 #include "Tray.h"
 #include "../App/App.h"
 #include "../App/BrowserWindow.h"
-#include "../App/MenuWindow.h"
 
 namespace {
     std::unique_ptr<Tray> tray;
@@ -58,15 +57,15 @@ void Tray::create(const rapidjson::Value& params, JsonResult* result)
 
     
     if(config.HasMember("menu") && config["menu"].IsArray()){
+        HMENU menu = CreatePopupMenu();
         const rapidjson::Value::ConstArray menuArr = config["menu"].GetArray();
-        std::map<int, std::wstring> menus;
         for (size_t i = 0; i < menuArr.Size(); i++)
         {
             const rapidjson::Value& value = menuArr[i];
             auto id = value["__id"].GetInt();
             auto text = Util::convertToWStr(value["text"].GetString());
-            menus.insert({ id,text });
+            AppendMenu(menu, MF_STRING, id,text.data());
         }
-        win->trayMenus.insert({ tray->uID ,std::move(menus)});
+        win->trayMenus.insert({ tray->uID ,menu});
     }
 }

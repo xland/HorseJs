@@ -2,7 +2,6 @@
 #include <pch.h>
 
 #include "../App/App.h"
-#include "../App/MenuWindow.h"
 #include "../Processor/MsgProcessor.h"
 #include "../Processor/Tray.h"
 #include "BrowserWindow.h"
@@ -92,25 +91,29 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         result->returnBack();
         delete result;
     }
+    else if (msg == WM_COMMAND) {
+        JsonResult result(id, "tray", std::to_string(wParam));
+        result.returnBack();
+    }
     else if (msg == WM_TRAY) {
-        int trayId = (int)wParam;
         if (lParam == WM_RBUTTONDOWN) {
-            //JsonResult result(winId, "tray", std::to_string(trayId));
-            //result.addString("type", "rightBtnDown");
-            //result.returnBack();
+            JsonResult result(id, "tray", std::to_string(wParam));
+            result.addString("type", "rightBtnDown");
+            result.returnBack();
             POINT pt;
             GetCursorPos(&pt);
-            if (trayMenus.contains(trayId)) {
-                MenuWindow::get()->show(pt, trayMenus[trayId]);
+            if (trayMenus.contains(wParam)) {
+                SetForegroundWindow(hwnd);
+                TrackPopupMenuEx(trayMenus[wParam], TPM_RIGHTBUTTON, pt.x, pt.y, hwnd, nullptr);
             }
         }
         else if (lParam == WM_LBUTTONDOWN) {
             POINT pt;
             GetCursorPos(&pt);
-            //SetForegroundWindow(hwnd);
-            //JsonResult result(winId, "tray", std::to_string(wParam));
-            //result.addString("type", "leftBtnDown");
-            //result.returnBack();
+            SetForegroundWindow(hwnd);
+            JsonResult result(id, "tray", std::to_string(wParam));
+            result.addString("type", "leftBtnDown");
+            result.returnBack();
         }
     }
     sysProcess:
