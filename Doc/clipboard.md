@@ -53,3 +53,9 @@ const rtfContent = "{\\rtf1\\ansi\\ansicpg65001\\deff0" +
 let data = await horse.clipboard.writeRtf(rtfContent);
 console.log(data);
 ```
+
+- 清空剪切板
+```js
+let data = await horse.clipboard.clear();
+console.log(data);
+```

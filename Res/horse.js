@@ -281,6 +281,9 @@
     writeRtf(rtf) {
       return this.callMethod("writeRtf", rtf);
     }
+    clear() {
+      return this.callMethod("clear");
+    }
     callMethod(methodName, ...params) {
       return this.call({
         className: "clipboard",

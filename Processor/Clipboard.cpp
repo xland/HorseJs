@@ -12,6 +12,7 @@ namespace {
         {"writeHtml", &Clipboard::writeHtml},
         {"readRtf", &Clipboard::readRtf},
         {"writeRtf", &Clipboard::writeRtf},
+        {"clear", &Clipboard::clear},
     };
 
     UINT CF_HTML,CF_RTF;
@@ -42,8 +43,6 @@ bool Clipboard::execute(std::string& methodName, const rapidjson::Value& param, 
     (Clipboard::get()->*it->second)(param, result);
     return true;
 }
-
-
 
 void Clipboard::getDataType(const rapidjson::Value& params, JsonResult* result)
 {
@@ -295,16 +294,14 @@ void Clipboard::writeRtf(const rapidjson::Value& params, JsonResult* result)
     CloseClipboard();
 }
 
-void Clipboard::readBookmark(const rapidjson::Value& params, JsonResult* result)
-{
-}
-
-void Clipboard::writeBookmark(const rapidjson::Value& params, JsonResult* result)
-{
-}
-
 void Clipboard::clear(const rapidjson::Value& params, JsonResult* result)
 {
+    if (!OpenClipboard(NULL)) {
+        result->addErr("open clipboard err");
+        return;
+    }
+    EmptyClipboard();
+    CloseClipboard();
 }
 
 
