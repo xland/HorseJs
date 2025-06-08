@@ -30,3 +30,14 @@ std::string Util::convertToStr(const std::wstring& wstr)
     WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, &str[0], count, NULL, NULL);
     return str;
 }
+
+std::string Util::convertToAnsi(const std::wstring& wstr)
+{
+    int count = WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), (int)wstr.size(), nullptr, 0, nullptr, nullptr);
+    if (count <= 0) {
+        return std::string(); // ×ª»»Ê§°Ü
+    }
+    std::string str(count, 0);
+    WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), (int)wstr.size(), &str[0], count, nullptr, nullptr);
+    return str;
+}

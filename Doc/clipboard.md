@@ -40,3 +40,16 @@ console.log(data);
 let data = await horse.clipboard.readRtf();
 console.log(data);
 ```
+
+- 向剪切板写入Rtf字符串
+```js
+const rtfContent = "{\\rtf1\\ansi\\ansicpg65001\\deff0" +
+  "{\\fonttbl{\\f0\\fnil\\fcharset134 SimSun;}}" +
+  "{\\colortbl ;\\red255\\green0\\blue0;\\red0\\green0\\blue255;}" +
+  "\\pard\\fs24" +
+  "This is a \\b bold\\b0  and \\i italic\\i0  这是宋体中文文本。\\par" +
+  "\\fs20 Normal text with default font.\\par" +
+  "}";
+let data = await horse.clipboard.writeRtf(rtfContent);
+console.log(data);
+```

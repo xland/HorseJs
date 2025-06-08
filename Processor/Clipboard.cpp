@@ -269,7 +269,8 @@ void Clipboard::readRtf(const rapidjson::Value& params, JsonResult* result)
 void Clipboard::writeRtf(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
-    std::string text = arr[0].GetString();
+    std::wstring text1 = Util::convertToWStr(arr[0].GetString());
+    std::string text = Util::convertToAnsi(text1);
     if (!OpenClipboard(NULL)) {
         result->addErr("open clipboard err");
         return;
