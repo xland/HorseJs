@@ -86,6 +86,7 @@
       <div id="btnReadClipBoardHtml" class="btn">读取剪切板内的html</div>
       <div id="btnWriteClipBoardHtml" class="btn">向剪切板写入html</div>
       <div id="btnReadClipBoardRtf" class="btn">读取剪切板内的Rtf</div>
+      <div id="btnWriteClipBoardRtf" class="btn">向剪切板写入Rtf</div>
       <p>menu</p>
       <div id="btnCreateMenu" class="btn">创建菜单</div>
       <p>net</p>
@@ -182,6 +183,11 @@
         });
         $("#btnReadClipBoardRtf").addEventListener("click", async () => {
           let data = await horse.clipboard.readRtf();
+          console.log(data);
+        });
+        $("#btnWriteClipBoardRtf").addEventListener("click", async () => {
+          const rtfContent = `{\\rtf1\\ansi{\\fonttbl\\f0\\fswiss Helvetica;}\\f0\\pard\n这是一段测试文本\\par}`;
+          let data = await horse.clipboard.writeRtf(rtfContent);
           console.log(data);
         });
       };

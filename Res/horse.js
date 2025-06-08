@@ -278,6 +278,9 @@
     readRtf() {
       return this.callMethod("readRtf");
     }
+    writeRtf(rtf) {
+      return this.callMethod("writeRtf", rtf);
+    }
     callMethod(methodName, ...params) {
       return this.call({
         className: "clipboard",

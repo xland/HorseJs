@@ -18,6 +18,9 @@ export class Clipboard extends Eventer {
   readRtf() {
     return this.callMethod("readRtf");
   }
+  writeRtf(rtf: string) {
+    return this.callMethod("writeRtf", rtf);
+  }
   private callMethod(methodName: string, ...params: any[]) {
     return this.call({
       className: "clipboard",

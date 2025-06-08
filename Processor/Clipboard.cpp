@@ -11,6 +11,7 @@ namespace {
         {"readHtml", &Clipboard::readHtml},
         {"writeHtml", &Clipboard::writeHtml},
         {"readRtf", &Clipboard::readRtf},
+        {"writeRtf", &Clipboard::writeRtf},
     };
 
     UINT CF_HTML,CF_RTF;
@@ -267,6 +268,30 @@ void Clipboard::readRtf(const rapidjson::Value& params, JsonResult* result)
 
 void Clipboard::writeRtf(const rapidjson::Value& params, JsonResult* result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::string text = arr[0].GetString();
+    if (!OpenClipboard(NULL)) {
+        result->addErr("open clipboard err");
+        return;
+    }
+    EmptyClipboard();
+    size_t length = (text.size() + 1);
+    HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, length);
+    if (hGlobal == NULL) {
+        CloseClipboard();
+        result->addErr("alloc global memory err");
+        return;
+    }
+    auto pGlobal = (char*)GlobalLock(hGlobal);
+    if (pGlobal == NULL) {
+        CloseClipboard();
+        result->addErr("global memory lock err");
+        return;
+    }
+    strcpy_s(pGlobal, length, text.c_str());
+    GlobalUnlock(hGlobal);
+    SetClipboardData(CF_RTF, hGlobal);
+    CloseClipboard();
 }
 
 void Clipboard::readBookmark(const rapidjson::Value& params, JsonResult* result)
