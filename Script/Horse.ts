@@ -1,5 +1,4 @@
 import { Process } from "./Process";
-import { Menu } from "./Menu";
 import { Tray } from "./Tray";
 import { Notify } from "./Notify";
 import { WinProx } from "./WinProxy";
@@ -23,7 +22,6 @@ class Horse extends Eventer {
   os: Os;
   screen: Screen;
   tray: Tray;
-  menu: Menu;
   process: Process;
   webview;
   constructor() {
@@ -38,7 +36,6 @@ class Horse extends Eventer {
     this.os = new Os();
     this.screen = new Screen();
     this.tray = new Tray();
-    this.menu = new Menu();
     this.process = new Process();
     this.listenMsg();
   }

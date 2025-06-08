@@ -87,28 +87,6 @@
     }
   };
 
-  // Menu.ts
-  var Menu = class extends Eventer {
-    async create(arr) {
-      arr.forEach((item) => {
-        item.__id = util.randomNum();
-        if (item.click) {
-          this.on(item.__id, item.click);
-          delete item.click;
-        }
-      });
-      return this.callMethod("create", ...arr);
-    }
-    callMethod(methodName, ...params) {
-      return this.call({
-        className: "menu",
-        winId: globalThis.__WIN_ID,
-        methodName,
-        params
-      });
-    }
-  };
-
   // Tray.ts
   var Tray = class extends Eventer {
     async create(config) {
@@ -361,7 +339,6 @@
     os;
     screen;
     tray;
-    menu;
     process;
     webview;
     constructor() {
@@ -376,7 +353,6 @@
       this.os = new Os();
       this.screen = new Screen();
       this.tray = new Tray();
-      this.menu = new Menu();
       this.process = new Process();
       this.listenMsg();
     }

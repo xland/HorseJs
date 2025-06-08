@@ -1,3 +1,5 @@
-用于获取系统进程信息、启动子进程等
-
-目前此模块尚未开发完成
+- 启动一个进程
+```js
+let data = await horse.process.exec("notepad.exe");
+console.log(data);
+```
