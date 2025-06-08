@@ -9,9 +9,10 @@ namespace {
         {"readText", &Clipboard::readText},
         {"writeText", &Clipboard::writeText},
         {"readHtml", &Clipboard::readHtml},
+        {"readRtf", &Clipboard::readRtf},
     };
 
-    UINT CF_HTML;
+    UINT CF_HTML,CF_RTF;
 }
 
 Clipboard::Clipboard()
@@ -26,6 +27,7 @@ Clipboard* Clipboard::get()
 {
     if(!clipboard) {
         CF_HTML = RegisterClipboardFormat(L"HTML Format");
+        CF_RTF = RegisterClipboardFormat(L"Rich Text Format");
         clipboard = std::make_unique<Clipboard>();
 	}
     return clipboard.get();
@@ -52,6 +54,9 @@ void Clipboard::getDataType(const rapidjson::Value& params, JsonResult* result)
     }
     else if (IsClipboardFormatAvailable(CF_HTML)) {
         result->addString("data", "html");
+    }
+    else if (IsClipboardFormatAvailable(CF_RTF)) {
+        result->addString("data", "rtf");
     }
     else if (IsClipboardFormatAvailable(CF_TEXT) || IsClipboardFormatAvailable(CF_UNICODETEXT)) {
         result->addString("data", "text");
@@ -135,20 +140,15 @@ void Clipboard::writeFile(const rapidjson::Value& params, JsonResult* result)
 
 void Clipboard::readHtml(const rapidjson::Value& params, JsonResult* result)
 {
-    // 打开剪切板
     if (!OpenClipboard(NULL)) {
         result->addErr("Open clipboard error: " + std::to_string(GetLastError()));
         return;
     }
-
-    // 检查 HTML 格式
     if (!IsClipboardFormatAvailable(CF_HTML)) {
         result->addErr("No HTML data in clipboard");
         CloseClipboard();
         return;
     }
-
-    // 获取 HTML 数据句柄
     HGLOBAL hData = GetClipboardData(CF_HTML);
     if (hData == NULL) {
         result->addErr("Cannot get HTML data: " + std::to_string(GetLastError()));
@@ -187,10 +187,36 @@ void Clipboard::readHtml(const rapidjson::Value& params, JsonResult* result)
 
 void Clipboard::writeHtml(const rapidjson::Value& params, JsonResult* result)
 {
+
 }
 
 void Clipboard::readRtf(const rapidjson::Value& params, JsonResult* result)
 {
+    if (!OpenClipboard(NULL)) {
+        result->addErr("Open clipboard error: " + std::to_string(GetLastError()));
+        return;
+    }
+    if (!IsClipboardFormatAvailable(CF_RTF)) {
+        result->addErr("No HTML data in clipboard");
+        CloseClipboard();
+        return;
+    }
+    HGLOBAL hData = GetClipboardData(CF_RTF);
+    if (hData == NULL) {
+        result->addErr("Cannot get HTML data: " + std::to_string(GetLastError()));
+        CloseClipboard();
+        return;
+    }
+    const char* data = static_cast<const char*>(GlobalLock(hData));
+    if (data == NULL) {
+        result->addErr("Cannot lock memory: " + std::to_string(GetLastError()));
+        CloseClipboard();
+        return;
+    }
+    // 解锁内存并关闭剪切板
+    GlobalUnlock(hData);
+    CloseClipboard();
+    result->addString("data", data);
 }
 
 void Clipboard::writeRtf(const rapidjson::Value& params, JsonResult* result)

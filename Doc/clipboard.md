@@ -28,3 +28,9 @@ console.log(data);
 let data = await horse.clipboard.readHtml();
 console.log(data);
 ```
+
+- 读取剪切板内的Rtf字符串
+```js
+let data = await horse.clipboard.readRtf();
+console.log(data);
+```

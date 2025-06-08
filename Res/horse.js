@@ -272,6 +272,9 @@
     readHtml() {
       return this.callMethod("readHtml");
     }
+    readRtf() {
+      return this.callMethod("readRtf");
+    }
     callMethod(methodName, ...params) {
       return this.call({
         className: "clipboard",
