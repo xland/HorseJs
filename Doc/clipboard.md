@@ -1,7 +1,7 @@
 ## horse.clipboard 的方法
 
 - 获取剪切板内的数据的数据类型
-> 已定义的数据类型：file、html、text、img、unknown
+> 已定义的数据类型：file、html、text、img、rtf、unknown
 ```js
 let data = await horse.clipboard.getDataType();
 console.log(data);
