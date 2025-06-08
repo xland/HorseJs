@@ -12,6 +12,9 @@ export class Clipboard extends Eventer {
   readHtml() {
     return this.callMethod("readHtml");
   }
+  writeHtml(html: string) {
+    return this.callMethod("writeHtml", html);
+  }
   readRtf() {
     return this.callMethod("readRtf");
   }

@@ -272,6 +272,9 @@
     readHtml() {
       return this.callMethod("readHtml");
     }
+    writeHtml(html) {
+      return this.callMethod("writeHtml", html);
+    }
     readRtf() {
       return this.callMethod("readRtf");
     }

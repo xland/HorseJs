@@ -9,6 +9,7 @@ namespace {
         {"readText", &Clipboard::readText},
         {"writeText", &Clipboard::writeText},
         {"readHtml", &Clipboard::readHtml},
+        {"writeHtml", &Clipboard::writeHtml},
         {"readRtf", &Clipboard::readRtf},
     };
 
@@ -187,7 +188,52 @@ void Clipboard::readHtml(const rapidjson::Value& params, JsonResult* result)
 
 void Clipboard::writeHtml(const rapidjson::Value& params, JsonResult* result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::string fragment = arr[0].GetString();
+    constexpr std::string_view header =
+        "Version:0.9\r\n"
+        "StartHTML:{:08d}\r\n"
+        "EndHTML:{:08d}\r\n"
+        "StartFragment:{:08d}\r\n"
+        "EndFragment:{:08d}\r\n"
+        "StartSelection:{:08d}\r\n"
+        "EndSelection:{:08d}\r\n"
+        "SourceURL:about:blank\r\n";
+    std::string_view htmlPrefix = "<html>\r\n<head><meta charset=\"UTF-8\"></head>\r\n<body>\r\n<!--StartFragment-->";
+    std::string_view htmlSuffix = "<!--EndFragment-->\r\n</body>\r\n</html>";
 
+    std::string cfHtmlHeader = std::format(header, 0, 0, 0, 0, 0, 0);
+    size_t headerLen = cfHtmlHeader.length();
+    size_t startHtml = headerLen;
+    size_t startFragment = startHtml + htmlPrefix.length();
+    size_t endFragment = startFragment + fragment.length();
+    size_t endHtml = endFragment + htmlSuffix.length();
+    cfHtmlHeader = std::format(header, startHtml, endHtml, startFragment, endFragment, startFragment, endFragment);
+    std::string sHtml;
+    sHtml.reserve(endHtml + 1);
+    sHtml.append(cfHtmlHeader).append(htmlPrefix).append(fragment).append(htmlSuffix);
+    if (!OpenClipboard(NULL)) {
+        result->addErr("open clipboard err");
+        return;
+    }
+    EmptyClipboard();
+    HGLOBAL hGlobal = GlobalAlloc(GMEM_DDESHARE, sHtml.size() + 1);
+    if (hGlobal == NULL) {
+        CloseClipboard();
+        result->addErr("alloc global memory err");
+        return;
+    }
+    char* pchData = static_cast<char*>(GlobalLock(hGlobal));
+    if (pchData == NULL) {
+        GlobalFree(hGlobal);
+        CloseClipboard();
+        result->addErr("lock global memory err");
+        return;
+    }
+    strcpy_s(pchData, sHtml.size() + 1, sHtml.c_str());
+    GlobalUnlock(hGlobal);
+    SetClipboardData(CF_HTML, hGlobal);
+    CloseClipboard();
 }
 
 void Clipboard::readRtf(const rapidjson::Value& params, JsonResult* result)
