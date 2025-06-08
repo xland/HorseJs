@@ -7,7 +7,7 @@ public:
 	Net();
 	~Net();
 	static Net* get();
-	static bool excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result);
+	static bool execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result);
 	void getAddress(const rapidjson::Value& params, JsonResult* result);
 private:
 };

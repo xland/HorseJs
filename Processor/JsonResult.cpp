@@ -35,7 +35,7 @@ void JsonResult::returnBack()
     win->webview->PostWebMessageAsJson(jsonStr.data());
 }
 
-void JsonResult::returnBackSharedBuffer() //todo 到不了这个方法
+void JsonResult::returnBackSharedBuffer(ICoreWebView2SharedBuffer* sharedBuffer) //todo 到不了这个方法
 {
     if (ok) {
         addBool("ok", true);
@@ -43,7 +43,7 @@ void JsonResult::returnBackSharedBuffer() //todo 到不了这个方法
     std::wstring jsonStr = parse();
     auto win = App::get()->getWindow(winId);
     auto webview17 = win->webview.try_query<ICoreWebView2_17>();
-    webview17->PostSharedBufferToScript(this->sharedBuffer, COREWEBVIEW2_SHARED_BUFFER_ACCESS_READ_ONLY, jsonStr.data());
+    webview17->PostSharedBufferToScript(sharedBuffer, COREWEBVIEW2_SHARED_BUFFER_ACCESS_READ_ONLY, jsonStr.data());
 }
 
 BrowserWindow* JsonResult::getTar()

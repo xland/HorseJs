@@ -26,7 +26,7 @@ Tray* Tray::get()
 	}
     return tray.get();
 }
-bool Tray::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+bool Tray::execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
     auto it = funcs.find(methodName);
     if (it == funcs.end()) return false;
@@ -39,7 +39,7 @@ void Tray::create(const rapidjson::Value& params, JsonResult* result)
     const rapidjson::Value::ConstArray arr = params.GetArray();
     const rapidjson::Value& config = arr[0];
 
-    auto win = result->getWin(); //todo Ïú»Ù tray
+    auto win = result->getWin();
     NOTIFYICONDATA* tray = new NOTIFYICONDATA();
     ZeroMemory(tray, sizeof(NOTIFYICONDATA));
     tray->cbSize = sizeof(NOTIFYICONDATA);

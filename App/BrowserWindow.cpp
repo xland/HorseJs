@@ -17,6 +17,15 @@ BrowserWindow::BrowserWindow(const rapidjson::Value& winConfig)
 
 BrowserWindow::~BrowserWindow()
 {
+    for (auto& tray:trays)
+    {
+        Shell_NotifyIcon(NIM_DELETE, tray);
+        delete tray;
+    }
+    for (auto& item :trayMenus)
+    {
+        DestroyMenu(item.second);
+    }
 }
 
 void BrowserWindow::initWindow()

@@ -7,7 +7,7 @@ public:
 	Lib();
 	~Lib();
 	static Lib* get();
-	static bool excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result);
+	static bool execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result);
 	void load(const rapidjson::Value& params, JsonResult* result);
 	void free(const rapidjson::Value& params, JsonResult* result);
 	void call(const rapidjson::Value& params, JsonResult* result);

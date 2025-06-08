@@ -24,7 +24,7 @@ Screen* Screen::get()
 	}
     return screen.get();
 }
-bool Screen::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+bool Screen::execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
     auto it = funcs.find(methodName);
     if (it == funcs.end()) return false;

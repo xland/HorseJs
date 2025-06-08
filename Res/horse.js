@@ -72,6 +72,21 @@
     }
   };
 
+  // Process.ts
+  var Process = class extends Eventer {
+    async exec(path) {
+      return this.callMethod("exec", path);
+    }
+    callMethod(methodName, ...params) {
+      return this.call({
+        className: "process",
+        winId: globalThis.__WIN_ID,
+        methodName,
+        params
+      });
+    }
+  };
+
   // Menu.ts
   var Menu = class extends Eventer {
     async create(arr) {
@@ -347,6 +362,7 @@
     screen;
     tray;
     menu;
+    process;
     webview;
     constructor() {
       super();
@@ -361,6 +377,7 @@
       this.screen = new Screen();
       this.tray = new Tray();
       this.menu = new Menu();
+      this.process = new Process();
       this.listenMsg();
     }
     getConfig() {

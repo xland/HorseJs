@@ -21,19 +21,19 @@ namespace {
     std::unique_ptr<MsgProcessor> msgProcessor;
 
     static std::unordered_map<std::string, std::function<bool(std::string&, const rapidjson::Value&, JsonResult*)>> processFunc{
-        {"clipboard",Clipboard::excute},
-        {"dialog",Dialog::excute},
-        {"horse",Horse::excute},
-        {"lib",Lib::excute},
-        {"net",Net::excute},
-        {"menu",Menu::excute},
-        {"fs",Fs::excute},
-        {"notify",Notify::excute},
-        {"win",Win::excute},
-        {"os",Os::excute},
-        {"screen",Screen::excute},
-        {"tray",Tray::excute},
-        {"process",Process::excute},
+        {"clipboard",Clipboard::execute},
+        {"dialog",Dialog::execute},
+        {"horse",Horse::execute},
+        {"lib",Lib::execute},
+        {"net",Net::execute},
+        {"menu",Menu::execute},
+        {"fs",Fs::execute},
+        {"notify",Notify::execute},
+        {"win",Win::execute},
+        {"os",Os::execute},
+        {"screen",Screen::execute},
+        {"tray",Tray::execute},
+        {"process",Process::execute},
     };
 }
 

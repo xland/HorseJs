@@ -8,7 +8,7 @@ public:
 	Fs();
 	~Fs();
 	static Fs* get();
-	static bool excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result);
+	static bool execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result);
 	void getFileInfo(const rapidjson::Value& params, JsonResult* result);
 	void exists(const rapidjson::Value& params, JsonResult* result);
 	void readFile(const rapidjson::Value& params, JsonResult* result);

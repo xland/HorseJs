@@ -11,6 +11,7 @@ namespace {
     static std::unordered_map<std::string, void (Net::*)(const rapidjson::Value&, JsonResult*)> funcs{
     {"getAddress", &Net::getAddress},
     };
+    // todo: 创建一个命名管道，接收数据
 }
 
 Net::Net()
@@ -28,7 +29,7 @@ Net* Net::get()
 	}
     return net.get();
 }
-bool Net::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+bool Net::execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
     auto it = funcs.find(methodName);
     if (it == funcs.end()) return false;

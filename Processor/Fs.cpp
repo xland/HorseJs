@@ -38,7 +38,7 @@ Fs* Fs::get()
 	}
     return fs.get();
 }
-bool Fs::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+bool Fs::execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
     auto it = funcs.find(methodName);
     if (it == funcs.end()) return false;
@@ -145,12 +145,12 @@ void Fs::readFile(const rapidjson::Value& params, JsonResult* result)
     sharedBuffer->OpenStream(&stream);
     stream->Write(buffer.data(), totalSize, nullptr);
     result->addNumber("totalSize", totalSize);
-    result->sharedBuffer = sharedBuffer.get();
-    result->returnBackSharedBuffer();
+    result->returnBackSharedBuffer(sharedBuffer.get());
     //关闭 C++ 端对共享缓冲区的访问权限。 通知操作系统，主进程不再持有该共享内存的引用。
     //此时共享内存由渲染进程持有，不会立即销毁。
     //渲染进程通过 chrome.webview.releaseBuffer 释放缓冲区。
     sharedBuffer->Close();
+    result->cancel = true;
 }
 
 void Fs::readFileChunk(const rapidjson::Value& params, JsonResult* result)
@@ -189,13 +189,12 @@ void Fs::readFileChunk(const rapidjson::Value& params, JsonResult* result)
     result->addNumber("totalSize", totalSize);
     result->addNumber("readSize", readSize);
     result->addNumber("startPos", start);
-    result->sharedBuffer = sharedBuffer.get();
-    result->returnBackSharedBuffer();
+    result->returnBackSharedBuffer(sharedBuffer.get());
     //关闭 C++ 端对共享缓冲区的访问权限。 通知操作系统，主进程不再持有该共享内存的引用。
     //此时共享内存由渲染进程持有，不会立即销毁。
     //渲染进程通过 chrome.webview.releaseBuffer 释放缓冲区。
     sharedBuffer->Close();
-
+    result->cancel = true;
 }
 
 void Fs::writeFile(const rapidjson::Value& params, JsonResult* result)

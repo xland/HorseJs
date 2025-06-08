@@ -1,3 +1,4 @@
+import { Process } from "./Process";
 import { Menu } from "./Menu";
 import { Tray } from "./Tray";
 import { Notify } from "./Notify";
@@ -23,6 +24,7 @@ class Horse extends Eventer {
   screen: Screen;
   tray: Tray;
   menu: Menu;
+  process: Process;
   webview;
   constructor() {
     super();
@@ -37,6 +39,7 @@ class Horse extends Eventer {
     this.screen = new Screen();
     this.tray = new Tray();
     this.menu = new Menu();
+    this.process = new Process();
     this.listenMsg();
   }
   getConfig() {

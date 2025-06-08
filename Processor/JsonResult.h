@@ -10,13 +10,12 @@ class JsonResult : public JsonParsor
         void addErr(const std::string& value);
         void returnBackThread();
         void returnBack();
-        void returnBackSharedBuffer();
+        void returnBackSharedBuffer(ICoreWebView2SharedBuffer* sharedBuffer);
         BrowserWindow* getTar();
         BrowserWindow* getWin();
     public:
         bool ok{ true },cancel{false};
         int winId, tarId{-1};
-        ICoreWebView2SharedBuffer* sharedBuffer; //todo大部分result都不需要这个指针，导致多了8个字节
     private:
     private:
 };

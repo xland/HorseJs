@@ -36,7 +36,7 @@ Win* Win::get()
     }
     return win.get();
 }
-bool Win::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+bool Win::execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
     auto it = funcs.find(methodName);
     if (it == funcs.end()) return false;

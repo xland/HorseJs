@@ -31,7 +31,7 @@ Clipboard* Clipboard::get()
     return clipboard.get();
 }
 
-bool Clipboard::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+bool Clipboard::execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
     auto it = funcs.find(methodName);
     if (it == funcs.end()) return false;

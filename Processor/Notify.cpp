@@ -29,7 +29,7 @@ Notify* Notify::get()
 	}
     return notify.get();
 }
-bool Notify::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+bool Notify::execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
     auto it = funcs.find(methodName);
     if (it == funcs.end()) return false;

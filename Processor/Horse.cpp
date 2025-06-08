@@ -26,7 +26,7 @@ Horse* Horse::get()
 	}
     return horse.get();
 }
-bool Horse::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+bool Horse::execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
     auto it = funcs.find(methodName);
     if (it == funcs.end()) return false;

@@ -29,7 +29,7 @@ Lib* Lib::get()
 	}
     return lib.get();
 }
-bool Lib::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+bool Lib::execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
     auto it = funcs.find(methodName);
     if (it == funcs.end()) return false;

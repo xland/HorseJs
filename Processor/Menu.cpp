@@ -28,7 +28,7 @@ Menu* Menu::get()
 	}
     return menu.get();
 }
-bool Menu::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+bool Menu::execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
     auto it = funcs.find(methodName);
     if (it == funcs.end()) return false;

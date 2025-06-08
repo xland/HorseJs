@@ -25,7 +25,7 @@ Os* Os::get()
 	}
     return os.get();
 }
-bool Os::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+bool Os::execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
     auto it = funcs.find(methodName);
     if (it == funcs.end()) return false;

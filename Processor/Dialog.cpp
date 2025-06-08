@@ -25,7 +25,7 @@ Dialog* Dialog::get()
 	}
     return dialog.get();
 }
-bool Dialog::excute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
+bool Dialog::execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
 {
     auto it = funcs.find(methodName);
     if (it == funcs.end()) return false;
