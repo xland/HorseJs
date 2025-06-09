@@ -1,4 +1,5 @@
 ﻿#include <pch.h>
+#include "../App/App.h"
 #include "Clipboard.h"
 
 namespace {
@@ -129,6 +130,65 @@ void Clipboard::writeText(const rapidjson::Value& params, JsonResult* result)
 
 void Clipboard::readImg(const rapidjson::Value& params, JsonResult* result)
 {
+    if (!OpenClipboard(nullptr)) {
+        result->addErr("can not open clipboard");
+        return;
+    }
+    if (!IsClipboardFormatAvailable(CF_BITMAP)) {
+        result->addErr("no img");
+        CloseClipboard();
+        return;
+    }
+    HBITMAP hBitmap = (HBITMAP)GetClipboardData(CF_BITMAP);
+    if (hBitmap == nullptr) {
+        result->addErr("can not get img");
+        CloseClipboard();
+        return;
+    }
+    BITMAP bmp;
+    if (GetObject(hBitmap, sizeof(BITMAP), &bmp) == 0) {
+        result->addErr("can not get bitmap");
+        CloseClipboard();
+        return;
+    }
+    HDC hdc = CreateCompatibleDC(nullptr);
+    if (hdc == nullptr) {
+        result->addErr("create compatible DC err");
+        CloseClipboard();
+        return;
+    }
+    HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdc, hBitmap);
+    if (hOldBitmap == nullptr) {
+        result->addErr("select bitmap to hdc err");
+        DeleteDC(hdc);
+        CloseClipboard();
+        return;
+    }
+    long long pixCount = bmp.bmWidth * 4 * bmp.bmHeight;
+    BITMAPINFO bmi = { sizeof(BITMAPINFOHEADER), bmp.bmWidth, 0 - bmp.bmHeight, 1, 32, BI_RGB, pixCount, 0, 0, 0, 0 };
+    std::vector<unsigned char> buffer(pixCount);
+    if (GetDIBits(hdc, hBitmap, 0, bmp.bmHeight, buffer.data(), &bmi, DIB_RGB_COLORS) == 0) {
+        result->addErr("get pix err");
+        SelectObject(hdc, hOldBitmap);
+        DeleteDC(hdc);
+        CloseClipboard();
+        return;
+    }
+    auto env12 = App::get()->env.try_query<ICoreWebView2Environment12>();
+    wil::com_ptr<ICoreWebView2SharedBuffer> sharedBuffer;
+    auto hr = env12->CreateSharedBuffer(pixCount, &sharedBuffer);
+    wil::com_ptr<IStream> stream;
+    sharedBuffer->OpenStream(&stream);
+    stream->Write(buffer.data(), pixCount, nullptr);
+    result->addNumber("w", (int)bmp.bmWidth);
+    result->addNumber("h", (int)bmp.bmHeight);
+    result->returnBackSharedBuffer(sharedBuffer.get());
+    sharedBuffer->Close();
+    result->cancel = true;
+    // 清理资源
+    SelectObject(hdc, hOldBitmap);
+    DeleteDC(hdc);
+    CloseClipboard();
 }
 
 void Clipboard::writeImg(const rapidjson::Value& params, JsonResult* result)

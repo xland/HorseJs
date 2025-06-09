@@ -65,13 +65,23 @@ class Horse extends Eventer {
       delete e.additionalData.className;
       let evtName = e.additionalData.eventName;
       delete e.additionalData.eventName;
-      this[clsName].emit(evtName, {
-        buffer,
-        ...e.additionalData,
-        release: () => {
-          window.chrome.webview.releaseBuffer(buffer);
-        },
-      });
+      if (clsName !== "horse") {
+        this[clsName].emit(evtName, {
+          buffer,
+          ...e.additionalData,
+          release: () => {
+            window.chrome.webview.releaseBuffer(buffer);
+          },
+        });
+      } else {
+        this.emit(evtName, {
+          buffer,
+          ...e.additionalData,
+          release: () => {
+            window.chrome.webview.releaseBuffer(buffer);
+          },
+        });
+      }
     });
   }
   private callMethod(methodName: string, ...params: any[]) {

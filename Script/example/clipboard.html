@@ -60,7 +60,12 @@
         });
         $("#btnReadImg").addEventListener("click", async () => {
           let data = await horse.clipboard.readImg();
-          console.log(data);
+          const uint8Array = new Uint8Array(data.buffer);
+          const binaryString = new TextDecoder("latin1").decode(uint8Array);
+          const base64String = btoa(binaryString);
+          base64String = `data:${mimeType};base64,${base64String}`;
+          data.release();
+          console.log(base64String);
         });
         $("#btnWriteImg").addEventListener("click", async () => {
           let data = await horse.clipboard.writeImg(`D:\\project\\HorseJs\\Doc\\img\\horse.png`);
