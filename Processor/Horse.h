@@ -10,6 +10,7 @@ public:
 	static bool execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result);
 	void getConfig(const rapidjson::Value& params, JsonResult* result);
 	void createWindow(const rapidjson::Value& params, JsonResult* result);
+	void getVersion(const rapidjson::Value& params, JsonResult* result);
 private:
 };
 

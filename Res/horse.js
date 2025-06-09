@@ -288,6 +288,9 @@
     writeRtf(rtf) {
       return this.callMethod("writeRtf", rtf);
     }
+    writeFile(...paths) {
+      return this.callMethod("writeFile", ...paths);
+    }
     clear() {
       return this.callMethod("clear");
     }

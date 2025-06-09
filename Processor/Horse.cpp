@@ -52,3 +52,8 @@ void Horse::createWindow(const rapidjson::Value& params, JsonResult* result)
     result->addNumber("id", winIns->id);
     App::get()->winMap.insert({ winIns->id,std::move(winIns) });
 }
+
+void Horse::getVersion(const rapidjson::Value& params, JsonResult* result) 
+{
+
+}

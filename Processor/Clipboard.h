@@ -20,8 +20,6 @@ public:
 	void writeHtml(const rapidjson::Value& params, JsonResult* result);
 	void readRtf(const rapidjson::Value& params, JsonResult* result);
 	void writeRtf(const rapidjson::Value& params, JsonResult* result);
-	void readBookmark(const rapidjson::Value& params, JsonResult* result);
-	void writeBookmark(const rapidjson::Value& params, JsonResult* result);
 	void clear(const rapidjson::Value& params, JsonResult* result);
 
 private:

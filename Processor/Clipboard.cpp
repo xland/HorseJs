@@ -12,6 +12,7 @@ namespace {
         {"writeHtml", &Clipboard::writeHtml},
         {"readRtf", &Clipboard::readRtf},
         {"writeRtf", &Clipboard::writeRtf},
+        {"writeFile", &Clipboard::writeFile},
         {"clear", &Clipboard::clear},
     };
 
@@ -133,10 +134,56 @@ void Clipboard::writeImage(const rapidjson::Value& params, JsonResult* result)
 
 void Clipboard::readFile(const rapidjson::Value& params, JsonResult* result)
 {
+    
 }
 
 void Clipboard::writeFile(const rapidjson::Value& params, JsonResult* result)
 {
+    if (!OpenClipboard(NULL)) {
+        result->addErr("open clipboard err");
+        return;
+    }
+    EmptyClipboard();
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::vector<std::wstring> filePaths;
+    for (auto& val : arr)
+    {
+        auto text = Util::convertToWStr(val.GetString());
+        filePaths.push_back(std::move(text));
+    }
+    size_t totalSize = sizeof(DROPFILES);
+    for (const auto& path : filePaths) {
+        totalSize += (path.length() + 1) * sizeof(wchar_t);
+    }
+    totalSize += sizeof(wchar_t);
+    HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, totalSize);
+    if (!hGlobal) {
+        CloseClipboard();
+        result->addErr("alloc global memory err");
+        return;
+    }
+    DROPFILES* pDropFiles = static_cast<DROPFILES*>(GlobalLock(hGlobal));
+    if (!pDropFiles) {
+        GlobalFree(hGlobal);
+        CloseClipboard();
+        result->addErr("global lock err");
+        return;
+    }
+    pDropFiles->pFiles = sizeof(DROPFILES);
+    pDropFiles->fWide = TRUE;
+    wchar_t* dest = reinterpret_cast<wchar_t*>(pDropFiles + 1);
+    for (const auto& path : filePaths) {
+        wcscpy_s(dest, path.length() + 1, path.c_str());
+        dest += path.length() + 1;
+    }
+    *dest = L'\0';
+    GlobalUnlock(hGlobal);
+    if (!SetClipboardData(CF_HDROP, hGlobal)) {
+        GlobalFree(hGlobal);
+        CloseClipboard();
+        result->addErr("set data err");
+    }
+    CloseClipboard();
 }
 
 void Clipboard::readHtml(const rapidjson::Value& params, JsonResult* result)
@@ -188,6 +235,7 @@ void Clipboard::readHtml(const rapidjson::Value& params, JsonResult* result)
 
 void Clipboard::writeHtml(const rapidjson::Value& params, JsonResult* result)
 {
+    //todo src Url
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::string fragment = arr[0].GetString();
     constexpr std::string_view header =
