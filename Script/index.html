@@ -142,8 +142,6 @@
           horse.win.restore();
         });
         horse.win.addEventListener("stateChanged", async (result) => {
-          //todo 这里好像有问题
-          debugger;
           if (result.state == "maximize") {
             $("#btnMaximizeT").setAttribute("style", "display:none;");
             $("#btnRestoreT").setAttribute("style", "");
