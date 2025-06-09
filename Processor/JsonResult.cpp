@@ -1,4 +1,4 @@
-#include <pch.h>
+﻿#include <pch.h>
 #include "../App/App.h"
 #include "JsonResult.h"
 #include "../App/BrowserWindow.h"

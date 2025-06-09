@@ -65,6 +65,10 @@ void BrowserWindow::loadPage()
     auto msgReceivedCB = WRL::Callback<ICoreWebView2WebMessageReceivedEventHandler>(this, &BrowserWindow::msgReceive);
     webview->add_WebMessageReceived(msgReceivedCB.Get(), &msgReceivedToken);
 
+    EventRegistrationToken frameCreatedToken;
+    auto frameCreatedCB = WRL::Callback<ICoreWebView2FrameCreatedEventHandler>(this, &BrowserWindow::frameCreated);
+    webView15->add_FrameCreated(frameCreatedCB.Get(), &frameCreatedToken);
+
     loadResource();    
     //webview->OpenDevToolsWindow();
     auto url = std::format(L"https://{}/index.html", localDomain);
@@ -73,7 +77,6 @@ void BrowserWindow::loadPage()
 
 void BrowserWindow::loadResource()
 {
-    auto a = 1;
     const static std::wstring resScript = []() {
         auto hInstance = App::get()->hInstance;
         HRSRC hResource = FindResourceW(hInstance, MAKEINTRESOURCEW(IDR_JS), RT_RCDATA);
@@ -91,9 +94,6 @@ void BrowserWindow::loadResource()
     auto str = std::format(L"__WIN_ID={};",id);
     auto hr = webview->AddScriptToExecuteOnDocumentCreated(str.data(), nullptr);
     hr = webview->AddScriptToExecuteOnDocumentCreated(resScript.data(), nullptr);
-    if (FAILED(hr)) {
-        auto a = 1;
-    }
 }
 
 HRESULT BrowserWindow::navigateStart(ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args)
@@ -292,7 +292,37 @@ HRESULT BrowserWindow::newWindowRequeste(ICoreWebView2* sender, ICoreWebView2New
     return S_OK;
 }
 
+HRESULT BrowserWindow::frameCreated(ICoreWebView2* sender, ICoreWebView2FrameCreatedEventArgs* args) 
+{
+    wil::com_ptr<ICoreWebView2Frame> frame;
+    HRESULT hr = args->get_Frame(&frame);
+    if (SUCCEEDED(hr))
+    {
+        wil::com_ptr<ICoreWebView2Frame2> frame2;
+        hr = frame->QueryInterface(IID_PPV_ARGS(&frame2));
+        if (SUCCEEDED(hr))
+        {
+            EventRegistrationToken frameMsgToken;            
+            auto frameMsgCB = WRL::Callback<ICoreWebView2FrameWebMessageReceivedEventHandler>(this, &BrowserWindow::msgReceiveIframe);
+            frame2->add_WebMessageReceived(frameMsgCB.Get(), &frameMsgToken);
+        }
+    }
+    return S_OK;
+}
+
+
 HRESULT BrowserWindow::msgReceive(ICoreWebView2* webview, ICoreWebView2WebMessageReceivedEventArgs* args)
+{
+    wil::unique_cotaskmem_string messageRaw;
+    args->get_WebMessageAsJson(&messageRaw);
+    std::wstring message = messageRaw.get();
+    messageRaw.reset();
+    auto str = Util::convertToStr(message);
+    MsgProcessor::get()->processStr(str);
+    return S_OK;
+}
+
+HRESULT BrowserWindow::msgReceiveIframe(ICoreWebView2Frame* webview, ICoreWebView2WebMessageReceivedEventArgs* args)
 {
     wil::unique_cotaskmem_string messageRaw;
     args->get_WebMessageAsJson(&messageRaw);

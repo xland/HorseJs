@@ -63,9 +63,11 @@ private:
 	HRESULT titleChange(ICoreWebView2* sender, IUnknown* args);
 	HRESULT statusChange(ICoreWebView2* sender, IUnknown* args);
 	HRESULT faviconChange(ICoreWebView2* sender, IUnknown* args);
+	HRESULT frameCreated(ICoreWebView2* sender, ICoreWebView2FrameCreatedEventArgs* args);
 	HRESULT contextMenuRequested(ICoreWebView2* sender, ICoreWebView2ContextMenuRequestedEventArgs* args);
 	HRESULT newWindowRequeste(ICoreWebView2* sender, ICoreWebView2NewWindowRequestedEventArgs* args);
 	HRESULT msgReceive(ICoreWebView2* webview, ICoreWebView2WebMessageReceivedEventArgs* args);
+	HRESULT msgReceiveIframe(ICoreWebView2Frame* webview, ICoreWebView2WebMessageReceivedEventArgs* args);
 	void loadResource();
 	void loadPage();
 private:
