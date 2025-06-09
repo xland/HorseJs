@@ -48,6 +48,7 @@ void App::start()
 }
 void App::checkRuntime()
 {
+    // --disable-features=msSmartScreenProtection
     std::wstring regSubKey = L"\\Microsoft\\EdgeUpdate\\Clients\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}";
     bool hasRuntime = checkRegKey(HKEY_LOCAL_MACHINE, L"SOFTWARE\\WOW6432Node" + regSubKey);
     if (hasRuntime) return;

@@ -12,9 +12,9 @@ void BrowserWindow::loadPage()
 {
     HRESULT hr = ctrl->get_CoreWebView2(&webview);
     auto app = App::get();
-    auto appId = Util::convertToWStr(app->appId.data());
+    auto localDomain = Util::convertToWStr(app->appId.data())+L".local";
     auto webView3 = webview.try_query<ICoreWebView2_3>();
-    webView3->SetVirtualHostNameToFolderMapping(appId.data(),L"UI",COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_ALLOW);
+    webView3->SetVirtualHostNameToFolderMapping(localDomain.data(),L"UI",COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_ALLOW);
 
     wil::com_ptr<ICoreWebView2Settings> settings;
     webview->get_Settings(&settings);
@@ -67,9 +67,8 @@ void BrowserWindow::loadPage()
 
     loadResource();    
     //webview->OpenDevToolsWindow();
-	webview->Navigate(L"https://HorseJs/index.html"); //todo: 替换为实际的资源路径
-    //webview->Navigate(L"https://www.baidu.com");
-    //webview->Navigate(L"file://D:\\project\\HorseJs\\x64\\Release\\UI\\index.html");
+    auto url = std::format(L"https://{}/index.html", localDomain);
+	webview->Navigate(url.data()); //todo: 替换为实际的资源路径
 }
 
 void BrowserWindow::loadResource()
