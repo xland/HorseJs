@@ -141,16 +141,17 @@
         $("#btnRestoreT").addEventListener("click", () => {
           horse.win.restore();
         });
-        // horse.win.addEventListener("stateChanged", async (result) => {
-        //   //todo 这里好像有问题
-        //   if (result.state == "maximize") {
-        //     $("#btnMaximizeT").setAttribute("style", "display:none;");
-        //     $("#btnRestoreT").setAttribute("style", "");
-        //   } else if (result.state == "restore") {
-        //     $("#btnMaximizeT").setAttribute("style", "");
-        //     $("#btnRestoreT").setAttribute("style", "display:none;");
-        //   }
-        // });
+        horse.win.addEventListener("stateChanged", async (result) => {
+          //todo 这里好像有问题
+          debugger;
+          if (result.state == "maximize") {
+            $("#btnMaximizeT").setAttribute("style", "display:none;");
+            $("#btnRestoreT").setAttribute("style", "");
+          } else if (result.state == "restore") {
+            $("#btnMaximizeT").setAttribute("style", "");
+            $("#btnRestoreT").setAttribute("style", "display:none;");
+          }
+        });
         // horse.win.addEventListener("sizePosChanged", (data) => {
         //   // console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
         // });

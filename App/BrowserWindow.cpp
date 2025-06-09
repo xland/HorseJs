@@ -154,11 +154,11 @@ void BrowserWindow::sizePosChanged(WINDOWPOS* winPos)
 void BrowserWindow::stateChanged(const int& state)
 {
     if (!ctrl) return;
-    auto& vec = events["sizePosChanged"];
+    auto& vec = events["stateChanged"];
     if (vec.size() == 0) return;
     for (auto& id : vec)
     {
-        JsonResult result(id, "win", "sizePosChanged");
+        JsonResult result(id, "win", "stateChanged");
         if (state == SIZE_MAXIMIZED) {
             result.addString("state", "maximize");
         }
