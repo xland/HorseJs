@@ -288,11 +288,17 @@
     writeRtf(rtf) {
       return this.callMethod("writeRtf", rtf);
     }
-    readFile() {
-      return this.callMethod("readFile");
+    readImg() {
+      return this.callMethod("readImg");
     }
-    writeFile(...paths) {
-      return this.callMethod("writeFile", ...paths);
+    writeImg(rtf) {
+      return this.callMethod("writeImg", rtf);
+    }
+    getFile() {
+      return this.callMethod("getFile");
+    }
+    addFile(...paths) {
+      return this.callMethod("addFile", ...paths);
     }
     clear() {
       return this.callMethod("clear");

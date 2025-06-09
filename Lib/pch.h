@@ -19,6 +19,7 @@
 #include <shobjidl.h>
 #include <windowsx.h>
 #include <dwmapi.h>
+#include <gdiplus.h>
 #include <shellscalingapi.h>
 
 #include <WebView2.h>

@@ -12,8 +12,10 @@ namespace {
         {"writeHtml", &Clipboard::writeHtml},
         {"readRtf", &Clipboard::readRtf},
         {"writeRtf", &Clipboard::writeRtf},
-        {"readFile", &Clipboard::readFile},
-        {"writeFile", &Clipboard::writeFile},
+        {"readImg", &Clipboard::readImg},
+        {"writeImg", &Clipboard::writeImg},
+        {"addFile", &Clipboard::addFile},
+        {"getFile", &Clipboard::getFile},
         {"clear", &Clipboard::clear},
     };
 
@@ -125,15 +127,65 @@ void Clipboard::writeText(const rapidjson::Value& params, JsonResult* result)
     CloseClipboard();
 }
 
-void Clipboard::readImage(const rapidjson::Value& params, JsonResult* result)
+void Clipboard::readImg(const rapidjson::Value& params, JsonResult* result)
 {
 }
 
-void Clipboard::writeImage(const rapidjson::Value& params, JsonResult* result)
+void Clipboard::writeImg(const rapidjson::Value& params, JsonResult* result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring imagePath = Util::convertToWStr(arr[0].GetString());
+    if (!std::filesystem::exists(imagePath)) {
+        result->addErr("Image file does not exist");
+        return;
+    }
+    ULONG_PTR gdiplusToken;
+    Gdiplus::GdiplusStartupInput startupInput;
+    if (Gdiplus::GdiplusStartup(&gdiplusToken, &startupInput, nullptr) != Gdiplus::Ok) {
+        result->addErr("gdiplus init err");
+        return;
+    }
+    Gdiplus::Bitmap bitmap(imagePath.c_str());
+    if (bitmap.GetLastStatus() != Gdiplus::Ok) {
+        Gdiplus::GdiplusShutdown(gdiplusToken);
+        result->addErr("gdi bitmap init err");
+        return;
+    }
+    auto width{ bitmap.GetWidth() }, height{ bitmap.GetHeight() };
+
+    Gdiplus::BitmapData bitmapData;
+    Gdiplus::Rect rect(0, 0, width, height);
+    bitmap.LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bitmapData);
+    bitmap.UnlockBits(&bitmapData);
+
+    HDC screenDC = GetDC(nullptr);
+    HDC memoryDC = CreateCompatibleDC(screenDC);
+    HBITMAP hBitmap = CreateCompatibleBitmap(screenDC, width, height);
+    DeleteObject(SelectObject(memoryDC, hBitmap));
+    BITMAPINFO bmi = { sizeof(BITMAPINFOHEADER), width, 0 - height, 1, 32, BI_RGB, width * 4 * height, 0, 0, 0, 0 };
+    SetDIBitsToDevice(memoryDC, 0, 0, width, height, 0, 0, 0, height, bitmapData.Scan0, &bmi, DIB_RGB_COLORS);
+
+    if (!OpenClipboard(nullptr)) {
+        DeleteObject(hBitmap);
+        Gdiplus::GdiplusShutdown(gdiplusToken);
+        result->addErr("open clipboard err");
+        return;
+    }
+    if (!EmptyClipboard() || !SetClipboardData(CF_BITMAP, hBitmap)) {
+        CloseClipboard();
+        DeleteObject(hBitmap);
+        Gdiplus::GdiplusShutdown(gdiplusToken);
+        result->addErr("set clipboard data err");
+        return;
+    }
+    CloseClipboard();
+    ReleaseDC(nullptr, screenDC);
+    DeleteDC(memoryDC);
+    DeleteObject(hBitmap);
+    Gdiplus::GdiplusShutdown(gdiplusToken);
 }
 
-void Clipboard::readFile(const rapidjson::Value& params, JsonResult* result)
+void Clipboard::getFile(const rapidjson::Value& params, JsonResult* result)
 {
     if (!OpenClipboard(nullptr)) {
         result->addErr("open clipboard err");
@@ -167,7 +219,7 @@ void Clipboard::readFile(const rapidjson::Value& params, JsonResult* result)
     result->addValue("data", std::move(array));
 }
 
-void Clipboard::writeFile(const rapidjson::Value& params, JsonResult* result)
+void Clipboard::addFile(const rapidjson::Value& params, JsonResult* result)
 {
     if (!OpenClipboard(NULL)) {
         result->addErr("open clipboard err");

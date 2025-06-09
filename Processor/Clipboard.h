@@ -12,10 +12,10 @@ public:
 	void getDataType(const rapidjson::Value& params, JsonResult* result);
 	void readText(const rapidjson::Value& params, JsonResult* result);
 	void writeText(const rapidjson::Value& params, JsonResult* result);
-	void readImage(const rapidjson::Value& params, JsonResult* result);
-	void writeImage(const rapidjson::Value& params, JsonResult* result);
-	void readFile(const rapidjson::Value& params, JsonResult* result);
-	void writeFile(const rapidjson::Value& params, JsonResult* result);
+	void readImg(const rapidjson::Value& params, JsonResult* result);
+	void writeImg(const rapidjson::Value& params, JsonResult* result);
+	void getFile(const rapidjson::Value& params, JsonResult* result);
+	void addFile(const rapidjson::Value& params, JsonResult* result);
 	void readHtml(const rapidjson::Value& params, JsonResult* result);
 	void writeHtml(const rapidjson::Value& params, JsonResult* result);
 	void readRtf(const rapidjson::Value& params, JsonResult* result);
