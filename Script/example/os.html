@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="../css/example.css" />
+  </head>
+  <body>
+    <div class="box">
+      <div id="btnGetVersion" class="btn">获取系统版本号</div>
+    </div>
+    <script>
+      let $ = (selector) => document.querySelector(selector);
+      window.addEventListener("DOMContentLoaded", async () => {
+        $("#btnGetVersion").addEventListener("click", async () => {
+          let data = await horse.os.getVersion();
+          console.log(data);
+        });
+      });
+    </script>
+  </body>
+</html>

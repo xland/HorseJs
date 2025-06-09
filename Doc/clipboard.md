@@ -27,6 +27,7 @@ console.log(data);
 ```js
 let data = await horse.clipboard.readHtml();
 console.log(data);
+// {data: '<ul dir="auto">读取剪切板内的Html字符串</li></ul>', ok: true}
 ```
 
 - 向剪切板写入Html数据

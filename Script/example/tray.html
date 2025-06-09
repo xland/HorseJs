@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="../css/example.css" />
+  </head>
+  <body>
+    <div class="box">
+      <div id="btnCreateTray" class="btn">创建托盘图标</div>
+    </div>
+    <script>
+      let $ = (selector) => document.querySelector(selector);
+      window.addEventListener("DOMContentLoaded", async () => {
+        $("#btnCreateTray").addEventListener("click", async () => {
+          let data = await horse.tray.create({
+            tip: "托盘图标的Tip",
+            rightBtnDown: () => {
+              console.log("rightBtnDown");
+            },
+            leftBtnDown: () => {
+              console.log("leftBtnDown");
+            },
+            menu: [
+              {
+                text: "退出",
+                click: () => {
+                  console.log("tray menu item click");
+                },
+              },
+            ],
+          });
+          console.log(data);
+        });
+      });
+    </script>
+  </body>
+</html>

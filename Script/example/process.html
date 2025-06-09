@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="../css/example.css" />
+  </head>
+  <body>
+    <div class="box">
+      <div id="btnStartProcess" class="btn">启动一个进程</div>
+    </div>
+    <script>
+      let $ = (selector) => document.querySelector(selector);
+      window.addEventListener("DOMContentLoaded", async () => {
+        $("#btnStartProcess").addEventListener("click", async () => {
+          let data = await horse.process.exec("notepad.exe");
+          console.log(data);
+        });
+      });
+    </script>
+  </body>
+</html>

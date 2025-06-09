@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="../css/example.css" />
+  </head>
+  <body>
+    <div class="box">
+      <div id="btnGetDataType" class="btn">获取剪切板内的数据类型</div>
+      <div id="btnReadClipBoardText" class="btn">读取剪切板内的文本</div>
+      <div id="btnWriteClipBoardText" class="btn">向剪切板内写入文本</div>
+      <div id="btnReadClipBoardHtml" class="btn">读取剪切板内的html</div>
+      <div id="btnWriteClipBoardHtml" class="btn">向剪切板写入html</div>
+      <div id="btnReadClipBoardRtf" class="btn">读取剪切板内的Rtf</div>
+      <div id="btnWriteClipBoardRtf" class="btn">向剪切板写入Rtf</div>
+      <div id="btnClearClipboard" class="btn">清空剪切板</div>
+    </div>
+    <script>
+      let $ = (selector) => document.querySelector(selector);
+      window.addEventListener("DOMContentLoaded", async () => {
+        $("#btnGetDataType").addEventListener("click", async () => {
+          let data = await horse.clipboard.getDataType();
+          console.log(data);
+        });
+        $("#btnReadClipBoardText").addEventListener("click", async () => {
+          let data = await horse.clipboard.readText();
+          console.log(data);
+        });
+        $("#btnWriteClipBoardText").addEventListener("click", async () => {
+          let data = await horse.clipboard.writeText("待写入的文本");
+          console.log(data);
+        });
+        $("#btnReadClipBoardHtml").addEventListener("click", async () => {
+          let data = await horse.clipboard.readHtml();
+          console.log(data);
+        });
+        $("#btnWriteClipBoardHtml").addEventListener("click", async () => {
+          let data = await horse.clipboard.writeHtml(`<h1>Hello, World!</h1><p>中文</p>`);
+          console.log(data);
+        });
+        $("#btnReadClipBoardRtf").addEventListener("click", async () => {
+          let data = await horse.clipboard.readRtf();
+          console.log(data);
+        });
+        $("#btnWriteClipBoardRtf").addEventListener("click", async () => {
+          const rtfContent =
+            "{\\rtf1\\ansi\\ansicpg65001\\deff0" +
+            "{\\fonttbl{\\f0\\fnil\\fcharset134 SimSun;}}" +
+            "{\\colortbl ;\\red255\\green0\\blue0;\\red0\\green0\\blue255;}" +
+            "\\pard\\fs24" +
+            "This is a \\b bold\\b0  and \\i italic\\i0  这是宋体中文文本。\\par" +
+            "\\fs20 Normal text with default font.\\par" +
+            "}";
+          let data = await horse.clipboard.writeRtf(rtfContent);
+          console.log(data);
+        });
+        $("#btnClearClipboard").addEventListener("click", async () => {
+          await horse.clipboard.clear();
+        });
+      });
+    </script>
+  </body>
+</html>

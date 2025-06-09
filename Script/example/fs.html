@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="../css/example.css" />
+  </head>
+  <body>
+    <div class="box">
+      <div id="btnReadFile" class="btn">读文件</div>
+      <div id="btnReadFileChunk" class="btn">读文件的一部分</div>
+      <div id="btnWriteFile" class="btn">写文件</div>
+      <div id="btnWriteFileChunk" class="btn">在指定位置向文件写入数据</div>
+      <div id="btnDelPath" class="btn">删除路径</div>
+      <div id="btnRemovePath" class="btn">把路径移入回收站</div>
+      <div id="btnPathExists" class="btn">路径是否存在</div>
+      <div id="btnFileInfo" class="btn">获取文件信息</div>
+    </div>
+    <script>
+      let $ = (selector) => document.querySelector(selector);
+      window.addEventListener("DOMContentLoaded", async () => {
+        $("#btnReadFile").addEventListener("click", async () => {
+          let data = await horse.fs.readFile("D:\\project\\HorseJs\\Script\\index.html");
+          const uint8Array = new Uint8Array(data.buffer); // 字节视图
+          const decoder = new TextDecoder("utf-8"); // UTF-8 解码器
+          const text = decoder.decode(uint8Array); // 转换为字符串
+          console.log("Decoded string:", text);
+          data.release();
+        });
+        $("#btnReadFileChunk").addEventListener("click", async () => {
+          let data = await horse.fs.readFileChunk("D:\\project\\HorseJs\\Script\\index.html", 10, 100);
+          const uint8Array = new Uint8Array(data.buffer); // 字节视图
+          const decoder = new TextDecoder("utf-8"); // UTF-8 解码器
+          const text = decoder.decode(uint8Array); // 转换为字符串
+          console.log("Decoded string:", text);
+          data.release();
+        });
+        $("#btnWriteFile").addEventListener("click", async () => {
+          let data = await horse.fs.writeFile("D:\\project\\HorseJs\\Script\\abc.txt", "Hello World \n 你好，世界！！！");
+          console.log(data);
+        });
+        $("#btnWriteFileChunk").addEventListener("click", async () => {
+          let data = await horse.fs.writeFileChunk("D:\\project\\HorseJs\\Script\\abc.txt", "插入的数据", -1);
+          console.log(data);
+        });
+        $("#btnDelPath").addEventListener("click", async () => {
+          let data = await horse.fs.delPath("D:\\project\\HorseJs\\Script\\abc.txt");
+          console.log(data);
+        });
+        $("#btnRemovePath").addEventListener("click", async () => {
+          let data = await horse.fs.removePath("D:\\project\\HorseJs\\Script\\abc.txt");
+          console.log(data);
+        });
+        $("#btnPathExists").addEventListener("click", async () => {
+          let data = await horse.fs.exists("D:\\project\\HorseJs\\Script\\index.html");
+          console.log(data);
+        });
+        $("#btnFileInfo").addEventListener("click", async () => {
+          let data = await horse.fs.getFileInfo("D:\\project\\HorseJs\\Script\\index.html");
+          console.log(data);
+        });
+      });
+    </script>
+  </body>
+</html>

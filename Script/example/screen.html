@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="../css/example.css" />
+  </head>
+  <body>
+    <div class="box">
+      <div id="btnGetAllScreenInfo" class="btn">获取所有屏幕信息</div>
+    </div>
+    <script>
+      let $ = (selector) => document.querySelector(selector);
+      window.addEventListener("DOMContentLoaded", async () => {
+        $("#btnGetAllScreenInfo").addEventListener("click", async () => {
+          let data = await horse.screen.getAll();
+          console.log(data);
+        });
+      });
+    </script>
+  </body>
+</html>

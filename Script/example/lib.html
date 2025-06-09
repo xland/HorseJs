@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="../css/example.css" />
+  </head>
+  <body>
+    <div class="box">
+      <div id="btnLoad" class="btn">加载dll</div>
+      <div id="btnFree" class="btn">释放dll</div>
+      <div id="btnCall" class="btn">调用dll中的方法</div>
+    </div>
+    <script>
+      let $ = (selector) => document.querySelector(selector);
+      window.addEventListener("DOMContentLoaded", async () => {
+        $("#btnLoad").addEventListener("click", async () => {
+          let data = await horse.lib.load();
+          console.log(data);
+        });
+        $("#btnFree").addEventListener("click", async () => {
+          let data = await horse.lib.free();
+          console.log(data);
+        });
+        $("#btnCall").addEventListener("click", async () => {
+          let data = await horse.lib.call();
+          console.log(data);
+        });
+      });
+    </script>
+  </body>
+</html>

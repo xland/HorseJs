@@ -238,6 +238,7 @@ void Clipboard::writeHtml(const rapidjson::Value& params, JsonResult* result)
 
 void Clipboard::readRtf(const rapidjson::Value& params, JsonResult* result)
 {
+    //todo 如果剪切板里存储的是普通文本，那么有可能读出来的也是普通文本，此时应该给客户端报个异常才对
     if (!OpenClipboard(NULL)) {
         result->addErr("Open clipboard error: " + std::to_string(GetLastError()));
         return;

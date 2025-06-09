@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="../css/example.css" />
+  </head>
+  <body>
+    <div class="box">
+      <div id="btnMaximize" class="btn">最大化</div>
+      <div id="btnMinimize" class="btn">最小化</div>
+      <div id="btnShow" class="btn">显示</div>
+      <div id="btnHide" class="btn">隐藏</div>
+      <div id="btnRestore" class="btn">还原</div>
+      <div id="btnResize" class="btn">改变大小</div>
+      <div id="btnClose" class="btn">关闭窗口</div>
+      <div id="btnDestory" class="btn">销毁窗口</div>
+      <div id="btnFlash" class="btn">闪烁窗口</div>
+      <div id="btnSetResizable" class="btn">启用/禁止改变窗口大小</div>
+      <div id="btnRegWinClose" class="btn">注册窗口关闭事件</div>
+      <div id="btnUnregWinClose" class="btn">取消注册窗口关闭事件</div>
+    </div>
+    <script>
+      let $ = (selector) => document.querySelector(selector);
+      window.addEventListener("DOMContentLoaded", async () => {
+        $("#btnMaximize").addEventListener("click", async () => {
+          await horse.win.maximize();
+        });
+        $("#btnMinimize").addEventListener("click", () => {
+          horse.win.minimize();
+        });
+        $("#btnHide").addEventListener("click", () => {
+          horse.win.hide();
+          setTimeout(() => {
+            horse.win.show();
+          }, 2000);
+        });
+        $("#btnRestore").addEventListener("click", () => {
+          horse.win.restore();
+        });
+        $("#btnRegWinClose").addEventListener("click", () => {
+          horse.win.addEventListener("closing", async () => {
+            alert("现在你只能用销毁窗口关闭此窗口了");
+          });
+        });
+        $("#btnUnregWinClose").addEventListener("click", async () => {
+          await horse.win.removeEventListener("closing");
+          alert("现在你可以正常关闭窗口了");
+        });
+        $("#btnResize").addEventListener("click", async () => {
+          await horse.win.resize(1200, 600);
+        });
+        let isResizalbe = true;
+        $("#btnSetResizable").addEventListener("click", async () => {
+          isResizalbe = !isResizalbe;
+          await horse.win.setResizable(isResizalbe);
+        });
+        $("#btnClose").addEventListener("click", () => {
+          horse.win.close();
+        });
+        $("#btnDestory").addEventListener("click", () => {
+          horse.win.destroy();
+        });
+        $("#btnFlash").addEventListener("click", () => {
+          setTimeout(() => {
+            horse.win.flash(true);
+            setTimeout(() => {
+              horse.win.flash(false);
+            }, 2000);
+          }, 2000);
+        });
+      });
+    </script>
+  </body>
+</html>

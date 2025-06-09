@@ -21,19 +21,6 @@
         display: flex;
         flex-direction: column;
       }
-      .btn {
-        cursor: pointer;
-        background: #eee;
-        display: inline-block;
-        user-select: none;
-        border-radius: 3px;
-        margin: 6px;
-        padding: 6px;
-      }
-      .btn:hover {
-        background: #888;
-        color: #fff;
-      }
       #titleBar {
         background: #ccd5f0;
         user-select: none;
@@ -61,9 +48,53 @@
         font-size: 12px !important;
       }
       .box {
-        padding: 12px;
+        display: flex;
         flex: 1;
-        overflow-y: auto;
+      }
+      #menuContainer {
+        background: rgb(219, 237, 255);
+        width: 180px;
+        line-height: 38px;
+        font-size: 15px;
+        padding: 12px 0px;
+      }
+      #menuContainer div {
+        cursor: pointer;
+        padding-left: 16px;
+        border-left: 6px solid transparent;
+      }
+      #menuContainer div:hover {
+        background: rgb(140, 200, 255);
+        color: #fff;
+        border-left: 6px solid rgb(121, 184, 255);
+      }
+
+      #menuContainer .menuSelected {
+        background: rgb(33, 136, 255) !important;
+        color: #fff;
+        border-left: 6px solid rgb(0, 92, 197) !important;
+        position: relative;
+      }
+      #menuContainer .menuSelected::after {
+        display: block;
+        width: 0px;
+        height: 0px;
+        position: absolute;
+        right: 0px;
+        top: calc(50% - 4px);
+        border-top: solid 4px transparent;
+        border-right: solid 4px #fff;
+        border-bottom: solid 4px transparent;
+        content: "";
+      }
+      #demoContainer {
+        flex: 1;
+        overflow: hidden;
+      }
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
       }
     </style>
   </head>
@@ -76,63 +107,25 @@
       <div id="btnCloseT" class="titleBtn"><i class="iconfont horse-close"></i></div>
     </div>
     <div class="box">
-      <p>horse</p>
-      <div id="btnGetConfig" class="btn">获取App配置</div>
-      <div id="btnNewWindow" class="btn">创建窗口</div>
-      <p>clipboard</p>
-      <div id="btnGetDataType" class="btn">获取剪切板内的数据类型</div>
-      <div id="btnReadClipBoardText" class="btn">读取剪切板内的文本</div>
-      <div id="btnWriteClipBoardText" class="btn">向剪切板内写入文本</div>
-      <div id="btnReadClipBoardHtml" class="btn">读取剪切板内的html</div>
-      <div id="btnWriteClipBoardHtml" class="btn">向剪切板写入html</div>
-      <div id="btnReadClipBoardRtf" class="btn">读取剪切板内的Rtf</div>
-      <div id="btnWriteClipBoardRtf" class="btn">向剪切板写入Rtf</div>
-      <div id="btnClearClipboard" class="btn">清空剪切板</div>
-      <p>menu</p>
-      <div id="btnCreateMenu" class="btn">创建菜单</div>
-      <p>net</p>
-      <div id="btnGetAddress" class="btn">获取IP地址</div>
-      <p>process</p>
-      <div id="btnStartProcess" class="btn">启动一个进程</div>
-      <p>window</p>
-      <div id="btnMaximize" class="btn">最大化</div>
-      <div id="btnMinimize" class="btn">最小化</div>
-      <div id="btnShow" class="btn">显示</div>
-      <div id="btnHide" class="btn">隐藏</div>
-      <div id="btnRestore" class="btn">还原</div>
-      <div id="btnResize" class="btn">改变大小</div>
-      <div id="btnClose" class="btn">关闭窗口</div>
-      <div id="btnDestory" class="btn">销毁窗口</div>
-      <div id="btnFlash" class="btn">闪烁窗口</div>
-      <div id="btnSetResizable" class="btn">启用/禁止改变窗口大小</div>
-      <div id="btnRegWinClose" class="btn">注册窗口关闭事件</div>
-      <div id="btnUnregWinClose" class="btn">取消注册窗口关闭事件</div>
-      <p>fs</p>
-      <div id="btnReadFile" class="btn">读文件</div>
-      <div id="btnReadFileChunk" class="btn">读文件的一部分</div>
-      <div id="btnWriteFile" class="btn">写文件</div>
-      <div id="btnWriteFileChunk" class="btn">在指定位置向文件写入数据</div>
-      <div id="btnDelPath" class="btn">删除路径</div>
-      <div id="btnRemovePath" class="btn">把路径移入回收站</div>
-      <div id="btnPathExists" class="btn">路径是否存在</div>
-      <div id="btnFileInfo" class="btn">获取文件信息</div>
-      <p>dialog</p>
-      <div id="btnOpenPathDialog" class="btn">打开一个文件路径</div>
-      <p>notify</p>
-      <div id="btnNotifyShow" class="btn">显示一个通知</div>
-      <p>os</p>
-      <div id="btnGetVersion" class="btn">获取系统版本号</div>
-      <p>screen</p>
-      <div id="btnGetAllScreenInfo" class="btn">获取所有屏幕信息</div>
-      <p>tray</p>
-      <div id="btnCreateTray" class="btn">创建托盘图标</div>
-      <p>测试输入</p>
-      <input type="text" value="asdfasdf测试" />
+      <div id="menuContainer">
+        <div id="window" class="menuSelected">窗口 win</div>
+        <div id="dialog">对话框 dialog</div>
+        <div id="os">系统 os</div>
+        <div id="clipboard">剪切板 clipboard</div>
+        <div id="horse">应用 horse</div>
+        <div id="fs">文件 fs</div>
+        <div id="notify">通知 notify</div>
+        <div id="process">进程 process</div>
+        <div id="screen">进程 screen</div>
+        <div id="net">网络 net</div>
+        <div id="tray">托盘图标 tray</div>
+        <div id="lib">原生插件 lib</div>
+      </div>
+      <div id="demoContainer"><iframe id="exampleIframe" src="./example/clipboard.html"></iframe></div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
-      let log = (data) => console.log(JSON.stringify(data));
-      let initTitleBar = () => {
+      window.addEventListener("DOMContentLoaded", async () => {
         $("#titleBox").addEventListener("mousedown", async () => {
           horse.win.startDrag();
         });
@@ -149,6 +142,7 @@
           horse.win.restore();
         });
         horse.win.addEventListener("stateChanged", async (result) => {
+          //todo 这里好像有问题
           if (result.state == "maximize") {
             $("#btnMaximizeT").setAttribute("style", "display:none;");
             $("#btnRestoreT").setAttribute("style", "");
@@ -160,281 +154,13 @@
         horse.win.addEventListener("sizePosChanged", (data) => {
           // console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
         });
-      };
-      let initClipboard = () => {
-        $("#btnGetDataType").addEventListener("click", async () => {
-          let data = await horse.clipboard.getDataType();
-          console.log(data);
+        $("#menuContainer").addEventListener("click", (e) => {
+          let id = e.target.getAttribute("id");
+          if (!id || e.target.classList.contains("menuSelected")) return;
+          $(".menuSelected").classList.remove("menuSelected");
+          e.target.classList.add("menuSelected");
+          $("#exampleIframe").setAttribute("src", `./example/${id}.html`);
         });
-        $("#btnReadClipBoardText").addEventListener("click", async () => {
-          let data = await horse.clipboard.readText();
-          console.log(data);
-        });
-        $("#btnWriteClipBoardText").addEventListener("click", async () => {
-          let data = await horse.clipboard.writeText("待写入的文本");
-          console.log(data);
-        });
-        $("#btnReadClipBoardHtml").addEventListener("click", async () => {
-          let data = await horse.clipboard.readHtml();
-          console.log(data);
-        });
-        $("#btnWriteClipBoardHtml").addEventListener("click", async () => {
-          let data = await horse.clipboard.writeHtml(`<h1>Hello, World!</h1><p>中文</p>`);
-          console.log(data);
-        });
-        $("#btnReadClipBoardRtf").addEventListener("click", async () => {
-          let data = await horse.clipboard.readRtf();
-          console.log(data);
-        });
-        $("#btnWriteClipBoardRtf").addEventListener("click", async () => {
-          const rtfContent =
-            "{\\rtf1\\ansi\\ansicpg65001\\deff0" +
-            "{\\fonttbl{\\f0\\fnil\\fcharset134 SimSun;}}" +
-            "{\\colortbl ;\\red255\\green0\\blue0;\\red0\\green0\\blue255;}" +
-            "\\pard\\fs24" +
-            "This is a \\b bold\\b0  and \\i italic\\i0  这是宋体中文文本。\\par" +
-            "\\fs20 Normal text with default font.\\par" +
-            "}";
-          let data = await horse.clipboard.writeRtf(rtfContent);
-          console.log(data);
-        });
-        $("#btnClearClipboard").addEventListener("click", async () => {
-          await horse.clipboard.clear();
-        });
-      };
-      let initHorse = () => {
-        $("#btnGetConfig").addEventListener("click", async () => {
-          let config = await horse.getConfig();
-          console.log(config);
-        });
-        $("#btnNewWindow").addEventListener("click", async () => {
-          let proxy = await horse.createWindow({
-            resizable: true,
-            maximizable: false,
-            minimizable: false,
-            alwaysOnTop: false,
-            skipTaskbar: false,
-            visible: true,
-            frame: false,
-            shadow: true,
-            title: "窗口标题！！！",
-            size: {
-              w: 1000,
-              h: 800,
-            },
-            minSize: {
-              w: 250,
-              h: 200,
-            },
-            position: {
-              x: 200,
-              y: 200,
-            },
-            page: {
-              areDefaultScriptDialogsEnabled: true,
-              isScriptEnabled: true,
-              isWebMessageEnabled: true,
-              url: "index.html",
-            },
-          });
-          // let obj = await proxy.addEventListener("sizePosChanged", (data) => {
-          // console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
-          // });
-          await proxy.minimize();
-        });
-      };
-      let initMenu = () => {
-        $("#btnCreateMenu").addEventListener("click", async () => {
-          let data = await horse.menu.create([
-            {
-              text: "退出",
-              click: () => {
-                console.log("tray menu item click");
-              },
-            },
-          ]);
-          console.log(data);
-        });
-      };
-      let initNet = () => {
-        $("#btnGetAddress").addEventListener("click", async () => {
-          let data = await horse.net.getAddress();
-          console.log(data);
-        });
-      };
-      let initNotify = () => {
-        $("#btnNotifyShow").addEventListener("click", async () => {
-          let data = await horse.notify.show("HorseJs", "通知标题", "通知内容\n换行\n换行");
-          console.log(data);
-        });
-      };
-      let initOs = () => {
-        $("#btnGetVersion").addEventListener("click", async () => {
-          let data = await horse.os.getVersion();
-          log(data);
-        });
-      };
-      let initProcess = () => {
-        $("#btnStartProcess").addEventListener("click", async () => {
-          let data = await horse.process.exec("notepad.exe");
-          log(data);
-        });
-      };
-      let initScreen = () => {
-        $("#btnGetAllScreenInfo").addEventListener("click", async () => {
-          let data = await horse.screen.getAll();
-          log(data);
-        });
-      };
-      let initTray = () => {
-        $("#btnCreateTray").addEventListener("click", async () => {
-          let data = await horse.tray.create({
-            tip: "托盘图标的Tip",
-            rightBtnDown: () => {
-              console.log("rightBtnDown");
-            },
-            leftBtnDown: () => {
-              console.log("leftBtnDown");
-            },
-            menu: [
-              {
-                text: "退出",
-                click: () => {
-                  console.log("tray menu item click");
-                },
-              },
-            ],
-          });
-          log(data);
-        });
-      };
-      let initWin = () => {
-        $("#btnMaximize").addEventListener("click", async () => {
-          await horse.win.maximize();
-        });
-        $("#btnMinimize").addEventListener("click", () => {
-          horse.win.minimize();
-        });
-        $("#btnHide").addEventListener("click", () => {
-          horse.win.hide();
-          setTimeout(() => {
-            horse.win.show();
-          }, 2000);
-        });
-        $("#btnRestore").addEventListener("click", () => {
-          horse.win.restore();
-        });
-        $("#btnRegWinClose").addEventListener("click", () => {
-          horse.win.addEventListener("closing", async () => {
-            alert("现在你只能用销毁窗口关闭此窗口了");
-          });
-        });
-        $("#btnUnregWinClose").addEventListener("click", async () => {
-          await horse.win.removeEventListener("closing");
-          alert("现在你可以正常关闭窗口了");
-        });
-        $("#btnResize").addEventListener("click", async () => {
-          await horse.win.resize(1200, 600);
-        });
-        let isResizalbe = true;
-        $("#btnSetResizable").addEventListener("click", async () => {
-          isResizalbe = !isResizalbe;
-          await horse.win.setResizable(isResizalbe);
-        });
-        $("#btnClose").addEventListener("click", () => {
-          horse.win.close();
-        });
-        $("#btnDestory").addEventListener("click", () => {
-          horse.win.destroy();
-        });
-        $("#btnFlash").addEventListener("click", () => {
-          setTimeout(() => {
-            horse.win.flash(true);
-            setTimeout(() => {
-              horse.win.flash(false);
-            }, 2000);
-          }, 2000);
-        });
-      };
-      let initFs = () => {
-        $("#btnReadFile").addEventListener("click", async () => {
-          let data = await horse.fs.readFile("D:\\project\\HorseJs\\Script\\index.html");
-          const uint8Array = new Uint8Array(data.buffer); // 字节视图
-          const decoder = new TextDecoder("utf-8"); // UTF-8 解码器
-          const text = decoder.decode(uint8Array); // 转换为字符串
-          console.log("Decoded string:", text);
-          data.release();
-        });
-        $("#btnReadFileChunk").addEventListener("click", async () => {
-          let data = await horse.fs.readFileChunk("D:\\project\\HorseJs\\Script\\index.html", 10, 100);
-          const uint8Array = new Uint8Array(data.buffer); // 字节视图
-          const decoder = new TextDecoder("utf-8"); // UTF-8 解码器
-          const text = decoder.decode(uint8Array); // 转换为字符串
-          console.log("Decoded string:", text);
-          data.release();
-        });
-        $("#btnWriteFile").addEventListener("click", async () => {
-          let data = await horse.fs.writeFile("D:\\project\\HorseJs\\Script\\abc.txt", "Hello World \n 你好，世界！！！");
-          console.log(data);
-        });
-        $("#btnWriteFileChunk").addEventListener("click", async () => {
-          let data = await horse.fs.writeFileChunk("D:\\project\\HorseJs\\Script\\abc.txt", "插入的数据", -1);
-          console.log(data);
-        });
-        $("#btnDelPath").addEventListener("click", async () => {
-          let data = await horse.fs.delPath("D:\\project\\HorseJs\\Script\\abc.txt");
-          console.log(data);
-        });
-        $("#btnRemovePath").addEventListener("click", async () => {
-          let data = await horse.fs.removePath("D:\\project\\HorseJs\\Script\\abc.txt");
-          console.log(data);
-        });
-        $("#btnPathExists").addEventListener("click", async () => {
-          let data = await horse.fs.exists("D:\\project\\HorseJs\\Script\\index.html");
-          console.log(data);
-        });
-        $("#btnFileInfo").addEventListener("click", async () => {
-          let data = await horse.fs.getFileInfo("D:\\project\\HorseJs\\Script\\index.html");
-          console.log(data);
-        });
-      };
-      let initRes = () => {
-        // $("#btnBindRes").addEventListener("click", async () => {
-        //   horse.fs.addResToExe("D:\\project\\HorseJs\\x64\\Release\\UI\\", "D:\\project\\HorseJs\\x64\\Release\\HorseJs.exe");
-        // });
-      };
-      let initDialog = () => {
-        $("#btnOpenPathDialog").addEventListener("click", async () => {
-          let data = await horse.dialog.openPathDialog({
-            title: "我的窗口标题",
-            okBtnText: "选择文件",
-            defaultDir: "C:\\Users",
-            type: "file", //或"dir"，默认值为file
-            filter: [
-              ["All Files", "*.*"],
-              ["Image Files", "*.jpg;*.png"],
-            ], //只有type是file的时候才有效
-            multiSelection: true, //默认值false
-            showHiddenFile: true, //默认值false
-          });
-          console.log(data);
-        });
-      };
-      window.addEventListener("DOMContentLoaded", async () => {
-        initTitleBar();
-        initClipboard();
-        initHorse();
-        initWin();
-        initMenu();
-        initNet();
-        initFs();
-        initRes();
-        initDialog();
-        initNotify();
-        initOs();
-        initScreen();
-        initTray();
-        initProcess();
       });
     </script>
   </body>
