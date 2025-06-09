@@ -25,7 +25,8 @@ export class Clipboard extends Eventer {
     return this.callMethod("clear");
   }
   private callMethod(methodName: string, ...params: any[]) {
-    return this.call({
+    let obj = window.self === window.top ? this : window.top.horse.clipboard;
+    return obj.call({
       className: "clipboard",
       winId: globalThis.__WIN_ID,
       methodName,

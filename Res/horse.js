@@ -78,7 +78,8 @@
       return this.callMethod("exec", path);
     }
     callMethod(methodName, ...params) {
-      return this.call({
+      let obj = window.self === window.top ? this : window.top.horse.process;
+      return obj.call({
         className: "process",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -103,7 +104,8 @@
       return this.callMethod("create", config);
     }
     callMethod(methodName, ...params) {
-      return this.call({
+      let obj = window.self === window.top ? this : window.top.horse.tray;
+      return obj.call({
         className: "tray",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -118,7 +120,8 @@
       return this.callMethod("show", appName, title, content);
     }
     callMethod(methodName, ...params) {
-      return this.call({
+      let obj = window.self === window.top ? this : window.top.notify;
+      return obj.call({
         className: "notify",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -178,7 +181,8 @@
       }
     }
     callMethod(methodName, ...params) {
-      return this.call({
+      let obj = window.self === window.top ? this : window.top.horse.win;
+      return obj.call({
         className: "win",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -197,7 +201,8 @@
       this.parent = parent;
     }
     callMethod(methodName, ...params) {
-      return this.parent.call({
+      let obj = window.self === window.top ? this.parent : window.top.horse.win;
+      return obj.call({
         className: "win",
         winId: globalThis.__WIN_ID,
         tarId: this.id,
@@ -234,7 +239,8 @@
       return this.callMethod("removePath", filePath);
     }
     callMethod(methodName, ...params) {
-      return this.call({
+      let obj = window.self === window.top ? this : window.top.horse.fs;
+      return obj.call({
         className: "fs",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -249,7 +255,8 @@
       return this.callMethod("openPathDialog", config);
     }
     callMethod(methodName, ...params) {
-      return this.call({
+      let obj = window.self === window.top ? this : window.top.horse.dialog;
+      return obj.call({
         className: "dialog",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -285,7 +292,8 @@
       return this.callMethod("clear");
     }
     callMethod(methodName, ...params) {
-      return this.call({
+      let obj = window.self === window.top ? this : window.top.horse.clipboard;
+      return obj.call({
         className: "clipboard",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -300,7 +308,8 @@
       return this.callMethod("getAddress");
     }
     callMethod(methodName, ...params) {
-      return this.call({
+      let obj = window.self === window.top ? this : window.top.horse.net;
+      return obj.call({
         className: "net",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -315,7 +324,8 @@
       return this.callMethod("getVersion");
     }
     callMethod(methodName, ...params) {
-      return this.call({
+      let obj = window.self === window.top ? this : window.top.horse.os;
+      return obj.call({
         className: "os",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -330,7 +340,8 @@
       return this.callMethod("getAll");
     }
     callMethod(methodName, ...params) {
-      return this.call({
+      let obj = window.self === window.top ? this : window.top.horse.screen;
+      return obj.call({
         className: "screen",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -376,12 +387,17 @@
       return new WinProx(obj.id, this.win);
     }
     listenMsg() {
+      if (window.self !== window.top) return;
       this.webview.addEventListener("message", (e) => {
         let clsName = e.data.className;
         delete e.data.className;
         let evtName = e.data.eventName;
         delete e.data.eventName;
-        this[clsName].emit(evtName, e.data);
+        if (clsName !== "horse") {
+          this[clsName].emit(evtName, e.data);
+        } else {
+          this.emit(evtName, e.data);
+        }
       });
       this.webview.addEventListener("sharedbufferreceived", (e) => {
         const buffer = e.getBuffer();
@@ -399,7 +415,8 @@
       });
     }
     callMethod(methodName, ...params) {
-      return this.call({
+      let obj = window.self === window.top ? this : window.top.horse;
+      return obj.call({
         className: "horse",
         winId: globalThis.__WIN_ID,
         methodName,

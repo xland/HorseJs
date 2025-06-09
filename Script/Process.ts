@@ -4,7 +4,8 @@ export class Process extends Eventer {
     return this.callMethod("exec", path);
   }
   private callMethod(methodName: string, ...params: any[]) {
-    return this.call({
+    let obj = window.self === window.top ? this : window.top.horse.process;
+    return obj.call({
       className: "process",
       winId: globalThis.__WIN_ID,
       methodName,

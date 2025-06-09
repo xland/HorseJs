@@ -9,7 +9,8 @@ export class WinProx extends Win {
     this.parent = parent;
   }
   protected callMethod(methodName: string, ...params: any[]) {
-    return this.parent.call({
+    let obj = window.self === window.top ? this.parent : window.top.horse.win;
+    return obj.call({
       className: "win",
       winId: globalThis.__WIN_ID,
       tarId: this.id,

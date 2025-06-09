@@ -47,12 +47,17 @@ class Horse extends Eventer {
     return new WinProx(obj.id, this.win);
   }
   private listenMsg() {
+    if (window.self !== window.top) return;
     this.webview.addEventListener("message", (e) => {
       let clsName = e.data.className;
       delete e.data.className;
       let evtName = e.data.eventName;
       delete e.data.eventName;
-      this[clsName].emit(evtName, e.data);
+      if (clsName !== "horse") {
+        this[clsName].emit(evtName, e.data);
+      } else {
+        this.emit(evtName, e.data);
+      }
     });
     this.webview.addEventListener("sharedbufferreceived", (e) => {
       const buffer = e.getBuffer();
@@ -70,7 +75,8 @@ class Horse extends Eventer {
     });
   }
   private callMethod(methodName: string, ...params: any[]) {
-    return this.call({
+    let obj = window.self === window.top ? this : window.top.horse;
+    return obj.call({
       className: "horse",
       winId: globalThis.__WIN_ID,
       methodName,

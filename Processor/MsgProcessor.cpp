@@ -58,10 +58,6 @@ void MsgProcessor::processStr(const std::string& msgStr)
     if (jsonDoc.HasMember("winId") && jsonDoc["winId"].IsInt()) {
         winId = jsonDoc["winId"].GetInt();
     }
-    if (winId < 0) {
-        MessageBox(nullptr, L"winId为空或tarId为空", L"错误", MB_OK | MB_ICONERROR);
-        return;
-    }
     std::string className, methodName, eventName;
     if (jsonDoc.HasMember("className") && jsonDoc["className"].IsString()) {
         className = jsonDoc["className"].GetString();
@@ -72,11 +68,7 @@ void MsgProcessor::processStr(const std::string& msgStr)
     if (jsonDoc.HasMember("eventName") && jsonDoc["eventName"].IsString()) {
         eventName = jsonDoc["eventName"].GetString();
     }
-    if (className.empty() || methodName.empty() || eventName.empty()) {
-        MessageBox(nullptr, L"className,methodName或eventName", L"错误", MB_OK | MB_ICONERROR);
-        return;
-    }
-    JsonResult result(winId,className, eventName);
+    JsonResult result(winId,className,eventName);
     if (jsonDoc.HasMember("tarId") && jsonDoc["tarId"].IsInt()) {
         result.tarId = jsonDoc["tarId"].GetInt();
     }

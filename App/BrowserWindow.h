@@ -70,6 +70,7 @@ private:
 	HRESULT msgReceiveIframe(ICoreWebView2Frame* webview, ICoreWebView2WebMessageReceivedEventArgs* args);
 	void loadResource();
 	void loadPage();
+	std::string getMsgStr(ICoreWebView2WebMessageReceivedEventArgs* args);
 private:
 	bool isMouseTracking{ false };
 };

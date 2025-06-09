@@ -26,7 +26,8 @@ export class Fs extends Eventer {
     return this.callMethod("removePath", filePath);
   }
   private callMethod(methodName: string, ...params: any[]) {
-    return this.call({
+    let obj = window.self === window.top ? this : window.top.horse.fs;
+    return obj.call({
       className: "fs",
       winId: globalThis.__WIN_ID,
       methodName,

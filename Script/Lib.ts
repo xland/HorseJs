@@ -13,7 +13,8 @@ export class Lib extends Eventer {
     return this.callMethod("readHtml");
   }
   private callMethod(methodName: string, ...params: any[]) {
-    return this.call({
+    let obj = window.self === window.top ? this : window.top.horse.lib;
+    return obj.call({
       className: "lib",
       winId: globalThis.__WIN_ID,
       methodName,

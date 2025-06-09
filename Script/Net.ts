@@ -4,7 +4,8 @@ export class Net extends Eventer {
     return this.callMethod("getAddress");
   }
   private callMethod(methodName: string, ...params: any[]) {
-    return this.call({
+    let obj = window.self === window.top ? this : window.top.horse.net;
+    return obj.call({
       className: "net",
       winId: globalThis.__WIN_ID,
       methodName,

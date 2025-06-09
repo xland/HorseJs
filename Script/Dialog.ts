@@ -4,7 +4,8 @@ export class Dialog extends Eventer {
     return this.callMethod("openPathDialog", config);
   }
   private callMethod(methodName: string, ...params: any[]) {
-    return this.call({
+    let obj = window.self === window.top ? this : window.top.horse.dialog;
+    return obj.call({
       className: "dialog",
       winId: globalThis.__WIN_ID,
       methodName,

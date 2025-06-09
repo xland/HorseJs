@@ -313,22 +313,23 @@ HRESULT BrowserWindow::frameCreated(ICoreWebView2* sender, ICoreWebView2FrameCre
 
 HRESULT BrowserWindow::msgReceive(ICoreWebView2* webview, ICoreWebView2WebMessageReceivedEventArgs* args)
 {
-    wil::unique_cotaskmem_string messageRaw;
-    args->get_WebMessageAsJson(&messageRaw);
-    std::wstring message = messageRaw.get();
-    messageRaw.reset();
-    auto str = Util::convertToStr(message);
+    auto str = getMsgStr(args);
     MsgProcessor::get()->processStr(str);
     return S_OK;
 }
 
 HRESULT BrowserWindow::msgReceiveIframe(ICoreWebView2Frame* webview, ICoreWebView2WebMessageReceivedEventArgs* args)
 {
+    auto str = getMsgStr(args);
+    MsgProcessor::get()->processStr(str);
+    return S_OK;
+}
+
+std::string BrowserWindow::getMsgStr(ICoreWebView2WebMessageReceivedEventArgs* args) {
     wil::unique_cotaskmem_string messageRaw;
     args->get_WebMessageAsJson(&messageRaw);
     std::wstring message = messageRaw.get();
     messageRaw.reset();
     auto str = Util::convertToStr(message);
-    MsgProcessor::get()->processStr(str);
-    return S_OK;
+    return str;
 }
