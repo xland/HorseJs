@@ -13,6 +13,7 @@
       <div id="btnWriteClipBoardHtml" class="btn">向剪切板写入html</div>
       <div id="btnReadClipBoardRtf" class="btn">读取剪切板内的Rtf</div>
       <div id="btnWriteClipBoardRtf" class="btn">向剪切板写入Rtf</div>
+      <div id="btnReadFile" class="btn">读取剪切板内的文件</div>
       <div id="btnAddFile" class="btn">向剪切板写入文件</div>
       <div id="btnClearClipboard" class="btn">清空剪切板</div>
     </div>
@@ -55,11 +56,17 @@
           let data = await horse.clipboard.writeRtf(rtfContent);
           console.log(data);
         });
+        $("#btnReadFile").addEventListener("click", async () => {
+          let data = await horse.clipboard.readFile();
+          console.log(data);
+        });
         $("#btnAddFile").addEventListener("click", async () => {
-          await horse.clipboard.writeFile("D:\\project\\HorseJs\\Script\\example\\window.html", "D:\\project\\HorseJs\\Script\\example\\tray.html");
+          let data = await horse.clipboard.writeFile("D:\\project\\HorseJs\\Script\\example\\window.html", "D:\\project\\HorseJs\\Script\\example\\tray.html");
+          console.log(data);
         });
         $("#btnClearClipboard").addEventListener("click", async () => {
-          await horse.clipboard.clear();
+          let data = await horse.clipboard.clear();
+          console.log(data);
         });
       });
     </script>

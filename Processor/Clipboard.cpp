@@ -12,6 +12,7 @@ namespace {
         {"writeHtml", &Clipboard::writeHtml},
         {"readRtf", &Clipboard::readRtf},
         {"writeRtf", &Clipboard::writeRtf},
+        {"readFile", &Clipboard::readFile},
         {"writeFile", &Clipboard::writeFile},
         {"clear", &Clipboard::clear},
     };
@@ -134,7 +135,36 @@ void Clipboard::writeImage(const rapidjson::Value& params, JsonResult* result)
 
 void Clipboard::readFile(const rapidjson::Value& params, JsonResult* result)
 {
-    
+    if (!OpenClipboard(nullptr)) {
+        result->addErr("open clipboard err");
+        return;
+    }
+    HANDLE hClipboardData = GetClipboardData(CF_HDROP);
+    if (!hClipboardData) {
+        CloseClipboard();
+        result->addErr("No files found in clipboard");
+        return;
+    }
+    DROPFILES* pDropFiles = static_cast<DROPFILES*>(GlobalLock(hClipboardData));
+    if (!pDropFiles) {
+        CloseClipboard();
+        result->addErr("Failed to lock clipboard data");
+        return;
+    }
+    rapidjson::Value array(rapidjson::kArrayType);
+    if (pDropFiles->fWide) {
+        wchar_t* fileName = reinterpret_cast<wchar_t*>(reinterpret_cast<char*>(pDropFiles) + pDropFiles->pFiles);
+        while (*fileName) {
+            auto str = Util::convertToStr(fileName);
+            rapidjson::Value val;
+            val.SetString(str.data(), str.length(), result->getAllocator());
+            array.PushBack(val, result->getAllocator());
+            fileName += wcslen(fileName) + 1;
+        }
+    }
+    GlobalUnlock(hClipboardData);
+    CloseClipboard();
+    result->addValue("data", std::move(array));
 }
 
 void Clipboard::writeFile(const rapidjson::Value& params, JsonResult* result)
