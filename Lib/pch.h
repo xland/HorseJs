@@ -20,6 +20,8 @@
 #include <windowsx.h>
 #include <dwmapi.h>
 #include <gdiplus.h>
+#include <wincodec.h>
+#include <comdef.h>
 #include <shellscalingapi.h>
 
 #include <WebView2.h>

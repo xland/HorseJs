@@ -55,6 +55,39 @@ let data = await horse.clipboard.writeRtf(rtfContent);
 console.log(data);
 ```
 
+- 读取剪切板内的文件路径
+```js
+let data = await horse.clipboard.getFile();
+console.log(data);
+//输出：{"data":["D:\\1.mp4","D:\\test.png"],"ok":true}
+```
+
+- 向剪切板写入文件
+```js
+let data = await horse.clipboard.addFile("D:\\window.html", 
+"D:\\tray.html");
+console.log(data);
+```
+
+- 读取剪切板内的图像
+```js
+let data = await horse.clipboard.readImg();
+const uint8Array = new Uint8Array(data.buffer);
+const binary = Array.from(uint8Array)
+	.map((byte) => String.fromCharCode(byte))
+	.join("");
+const base64String = btoa(binary);
+const base64Image = `data:image/png;base64,${base64String}`;
+data.release();
+console.log(base64Image);
+```
+
+- 向剪切板写入图像
+```js
+let data = await horse.clipboard.writeImg(`D:\\horse.png`);
+console.log(data);
+```
+
 - 清空剪切板
 ```js
 let data = await horse.clipboard.clear();

@@ -61,11 +61,13 @@
         $("#btnReadImg").addEventListener("click", async () => {
           let data = await horse.clipboard.readImg();
           const uint8Array = new Uint8Array(data.buffer);
-          const binaryString = new TextDecoder("latin1").decode(uint8Array);
-          const base64String = btoa(binaryString);
-          base64String = `data:${mimeType};base64,${base64String}`;
+          const binary = Array.from(uint8Array)
+            .map((byte) => String.fromCharCode(byte))
+            .join("");
+          const base64String = btoa(binary);
+          const base64Image = `data:image/png;base64,${base64String}`;
           data.release();
-          console.log(base64String);
+          console.log(base64Image);
         });
         $("#btnWriteImg").addEventListener("click", async () => {
           let data = await horse.clipboard.writeImg(`D:\\project\\HorseJs\\Doc\\img\\horse.png`);
@@ -73,7 +75,7 @@
         });
         $("#btnGetFile").addEventListener("click", async () => {
           let data = await horse.clipboard.getFile();
-          console.log(data);
+          console.log(JSON.stringify(data));
         });
         $("#btnAddFile").addEventListener("click", async () => {
           let data = await horse.clipboard.addFile("D:\\project\\HorseJs\\Script\\example\\window.html", "D:\\project\\HorseJs\\Script\\example\\tray.html");
