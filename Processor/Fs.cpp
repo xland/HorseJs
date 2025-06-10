@@ -14,6 +14,7 @@ namespace {
     {"writeFileChunk", &Fs::writeFileChunk},
     {"delPath", &Fs::delPath},
     {"removePath", &Fs::removePath},
+    {"createFile", &Fs::createFile},
     {"createDir", &Fs::createDir},
     {"ensurePath", &Fs::ensurePath},
     {"listDir", &Fs::listDir},
@@ -370,6 +371,17 @@ void Fs::ensurePath(const rapidjson::Value& params, JsonResult* result)
         }
         file.close();
     }
+}
+void Fs::createFile(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring path = Util::convertToWStr(arr[0].GetString());
+    std::wofstream file(path, std::ios::out);
+    if (!file.is_open()) {
+        result->addErr("file create err");
+        return;
+    }
+    file.close();
 }
 void Fs::createDir(const rapidjson::Value& params, JsonResult* result)
 {

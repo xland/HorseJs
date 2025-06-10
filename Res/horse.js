@@ -238,8 +238,11 @@
     async removePath(filePath) {
       return this.callMethod("removePath", filePath);
     }
-    async createDir(filePath) {
-      return this.callMethod("createDir", filePath);
+    async createFile(filePath) {
+      return this.callMethod("createFile", filePath);
+    }
+    async createDir(dirPath) {
+      return this.callMethod("createDir", dirPath);
     }
     async ensurePath(filePath) {
       return this.callMethod("ensurePath", filePath);

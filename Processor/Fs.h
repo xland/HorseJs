@@ -16,6 +16,7 @@ public:
 	void writeFile(const rapidjson::Value& params, JsonResult* result);
 	void writeFileChunk(const rapidjson::Value& params, JsonResult* result);
 
+	void createFile(const rapidjson::Value& params, JsonResult* result);
 	void createDir(const rapidjson::Value& params, JsonResult* result);
 	void ensurePath(const rapidjson::Value& params, JsonResult* result);
 	void delPath(const rapidjson::Value& params, JsonResult* result);

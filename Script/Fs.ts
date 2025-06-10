@@ -25,8 +25,11 @@ export class Fs extends Eventer {
   async removePath(filePath: string) {
     return this.callMethod("removePath", filePath);
   }
-  async createDir(filePath: string) {
-    return this.callMethod("createDir", filePath);
+  async createFile(filePath: string) {
+    return this.callMethod("createFile", filePath);
+  }
+  async createDir(dirPath: string) {
+    return this.callMethod("createDir", dirPath);
   }
   async ensurePath(filePath: string) {
     return this.callMethod("ensurePath", filePath);
