@@ -18,8 +18,8 @@ namespace {
     {"createDir", &Fs::createDir},
     {"ensurePath", &Fs::ensurePath},
     {"listDir", &Fs::listDir},
-    {"copyFile", &Fs::copyFile},
-    {"moveFile", &Fs::moveFile},
+    {"copyPath", &Fs::copyPath},
+    {"movePath", &Fs::movePath},
     {"renameFile", &Fs::renameFile},
     {"watch", &Fs::watch},
     };
@@ -294,7 +294,6 @@ void Fs::writeFileChunk(const rapidjson::Value& params, JsonResult* result)
     CloseHandle(hMap);
     CloseHandle(hFile);
 }
-
 void Fs::delPath(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
@@ -313,7 +312,6 @@ void Fs::delPath(const rapidjson::Value& params, JsonResult* result)
         result->addErr("del file error.");
     }
 }
-
 void Fs::removePath(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
@@ -334,7 +332,6 @@ void Fs::removePath(const rapidjson::Value& params, JsonResult* result)
         result->addErr("remove path error.");
     }
 }
-
 void Fs::ensurePath(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
@@ -413,13 +410,13 @@ void Fs::listDir(const rapidjson::Value& params, JsonResult* result)
         WIN32_FIND_DATAW findFileData;
         HANDLE hFind = FindFirstFileW(searchPath.c_str(), &findFileData);
         if (hFind == INVALID_HANDLE_VALUE) {
-            std::wcout << L"Error opening directory: " << currentDir << L"\n";
+            result->addErr("opening directory err");
             continue;
         }
         do {
             // 跳过 . 和 .. 目录
-            if (wcscmp(findFileData.cFileName, L".") == 0 ||
-                wcscmp(findFileData.cFileName, L"..") == 0) {
+            if (wcscmp(findFileData.cFileName, L".") == 0 || wcscmp(findFileData.cFileName, L"..") == 0) 
+            {
                 continue;
             }
             std::wstring fullPath = currentDir + L"\\" + findFileData.cFileName;
@@ -443,13 +440,50 @@ void Fs::listDir(const rapidjson::Value& params, JsonResult* result)
     }
     result->addValue("data", std::move(array));
 }
-
-void Fs::copyFile(const rapidjson::Value& params, JsonResult* result)
+void Fs::copyPath(const rapidjson::Value& params, JsonResult* result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring src = Util::convertToWStr(arr[0].GetString());
+    std::wstring dst = Util::convertToWStr(arr[1].GetString());
+    const wchar_t* srcData = src.data();
+    if (GetFileAttributes(src.c_str()) == INVALID_FILE_ATTRIBUTES) {
+        result->addErr("src path not exists");
+        return;
+    }
+    src.push_back(L'\0');
+    dst.push_back(L'\0');
+    SHFILEOPSTRUCTW fileOp = { 0 };
+    fileOp.wFunc = FO_COPY;
+    fileOp.fFlags = FOF_NOCONFIRMMKDIR; // 如果目标目录不存在，自动创建
+    fileOp.pFrom = src.data();
+    fileOp.pTo = dst.data();
+    int ret = SHFileOperation(&fileOp);
+    if (ret != 0) {
+        result->addErr("move err");
+    }
 }
 
-void Fs::moveFile(const rapidjson::Value& params, JsonResult* result)
+void Fs::movePath(const rapidjson::Value& params, JsonResult* result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring src = Util::convertToWStr(arr[0].GetString());
+    std::wstring dst = Util::convertToWStr(arr[1].GetString());
+    const wchar_t* srcData = src.data();
+    if (GetFileAttributes(src.c_str()) == INVALID_FILE_ATTRIBUTES) {
+        result->addErr("src path not exists");
+        return;
+    }
+    src.push_back(L'\0');
+    dst.push_back(L'\0');
+    SHFILEOPSTRUCTW fileOp = { 0 };
+    fileOp.wFunc = FO_MOVE;
+    fileOp.fFlags = FOF_NOCONFIRMMKDIR; // 如果目标目录不存在，自动创建
+    fileOp.pFrom = src.data();
+    fileOp.pTo = dst.data();
+    int ret = SHFileOperation(&fileOp);
+    if (ret != 0) {
+        result->addErr("move err");
+    }
 }
 
 void Fs::renameFile(const rapidjson::Value& params, JsonResult* result)

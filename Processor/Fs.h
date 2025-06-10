@@ -20,11 +20,10 @@ public:
 	void createFile(const rapidjson::Value& params, JsonResult* result);
 	void createDir(const rapidjson::Value& params, JsonResult* result);
 	void ensurePath(const rapidjson::Value& params, JsonResult* result);
-	
-	
 	void listDir(const rapidjson::Value& params, JsonResult* result);
-	void copyFile(const rapidjson::Value& params, JsonResult* result);
-	void moveFile(const rapidjson::Value& params, JsonResult* result);
+
+	void copyPath(const rapidjson::Value& params, JsonResult* result);
+	void movePath(const rapidjson::Value& params, JsonResult* result);
 	void renameFile(const rapidjson::Value& params, JsonResult* result);
 	void watch(const rapidjson::Value& params, JsonResult* result);
 private:
