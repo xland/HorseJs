@@ -5,6 +5,7 @@
 ```js
 let data = await horse.clipboard.getDataType();
 console.log(data);
+//输出：{data: 'img', ok: true}
 ```
 
 - 读取剪切板内的文本
@@ -40,6 +41,7 @@ console.log(data);
 ```js
 let data = await horse.clipboard.readRtf();
 console.log(data);
+//输出：{data: '{\\rtf1\\adeflang1025\\ansi\\ansicpg936\\uc2\\adeff31507…000105000000000000}}', ok: true}
 ```
 
 - 向剪切板写入Rtf字符串
