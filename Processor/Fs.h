@@ -15,12 +15,13 @@ public:
 	void readFileChunk(const rapidjson::Value& params, JsonResult* result);
 	void writeFile(const rapidjson::Value& params, JsonResult* result);
 	void writeFileChunk(const rapidjson::Value& params, JsonResult* result);
-
+	void delPath(const rapidjson::Value& params, JsonResult* result);
+	void removePath(const rapidjson::Value& params, JsonResult* result);
 	void createFile(const rapidjson::Value& params, JsonResult* result);
 	void createDir(const rapidjson::Value& params, JsonResult* result);
 	void ensurePath(const rapidjson::Value& params, JsonResult* result);
-	void delPath(const rapidjson::Value& params, JsonResult* result);
-	void removePath(const rapidjson::Value& params, JsonResult* result);
+	
+	
 	void listDir(const rapidjson::Value& params, JsonResult* result);
 	void copyFile(const rapidjson::Value& params, JsonResult* result);
 	void moveFile(const rapidjson::Value& params, JsonResult* result);

@@ -34,6 +34,9 @@ export class Fs extends Eventer {
   async ensurePath(filePath: string) {
     return this.callMethod("ensurePath", filePath);
   }
+  async listDir(dirPath: string) {
+    return this.callMethod("listDir", dirPath);
+  }
   private callMethod(methodName: string, ...params: any[]) {
     let obj = window.self === window.top ? this : window.top.horse.fs;
     return obj.call({

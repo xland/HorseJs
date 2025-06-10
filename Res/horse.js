@@ -247,6 +247,9 @@
     async ensurePath(filePath) {
       return this.callMethod("ensurePath", filePath);
     }
+    async listDir(dirPath) {
+      return this.callMethod("listDir", dirPath);
+    }
     callMethod(methodName, ...params) {
       let obj = window.self === window.top ? this : window.top.horse.fs;
       return obj.call({

@@ -400,6 +400,48 @@ void Fs::createDir(const rapidjson::Value& params, JsonResult* result)
 }
 void Fs::listDir(const rapidjson::Value& params, JsonResult* result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring startDirectory = Util::convertToWStr(arr[0].GetString());
+    rapidjson::Value array(rapidjson::kArrayType);
+    std::stack<std::wstring> dirStack;
+    dirStack.push(startDirectory);
+    auto& allocator = result->getAllocator();
+    while (!dirStack.empty()) {
+        std::wstring currentDir = dirStack.top();
+        dirStack.pop();
+        std::wstring searchPath = currentDir + L"\\*.*";
+        WIN32_FIND_DATAW findFileData;
+        HANDLE hFind = FindFirstFileW(searchPath.c_str(), &findFileData);
+        if (hFind == INVALID_HANDLE_VALUE) {
+            std::wcout << L"Error opening directory: " << currentDir << L"\n";
+            continue;
+        }
+        do {
+            // 跳过 . 和 .. 目录
+            if (wcscmp(findFileData.cFileName, L".") == 0 ||
+                wcscmp(findFileData.cFileName, L"..") == 0) {
+                continue;
+            }
+            std::wstring fullPath = currentDir + L"\\" + findFileData.cFileName;
+            rapidjson::Value obj(rapidjson::kObjectType);            
+            rapidjson::Value key1("path", allocator);
+            rapidjson::Value key2("isFile", allocator);
+            auto valStr = Util::convertToStr(fullPath);
+            rapidjson::Value val(valStr.data(), allocator);
+            obj.AddMember(key1, val, allocator);
+            if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+                obj.AddMember(key2, false, allocator);
+                // 将子目录压入栈中
+                dirStack.push(fullPath);
+            }
+            else {
+                obj.AddMember(key2, true, allocator);
+            }
+            array.PushBack(obj, allocator);
+        } while (FindNextFileW(hFind, &findFileData) != 0);
+        FindClose(hFind);
+    }
+    result->addValue("data", std::move(array));
 }
 
 void Fs::copyFile(const rapidjson::Value& params, JsonResult* result)

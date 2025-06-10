@@ -17,6 +17,7 @@
       <div id="btnCreateFile" class="btn">创建一个文件</div>
       <div id="btnCreateDir" class="btn">创建一个目录</div>
       <div id="btnEnsurePath" class="btn">递归创建一个路径</div>
+      <div id="btnListDir" class="btn">遍历一个目录下的所有子路径</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
@@ -71,6 +72,10 @@
         });
         $("#btnEnsurePath").addEventListener("click", async () => {
           let data = await horse.fs.ensurePath("D:\\aaa\\bbb\\ccc\\ddd.txt");
+          console.log(data);
+        });
+        $("#btnListDir").addEventListener("click", async () => {
+          let data = await horse.fs.listDir("D:\\project\\HorseJs\\x64\\Release");
           console.log(data);
         });
       });

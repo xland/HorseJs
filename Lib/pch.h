@@ -7,6 +7,7 @@
 #include <unordered_set>
 #include <set>
 #include <map>
+#include <stack>
 #include <fstream>
 #include <filesystem>
 #include <functional>
