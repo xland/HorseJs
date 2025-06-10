@@ -20,7 +20,7 @@ namespace {
     {"listDir", &Fs::listDir},
     {"copyPath", &Fs::copyPath},
     {"movePath", &Fs::movePath},
-    {"renameFile", &Fs::renameFile},
+    {"renamePath", &Fs::renamePath},
     {"watch", &Fs::watch},
     };
 }
@@ -295,7 +295,7 @@ void Fs::writeFileChunk(const rapidjson::Value& params, JsonResult* result)
     CloseHandle(hFile);
 }
 void Fs::delPath(const rapidjson::Value& params, JsonResult* result)
-{
+{    
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::wstring path = Util::convertToWStr(arr[0].GetString());
     DWORD fileAttributes = GetFileAttributes(path.c_str());
@@ -454,7 +454,7 @@ void Fs::copyPath(const rapidjson::Value& params, JsonResult* result)
     dst.push_back(L'\0');
     SHFILEOPSTRUCTW fileOp = { 0 };
     fileOp.wFunc = FO_COPY;
-    fileOp.fFlags = FOF_NOCONFIRMMKDIR; // 如果目标目录不存在，自动创建
+    fileOp.fFlags = FOF_NOCONFIRMATION | FOF_SILENT | FOF_NOERRORUI;
     fileOp.pFrom = src.data();
     fileOp.pTo = dst.data();
     int ret = SHFileOperation(&fileOp);
@@ -477,7 +477,7 @@ void Fs::movePath(const rapidjson::Value& params, JsonResult* result)
     dst.push_back(L'\0');
     SHFILEOPSTRUCTW fileOp = { 0 };
     fileOp.wFunc = FO_MOVE;
-    fileOp.fFlags = FOF_NOCONFIRMMKDIR; // 如果目标目录不存在，自动创建
+    fileOp.fFlags = FOF_NOCONFIRMATION | FOF_SILENT | FOF_NOERRORUI;
     fileOp.pFrom = src.data();
     fileOp.pTo = dst.data();
     int ret = SHFileOperation(&fileOp);
@@ -486,8 +486,28 @@ void Fs::movePath(const rapidjson::Value& params, JsonResult* result)
     }
 }
 
-void Fs::renameFile(const rapidjson::Value& params, JsonResult* result)
+void Fs::renamePath(const rapidjson::Value& params, JsonResult* result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring src = Util::convertToWStr(arr[0].GetString());
+    std::wstring dst = Util::convertToWStr(arr[1].GetString());
+    const wchar_t* srcData = src.data();
+    if (GetFileAttributes(src.c_str()) == INVALID_FILE_ATTRIBUTES) {
+        result->addErr("src path not exists");
+        return;
+    }
+    src.push_back(L'\0');
+    dst.push_back(L'\0');
+    SHFILEOPSTRUCT fileOp = { 0 };
+    fileOp.hwnd = NULL;
+    fileOp.wFunc = FO_RENAME;
+    fileOp.pFrom = src.c_str();
+    fileOp.pTo = dst.c_str();
+    fileOp.fFlags = FOF_NOCONFIRMATION | FOF_NOERRORUI | FOF_SILENT;
+    int val = SHFileOperation(&fileOp);
+    if (val != 0 || fileOp.fAnyOperationsAborted != FALSE) {
+        result->addErr("remove path error.");
+    }
 }
 
 void Fs::watch(const rapidjson::Value& params, JsonResult* result)

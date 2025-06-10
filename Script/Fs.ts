@@ -43,6 +43,9 @@ export class Fs extends Eventer {
   async copyPath(srcPath: string, dstPath: string) {
     return this.callMethod("copyPath", srcPath, dstPath);
   }
+  async renamePath(srcPath: string, dstPath: string) {
+    return this.callMethod("renamePath", srcPath, dstPath);
+  }
   private callMethod(methodName: string, ...params: any[]) {
     let obj = window.self === window.top ? this : window.top.horse.fs;
     return obj.call({

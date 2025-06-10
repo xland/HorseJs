@@ -20,6 +20,7 @@
       <div id="btnListDir" class="btn">遍历一个目录下的所有子路径</div>
       <div id="btnMovePath" class="btn">移动一个路径</div>
       <div id="btnCopyPath" class="btn">复制一个路径</div>
+      <div id="btnRenamePath" class="btn">重命名一个路径</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
@@ -49,7 +50,7 @@
           console.log(data);
         });
         $("#btnDelPath").addEventListener("click", async () => {
-          let data = await horse.fs.delPath("D:\\project\\HorseJs\\Script\\abc.txt");
+          let data = await horse.fs.delPath("D:\\doc\\周报\\allen\\");
           console.log(data);
         });
         $("#btnRemovePath").addEventListener("click", async () => {
@@ -86,6 +87,10 @@
         });
         $("#btnCopyPath").addEventListener("click", async () => {
           let data = await horse.fs.copyPath("D:\\doc\\周报\\allen\\", "D:\\project\\HorseJs\\Doc\\img\\");
+          console.log(data);
+        });
+        $("#btnRenamePath").addEventListener("click", async () => {
+          let data = await horse.fs.renamePath("D:\\doc\\周报\\allen\\", "D:\\doc\\周报\\新目录\\");
           console.log(data);
         });
       });
