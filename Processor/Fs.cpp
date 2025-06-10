@@ -15,6 +15,7 @@ namespace {
     {"delPath", &Fs::delPath},
     {"removePath", &Fs::removePath},
     {"createDir", &Fs::createDir},
+    {"ensurePath", &Fs::ensurePath},
     {"listDir", &Fs::listDir},
     {"copyFile", &Fs::copyFile},
     {"moveFile", &Fs::moveFile},
@@ -333,10 +334,58 @@ void Fs::removePath(const rapidjson::Value& params, JsonResult* result)
     }
 }
 
+void Fs::ensurePath(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring path = Util::convertToWStr(arr[0].GetString());    
+    std::filesystem::path targetPath(path);
+    if (std::filesystem::exists(targetPath)) {
+        return;
+    }
+    std::vector<std::filesystem::path> directories;
+    std::filesystem::path current = targetPath;
+    auto hasExt = targetPath.has_extension();
+    auto fileName = targetPath.filename().wstring();
+    if (hasExt && !fileName.empty()) {
+        current = targetPath.parent_path();
+    }
+    while (!current.empty() && !std::filesystem::exists(current)) {
+        directories.push_back(current);
+        current = current.parent_path();
+    }
+    for (auto it = directories.rbegin(); it != directories.rend(); ++it) {
+        if (!CreateDirectory(it->wstring().c_str(), nullptr)) {
+            DWORD error = GetLastError();
+            if (error != ERROR_ALREADY_EXISTS) {
+                result->addErr("create path exists");
+                return;
+            }
+        }
+    }
+    if (hasExt && !fileName.empty()) {
+        std::wofstream file(targetPath.wstring(), std::ios::out);
+        if (!file.is_open()) {
+            result->addErr("file create err");
+            return;
+        }
+        file.close();
+    }
+}
 void Fs::createDir(const rapidjson::Value& params, JsonResult* result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring path = Util::convertToWStr(arr[0].GetString());
+    std::filesystem::path dirPath(path);
+    if (std::filesystem::exists(dirPath)) {
+        result->addErr("path exists");
+        return;
+    }
+    BOOL flag = CreateDirectory(path.c_str(), nullptr);
+    if (!flag) {
+        result->addErr("create path err");
+        return;
+    }
 }
-
 void Fs::listDir(const rapidjson::Value& params, JsonResult* result)
 {
 }

@@ -14,6 +14,8 @@
       <div id="btnRemovePath" class="btn">把路径移入回收站</div>
       <div id="btnPathExists" class="btn">路径是否存在</div>
       <div id="btnFileInfo" class="btn">获取文件信息</div>
+      <div id="btnCreateDir" class="btn">创建一个目录</div>
+      <div id="btnEnsurePath" class="btn">递归创建一个路径</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
@@ -56,6 +58,14 @@
         });
         $("#btnFileInfo").addEventListener("click", async () => {
           let data = await horse.fs.getFileInfo("D:\\project\\HorseJs\\Script\\index.html");
+          console.log(data);
+        });
+        $("#btnCreateDir").addEventListener("click", async () => {
+          let data = await horse.fs.createDir("D:\\aaa");
+          console.log(data);
+        });
+        $("#btnEnsurePath").addEventListener("click", async () => {
+          let data = await horse.fs.ensurePath("D:\\aaa\\bbb\\ccc\\ddd.txt");
           console.log(data);
         });
       });

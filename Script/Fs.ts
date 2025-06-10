@@ -25,6 +25,12 @@ export class Fs extends Eventer {
   async removePath(filePath: string) {
     return this.callMethod("removePath", filePath);
   }
+  async createDir(filePath: string) {
+    return this.callMethod("createDir", filePath);
+  }
+  async ensurePath(filePath: string) {
+    return this.callMethod("ensurePath", filePath);
+  }
   private callMethod(methodName: string, ...params: any[]) {
     let obj = window.self === window.top ? this : window.top.horse.fs;
     return obj.call({
