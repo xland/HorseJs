@@ -32,7 +32,18 @@ console.log(JSON.stringify(data));
 ```
 
 
-- 显示一个MessageBox
+- 显示一个信息提示对话框
+> icon：info, warn, err, question,stop <br />
+> btn：ok,okCancel,yesNo,yesNoCancel,retryCancel,abortRetryIgnore
 ```js
-
+let data = await horse.dialog.msgBox({
+  title: "系统提示",
+  msg: "世界是我们的！",
+  icon: "err",
+  btn: "yesNoCancel",
+});
+console.log(JSON.stringify(data));
+// 输出：{"data":"yes","ok":true}
+// 输出：{"data":"no","ok":true}
+// 输出：{"data":"cancel","ok":true}
 ```

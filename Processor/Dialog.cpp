@@ -170,49 +170,84 @@ void Dialog::msgBox(const rapidjson::Value& params, JsonResult* result)
     if (obj.HasMember("msg") && obj["msg"].IsString()) {
         msg = Util::convertToWStr(obj["msg"].GetString());
     }
-    PCWSTR icon = TD_INFORMATION_ICON;  //info, warn, err, question
-    if (obj.HasMember("type") && obj["type"].IsString()) {
-        std::string type = obj["type"].GetString();
-        if (type == "warning") {
-            icon = TD_WARNING_ICON;
+    UINT icon = MB_ICONINFORMATION;  //info, warn, err, question,stop
+    if (obj.HasMember("icon") && obj["icon"].IsString()) {
+        std::string iconType = obj["icon"].GetString();
+        if (iconType == "warn") {
+            icon = MB_ICONWARNING;
         }
-        else if (type == "err") {
-            icon = TD_ERROR_ICON;
+        else if (iconType == "err") {
+            icon = MB_ICONERROR;
         }
-        else if (type == "question") {
-            icon = TD_SHIELD_ICON;
+        else if (iconType == "question") {
+            icon = MB_ICONQUESTION;
         }
-    }
-    //std::vector<std::wstring> btnText;
-    std::vector<TASKDIALOG_BUTTON> btns;
-    if (obj.HasMember("btns") && obj["btns"].IsArray()) {
-        const rapidjson::Value::ConstArray arr = obj["btns"].GetArray();
-        int i = 0;
-        for (const auto& btn : arr) {
-            auto name = Util::convertToWStr(btn.GetString());
-            btns.push_back({ i, name.c_str() });
-            i += 1;
-            //btnText.push_back(name);
+        else if (iconType == "stop") {
+            icon = MB_ICONSTOP;
         }
     }
-    TASKDIALOGCONFIG config = { 0 };
-    config.cbSize = sizeof(TASKDIALOGCONFIG);
-    config.hwndParent = result->getWin()->hwnd;
-    config.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION | TDF_POSITION_RELATIVE_TO_WINDOW;
-    config.pszWindowTitle = title.c_str();
-    config.pszMainInstruction = msg.c_str(); // 使用主指令显示消息
-    config.pszMainIcon = icon;
-    config.nDefaultButton = btns[0].nButtonID; // 默认选择第一个按钮
-    //config.cButtons = static_cast<UINT>(btns.size());
-    //config.pButtons = btns.data();
+    UINT mbButton = MB_OK;  //"ok"
+    if (obj.HasMember("btn") && obj["btn"].IsString()) {
+        std::string btn = obj["btn"].GetString();
+        if (btn == "okCancel") {
+            mbButton = MB_OKCANCEL;
+        }
+        else if (btn == "yesNo") {
+            mbButton = MB_YESNO;
+        }
+        else if (btn == "yesNoCancel") {
+            mbButton = MB_YESNOCANCEL;
+        }
+        else if (btn == "retryCancel") {
+            mbButton = MB_RETRYCANCEL;
+        }
+        else if (btn == "abortRetryIgnore") {
+            mbButton = MB_ABORTRETRYIGNORE;
+        }
+    }
 
-    int buttonPressed = 0;
-    HRESULT hr = TaskDialogIndirect(&config, &buttonPressed, nullptr, nullptr);
-    if (FAILED(hr)) {
-        result->addErr("TaskDialogIndirect failed: " + std::to_string(hr));
-        result->returnBackThread();
-        return;
-    }
+    result->cancel = true;
+    auto iconAndBtns = mbButton | icon;
+    auto asyncResult = new JsonResult(result->winId, "dialog", result->getString("eventName"));
+    std::jthread worker([
+        asyncResult,
+        title = std::move(title),
+        msg =  std::move(msg),
+        iconAndBtns
+        ]() {
+            int ret = MessageBox(asyncResult->getWin()->hwnd, msg.c_str(), title.c_str(), iconAndBtns);
+            switch (ret) {
+            case IDOK:
+                asyncResult->addString("data", "ok");
+                break;
+            case IDCANCEL:
+                asyncResult->addString("data", "cancel");
+                break;
+            case IDYES:
+                asyncResult->addString("data", "yes");
+                break;
+            case IDNO:
+                asyncResult->addString("data", "no");
+                break;
+            case IDABORT:
+                asyncResult->addString("data", "abort");
+                break;
+            case IDRETRY:
+                asyncResult->addString("data", "retry");
+                break;
+            case IDIGNORE:
+                asyncResult->addString("data", "ignore");
+                break;
+            case 0:
+                asyncResult->addErr("MessageBox failed: " + std::to_string(GetLastError()));
+                return;
+            default:
+                asyncResult->addErr("unknown MessageBox return value: " + std::to_string(ret));
+                return;
+            }
+            asyncResult->returnBackThread();
+        });
+    worker.detach();
 }
 
 void Dialog::showOpenPathDialog(JsonResult* result,

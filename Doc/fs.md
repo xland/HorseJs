@@ -43,10 +43,14 @@ let data = await horse.fs.exists("D:\\index.html");
 console.log(data);
 // 输出：{isDir: false, isExists: true}
 ```
+
 - 获取文件信息
+> 返回结果里的时间数据，可以直接用`new Date(1748565302829)`格式化为js的时间格式
 ```js
 let data = await horse.fs.getFileInfo("D:\\index.html");
 console.log(data);
 // 输出：{createTime:1747615428326,fileSize:9190,isHidden:false,isReadOnly:false,isSystem:false,lastAccessTime:1748565302829,lastWriteTime:1748565107113}
 ```
+
+
 ## horse.fs 的事件
