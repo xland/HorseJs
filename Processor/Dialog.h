@@ -11,9 +11,17 @@ public:
 	~Dialog();
 	static Dialog* get();
 	static bool execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result);
-	void openPathDialog(const rapidjson::Value& params, JsonResult* result);
+	void openPath(const rapidjson::Value& params, JsonResult* result);
+	void savePath(const rapidjson::Value& params, JsonResult* result);
+	void msgBox(const rapidjson::Value& params, JsonResult* result);
 private:
-	void showPathDialog(JsonResult* result,
+	void showOpenPathDialog(JsonResult* result,
+		const std::wstring&& title,
+		const std::wstring&& okBtnText,
+		const std::wstring&& defaultDir,
+		const FILEOPENDIALOGOPTIONS&& option,
+		const filterType&& filter);
+	void showSavePathDialog(JsonResult* result,
 		const std::wstring&& title,
 		const std::wstring&& okBtnText,
 		const std::wstring&& defaultDir,

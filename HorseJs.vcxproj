@@ -126,6 +126,7 @@
     </Link>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+      <AdditionalManifestFiles>$(SolutionDir)HorseJs.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -153,6 +154,7 @@
     </Link>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+      <AdditionalManifestFiles>$(SolutionDir)HorseJs.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
     <PreBuildEvent>
       <Command>esbuild Script/Horse.ts --bundle --outfile=Res/horse.js --minify </Command>
@@ -345,6 +347,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Res\Res.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="HorseJs.manifest" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

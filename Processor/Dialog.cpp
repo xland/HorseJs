@@ -6,7 +6,9 @@
 namespace {
     std::unique_ptr<Dialog> dialog;
     static std::unordered_map<std::string, void (Dialog::*)(const rapidjson::Value&, JsonResult*)> funcs{
-    {"openPathDialog", &Dialog::openPathDialog},
+        {"openPath", &Dialog::openPath},
+        {"savePath", &Dialog::savePath},
+        {"msgBox", &Dialog::msgBox},
     };
 }
 
@@ -32,10 +34,9 @@ bool Dialog::execute(std::string& methodName, const rapidjson::Value& param, Jso
     (Dialog::get()->*it->second)(param, result);
     return true;
 }
-void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
+void Dialog::openPath(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
-    auto flag = arr[0].IsObject();
     const rapidjson::Value& obj = arr[0].GetObj();
 
     std::wstring title;
@@ -48,9 +49,9 @@ void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
         okBtnText = Util::convertToWStr(obj["okBtnText"].GetString());
     }
 
-    std::wstring defaultDir;
-    if (obj.HasMember("defaultDir") && obj["defaultDir"].IsString()) {
-        defaultDir = Util::convertToWStr(obj["defaultDir"].GetString());
+    std::wstring defaultPath;
+    if (obj.HasMember("defaultPath") && obj["defaultPath"].IsString()) {
+        defaultPath = Util::convertToWStr(obj["defaultPath"].GetString());
     }
 
     FILEOPENDIALOGOPTIONS option{ FOS_FORCEFILESYSTEM };
@@ -92,22 +93,133 @@ void Dialog::openPathDialog(const rapidjson::Value& params, JsonResult* result)
     result->cancel = true;
 
     auto asyncResult = new JsonResult(result->winId,"dialog",result->getString("eventName"));
-    std::jthread worker(&Dialog::showPathDialog,
+    std::jthread worker(&Dialog::showOpenPathDialog,
         this,
         asyncResult,
         std::move(title),
         std::move(okBtnText),
-        std::move(defaultDir),
+        std::move(defaultPath),
         std::move(option),
         std::move(filters));
     worker.detach();
 }
 
-void Dialog::showPathDialog(JsonResult* result,
-    const std::wstring&& title, 
-    const std::wstring&& okBtnText, 
-    const std::wstring&& defaultDir, 
-    const FILEOPENDIALOGOPTIONS&& option, 
+void Dialog::savePath(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    auto flag = arr[0].IsObject();
+    const rapidjson::Value& obj = arr[0].GetObj();
+
+    std::wstring title;
+    if (obj.HasMember("title") && obj["title"].IsString()) {
+        title = Util::convertToWStr(obj["title"].GetString());
+    }
+
+    std::wstring okBtnText;
+    if (obj.HasMember("okBtnText") && obj["okBtnText"].IsString()) {
+        okBtnText = Util::convertToWStr(obj["okBtnText"].GetString());
+    }
+
+    std::wstring defaultPath;
+    if (obj.HasMember("defaultPath") && obj["defaultPath"].IsString()) {
+        defaultPath = Util::convertToWStr(obj["defaultPath"].GetString());
+    }
+
+    FILEOPENDIALOGOPTIONS option{ FOS_FORCEFILESYSTEM };
+    filterType filters;
+    if (obj.HasMember("filter") && obj["filter"].IsArray()) {
+        const rapidjson::Value::ConstArray arr = obj["filter"].GetArray();
+        for (const auto& filter : arr) {
+            const rapidjson::Value::ConstArray arr = filter.GetArray();
+            auto name = Util::convertToWStr(arr[0].GetString());
+            auto val = Util::convertToWStr(arr[1].GetString());
+            filters.push_back({ name, val });
+        }
+    }
+
+    bool showHiddenFile{ false };
+    if (obj.HasMember("showHiddenFile") && obj["showHiddenFile"].IsBool()) {
+        showHiddenFile = obj["showHiddenFile"].GetBool();
+        if (showHiddenFile) {
+            option |= FOS_FORCESHOWHIDDEN;
+        }
+    }
+    result->cancel = true;
+
+    auto asyncResult = new JsonResult(result->winId, "dialog", result->getString("eventName"));
+    std::jthread worker(&Dialog::showSavePathDialog,
+        this,
+        asyncResult,
+        std::move(title),
+        std::move(okBtnText),
+        std::move(defaultPath),
+        std::move(option),
+        std::move(filters));
+    worker.detach();
+}
+
+void Dialog::msgBox(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    const rapidjson::Value& obj = arr[0].GetObj();
+    std::wstring title;
+    if (obj.HasMember("title") && obj["title"].IsString()) {
+        title = Util::convertToWStr(obj["title"].GetString());
+    }
+    std::wstring msg;
+    if (obj.HasMember("msg") && obj["msg"].IsString()) {
+        msg = Util::convertToWStr(obj["msg"].GetString());
+    }
+    PCWSTR icon = TD_INFORMATION_ICON;  //info, warn, err, question
+    if (obj.HasMember("type") && obj["type"].IsString()) {
+        std::string type = obj["type"].GetString();
+        if (type == "warning") {
+            icon = TD_WARNING_ICON;
+        }
+        else if (type == "err") {
+            icon = TD_ERROR_ICON;
+        }
+        else if (type == "question") {
+            icon = TD_SHIELD_ICON;
+        }
+    }
+    //std::vector<std::wstring> btnText;
+    std::vector<TASKDIALOG_BUTTON> btns;
+    if (obj.HasMember("btns") && obj["btns"].IsArray()) {
+        const rapidjson::Value::ConstArray arr = obj["btns"].GetArray();
+        int i = 0;
+        for (const auto& btn : arr) {
+            auto name = Util::convertToWStr(btn.GetString());
+            btns.push_back({ i, name.c_str() });
+            i += 1;
+            //btnText.push_back(name);
+        }
+    }
+    TASKDIALOGCONFIG config = { 0 };
+    config.cbSize = sizeof(TASKDIALOGCONFIG);
+    config.hwndParent = result->getWin()->hwnd;
+    config.dwFlags = TDF_ALLOW_DIALOG_CANCELLATION | TDF_POSITION_RELATIVE_TO_WINDOW;
+    config.pszWindowTitle = title.c_str();
+    config.pszMainInstruction = msg.c_str(); // 使用主指令显示消息
+    config.pszMainIcon = icon;
+    config.nDefaultButton = btns[0].nButtonID; // 默认选择第一个按钮
+    //config.cButtons = static_cast<UINT>(btns.size());
+    //config.pButtons = btns.data();
+
+    int buttonPressed = 0;
+    HRESULT hr = TaskDialogIndirect(&config, &buttonPressed, nullptr, nullptr);
+    if (FAILED(hr)) {
+        result->addErr("TaskDialogIndirect failed: " + std::to_string(hr));
+        result->returnBackThread();
+        return;
+    }
+}
+
+void Dialog::showOpenPathDialog(JsonResult* result,
+    const std::wstring&& title,
+    const std::wstring&& okBtnText,
+    const std::wstring&& defaultPath,
+    const FILEOPENDIALOGOPTIONS&& option,
     const filterType&& filter)
 {
     IFileOpenDialog* pFileOpen;
@@ -150,9 +262,9 @@ void Dialog::showPathDialog(JsonResult* result,
             return;
         }
     }
-    if (!defaultDir.empty()) {
+    if (!defaultPath.empty()) {
         IShellItem* pDefaultFolder = nullptr;
-        hr = SHCreateItemFromParsingName(defaultDir.c_str(), nullptr, IID_PPV_ARGS(&pDefaultFolder));
+        hr = SHCreateItemFromParsingName(defaultPath.c_str(), nullptr, IID_PPV_ARGS(&pDefaultFolder));
         if (FAILED(hr)) {
             pFileOpen->Release();
             result->addErr("set default dir err");
@@ -274,5 +386,196 @@ void Dialog::showPathDialog(JsonResult* result,
         auto str = Util::convertToStr(pathStr);
         result->addString("data", str);
     }
+    result->returnBackThread();
+}
+
+void Dialog::showSavePathDialog(JsonResult* result,
+    const std::wstring&& title,
+    const std::wstring&& okBtnText,
+    const std::wstring&& defaultPath,
+    const FILEOPENDIALOGOPTIONS&& option,
+    const filterType&& filter)
+{
+    // 创建 IFileSaveDialog 实例
+    IFileSaveDialog* pFileSave;
+    HRESULT hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pFileSave));
+    if (FAILED(hr)) {
+        result->addErr("CoCreateInstance failed: " + std::to_string(hr));
+        result->returnBackThread();
+        return;
+    }
+
+    // 获取当前选项并移除 FOS_FILEMUSTEXIST
+    DWORD dwOptions;
+    hr = pFileSave->GetOptions(&dwOptions);
+    if (FAILED(hr)) {
+        pFileSave->Release();
+        result->addErr("pFileSave GetOptions err: " + std::to_string(hr));
+        result->returnBackThread();
+        return;
+    }
+
+    // 设置选项，确保适合保存新文件
+    dwOptions |= option;
+    dwOptions &= ~FOS_FILEMUSTEXIST; // 移除 FOS_FILEMUSTEXIST
+    dwOptions |= FOS_PATHMUSTEXIST | FOS_OVERWRITEPROMPT; // 确保路径存在，提示覆盖
+    hr = pFileSave->SetOptions(dwOptions);
+    if (FAILED(hr)) {
+        pFileSave->Release();
+        result->addErr("pFileSave SetOptions err: " + std::to_string(hr));
+        result->returnBackThread();
+        return;
+    }
+
+    // 设置标题
+    if (!title.empty()) {
+        hr = pFileSave->SetTitle(title.data());
+        if (FAILED(hr)) {
+            pFileSave->Release();
+            result->addErr("set title err: " + std::to_string(hr));
+            result->returnBackThread();
+            return;
+        }
+    }
+
+    // 设置确认按钮文本
+    if (!okBtnText.empty()) {
+        hr = pFileSave->SetOkButtonLabel(okBtnText.data());
+        if (FAILED(hr)) {
+            pFileSave->Release();
+            result->addErr("set ok button label err: " + std::to_string(hr));
+            result->returnBackThread();
+            return;
+        }
+    }
+
+    // 解析默认路径和文件名
+    std::wstring dirPath;
+    std::wstring fileName;
+    if (!defaultPath.empty()) {
+        // 查找最后一个路径分隔符
+        size_t lastSlash = defaultPath.find_last_of(L"\\/");
+        if (lastSlash != std::wstring::npos && lastSlash < defaultPath.length() - 1) {
+            // 提取目录和文件名
+            dirPath = defaultPath.substr(0, lastSlash);
+            fileName = defaultPath.substr(lastSlash + 1);
+        }
+        else {
+            // 仅目录，无文件名
+            dirPath = defaultPath;
+        }
+
+        // 验证目录是否存在
+        if (!dirPath.empty()) {
+            DWORD dwAttrib = GetFileAttributesW(dirPath.c_str());
+            if (dwAttrib == INVALID_FILE_ATTRIBUTES || !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY)) {
+                pFileSave->Release();
+                result->addErr("default directory does not exist and cannot be created: " + std::to_string(hr));
+                result->returnBackThread();
+                return;
+            }
+
+            // 设置默认目录
+            IShellItem* pDefaultFolder = nullptr;
+            hr = SHCreateItemFromParsingName(dirPath.c_str(), nullptr, IID_PPV_ARGS(&pDefaultFolder));
+            if (FAILED(hr)) {
+                pFileSave->Release();
+                result->addErr("set default dir err: " + std::to_string(hr));
+                result->returnBackThread();
+                return;
+            }
+            hr = pFileSave->SetFolder(pDefaultFolder);
+            pDefaultFolder->Release();
+            if (FAILED(hr)) {
+                pFileSave->Release();
+                result->addErr("set default dir err: " + std::to_string(hr));
+                result->returnBackThread();
+                return;
+            }
+        }
+
+        // 设置默认文件名（如果存在）
+        if (!fileName.empty()) {
+            hr = pFileSave->SetFileName(fileName.c_str());
+            if (FAILED(hr)) {
+                pFileSave->Release();
+                result->addErr("set default file name err: " + std::to_string(hr));
+                result->returnBackThread();
+                return;
+            }
+        }
+    }
+
+    // 设置文件过滤器并指定默认扩展名
+    std::wstring defaultExt;
+    if (!filter.empty()) {
+        std::vector<COMDLG_FILTERSPEC> fs;
+        for (const auto& f : filter) {
+            fs.push_back({ f.first.c_str(), f.second.c_str() });
+        }
+        hr = pFileSave->SetFileTypes(fs.size(), fs.data());
+        if (FAILED(hr)) {
+            pFileSave->Release();
+            result->addErr("set filter err: " + std::to_string(hr));
+            result->returnBackThread();
+            return;
+        }
+        // 设置默认扩展名（使用第一个过滤器的扩展名）
+        defaultExt = filter.begin()->second;
+        if (defaultExt.find(L"*") != std::wstring::npos) {
+            defaultExt.erase(0, 2); // 移除 "*. "
+        }
+        hr = pFileSave->SetDefaultExtension(defaultExt.c_str());
+        if (FAILED(hr)) {
+            pFileSave->Release();
+            result->addErr("set default extension err: " + std::to_string(hr));
+            result->returnBackThread();
+            return;
+        }
+    }
+    // 显示保存对话框
+    auto win = result->getWin();
+    hr = pFileSave->Show(win->hwnd);
+    if (hr == HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
+        pFileSave->Release();
+        result->addBool("cancel", true);
+        result->returnBackThread();
+        return;
+    }
+    if (FAILED(hr)) {
+        pFileSave->Release();
+        result->addErr("pFileSave Show err: " + std::to_string(hr));
+        result->returnBackThread();
+        return;
+    }
+    result->addBool("cancel", false);
+
+    // 获取保存的文件路径
+    IShellItem* pItem;
+    hr = pFileSave->GetResult(&pItem);
+    if (FAILED(hr)) {
+        pFileSave->Release();
+        result->addErr("pFileSave GetResult err: " + std::to_string(hr));
+        result->returnBackThread();
+        return;
+    }
+
+    PWSTR pszFilePath;
+    hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+    if (FAILED(hr)) {
+        pItem->Release();
+        pFileSave->Release();
+        result->addErr("GetDisplayName err: " + std::to_string(hr));
+        result->returnBackThread();
+        return;
+    }
+    // 验证文件名是否有效
+    std::wstring pathStr(pszFilePath);
+    // 转换路径并存储到结果
+    CoTaskMemFree(pszFilePath);
+    pItem->Release();
+    pFileSave->Release();
+    auto str = Util::convertToStr(pathStr);
+    result->addString("data", str);
     result->returnBackThread();
 }

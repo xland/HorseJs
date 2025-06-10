@@ -254,6 +254,12 @@
     async openPathDialog(config) {
       return this.callMethod("openPathDialog", config);
     }
+    async savePathDialog(config) {
+      return this.callMethod("savePathDialog", config);
+    }
+    async msgBox(config) {
+      return this.callMethod("msgBox", config);
+    }
     callMethod(methodName, ...params) {
       let obj = window.self === window.top ? this : window.top.horse.dialog;
       return obj.call({

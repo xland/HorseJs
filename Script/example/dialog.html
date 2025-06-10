@@ -6,17 +6,19 @@
   </head>
   <body>
     <div class="box">
-      <div id="btnOpenPathDialog" class="btn">打开一个文件路径</div>
+      <div id="btnOpenPathDialog" class="btn">显示：打开文件路径对话框</div>
+      <div id="btnSavePathDialog" class="btn">显示：保存文件路径对话框</div>
+      <div id="btnMsgBox" class="btn">显示：信息提示对话框</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
       window.addEventListener("DOMContentLoaded", async () => {
         $("#btnOpenPathDialog").addEventListener("click", async () => {
-          let data = await horse.dialog.openPathDialog({
+          let data = await horse.dialog.openPath({
             title: "我的窗口标题",
             okBtnText: "选择文件",
-            defaultDir: "C:\\Users",
-            type: "file", //或"dir"，默认值为file
+            defaultPath: "C:\\Users",
+            type: "dir", //或"dir"，默认值为file
             filter: [
               ["All Files", "*.*"],
               ["Image Files", "*.jpg;*.png"],
@@ -24,7 +26,26 @@
             multiSelection: true, //默认值false
             showHiddenFile: true, //默认值false
           });
-          console.log(data);
+          console.log(JSON.stringify(data));
+        });
+        $("#btnSavePathDialog").addEventListener("click", async () => {
+          let data = await horse.dialog.savePath({
+            title: "另存为...",
+            okBtnText: "保存文件",
+            defaultPath: "C:\\Users\\",
+            filter: [["Image Files", "*.jpg;*.png"]], //只有type是file的时候才有效
+            showHiddenFile: true, //默认值false
+          });
+          console.log(JSON.stringify(data));
+        });
+        $("#btnMsgBox").addEventListener("click", async () => {
+          let data = await horse.dialog.msgBox({
+            title: "系统提示",
+            msg: "世界是我们的！",
+            icon: "err",
+            btns: ["确认", "取消"],
+          });
+          console.log(JSON.stringify(data));
         });
       });
     </script>
