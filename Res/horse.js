@@ -253,6 +253,9 @@
     async movePath(srcPath, dstPath) {
       return this.callMethod("movePath", srcPath, dstPath);
     }
+    async copyPath(srcPath, dstPath) {
+      return this.callMethod("copyPath", srcPath, dstPath);
+    }
     callMethod(methodName, ...params) {
       let obj = window.self === window.top ? this : window.top.horse.fs;
       return obj.call({
