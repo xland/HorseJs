@@ -22,6 +22,7 @@ namespace {
     {"movePath", &Fs::movePath},
     {"renamePath", &Fs::renamePath},
     {"watch", &Fs::watch},
+    {"stopWatch", &Fs::stopWatch},
     };
 }
 
@@ -512,8 +513,69 @@ void Fs::renamePath(const rapidjson::Value& params, JsonResult* result)
 
 void Fs::watch(const rapidjson::Value& params, JsonResult* result)
 {
-}
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring src = Util::convertToWStr(arr[0].GetString());
+    auto id = arr[1].GetInt();
+    result->addNumber("id", id);
+    std::jthread worker([winId = result->winId, src = std::move(src), id]() {
+        // 打开目录句柄，以便对其进行文件系统更改通知的监控
+        HANDLE hDir = CreateFile(src.data(),
+            FILE_LIST_DIRECTORY, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+            NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
+        if (hDir == INVALID_HANDLE_VALUE) {
+            //result->addErr("create dir handle error.");
+            return;
+        }
+        BYTE buffer[1024];// 缓冲区用于存储变化信息
+        DWORD bytesReturned;
+        FILE_NOTIFY_INFORMATION* pNotify;
 
+        while (true) {
+            auto flags = FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME |
+                FILE_NOTIFY_CHANGE_ATTRIBUTES | FILE_NOTIFY_CHANGE_SIZE | FILE_NOTIFY_CHANGE_LAST_WRITE;
+            if (ReadDirectoryChangesW(hDir, buffer, sizeof(buffer), TRUE, // 监控子目录
+                flags, &bytesReturned, NULL, NULL))
+            {
+                pNotify = (FILE_NOTIFY_INFORMATION*)buffer;
+                do {
+                    // 提取文件名
+                    std::wstring fileName(pNotify->FileName, pNotify->FileNameLength / sizeof(WCHAR));
+                    switch (pNotify->Action) {
+                    case FILE_ACTION_ADDED:
+                        std::wcout << L"File added: " << fileName << std::endl;
+                        break;
+                    case FILE_ACTION_REMOVED:
+                        std::wcout << L"File removed: " << fileName << std::endl;
+                        break;
+                    case FILE_ACTION_MODIFIED:
+                        std::wcout << L"File modified: " << fileName << std::endl;
+                        break;
+                    case FILE_ACTION_RENAMED_OLD_NAME:
+                        std::wcout << L"File renamed (old name): " << fileName << std::endl;
+                        break;
+                    case FILE_ACTION_RENAMED_NEW_NAME:
+                        std::wcout << L"File renamed (new name): " << fileName << std::endl;
+                        break;
+                    default:
+                        std::wcout << L"Unknown action: " << pNotify->Action << std::endl;
+                        break;
+                    }
+                    if (pNotify->NextEntryOffset == 0) break;
+                    pNotify = (FILE_NOTIFY_INFORMATION*)((BYTE*)pNotify + pNotify->NextEntryOffset); // 移动到下一个通知
+                } while (true);
+            }
+            else {
+                std::wcerr << L"ReadDirectoryChangesW failed with error: " << GetLastError() << std::endl;
+                break;
+            }
+        }
+        CloseHandle(hDir);
+        });
+}
+void Fs::stopWatch(const rapidjson::Value& params, JsonResult* result)
+{
+
+}
 bool Fs::delDirRecursive(const std::wstring& dirPath)
 {
     WIN32_FIND_DATA findData;

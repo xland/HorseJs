@@ -209,12 +209,7 @@ void Dialog::msgBox(const rapidjson::Value& params, JsonResult* result)
     result->cancel = true;
     auto iconAndBtns = mbButton | icon;
     auto asyncResult = new JsonResult(result->winId, "dialog", result->getString("eventName"));
-    std::jthread worker([
-        asyncResult,
-        title = std::move(title),
-        msg =  std::move(msg),
-        iconAndBtns
-        ]() {
+    std::jthread worker([asyncResult,title = std::move(title),msg = std::move(msg),iconAndBtns ]() {
             int ret = MessageBox(asyncResult->getWin()->hwnd, msg.c_str(), title.c_str(), iconAndBtns);
             switch (ret) {
             case IDOK:

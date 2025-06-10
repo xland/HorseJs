@@ -46,9 +46,17 @@ export class Fs extends Eventer {
   async renamePath(srcPath: string, dstPath: string) {
     return this.callMethod("renamePath", srcPath, dstPath);
   }
+  async watch(path: string, cb: () => {}) {
+    let id = util.randomNum();
+    this.on(id, cb);
+    return this.callMethod("watch", path, id);
+  }
+  async stopWatch(id: string) {
+    this.off(id);
+    return this.callMethod("stopWatch", id);
+  }
   private callMethod(methodName: string, ...params: any[]) {
-    let obj = window.self === window.top ? this : window.top.horse.fs;
-    return obj.call({
+    return this.call({
       className: "fs",
       winId: globalThis.__WIN_ID,
       methodName,

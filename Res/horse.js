@@ -63,7 +63,7 @@
     // 调用原生方法并返回 Promise
     call(obj) {
       return new Promise((resolve, reject) => {
-        obj.eventName = `${util.randomNum()}`;
+        obj.eventName = util.randomNum();
         this.once(obj.eventName, (result) => {
           resolve(result);
         });
@@ -78,8 +78,7 @@
       return this.callMethod("exec", path);
     }
     callMethod(methodName, ...params) {
-      let obj = window.self === window.top ? this : window.top.horse.process;
-      return obj.call({
+      return this.call({
         className: "process",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -104,8 +103,7 @@
       return this.callMethod("create", config);
     }
     callMethod(methodName, ...params) {
-      let obj = window.self === window.top ? this : window.top.horse.tray;
-      return obj.call({
+      return this.call({
         className: "tray",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -120,8 +118,7 @@
       return this.callMethod("show", appName, title, content);
     }
     callMethod(methodName, ...params) {
-      let obj = window.self === window.top ? this : window.top.notify;
-      return obj.call({
+      return this.call({
         className: "notify",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -181,8 +178,7 @@
       }
     }
     callMethod(methodName, ...params) {
-      let obj = window.self === window.top ? this : window.top.horse.win;
-      return obj.call({
+      return this.call({
         className: "win",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -194,15 +190,12 @@
   // WinProxy.ts
   var WinProx = class extends Win {
     id;
-    parent;
     constructor(id, parent) {
       super();
       this.id = id;
-      this.parent = parent;
     }
     callMethod(methodName, ...params) {
-      let obj = window.self === window.top ? this.parent : window.top.horse.win;
-      return obj.call({
+      return this.call({
         className: "win",
         winId: globalThis.__WIN_ID,
         tarId: this.id,
@@ -259,9 +252,17 @@
     async renamePath(srcPath, dstPath) {
       return this.callMethod("renamePath", srcPath, dstPath);
     }
+    async watch(path, cb) {
+      let id = util.randomNum();
+      this.on(id, cb);
+      return this.callMethod("watch", path, id);
+    }
+    async stopWatch(id) {
+      this.off(id);
+      return this.callMethod("stopWatch", id);
+    }
     callMethod(methodName, ...params) {
-      let obj = window.self === window.top ? this : window.top.horse.fs;
-      return obj.call({
+      return this.call({
         className: "fs",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -282,8 +283,7 @@
       return this.callMethod("msgBox", config);
     }
     callMethod(methodName, ...params) {
-      let obj = window.self === window.top ? this : window.top.horse.dialog;
-      return obj.call({
+      return this.call({
         className: "dialog",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -331,8 +331,7 @@
       return this.callMethod("clear");
     }
     callMethod(methodName, ...params) {
-      let obj = window.self === window.top ? this : window.top.horse.clipboard;
-      return obj.call({
+      return this.call({
         className: "clipboard",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -347,8 +346,7 @@
       return this.callMethod("getAddress");
     }
     callMethod(methodName, ...params) {
-      let obj = window.self === window.top ? this : window.top.horse.net;
-      return obj.call({
+      return this.call({
         className: "net",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -363,8 +361,7 @@
       return this.callMethod("getVersion");
     }
     callMethod(methodName, ...params) {
-      let obj = window.self === window.top ? this : window.top.horse.os;
-      return obj.call({
+      return this.call({
         className: "os",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -379,8 +376,7 @@
       return this.callMethod("getAll");
     }
     callMethod(methodName, ...params) {
-      let obj = window.self === window.top ? this : window.top.horse.screen;
-      return obj.call({
+      return this.call({
         className: "screen",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -464,8 +460,7 @@
       });
     }
     callMethod(methodName, ...params) {
-      let obj = window.self === window.top ? this : window.top.horse;
-      return obj.call({
+      return this.call({
         className: "horse",
         winId: globalThis.__WIN_ID,
         methodName,
@@ -473,5 +468,9 @@
       });
     }
   };
-  globalThis.horse = new Horse();
+  if (window.self === window.top) {
+    globalThis.horse = new Horse();
+  } else {
+    globalThis.horse = window.top.horse;
+  }
 })();

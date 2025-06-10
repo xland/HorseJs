@@ -4,8 +4,7 @@ export class Notify extends Eventer {
     return this.callMethod("show", appName, title, content);
   }
   private callMethod(methodName: string, ...params: any[]) {
-    let obj = window.self === window.top ? this : window.top.notify;
-    return obj.call({
+    return this.call({
       className: "notify",
       winId: globalThis.__WIN_ID,
       methodName,

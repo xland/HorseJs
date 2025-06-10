@@ -21,11 +21,12 @@ public:
 	void createDir(const rapidjson::Value& params, JsonResult* result);
 	void ensurePath(const rapidjson::Value& params, JsonResult* result);
 	void listDir(const rapidjson::Value& params, JsonResult* result);
-
 	void copyPath(const rapidjson::Value& params, JsonResult* result);
 	void movePath(const rapidjson::Value& params, JsonResult* result);
 	void renamePath(const rapidjson::Value& params, JsonResult* result);
+
 	void watch(const rapidjson::Value& params, JsonResult* result);
+	void stopWatch(const rapidjson::Value& params, JsonResult* result);
 private:
 	bool delDirRecursive(const std::wstring& dirPath);
 };

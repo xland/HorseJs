@@ -4,8 +4,7 @@ export class Os extends Eventer {
     return this.callMethod("getVersion");
   }
   private callMethod(methodName: string, ...params: any[]) {
-    let obj = window.self === window.top ? this : window.top.horse.os;
-    return obj.call({
+    return this.call({
       className: "os",
       winId: globalThis.__WIN_ID,
       methodName,

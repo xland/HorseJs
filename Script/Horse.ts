@@ -85,8 +85,7 @@ class Horse extends Eventer {
     });
   }
   private callMethod(methodName: string, ...params: any[]) {
-    let obj = window.self === window.top ? this : window.top.horse;
-    return obj.call({
+    return this.call({
       className: "horse",
       winId: globalThis.__WIN_ID,
       methodName,
@@ -94,4 +93,8 @@ class Horse extends Eventer {
     });
   }
 }
-globalThis.horse = new Horse();
+if (window.self === window.top) {
+  globalThis.horse = new Horse();
+} else {
+  globalThis.horse = window.top.horse;
+}

@@ -15,8 +15,7 @@ export class Tray extends Eventer {
     return this.callMethod("create", config);
   }
   private callMethod(methodName: string, ...params: any[]) {
-    let obj = window.self === window.top ? this : window.top.horse.tray;
-    return obj.call({
+    return this.call({
       className: "tray",
       winId: globalThis.__WIN_ID,
       methodName,

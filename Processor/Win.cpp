@@ -156,6 +156,7 @@ void Win::setResizable(const rapidjson::Value& params, JsonResult* result)
 
 void Win::startDrag(const rapidjson::Value& params, JsonResult* result)
 {
+    //todo 这里不稳定，应该用hittest方法解决
     auto win = result->getTar();
     ReleaseCapture();
     SendMessage(win->hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);

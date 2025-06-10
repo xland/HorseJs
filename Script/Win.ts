@@ -50,8 +50,7 @@ export class Win extends Eventer {
     }
   }
   protected callMethod(methodName: string, ...params: any[]) {
-    let obj = window.self === window.top ? this : window.top.horse.win;
-    return obj.call({
+    return this.call({
       className: "win",
       winId: globalThis.__WIN_ID,
       methodName,

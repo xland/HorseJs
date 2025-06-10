@@ -10,8 +10,7 @@ export class Dialog extends Eventer {
     return this.callMethod("msgBox", config);
   }
   private callMethod(methodName: string, ...params: any[]) {
-    let obj = window.self === window.top ? this : window.top.horse.dialog;
-    return obj.call({
+    return this.call({
       className: "dialog",
       winId: globalThis.__WIN_ID,
       methodName,
