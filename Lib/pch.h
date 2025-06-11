@@ -11,6 +11,7 @@
 #include <fstream>
 #include <filesystem>
 #include <functional>
+#include <shared_mutex>
 #include <regex>
 
 #include <windows.h>

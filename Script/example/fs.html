@@ -96,14 +96,20 @@
           console.log(data);
         });
         $("#btnWatch").addEventListener("click", async () => {
+          if (window.watchId) {
+            console.log("已存在监视器，请先取消监视");
+            return;
+          }
           let data = await horse.fs.watch("D:\\doc\\周报\\allen\\", (data) => {
             console.log("change:", data);
           });
           console.log(data);
+          window.watchId = data.id;
         });
         $("#btnStopWatch").addEventListener("click", async () => {
-          let data = await horse.fs.stopWatch("D:\\doc\\周报\\allen\\");
+          let data = await horse.fs.stopWatch(window.watchId);
           console.log(data);
+          window.watchId = undefined;
         });
       });
     </script>

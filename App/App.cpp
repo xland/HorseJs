@@ -4,7 +4,9 @@
 #include "../App/BrowserWindow.h"
 using namespace Microsoft;
 namespace {
+    std::shared_mutex mtx;
     std::unique_ptr<App> app;
+    static std::vector<std::unique_ptr<BrowserWindow>> wins;
 }
 
 
@@ -18,8 +20,9 @@ App::~App()
 
 void App::onWindowDestroy(BrowserWindow* win)
 {
-    winMap.erase(win->id);
-    if (quitWhenAllWindowClosed && winMap.empty()) {
+    std::unique_lock<std::shared_mutex> lock(mtx);
+    std::erase_if(wins, [win](const std::unique_ptr<BrowserWindow>& ptr) { return ptr->id == win->id; });
+    if (quitWhenAllWindowClosed && wins.empty()) {
         PostQuitMessage(0);
     }    
 }
@@ -31,7 +34,17 @@ App* App::get()
 
 BrowserWindow* App::getWindow(const int& id)
 {
-    return winMap[id].get();
+    std::shared_lock<std::shared_mutex> lock(mtx);
+    auto it = std::find_if(wins.begin(),wins.end(), [&id](const std::unique_ptr<BrowserWindow>& ptr) { return ptr->id == id; });
+    if (it != wins.end()) {
+        return (*it).get();
+    }
+}
+
+void App::addWindow(std::unique_ptr<BrowserWindow> win)
+{
+    std::unique_lock<std::shared_mutex> lock(mtx);
+    wins.push_back(std::move(win));
 }
 
 void App::init(HINSTANCE hInstance)
@@ -115,7 +128,7 @@ void App::loadConfig()
         quitWhenAllWindowClosed = jsonDoc["quitWhenAllWindowClosed"].GetBool();
     }
     auto win = std::make_unique<BrowserWindow>(jsonDoc["window"]);
-    winMap.insert({ win->id,std::move(win) });
+    wins.push_back(std::move(win));
 }
 void App::createEnv()
 {
@@ -144,6 +157,6 @@ void App::createEnv()
 HRESULT App::envReady(HRESULT result, ICoreWebView2Environment* env)
 {
     this->env = env;
-    winMap[0]->load();
+    wins[0]->load();
     return S_OK;
 }

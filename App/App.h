@@ -11,15 +11,14 @@ public:
 	~App();
 	void onWindowDestroy(BrowserWindow* win);
 	static App* get();
-	BrowserWindow* getWindow(const int& id);
+	static BrowserWindow* getWindow(const int& id);
+	static void addWindow(std::unique_ptr<BrowserWindow> win);
 	static void init(HINSTANCE hInstance);
 public:
 	bool quitWhenAllWindowClosed{ true };
 	std::string appId;
-
 	wil::com_ptr<ICoreWebView2Environment> env;
 	HINSTANCE hInstance;
-	std::unordered_map<int, std::unique_ptr<BrowserWindow>> winMap;
 private:
 	void loadConfig();
 	void createEnv();

@@ -29,5 +29,8 @@ public:
 	void stopWatch(const rapidjson::Value& params, JsonResult* result);
 private:
 	bool delDirRecursive(const std::wstring& dirPath);
+	static void addWatch(const std::string& id, HANDLE handle);
+	static bool hasWatch(const std::string& id);
+	static void removeWatch(const std::string& id);
 };
 

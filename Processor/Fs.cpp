@@ -5,6 +5,8 @@
 
 namespace {
     std::unique_ptr<Fs> fs;
+    std::shared_mutex mtx;
+    std::unordered_map<std::string, HANDLE> watchMap;
     static std::unordered_map<std::string, void (Fs::*)(const rapidjson::Value&, JsonResult*)> funcs{
     {"getFileInfo", &Fs::getFileInfo},
     {"exists", &Fs::exists},
@@ -520,22 +522,23 @@ void Fs::watch(const rapidjson::Value& params, JsonResult* result)
     // 打开目录句柄，以便对其进行文件系统更改通知的监控
     HANDLE hDir = CreateFile(src.data(), FILE_LIST_DIRECTORY,
         FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-        NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
+        NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL);
     if (hDir == INVALID_HANDLE_VALUE) {
         result->addErr("create dir handle error.");
         return;
     }
+    Fs::addWatch(id, hDir);
     std::jthread worker([winId = result->winId, hDir,id=std::move(id)]() {
 
         BYTE buffer[1024];// 缓冲区用于存储变化信息
         DWORD bytesReturned;
         FILE_NOTIFY_INFORMATION* pNotify;
         auto lastTime = std::chrono::steady_clock::now();
-        const auto debounceTime = std::chrono::milliseconds(180); // 合并时间窗口
-        while (true) {
+        const auto debounceTime = std::chrono::milliseconds(80); // 合并时间窗口        
+        while (App::getWindow(winId) && Fs::hasWatch(id)) {
             auto flags = FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME |
                 FILE_NOTIFY_CHANGE_ATTRIBUTES | FILE_NOTIFY_CHANGE_SIZE | FILE_NOTIFY_CHANGE_LAST_WRITE;
-            if (ReadDirectoryChangesW(hDir, buffer, sizeof(buffer),TRUE,/*子目录*/ flags, &bytesReturned, NULL, NULL))
+            if (ReadDirectoryChangesW(hDir, buffer, sizeof(buffer),TRUE,/*子目录*/ flags, &bytesReturned, NULL, NULL) && bytesReturned > 0)
             {
                 pNotify = (FILE_NOTIFY_INFORMATION*)buffer;
                 do {
@@ -576,19 +579,18 @@ void Fs::watch(const rapidjson::Value& params, JsonResult* result)
                 } while (true);
             }
             else {
-                auto result = new JsonResult(winId, "fs", id);
-                result->addErr("ReadDirectoryChanges err");
-                result->returnBackThread();
                 break;
             }
         }
-        CloseHandle(hDir);
         });
     worker.detach();
 }
 void Fs::stopWatch(const rapidjson::Value& params, JsonResult* result)
 {
-
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::string id = arr[0].GetString();
+    CloseHandle(watchMap[id]);
+    Fs::removeWatch(id);
 }
 bool Fs::delDirRecursive(const std::wstring& dirPath)
 {
@@ -621,4 +623,23 @@ bool Fs::delDirRecursive(const std::wstring& dirPath)
     FindClose(hFind);
     // 删除空目录
     return RemoveDirectory(dirPath.c_str()) != 0;
+}
+
+void Fs::addWatch(const std::string& id, HANDLE handle)
+{
+    std::unique_lock<std::shared_mutex> lock(mtx);
+    watchMap.insert({ id ,handle});
+}
+
+bool Fs::hasWatch(const std::string& id)
+{
+    std::shared_lock<std::shared_mutex> lock(mtx);
+    auto flag = watchMap.contains(id);
+    return flag;
+}
+
+void Fs::removeWatch(const std::string& id)
+{
+    std::unique_lock<std::shared_mutex> lock(mtx);
+    watchMap.erase(id);
 }

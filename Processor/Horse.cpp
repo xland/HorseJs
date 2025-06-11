@@ -50,7 +50,7 @@ void Horse::createWindow(const rapidjson::Value& params, JsonResult* result)
     auto winIns = std::make_unique<BrowserWindow>(value);
     winIns->load();
     result->addNumber("id", winIns->id);
-    App::get()->winMap.insert({ winIns->id,std::move(winIns) });
+    App::addWindow(std::move(winIns));
 }
 
 void Horse::getVersion(const rapidjson::Value& params, JsonResult* result) 

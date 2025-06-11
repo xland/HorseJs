@@ -21,7 +21,7 @@ void JsonResult::addErr(const std::string& value)
     addString("err", value);
 }
 void JsonResult::returnBackThread() {
-    auto win = App::get()->getWindow(winId);
+    auto win = App::getWindow(winId);
     PostMessage(win->hwnd, WM_THREAD_RESULT, 0, (LPARAM)this);
 }
 void JsonResult::returnBack()
@@ -31,7 +31,7 @@ void JsonResult::returnBack()
         addBool("ok", true);
     }
     std::wstring jsonStr = parse();
-    auto win = App::get()->getWindow(winId);
+    auto win = App::getWindow(winId);
     win->webview->PostWebMessageAsJson(jsonStr.data());
 }
 
@@ -41,7 +41,7 @@ void JsonResult::returnBackSharedBuffer(ICoreWebView2SharedBuffer* sharedBuffer)
         addBool("ok", true);
     }
     std::wstring jsonStr = parse();
-    auto win = App::get()->getWindow(winId);
+    auto win = App::getWindow(winId);
     auto webview17 = win->webview.try_query<ICoreWebView2_17>();
     webview17->PostSharedBufferToScript(sharedBuffer, COREWEBVIEW2_SHARED_BUFFER_ACCESS_READ_ONLY, jsonStr.data());
 }
@@ -49,14 +49,14 @@ void JsonResult::returnBackSharedBuffer(ICoreWebView2SharedBuffer* sharedBuffer)
 BrowserWindow* JsonResult::getTar()
 {
     if (tarId < 0) {
-        return App::get()->getWindow(winId);
+        return App::getWindow(winId);
     }
     else {
-        return App::get()->getWindow(tarId);
+        return App::getWindow(tarId);
     }
 }
 
 BrowserWindow* JsonResult::getWin()
 {
-    return App::get()->getWindow(winId);
+    return App::getWindow(winId);
 }
