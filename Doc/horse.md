@@ -73,3 +73,8 @@ console.log(JSON.stringify(data));
 horse.exit(1);
 ```
 
+- 启动当前应用的一个新实例
+```js
+let data = await horse.relaunch();
+console.log(JSON.stringify(data));
+```
