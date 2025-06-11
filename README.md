@@ -1,5 +1,7 @@
 ﻿此项目前正在积极开发中...
 
+![banner](./Doc/img/banner.png)
+
 ## HorseJs
 
 - 使用HTML/JS/CSS创建更快速、更稳定的桌面应用。
