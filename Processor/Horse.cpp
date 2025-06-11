@@ -12,6 +12,7 @@ namespace {
     {"getVersion", &Horse::getVersion},
     {"quit", &Horse::quit},
     {"exit", &Horse::exit},
+    {"relaunch", &Horse::relaunch},
     };
 }
 
@@ -122,4 +123,16 @@ void Horse::exit(const rapidjson::Value& params, JsonResult* result)
         auto val = arr[0].GetInt();
     }
     PostQuitMessage(val);
+}
+
+void Horse::relaunch(const rapidjson::Value& params, JsonResult* result)
+{
+    TCHAR szPath[MAX_PATH];
+    GetModuleFileName(NULL, szPath, MAX_PATH);
+    STARTUPINFO si = { sizeof(si) };
+    PROCESS_INFORMATION pi;
+    if (CreateProcess(szPath, NULL, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+        CloseHandle(pi.hProcess);
+        CloseHandle(pi.hThread);
+    }
 }

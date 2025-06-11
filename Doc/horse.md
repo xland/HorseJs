@@ -61,4 +61,15 @@ console.log(data);
 // 输出：{"exeVer":[0,0,10,0],"horseVer":[0,0,10,0],"ok":true}
 ```
 
+- 关闭所有窗口，并退出应用
+> 如果窗口注册了closing事件，那么应用不会退出，而是返回一个错误
+```js
+let data = await horse.quit();
+console.log(JSON.stringify(data));
+```
+
+- 强制退出应用
+```js
+horse.exit(1);
+```
 

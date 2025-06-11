@@ -423,6 +423,9 @@
     quit() {
       return this.callMethod("quit");
     }
+    relaunch() {
+      return this.callMethod("relaunch");
+    }
     exit(code) {
       return this.callMethod("exit", code);
     }

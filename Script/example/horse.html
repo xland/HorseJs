@@ -11,6 +11,7 @@
       <div id="btnGetVersion" class="btn">获取HorseJs的版本号</div>
       <div id="btnQuit" class="btn">关闭所有窗口，并退出应用</div>
       <div id="btnExit" class="btn">退出应用</div>
+      <div id="btnRelaunch" class="btn">启动当前应用的一个新实例</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
@@ -64,6 +65,10 @@
         });
         $("#btnExit").addEventListener("click", async () => {
           horse.exit(1);
+        });
+        $("#btnRelaunch").addEventListener("click", async () => {
+          let data = await horse.relaunch();
+          console.log(JSON.stringify(data));
         });
       });
     </script>
