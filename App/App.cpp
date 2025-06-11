@@ -41,6 +41,21 @@ BrowserWindow* App::getWindow(const int& id)
     }
 }
 
+void App::closeAllWindowAsync()
+{
+    std::shared_lock<std::shared_mutex> lock(mtx);
+    for (const auto& ptr : wins)
+    {
+        PostMessage(ptr->hwnd, WM_CLOSE, 0, 0);
+    }
+}
+
+bool App::hasWindow()
+{
+    std::shared_lock<std::shared_mutex> lock(mtx);
+    return wins.size()>0;
+}
+
 void App::addWindow(std::unique_ptr<BrowserWindow> win)
 {
     std::unique_lock<std::shared_mutex> lock(mtx);

@@ -529,7 +529,6 @@ void Fs::watch(const rapidjson::Value& params, JsonResult* result)
     }
     Fs::addWatch(id, hDir);
     std::jthread worker([winId = result->winId, hDir,id=std::move(id)]() {
-
         BYTE buffer[1024];// 缓冲区用于存储变化信息
         DWORD bytesReturned;
         FILE_NOTIFY_INFORMATION* pNotify;

@@ -12,6 +12,8 @@ public:
 	void onWindowDestroy(BrowserWindow* win);
 	static App* get();
 	static BrowserWindow* getWindow(const int& id);
+	static void closeAllWindowAsync();
+	static bool hasWindow();
 	static void addWindow(std::unique_ptr<BrowserWindow> win);
 	static void init(HINSTANCE hInstance);
 public:

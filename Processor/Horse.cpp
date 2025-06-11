@@ -10,6 +10,7 @@ namespace {
     {"getConfig", &Horse::getConfig},
     {"createWindow", &Horse::createWindow},
     {"getVersion", &Horse::getVersion},
+    {"quit", &Horse::quit},
     {"exit", &Horse::exit},
     };
 }
@@ -101,6 +102,16 @@ void Horse::getVersion(const rapidjson::Value& params, JsonResult* result)
 
 void Horse::quit(const rapidjson::Value& params, JsonResult* result)
 {
+    App::closeAllWindowAsync();
+    for (size_t i = 0; i < 8; i++)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        if (!App::hasWindow()) {
+            PostQuitMessage(0);
+            break;
+        }
+    }
+    result->addErr("can not close all win");
 }
 
 void Horse::exit(const rapidjson::Value& params, JsonResult* result)

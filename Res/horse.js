@@ -420,6 +420,9 @@
     getVersion() {
       return this.callMethod("getVersion");
     }
+    quit() {
+      return this.callMethod("quit");
+    }
     exit(code) {
       return this.callMethod("exit", code);
     }

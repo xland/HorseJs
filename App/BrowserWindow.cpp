@@ -177,7 +177,7 @@ void BrowserWindow::closing()
     if (vec.size() > 0) {
         for (auto& id : vec)
         {
-            JsonResult result(id, "win", "sizePosChanged");
+            JsonResult result(id, "win", "closing");
             result.returnBack();
         }
         return; //阻止窗口关闭
