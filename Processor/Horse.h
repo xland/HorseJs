@@ -14,6 +14,9 @@ public:
 	void quit(const rapidjson::Value& params, JsonResult* result);
 	void exit(const rapidjson::Value& params, JsonResult* result);
 	void relaunch(const rapidjson::Value& params, JsonResult* result);
+	void getPath(const rapidjson::Value& params, JsonResult* result);
 private:
+	std::string getExePath(const std::string& type);
+	void getKnownPath(const GUID& type, JsonResult* result);
 };
 

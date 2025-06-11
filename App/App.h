@@ -21,6 +21,7 @@ public:
 	std::string appId;
 	wil::com_ptr<ICoreWebView2Environment> env;
 	HINSTANCE hInstance;
+	std::filesystem::path appDir;
 private:
 	void loadConfig();
 	void createEnv();
@@ -30,6 +31,5 @@ private:
 	void ensureAppFolder();
 	HRESULT envReady(HRESULT result, ICoreWebView2Environment* env);
 private:
-	std::filesystem::path appDir;
 };
 

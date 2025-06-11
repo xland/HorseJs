@@ -51,6 +51,9 @@ class Horse extends Eventer {
   relaunch() {
     return this.callMethod("relaunch");
   }
+  getPath(type: string) {
+    return this.callMethod("getPath", type);
+  }
   exit(code: number) {
     return this.callMethod("exit", code);
   }

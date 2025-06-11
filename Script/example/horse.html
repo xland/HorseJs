@@ -12,6 +12,7 @@
       <div id="btnQuit" class="btn">关闭所有窗口，并退出应用</div>
       <div id="btnExit" class="btn">退出应用</div>
       <div id="btnRelaunch" class="btn">启动当前应用的一个新实例</div>
+      <div id="btnGetPath" class="btn">获取常用路径</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
@@ -68,6 +69,11 @@
         });
         $("#btnRelaunch").addEventListener("click", async () => {
           let data = await horse.relaunch();
+          console.log(JSON.stringify(data));
+        });
+        $("#btnGetPath").addEventListener("click", async () => {
+          //exeDir,exePath,download，music，video，picture，document，startup，desktop，font，program，system，windows，profile，appdata，roaming，cache，userdata
+          let data = await horse.getPath("userdata");
           console.log(JSON.stringify(data));
         });
       });
