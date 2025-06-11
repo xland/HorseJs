@@ -63,7 +63,7 @@
     // 调用原生方法并返回 Promise
     call(obj) {
       return new Promise((resolve, reject) => {
-        obj.eventName = util.randomNum();
+        obj.eventName = `${util.randomNum()}`;
         this.once(obj.eventName, (result) => {
           resolve(result);
         });
@@ -253,7 +253,7 @@
       return this.callMethod("renamePath", srcPath, dstPath);
     }
     async watch(path, cb) {
-      let id = util.randomNum();
+      let id = `${util.randomNum()}`;
       this.on(id, cb);
       return this.callMethod("watch", path, id);
     }

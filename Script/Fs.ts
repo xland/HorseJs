@@ -47,7 +47,7 @@ export class Fs extends Eventer {
     return this.callMethod("renamePath", srcPath, dstPath);
   }
   async watch(path: string, cb: () => {}) {
-    let id = util.randomNum();
+    let id = `${util.randomNum()}`;
     this.on(id, cb);
     return this.callMethod("watch", path, id);
   }

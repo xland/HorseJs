@@ -21,6 +21,8 @@
       <div id="btnMovePath" class="btn">移动一个路径</div>
       <div id="btnCopyPath" class="btn">复制一个路径</div>
       <div id="btnRenamePath" class="btn">重命名一个路径</div>
+      <div id="btnWatch" class="btn">监视路径</div>
+      <div id="btnStopWatch" class="btn">取消监视路径</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
@@ -91,6 +93,16 @@
         });
         $("#btnRenamePath").addEventListener("click", async () => {
           let data = await horse.fs.renamePath("D:\\doc\\周报\\allen\\", "D:\\doc\\周报\\新目录\\");
+          console.log(data);
+        });
+        $("#btnWatch").addEventListener("click", async () => {
+          let data = await horse.fs.watch("D:\\doc\\周报\\allen\\", (data) => {
+            console.log("change:", data);
+          });
+          console.log(data);
+        });
+        $("#btnStopWatch").addEventListener("click", async () => {
+          let data = await horse.fs.stopWatch("D:\\doc\\周报\\allen\\");
           console.log(data);
         });
       });
