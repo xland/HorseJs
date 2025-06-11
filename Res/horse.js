@@ -420,6 +420,9 @@
     getVersion() {
       return this.callMethod("getVersion");
     }
+    exit(code) {
+      return this.callMethod("exit", code);
+    }
     async createWindow(config) {
       let obj = await this.callMethod("createWindow", config);
       return new WinProx(obj.id, this.win);

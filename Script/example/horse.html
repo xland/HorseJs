@@ -9,6 +9,7 @@
       <div id="btnGetConfig" class="btn">获取App配置</div>
       <div id="btnNewWindow" class="btn">创建窗口</div>
       <div id="btnGetVersion" class="btn">获取HorseJs的版本号</div>
+      <div id="btnExit" class="btn">退出应用</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
@@ -55,6 +56,9 @@
         $("#btnGetVersion").addEventListener("click", async () => {
           let data = await horse.getVersion();
           console.log(JSON.stringify(data));
+        });
+        $("#btnExit").addEventListener("click", async () => {
+          horse.exit(1);
         });
       });
     </script>

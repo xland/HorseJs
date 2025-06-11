@@ -45,6 +45,9 @@ class Horse extends Eventer {
   getVersion() {
     return this.callMethod("getVersion");
   }
+  exit(code: number) {
+    return this.callMethod("exit", code);
+  }
   async createWindow(config: object) {
     let obj = await this.callMethod("createWindow", config);
     return new WinProx(obj.id, this.win);

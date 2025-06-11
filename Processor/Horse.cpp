@@ -10,6 +10,7 @@ namespace {
     {"getConfig", &Horse::getConfig},
     {"createWindow", &Horse::createWindow},
     {"getVersion", &Horse::getVersion},
+    {"exit", &Horse::exit},
     };
 }
 
@@ -61,27 +62,23 @@ void Horse::getVersion(const rapidjson::Value& params, JsonResult* result)
     if (GetModuleFileName(nullptr, exePath.data(), static_cast<DWORD>(exePath.size())) == 0) {
         result->addErr("Failed to get executable path");
     }
-
     // 获取版本信息大小
     DWORD dummy;
     DWORD versionSize = GetFileVersionInfoSize(exePath.data(), &dummy);
     if (versionSize == 0) {
         result->addErr("Failed to get version info size");
     }
-
     // 分配缓冲区并获取版本信息
     std::vector<BYTE> versionData(versionSize);
     if (!GetFileVersionInfoW(exePath.data(), 0, versionSize, versionData.data())) {
         result->addErr("Failed to get version info");
     }
-
     // 查询固定版本信息（VS_FIXEDFILEINFO）
     VS_FIXEDFILEINFO* fileInfo = nullptr;
     UINT fileInfoSize = 0;
     if (!VerQueryValueW(versionData.data(), L"\\", reinterpret_cast<void**>(&fileInfo), &fileInfoSize)) {
         result->addErr("Failed to query version info");
     }
-
     // 提取版本号
     DWORD major = (fileInfo->dwFileVersionMS >> 16) & 0xFFFF;
     DWORD minor = fileInfo->dwFileVersionMS & 0xFFFF;
@@ -100,4 +97,18 @@ void Horse::getVersion(const rapidjson::Value& params, JsonResult* result)
     array2.PushBack(VERSION_PATCH, allocator);
     array2.PushBack(VERSION_BUILD, allocator);
     result->addValue("horseVer", std::move(array2));
+}
+
+void Horse::quit(const rapidjson::Value& params, JsonResult* result)
+{
+}
+
+void Horse::exit(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    int val = 0;
+    if (!arr[0].IsNull() && arr[0].IsInt()) {
+        auto val = arr[0].GetInt();
+    }
+    PostQuitMessage(val);
 }

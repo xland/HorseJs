@@ -11,6 +11,8 @@ public:
 	void getConfig(const rapidjson::Value& params, JsonResult* result);
 	void createWindow(const rapidjson::Value& params, JsonResult* result);
 	void getVersion(const rapidjson::Value& params, JsonResult* result);
+	void quit(const rapidjson::Value& params, JsonResult* result);
+	void exit(const rapidjson::Value& params, JsonResult* result);
 private:
 };
 
