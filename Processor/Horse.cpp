@@ -57,7 +57,47 @@ void Horse::createWindow(const rapidjson::Value& params, JsonResult* result)
 
 void Horse::getVersion(const rapidjson::Value& params, JsonResult* result) 
 {
-    result->addNumber("major", VERSION_MAJOR);
-    result->addNumber("minor", VERSION_MINOR);
-    result->addNumber("patch", VERSION_PATCH);
+    std::vector<wchar_t> exePath(MAX_PATH);
+    if (GetModuleFileName(nullptr, exePath.data(), static_cast<DWORD>(exePath.size())) == 0) {
+        result->addErr("Failed to get executable path");
+    }
+
+    // 获取版本信息大小
+    DWORD dummy;
+    DWORD versionSize = GetFileVersionInfoSize(exePath.data(), &dummy);
+    if (versionSize == 0) {
+        result->addErr("Failed to get version info size");
+    }
+
+    // 分配缓冲区并获取版本信息
+    std::vector<BYTE> versionData(versionSize);
+    if (!GetFileVersionInfoW(exePath.data(), 0, versionSize, versionData.data())) {
+        result->addErr("Failed to get version info");
+    }
+
+    // 查询固定版本信息（VS_FIXEDFILEINFO）
+    VS_FIXEDFILEINFO* fileInfo = nullptr;
+    UINT fileInfoSize = 0;
+    if (!VerQueryValueW(versionData.data(), L"\\", reinterpret_cast<void**>(&fileInfo), &fileInfoSize)) {
+        result->addErr("Failed to query version info");
+    }
+
+    // 提取版本号
+    DWORD major = (fileInfo->dwFileVersionMS >> 16) & 0xFFFF;
+    DWORD minor = fileInfo->dwFileVersionMS & 0xFFFF;
+    DWORD patch = (fileInfo->dwFileVersionLS >> 16) & 0xFFFF;
+    DWORD build = fileInfo->dwFileVersionLS & 0xFFFF;
+    auto& allocator = result->getAllocator();
+    rapidjson::Value array1(rapidjson::kArrayType);
+    array1.PushBack(VERSION_MAJOR, allocator);
+    array1.PushBack(VERSION_MINOR, allocator);
+    array1.PushBack(VERSION_PATCH, allocator);
+    array1.PushBack(VERSION_BUILD, allocator);
+    result->addValue("exeVer", std::move(array1));
+    rapidjson::Value array2(rapidjson::kArrayType);
+    array2.PushBack(VERSION_MAJOR, allocator);
+    array2.PushBack(VERSION_MINOR, allocator);
+    array2.PushBack(VERSION_PATCH, allocator);
+    array2.PushBack(VERSION_BUILD, allocator);
+    result->addValue("horseVer", std::move(array2));
 }

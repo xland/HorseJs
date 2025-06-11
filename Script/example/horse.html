@@ -54,7 +54,7 @@
         });
         $("#btnGetVersion").addEventListener("click", async () => {
           let data = await horse.getVersion();
-          console.log(data);
+          console.log(JSON.stringify(data));
         });
       });
     </script>
