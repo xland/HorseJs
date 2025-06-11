@@ -2,12 +2,14 @@
 #include "Horse.h"
 #include "../App/App.h"
 #include "../App/BrowserWindow.h"
+#include "../Res/Res.h"
 
 namespace {
     std::unique_ptr<Horse> horse;
     static std::unordered_map<std::string, void (Horse::*)(const rapidjson::Value&, JsonResult*)> funcs{
     {"getConfig", &Horse::getConfig},
     {"createWindow", &Horse::createWindow},
+    {"getVersion", &Horse::getVersion},
     };
 }
 
@@ -55,5 +57,7 @@ void Horse::createWindow(const rapidjson::Value& params, JsonResult* result)
 
 void Horse::getVersion(const rapidjson::Value& params, JsonResult* result) 
 {
-
+    result->addNumber("major", VERSION_MAJOR);
+    result->addNumber("minor", VERSION_MINOR);
+    result->addNumber("patch", VERSION_PATCH);
 }

@@ -51,5 +51,12 @@ await proxyWin.addEventListener("sizePosChanged", (data) => {
   console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
 });
 ```
+- 获得当前应用程序的版本号
+
+```js
+let data = await horse.getVersion();
+console.log(data);
+// 输出：{major: 0, minor: 0, ok: true, patch: 10}
+```
 
 

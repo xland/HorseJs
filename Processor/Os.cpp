@@ -58,9 +58,9 @@ void Os::getVersion(const rapidjson::Value& params, JsonResult* result)
             result->addString("versionName", "win10");
         }
     }
-    result->addNumber("majorVersion", (long long)osInfo.dwMajorVersion);
-    result->addNumber("minorVersion", (long long)osInfo.dwMinorVersion);
-    result->addNumber("buildNumber", (long long)osInfo.dwBuildNumber);
+    result->addNumber("major", (long long)osInfo.dwMajorVersion);
+    result->addNumber("minor", (long long)osInfo.dwMinorVersion);
+    result->addNumber("build", (long long)osInfo.dwBuildNumber);
 }
 
 // 保存数据到用户凭据区
