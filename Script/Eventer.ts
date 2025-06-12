@@ -13,6 +13,9 @@ export class Eventer {
       return false;
     }
   }
+  protected has(eventName: string) {
+    return this.dic[eventName] && this.dic[eventName].length > 0;
+  }
   // 取消监听事件
   protected unlisten(eventName: string, callback?: EventHandler) {
     const handlers = this.dic[eventName];
@@ -48,7 +51,7 @@ export class Eventer {
     this.listen(eventName, wrapper);
   }
   // 调用原生方法并返回 Promise
-  protected call(obj: any): Promise<any> {
+  call(obj: any): Promise<any> {
     return new Promise((resolve, reject) => {
       obj.eventName = `${util.randomNum()}`;
       this.once(obj.eventName, (result: any) => {

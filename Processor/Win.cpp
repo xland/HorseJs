@@ -158,8 +158,8 @@ void Win::startDrag(const rapidjson::Value& params, JsonResult* result)
 {
     //todo 这里不稳定，应该用hittest方法解决
     auto win = result->getTar();
-    ReleaseCapture();
-    SendMessage(win->hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
+    //ReleaseCapture();
+    PostMessage(win->hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
 }
 
 void Win::resize(const rapidjson::Value& params, JsonResult* result)

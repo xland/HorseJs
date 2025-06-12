@@ -32,6 +32,8 @@ public:
 
 	HWND hwnd;
 	wil::unique_hicon favicon;
+	//  set不重复，即使一个窗口注册了多个相同的事件，
+	//  只要一个result returnBack之后页面会emit多次回调的
 	std::unordered_map<std::string, std::set<int>> events;
 	wil::com_ptr<ICoreWebView2> webview;
 	std::vector<NOTIFYICONDATA*> trays;
