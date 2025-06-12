@@ -17,7 +17,7 @@ public:
 	static void addWindow(std::unique_ptr<BrowserWindow> win);
 	static void init(HINSTANCE hInstance);
 public:
-	bool quitWhenAllWindowClosed{ true };
+	bool quitWhenAllWinClosed{ true };
 	std::string appId;
 	wil::com_ptr<ICoreWebView2Environment> env;
 	HINSTANCE hInstance;

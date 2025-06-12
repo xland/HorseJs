@@ -34,7 +34,7 @@ void App::onWindowDestroy(BrowserWindow* win)
             result.returnBack();
         }
     }
-    if (quitWhenAllWindowClosed && wins.empty()) {
+    if (quitWhenAllWinClosed && wins.empty()) {
         PostQuitMessage(0);
     }    
 }
@@ -176,9 +176,14 @@ void App::loadConfig()
     {
         appId = jsonDoc["appId"].GetString();
     }
-    if (jsonDoc.HasMember("quitWhenAllWindowClosed") && jsonDoc["quitWhenAllWindowClosed"].IsBool())
+    if (jsonDoc.HasMember("quitWhenAllWinClosed") && jsonDoc["quitWhenAllWinClosed"].IsBool())
     {
-        quitWhenAllWindowClosed = jsonDoc["quitWhenAllWindowClosed"].GetBool();
+        quitWhenAllWinClosed = jsonDoc["quitWhenAllWinClosed"].GetBool();
+    }
+    bool singleInstance{ false };
+    if (jsonDoc.HasMember("singleInstance") && jsonDoc["singleInstance"].IsBool())
+    {
+        singleInstance = jsonDoc["singleInstance"].GetBool();
     }
     auto win = std::make_unique<BrowserWindow>(jsonDoc["window"]);
     wins.push_back(std::move(win));
