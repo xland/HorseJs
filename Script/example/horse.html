@@ -17,6 +17,7 @@
       <div id="btnNewWinEvent" class="btn">监听新窗口创建事件</div>
       <div id="btnOffNewWinEvent" class="btn">取消监听新窗口创建事件</div>
       <div id="btnWinCloseEvent" class="btn">监听旧窗口关闭事件</div>
+      <div id="btnOffWinCloseEvent" class="btn">取消监听旧窗口关闭事件</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
@@ -84,14 +85,18 @@
             console.log(proxy.id);
             proxy.minimize();
           };
-          horse.on("newWin", func);
+          await horse.on("newWin", func);
         });
         $("#btnOffNewWinEvent").addEventListener("click", async () => {
-          horse.off("newWin");
+          await horse.off("newWin");
         });
         $("#btnWinCloseEvent").addEventListener("click", async () => {
-          let data = await horse.relaunch();
-          console.log(JSON.stringify(data));
+          await horse.on("winClose", (data) => {
+            console.log(data);
+          });
+        });
+        $("#btnOffWinCloseEvent").addEventListener("click", async () => {
+          await horse.off("winClose");
         });
       });
     </script>

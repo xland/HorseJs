@@ -20,8 +20,20 @@ App::~App()
 
 void App::onWindowDestroy(BrowserWindow* win)
 {
-    std::unique_lock<std::shared_mutex> lock(mtx);
-    std::erase_if(wins, [win](const std::unique_ptr<BrowserWindow>& ptr) { return ptr->id == win->id; });
+    int tarId = win->id;
+    {
+        std::unique_lock<std::shared_mutex> lock(mtx);
+        std::erase_if(wins, [win](const std::unique_ptr<BrowserWindow>& ptr) { return ptr->id == win->id; });
+    }
+    auto& vec = app->events["winClose"];
+    if (vec.size() != 0) {
+        for (auto& id : vec)
+        {
+            JsonResult result(id, "horse", "winClose");
+            result.addNumber("id", tarId);
+            result.returnBack();
+        }
+    }
     if (quitWhenAllWindowClosed && wins.empty()) {
         PostQuitMessage(0);
     }    
@@ -39,6 +51,7 @@ BrowserWindow* App::getWindow(const int& id)
     if (it != wins.end()) {
         return (*it).get();
     }
+    return nullptr;
 }
 
 void App::closeAllWindowAsync()

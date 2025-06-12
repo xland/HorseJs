@@ -27,11 +27,12 @@ void JsonResult::returnBackThread() {
 void JsonResult::returnBack()
 {
     if (cancel) return;
+    auto win = App::getWindow(winId);
+    if (!win) return;
     if (ok) {
         addBool("ok", true);
     }
     std::wstring jsonStr = parse();
-    auto win = App::getWindow(winId);
     win->webview->PostWebMessageAsJson(jsonStr.data());
 }
 
