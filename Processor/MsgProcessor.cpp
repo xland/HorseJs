@@ -6,7 +6,7 @@
 #include "Clipboard.h"
 #include "Dialog.h"
 #include "Horse.h"
-#include "Lib.h"
+#include "Dll.h"
 #include "Net.h"
 #include "Fs.h"
 #include "Notify.h"
@@ -23,7 +23,7 @@ namespace {
         {"clipboard",Clipboard::execute},
         {"dialog",Dialog::execute},
         {"horse",Horse::execute},
-        {"lib",Lib::execute},
+        {"dll",Dll::execute},
         {"net",Net::execute},
         {"fs",Fs::execute},
         {"notify",Notify::execute},

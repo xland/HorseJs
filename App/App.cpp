@@ -246,6 +246,20 @@ void App::createEnv()
     //ICoreWebView2CustomSchemeRegistration* registrations[1] = { defaultRegistration.Get() };
     //options4->SetCustomSchemeRegistrations(1, static_cast<ICoreWebView2CustomSchemeRegistration**>(registrations));
     //HRESULT hr = CreateCoreWebView2EnvironmentWithOptions(nullptr, path.c_str(), options.Get(),envReadyInstance.Get());
+
+    //todo 设置附加浏览器参数 proxy也再这里设置
+    //hr = options->put_AdditionalBrowserArguments(proxy.c_str());
+    //webView->add_WebResourceRequested(
+    //    Callback<ICoreWebView2WebResourceRequestedEventHandler>(
+    //        [](ICoreWebView2* sender, ICoreWebView2WebResourceRequestedEventArgs* args) -> HRESULT {
+    //            wil::com_ptr<ICoreWebView2WebResourceRequest> request;
+    //            args->get_Request(&request);
+    //            // 添加 Proxy-Authorization 头
+    //            std::wstring auth = L"Basic " + base64_encode(L"username:password");
+    //            request->put_Headers(L"Proxy-Authorization", auth.c_str());
+    //            return S_OK;
+    //        }).Get(), nullptr);
+
     auto envReadyInstance = WRL::Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(this, &App::envReady);
     HRESULT hr = CreateCoreWebView2EnvironmentWithOptions(nullptr, appDir.c_str(), nullptr, envReadyInstance.Get());
     if (FAILED(hr)) {

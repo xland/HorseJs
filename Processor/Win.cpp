@@ -19,6 +19,7 @@ namespace {
     {"on", &Win::on},
     {"off", &Win::off},
     };
+    //todo  Show the platform's native emoji picker.
 }
 
 Win::Win()

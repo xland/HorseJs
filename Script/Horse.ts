@@ -1,3 +1,4 @@
+import { Dll } from "./Dll";
 import { Process } from "./Process";
 import { Tray } from "./Tray";
 import { Notify } from "./Notify";
@@ -8,7 +9,6 @@ import { Eventer } from "./Eventer";
 import { Dialog } from "./Dialog";
 import { Clipboard } from "./Clipboard";
 import { Net } from "./Net";
-import { Lib } from "./Lib";
 import { Os } from "./Os";
 import { Screen } from "./Screen";
 class Horse extends Eventer {
@@ -17,12 +17,12 @@ class Horse extends Eventer {
   dialog: Dialog;
   clipboard: Clipboard;
   notify: Notify;
-  lib: Lib;
   net: Net;
   os: Os;
   screen: Screen;
   tray: Tray;
   process: Process;
+  dll: Dll;
   webview;
   constructor() {
     super();
@@ -37,6 +37,7 @@ class Horse extends Eventer {
     this.screen = new Screen();
     this.tray = new Tray();
     this.process = new Process();
+    this.dll = new Dll();
     this.listenMsg();
   }
   getConfig() {

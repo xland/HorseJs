@@ -21,8 +21,6 @@ namespace {
     };
 
     //todo  Application User Model IDs  https://learn.microsoft.com/en-us/windows/win32/shell/appids
-    //todo 进程锁，单例进程
-    //todo  Show the platform's native emoji picker.
     //todo setProxy
 }
 

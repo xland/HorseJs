@@ -8,21 +8,23 @@
     <div class="box">
       <div id="btnLoad" class="btn">加载dll</div>
       <div id="btnFree" class="btn">释放dll</div>
-      <div id="btnCall" class="btn">调用dll中的方法</div>
+      <div id="btnExcute" class="btn">调用dll中的方法</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
       window.addEventListener("DOMContentLoaded", async () => {
+        let dllId = -1;
         $("#btnLoad").addEventListener("click", async () => {
-          let data = await horse.lib.load();
+          let data = await horse.dll.load("TestDll.dll");
           console.log(data);
+          dllId = data.id;
         });
         $("#btnFree").addEventListener("click", async () => {
-          let data = await horse.lib.free();
+          let data = await horse.dll.free();
           console.log(data);
         });
-        $("#btnCall").addEventListener("click", async () => {
-          let data = await horse.lib.call();
+        $("#btnExcute").addEventListener("click", async () => {
+          let data = await horse.dll.invoke(dllId, "AddNumbers", "66,88");
           console.log(data);
         });
       });
