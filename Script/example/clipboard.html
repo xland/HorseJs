@@ -60,6 +60,10 @@
         });
         $("#btnReadImg").addEventListener("click", async () => {
           let data = await horse.clipboard.readImg();
+          if (!data.ok) {
+            console.log(data.err);
+            return;
+          }
           const uint8Array = new Uint8Array(data.buffer);
           const binary = Array.from(uint8Array)
             .map((byte) => String.fromCharCode(byte))

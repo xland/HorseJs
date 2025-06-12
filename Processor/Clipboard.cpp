@@ -132,13 +132,13 @@ void Clipboard::readImg(const rapidjson::Value& params, JsonResult* result)
 {
     // 打开剪切板
     if (!OpenClipboard(nullptr)) {
-        result->addErr("无法打开剪切板");
+        result->addErr("open clipboard err");
         return;
     }
 
     // 检查剪切板是否有位图
     if (!IsClipboardFormatAvailable(CF_BITMAP)) {
-        result->addErr("剪切板中没有位图");
+        result->addErr("no img");
         CloseClipboard();
         return;
     }
@@ -146,7 +146,7 @@ void Clipboard::readImg(const rapidjson::Value& params, JsonResult* result)
     // 获取位图句柄
     HBITMAP hBitmap = (HBITMAP)GetClipboardData(CF_BITMAP);
     if (hBitmap == nullptr) {
-        result->addErr("无法获取剪切板位图");
+        result->addErr("can not get img");
         CloseClipboard();
         return;
     }
@@ -154,7 +154,7 @@ void Clipboard::readImg(const rapidjson::Value& params, JsonResult* result)
     // 获取位图信息
     BITMAP bmp;
     if (GetObject(hBitmap, sizeof(BITMAP), &bmp) == 0) {
-        result->addErr("无法获取位图信息");
+        result->addErr("can not get img info");
         CloseClipboard();
         return;
     }
@@ -164,7 +164,7 @@ void Clipboard::readImg(const rapidjson::Value& params, JsonResult* result)
     wil::com_ptr<IWICImagingFactory> factory;
     hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&factory));
     if (FAILED(hr)) {
-        result->addErr("无法创建 WIC 工厂");
+        result->addErr("can not init WIC");
         CloseClipboard();
         return;
     }
@@ -173,7 +173,7 @@ void Clipboard::readImg(const rapidjson::Value& params, JsonResult* result)
     wil::com_ptr<IWICBitmap> wicBitmap;
     hr = factory->CreateBitmapFromHBITMAP(hBitmap, nullptr, WICBitmapUsePremultipliedAlpha, &wicBitmap);
     if (FAILED(hr)) {
-        result->addErr("无法创建 WIC 位图");
+        result->addErr("can not init WIC img");
         CloseClipboard();
         return;
     }
@@ -183,19 +183,19 @@ void Clipboard::readImg(const rapidjson::Value& params, JsonResult* result)
     wil::com_ptr<IStream> memStream;
     hr = CreateStreamOnHGlobal(nullptr, TRUE, &memStream);
     if (FAILED(hr)) {
-        result->addErr("无法创建内存流");
+        result->addErr("can not create WIC stream1");
         CloseClipboard();
         return;
     }
     hr = factory->CreateStream(&wicStream);
     if (FAILED(hr)) {
-        result->addErr("无法创建 WIC 流");
+        result->addErr("can not create WIC stream2");
         CloseClipboard();
         return;
     }
     hr = wicStream->InitializeFromIStream(memStream.get());
     if (FAILED(hr)) {
-        result->addErr("无法初始化 WIC 流");
+        result->addErr("can not create WIC stream3");
         CloseClipboard();
         return;
     }
@@ -204,13 +204,13 @@ void Clipboard::readImg(const rapidjson::Value& params, JsonResult* result)
     wil::com_ptr<IWICBitmapEncoder> encoder;
     hr = factory->CreateEncoder(GUID_ContainerFormatPng, nullptr, &encoder);
     if (FAILED(hr)) {
-        result->addErr("无法创建 PNG 编码器");
+        result->addErr("can not create png encoder1");
         CloseClipboard();
         return;
     }
     hr = encoder->Initialize(wicStream.get(), WICBitmapEncoderNoCache);
     if (FAILED(hr)) {
-        result->addErr("无法初始化 PNG 编码器");
+        result->addErr("can not create png encoder2");
         CloseClipboard();
         return;
     }
@@ -219,44 +219,44 @@ void Clipboard::readImg(const rapidjson::Value& params, JsonResult* result)
     wil::com_ptr<IWICBitmapFrameEncode> frame;
     hr = encoder->CreateNewFrame(&frame, nullptr);
     if (FAILED(hr)) {
-        result->addErr("无法创建 PNG 帧");
+        result->addErr("can not create img frame");
         CloseClipboard();
         return;
     }
     hr = frame->Initialize(nullptr);
     if (FAILED(hr)) {
-        result->addErr("无法初始化 PNG 帧");
+        result->addErr("can not init img frame");
         CloseClipboard();
         return;
     }
     hr = frame->SetSize(bmp.bmWidth, bmp.bmHeight);
     if (FAILED(hr)) {
-        result->addErr("无法设置 PNG 帧大小");
+        result->addErr("can not init img frame size");
         CloseClipboard();
         return;
     }
     WICPixelFormatGUID format = GUID_WICPixelFormat32bppRGBA;
     hr = frame->SetPixelFormat(&format);
     if (FAILED(hr)) {
-        result->addErr("无法设置像素格式");
+        result->addErr("can not init pix format");
         CloseClipboard();
         return;
     }
     hr = frame->WriteSource(wicBitmap.get(), nullptr);
     if (FAILED(hr)) {
-        result->addErr("无法写入 PNG 帧");
+        result->addErr("can not write img frame");
         CloseClipboard();
         return;
     }
     hr = frame->Commit();
     if (FAILED(hr)) {
-        result->addErr("无法提交 PNG 帧");
+        result->addErr("can not commit img frame");
         CloseClipboard();
         return;
     }
     hr = encoder->Commit();
     if (FAILED(hr)) {
-        result->addErr("无法提交 PNG 编码器");
+        result->addErr("can not commit img encoder");
         CloseClipboard();
         return;
     }
@@ -265,7 +265,7 @@ void Clipboard::readImg(const rapidjson::Value& params, JsonResult* result)
     STATSTG stat;
     hr = memStream->Stat(&stat, STATFLAG_NONAME);
     if (FAILED(hr)) {
-        result->addErr("无法获取流大小");
+        result->addErr("can not stat img stream");
         CloseClipboard();
         return;
     }
@@ -273,7 +273,7 @@ void Clipboard::readImg(const rapidjson::Value& params, JsonResult* result)
     HGLOBAL hGlobal;
     hr = GetHGlobalFromStream(memStream.get(), &hGlobal);
     if (FAILED(hr)) {
-        result->addErr("无法获取全局内存");
+        result->addErr("can not get global stream");
         CloseClipboard();
         return;
     }
@@ -286,31 +286,27 @@ void Clipboard::readImg(const rapidjson::Value& params, JsonResult* result)
     wil::com_ptr<ICoreWebView2SharedBuffer> sharedBuffer;
     hr = env12->CreateSharedBuffer(stat.cbSize.LowPart, &sharedBuffer);
     if (FAILED(hr)) {
-        result->addErr("无法创建共享缓冲区");
+        result->addErr("can not create shared buffer");
         CloseClipboard();
         return;
     }
     wil::com_ptr<IStream> stream;
     hr = sharedBuffer->OpenStream(&stream);
     if (FAILED(hr)) {
-        result->addErr("无法打开共享缓冲区流");
+        result->addErr("can not open stream");
         CloseClipboard();
         return;
     }
     hr = stream->Write(pngBuffer.data(), stat.cbSize.LowPart, nullptr);
     if (FAILED(hr)) {
-        result->addErr("无法写入共享缓冲区");
+        result->addErr("can not write png buffer");
         CloseClipboard();
         return;
     }
-
-    // 返回元数据和缓冲区
     result->addNumber("w", (int)bmp.bmWidth);
     result->addNumber("h", (int)bmp.bmHeight);
     result->returnBackSharedBuffer(sharedBuffer.get());
     sharedBuffer->Close();
-
-    // 清理资源
     CloseClipboard();
     result->cancel = true;
 }
