@@ -1,6 +1,7 @@
 {
   "appId": "HorseJs",
-  "singleInstance": true,
+  "instanceWatch": true,
+  "instanceLock": true,
   "quitWhenAllWinClosed": true,
   "window": {
     "resizable": true,

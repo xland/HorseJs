@@ -15,6 +15,8 @@ public:
 	void quit(const rapidjson::Value& params, JsonResult* result);
 	void exit(const rapidjson::Value& params, JsonResult* result);
 	void relaunch(const rapidjson::Value& params, JsonResult* result);
+	void enableSecondIns(const rapidjson::Value& params, JsonResult* result);
+	void disableSecondIns(const rapidjson::Value& params, JsonResult* result);
 
 	void on(const rapidjson::Value& params, JsonResult* result);
 	void off(const rapidjson::Value& params, JsonResult* result);

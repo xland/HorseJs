@@ -18,6 +18,10 @@
       <div id="btnOffNewWinEvent" class="btn">取消监听新窗口创建事件</div>
       <div id="btnWinCloseEvent" class="btn">监听旧窗口关闭事件</div>
       <div id="btnOffWinCloseEvent" class="btn">取消监听旧窗口关闭事件</div>
+      <div id="btnSecondInsEvent" class="btn">监听本应用第二次启动</div>
+      <div id="btnOffSecondInsEvent" class="btn">取消监听本应用的第二次启动</div>
+      <div id="btnEnableSecondIns" class="btn">允许本应用多开</div>
+      <div id="btnDisableSecondIns" class="btn">禁止本应用多开</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
@@ -97,6 +101,22 @@
         });
         $("#btnOffWinCloseEvent").addEventListener("click", async () => {
           await horse.off("winClose");
+        });
+        $("#btnSecondInsEvent").addEventListener("click", async () => {
+          await horse.on("secondIns", () => {
+            console.log("secondIns");
+          });
+        });
+        $("#btnOffSecondInsEvent").addEventListener("click", async () => {
+          await horse.off("secondIns");
+        });
+        $("#btnEnableSecondIns").addEventListener("click", async () => {
+          let obj = await horse.enableSecondIns();
+          console.log(obj);
+        });
+        $("#btnDisableSecondIns").addEventListener("click", async () => {
+          let obj = await horse.disableSecondIns();
+          console.log(obj);
         });
       });
     </script>

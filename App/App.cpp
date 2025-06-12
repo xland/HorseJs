@@ -39,6 +39,18 @@ void App::onWindowDestroy(BrowserWindow* win)
     }    
 }
 
+void App::onSecondInstance()
+{
+    auto& vec = app->events["secondIns"];
+    if (vec.size() != 0) {
+        for (auto& id : vec)
+        {
+            JsonResult result(id, "horse", "secondIns");
+            result.returnBack();
+        }
+    }
+}
+
 App* App::get()
 {
     return app.get();
@@ -167,6 +179,29 @@ void App::initUICompositor()
     CreateDispatcherQueueController(options, reinterpret_cast<ABI::Windows::System::IDispatcherQueueController**>(winrt::put_abi(dispatchCtrl)));
     compositor = winrt::Windows::UI::Composition::Compositor();
 }
+void App::createSingleMutex()
+{
+    auto mutextName = "Global\\" + appId;
+    auto nameStr = Util::convertToWStr(mutextName.data());
+    singleInsMutext = CreateMutex(NULL, TRUE, nameStr.data());
+    if (GetLastError() == ERROR_ALREADY_EXISTS)
+    {
+        if (instanceWatch)
+        {
+            HWND hExistingWnd = FindWindow(L"HorseJs", NULL);
+            if (hExistingWnd)
+            {
+                PostMessage(hExistingWnd, WM_SECOND_INSTANCE_NOTIFY, 0, 0);
+            }
+        }
+        if (instanceLock) {
+            if (singleInsMutext) {
+                CloseHandle(singleInsMutext);
+            }
+            exit(3);
+        }
+    }
+}
 void App::loadConfig()
 {
     auto jsonData = Util::readFile(L"UI/config.json");
@@ -180,10 +215,16 @@ void App::loadConfig()
     {
         quitWhenAllWinClosed = jsonDoc["quitWhenAllWinClosed"].GetBool();
     }
-    bool singleInstance{ false };
-    if (jsonDoc.HasMember("singleInstance") && jsonDoc["singleInstance"].IsBool())
+    if (jsonDoc.HasMember("instanceWatch") && jsonDoc["instanceWatch"].IsBool())
     {
-        singleInstance = jsonDoc["singleInstance"].GetBool();
+        instanceWatch = jsonDoc["instanceWatch"].GetBool();
+    }
+    if (jsonDoc.HasMember("instanceLock") && jsonDoc["instanceLock"].IsBool())
+    {
+        instanceLock = jsonDoc["instanceLock"].GetBool();
+    }
+    if (instanceLock || instanceWatch) {
+        createSingleMutex();
     }
     auto win = std::make_unique<BrowserWindow>(jsonDoc["window"]);
     wins.push_back(std::move(win));

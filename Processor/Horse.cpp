@@ -14,6 +14,8 @@ namespace {
     {"quit", &Horse::quit},
     {"exit", &Horse::exit},
     {"relaunch", &Horse::relaunch},
+    {"enableSecondIns", &Horse::enableSecondIns},
+    {"disableSecondIns", &Horse::disableSecondIns},
     {"on", &Horse::on},
     {"off", &Horse::off},
     };
@@ -140,6 +142,25 @@ void Horse::relaunch(const rapidjson::Value& params, JsonResult* result)
         CloseHandle(pi.hProcess);
         CloseHandle(pi.hThread);
     }
+}
+void Horse::enableSecondIns(const rapidjson::Value& params, JsonResult* result)
+{
+    auto app = App::get();
+    CloseHandle(App::get()->singleInsMutext);
+    app->instanceLock = false;
+}
+void Horse::disableSecondIns(const rapidjson::Value& params, JsonResult* result)
+{
+    auto app = App::get();
+    auto mutextName = "Global\\" + app->appId;
+    auto nameStr = Util::convertToWStr(mutextName.data());
+    auto singleInsMutext = CreateMutex(NULL, TRUE, nameStr.data());
+    if (GetLastError()) {
+        result->addErr("already disable");
+        return;
+    }
+    app->singleInsMutext = singleInsMutext;
+    app->instanceLock = true;
 }
 void Horse::on(const rapidjson::Value& params, JsonResult* result)
 {

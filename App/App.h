@@ -10,6 +10,7 @@ public:
 	App(HINSTANCE hInstance);
 	~App();
 	void onWindowDestroy(BrowserWindow* win);
+	void onSecondInstance();
 	static App* get();
 	static BrowserWindow* getWindow(const int& id);
 	static void closeAllWindowAsync();
@@ -23,8 +24,9 @@ public:
 	HINSTANCE hInstance;
 	std::filesystem::path appDir;
 	std::unordered_map<std::string, std::set<int>> events;
-	
 	UI::Composition::Compositor compositor{nullptr};
+	bool instanceWatch{ false }, instanceLock{false};
+	HANDLE singleInsMutext;
 private:
 	void loadConfig();
 	void createEnv();
@@ -33,6 +35,7 @@ private:
 	bool checkRegKey(const HKEY& key, const std::wstring& subKey);
 	void ensureAppFolder();
 	void initUICompositor();
+	void createSingleMutex();
 	HRESULT envReady(HRESULT result, ICoreWebView2Environment* env);
 private:
 };

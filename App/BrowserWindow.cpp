@@ -46,7 +46,10 @@ void BrowserWindow::initWindow()
 }
 LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    if (msg >= WM_MOUSEFIRST && msg <= WM_MOUSELAST)
+    if (msg == WM_SECOND_INSTANCE_NOTIFY) {
+        App::get()->onSecondInstance();
+    }
+    else if (msg >= WM_MOUSEFIRST && msg <= WM_MOUSELAST)
     {
         routeMsgToPage(msg, wParam, lParam);
         return true;

@@ -61,6 +61,12 @@ class Horse extends Eventer {
     let obj = await this.exec("createWin", config);
     return new WinProx(obj.id);
   }
+  enableSecondIns() {
+    return this.exec("enableSecondIns");
+  }
+  disableSecondIns() {
+    return this.exec("disableSecondIns");
+  }
   on(eventName, func) {
     if (eventName === "newWin") return this.onNewWin(func);
     let flag = this.listen(eventName, func);

@@ -44,6 +44,7 @@
 using namespace Microsoft;
 using namespace winrt::Windows;
 
-#define WM_THREAD_RESULT (WM_USER + 100)
-#define WM_TRAY (WM_USER + 101)
-#define WM_TRAY_CREATE (WM_USER + 102)
+#define WM_SECOND_INSTANCE_NOTIFY (WM_USER + 100)
+#define WM_THREAD_RESULT (WM_USER + 101)
+#define WM_TRAY (WM_USER + 102)
+#define WM_TRAY_CREATE (WM_USER + 103)
