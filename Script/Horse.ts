@@ -61,23 +61,21 @@ class Horse extends Eventer {
     let obj = await this.exec("createWin", config);
     return new WinProx(obj.id);
   }
-  onNewWin(func) {
-    this.listen("_newWin", func);
-    if (!this.has("newWin")) {
-      this.listen("newWin", (data) => {
-        let proxy = new WinProx(data.id);
-        this.emit("_newWin", proxy);
-      });
-      this.exec("on", "newWin");
-    }
-  }
-  offNewWin(func) {
-    let flag = this.unlisten("_newWin", func);
+  on(eventName, func) {
+    if (eventName === "newWin") return this.onNewWin(func);
+    let flag = this.listen(eventName, func);
     if (flag) {
-      this.unlisten("newWin");
-      this.exec("off", "newWin");
+      this.exec("on", eventName);
     }
   }
+  off(eventName, func) {
+    if (eventName === "newWin") return this.offNewWin(func);
+    let flag = this.unlisten(eventName, func);
+    if (flag) {
+      this.exec("off", eventName);
+    }
+  }
+
   private listenMsg() {
     if (window.self !== window.top) return;
     this.webview.addEventListener("message", (e) => {
@@ -123,6 +121,23 @@ class Horse extends Eventer {
       methodName,
       params,
     });
+  }
+  private onNewWin(func) {
+    this.listen("_newWin", func);
+    if (!this.has("newWin")) {
+      this.listen("newWin", (data) => {
+        let proxy = new WinProx(data.id);
+        this.emit("_newWin", proxy);
+      });
+      this.exec("on", "newWin");
+    }
+  }
+  private offNewWin(func) {
+    let flag = this.unlisten("_newWin", func);
+    if (flag) {
+      this.unlisten("newWin");
+      this.exec("off", "newWin");
+    }
   }
 }
 if (window.self === window.top) {

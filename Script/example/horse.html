@@ -83,15 +83,11 @@
           let func = (proxy) => {
             console.log(proxy.id);
             proxy.minimize();
-            horse.offNewWin(func);
           };
-          await horse.onNewWin(func);
+          horse.on("newWin", func);
         });
         $("#btnOffNewWinEvent").addEventListener("click", async () => {
-          await horse.offNewWin((proxy) => {
-            console.log(proxy.id);
-            proxy.minimize();
-          });
+          horse.off("newWin");
         });
         $("#btnWinCloseEvent").addEventListener("click", async () => {
           let data = await horse.relaunch();
