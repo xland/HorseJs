@@ -1,9 +1,9 @@
 import { Eventer } from "./Eventer";
 export class Net extends Eventer {
   async getAddress() {
-    return this.callMethod("getAddress");
+    return this.exec("getAddress");
   }
-  private callMethod(methodName: string, ...params: any[]) {
+  private exec(methodName: string, ...params: any[]) {
     return this.call({
       className: "net",
       winId: globalThis.__WIN_ID,

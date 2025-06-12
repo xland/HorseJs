@@ -1,4 +1,4 @@
-#include <pch.h>
+﻿#include <pch.h>
 #include "Horse.h"
 #include "../App/App.h"
 #include "../App/BrowserWindow.h"
@@ -14,6 +14,8 @@ namespace {
     {"quit", &Horse::quit},
     {"exit", &Horse::exit},
     {"relaunch", &Horse::relaunch},
+    {"on", &Horse::on},
+    {"off", &Horse::off},
     };
 
     //todo 监听窗口创建事件
@@ -139,4 +141,10 @@ void Horse::relaunch(const rapidjson::Value& params, JsonResult* result)
         CloseHandle(pi.hProcess);
         CloseHandle(pi.hThread);
     }
+}
+void Horse::on(const rapidjson::Value& params, JsonResult* result)
+{
+}
+void Horse::off(const rapidjson::Value& params, JsonResult* result)
+{
 }

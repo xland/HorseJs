@@ -6,7 +6,7 @@ export class WinProx extends Win {
     super();
     this.id = id;
   }
-  protected callMethod(methodName: string, ...params: any[]) {
+  protected exec(methodName: string, ...params: any[]) {
     return this.call({
       className: "win",
       winId: globalThis.__WIN_ID,

@@ -1,18 +1,18 @@
 import { Eventer } from "./Eventer";
 export class Lib extends Eventer {
   getDataType() {
-    return this.callMethod("getDataType");
+    return this.exec("getDataType");
   }
   readText() {
-    return this.callMethod("readText");
+    return this.exec("readText");
   }
   writeText(text: string) {
-    return this.callMethod("writeText", text);
+    return this.exec("writeText", text);
   }
   readHtml() {
-    return this.callMethod("readHtml");
+    return this.exec("readHtml");
   }
-  private callMethod(methodName: string, ...params: any[]) {
+  private exec(methodName: string, ...params: any[]) {
     return this.call({
       className: "lib",
       winId: globalThis.__WIN_ID,

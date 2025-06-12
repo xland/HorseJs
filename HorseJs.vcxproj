@@ -159,6 +159,9 @@
     <PreBuildEvent>
       <Command>esbuild Script/Horse.ts --bundle --outfile=Res/horse.js --minify </Command>
     </PreBuildEvent>
+    <CustomBuildStep>
+      <Command>esbuild $(ProjectDir)Script\Horse.ts --bundle --minify --outfile=$(ProjectDir)Res\horse.js</Command>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App\App.cpp" />

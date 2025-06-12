@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../App/Util.h"
 #include "JsonResult.h"
 class Horse
@@ -15,6 +15,9 @@ public:
 	void quit(const rapidjson::Value& params, JsonResult* result);
 	void exit(const rapidjson::Value& params, JsonResult* result);
 	void relaunch(const rapidjson::Value& params, JsonResult* result);
+
+	void on(const rapidjson::Value& params, JsonResult* result);
+	void off(const rapidjson::Value& params, JsonResult* result);
 private:
 
 };

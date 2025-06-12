@@ -22,7 +22,7 @@ public:
 	void resize(const rapidjson::Value& params, JsonResult* result);
 	void insertMenu(const rapidjson::Value& params, JsonResult* result);
 	void removeMenu(const rapidjson::Value& params, JsonResult* result);
-	void addEventListener(const rapidjson::Value& params, JsonResult* result);
-	void removeEventListener(const rapidjson::Value& params, JsonResult* result);
+	void on(const rapidjson::Value& params, JsonResult* result);
+	void off(const rapidjson::Value& params, JsonResult* result);
 };
 

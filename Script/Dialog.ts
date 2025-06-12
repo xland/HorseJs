@@ -1,15 +1,15 @@
 import { Eventer } from "./Eventer";
 export class Dialog extends Eventer {
   async openPath(config: any) {
-    return this.callMethod("openPath", config);
+    return this.exec("openPath", config);
   }
   async savePath(config: any) {
-    return this.callMethod("savePath", config);
+    return this.exec("savePath", config);
   }
   async msgBox(config: any) {
-    return this.callMethod("msgBox", config);
+    return this.exec("msgBox", config);
   }
-  private callMethod(methodName: string, ...params: any[]) {
+  private exec(methodName: string, ...params: any[]) {
     return this.call({
       className: "dialog",
       winId: globalThis.__WIN_ID,

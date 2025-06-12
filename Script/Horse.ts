@@ -40,26 +40,38 @@ class Horse extends Eventer {
     this.listenMsg();
   }
   getConfig() {
-    return this.callMethod("getConfig");
+    return this.exec("getConfig");
   }
   getExeVer() {
-    return this.callMethod("getExeVer");
+    return this.exec("getExeVer");
   }
   getHorseVer() {
-    return this.callMethod("getHorseVer");
+    return this.exec("getHorseVer");
   }
   quit() {
-    return this.callMethod("quit");
+    return this.exec("quit");
   }
   relaunch() {
-    return this.callMethod("relaunch");
+    return this.exec("relaunch");
   }
   exit(code: number) {
-    return this.callMethod("exit", code);
+    return this.exec("exit", code);
   }
   async createWindow(config: object) {
-    let obj = await this.callMethod("createWindow", config);
+    let obj = await this.exec("createWindow", config);
     return new WinProx(obj.id, this.win);
+  }
+  on(eventName, func) {
+    let flag = this.listen(eventName, func);
+    if (flag) {
+      this.exec("on", eventName);
+    }
+  }
+  off(eventName, func) {
+    let flag = this.unlisten(eventName, func);
+    if (flag) {
+      this.exec("off", eventName);
+    }
   }
   private listenMsg() {
     if (window.self !== window.top) return;
@@ -99,7 +111,7 @@ class Horse extends Eventer {
       }
     });
   }
-  private callMethod(methodName: string, ...params: any[]) {
+  private exec(methodName: string, ...params: any[]) {
     return this.call({
       className: "horse",
       winId: globalThis.__WIN_ID,

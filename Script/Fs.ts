@@ -2,63 +2,63 @@ import { util } from "./Util";
 import { Eventer } from "./Eventer";
 export class Fs extends Eventer {
   async readFile(filePath: string) {
-    return this.callMethod("readFile", filePath);
+    return this.exec("readFile", filePath);
   }
   async readFileChunk(filePath: string, startPos: number, chunkSize: number) {
-    return this.callMethod("readFileChunk", filePath, startPos, chunkSize);
+    return this.exec("readFileChunk", filePath, startPos, chunkSize);
   }
   async exists(filePath: string) {
-    return this.callMethod("exists", filePath);
+    return this.exec("exists", filePath);
   }
   async getFileInfo(filePath: string) {
-    return this.callMethod("getFileInfo", filePath);
+    return this.exec("getFileInfo", filePath);
   }
   async writeFile(filePath: string, content: string) {
-    return this.callMethod("writeFile", filePath, content);
+    return this.exec("writeFile", filePath, content);
   }
   async writeFileChunk(filePath: string, content: string, startPos: number) {
-    return this.callMethod("writeFileChunk", filePath, content, startPos);
+    return this.exec("writeFileChunk", filePath, content, startPos);
   }
   async delPath(filePath: string) {
-    return this.callMethod("delPath", filePath);
+    return this.exec("delPath", filePath);
   }
   async removePath(filePath: string) {
-    return this.callMethod("removePath", filePath);
+    return this.exec("removePath", filePath);
   }
   async createFile(filePath: string) {
-    return this.callMethod("createFile", filePath);
+    return this.exec("createFile", filePath);
   }
   async createDir(dirPath: string) {
-    return this.callMethod("createDir", dirPath);
+    return this.exec("createDir", dirPath);
   }
   async ensurePath(filePath: string) {
-    return this.callMethod("ensurePath", filePath);
+    return this.exec("ensurePath", filePath);
   }
   async listDir(dirPath: string) {
-    return this.callMethod("listDir", dirPath);
+    return this.exec("listDir", dirPath);
   }
   async movePath(srcPath: string, dstPath: string) {
-    return this.callMethod("movePath", srcPath, dstPath);
+    return this.exec("movePath", srcPath, dstPath);
   }
   async copyPath(srcPath: string, dstPath: string) {
-    return this.callMethod("copyPath", srcPath, dstPath);
+    return this.exec("copyPath", srcPath, dstPath);
   }
   async renamePath(srcPath: string, dstPath: string) {
-    return this.callMethod("renamePath", srcPath, dstPath);
+    return this.exec("renamePath", srcPath, dstPath);
   }
   getPath(type: string) {
-    return this.callMethod("getPath", type);
+    return this.exec("getPath", type);
   }
   async watch(path: string, cb: () => {}) {
     let id = `${util.randomNum()}`;
-    this.on(id, cb);
-    return this.callMethod("watch", path, id);
+    this.listen(id, cb);
+    return this.exec("watch", path, id);
   }
   async stopWatch(id: string) {
-    this.off(id);
-    return this.callMethod("stopWatch", id);
+    this.unlisten(id);
+    return this.exec("stopWatch", id);
   }
-  private callMethod(methodName: string, ...params: any[]) {
+  private exec(methodName: string, ...params: any[]) {
     return this.call({
       className: "fs",
       winId: globalThis.__WIN_ID,

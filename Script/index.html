@@ -141,7 +141,7 @@
         $("#btnRestoreT").addEventListener("click", () => {
           horse.win.restore();
         });
-        horse.win.addEventListener("stateChanged", async (result) => {
+        horse.win.on("stateChanged", async (result) => {
           if (result.state == "maximize") {
             $("#btnMaximizeT").setAttribute("style", "display:none;");
             $("#btnRestoreT").setAttribute("style", "");
@@ -150,7 +150,7 @@
             $("#btnRestoreT").setAttribute("style", "display:none;");
           }
         });
-        // horse.win.addEventListener("sizePosChanged", (data) => {
+        // horse.win.on("sizePosChanged", (data) => {
         //   // console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
         // });
         $("#menuContainer").addEventListener("click", (e) => {

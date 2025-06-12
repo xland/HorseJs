@@ -16,8 +16,8 @@ namespace {
     {"setResizable", &Win::setResizable},
     {"resize", &Win::resize},
     {"flash", &Win::flash},
-    {"addEventListener", &Win::addEventListener},
-    {"removeEventListener", &Win::removeEventListener},
+    {"on", &Win::on},
+    {"off", &Win::off},
     };
 }
 
@@ -43,7 +43,7 @@ bool Win::execute(std::string& methodName, const rapidjson::Value& param, JsonRe
     (Win::get()->*it->second)(param, result);
     return true;
 }
-void Win::addEventListener(const rapidjson::Value& params, JsonResult* result)
+void Win::on(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::string eventName = arr[0].GetString();
@@ -51,7 +51,7 @@ void Win::addEventListener(const rapidjson::Value& params, JsonResult* result)
     tar->events[eventName].insert(result->winId);
 }
 
-void Win::removeEventListener(const rapidjson::Value& params, JsonResult* result)
+void Win::off(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::string eventName = arr[0].GetString();

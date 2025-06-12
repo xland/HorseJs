@@ -1,42 +1,42 @@
 import { Eventer } from "./Eventer";
 export class Clipboard extends Eventer {
   getDataType() {
-    return this.callMethod("getDataType");
+    return this.exec("getDataType");
   }
   readText() {
-    return this.callMethod("readText");
+    return this.exec("readText");
   }
   writeText(text: string) {
-    return this.callMethod("writeText", text);
+    return this.exec("writeText", text);
   }
   readHtml() {
-    return this.callMethod("readHtml");
+    return this.exec("readHtml");
   }
   writeHtml(html: string) {
-    return this.callMethod("writeHtml", html);
+    return this.exec("writeHtml", html);
   }
   readRtf() {
-    return this.callMethod("readRtf");
+    return this.exec("readRtf");
   }
   writeRtf(rtf: string) {
-    return this.callMethod("writeRtf", rtf);
+    return this.exec("writeRtf", rtf);
   }
   readImg() {
-    return this.callMethod("readImg");
+    return this.exec("readImg");
   }
   writeImg(rtf: string) {
-    return this.callMethod("writeImg", rtf);
+    return this.exec("writeImg", rtf);
   }
   getFile() {
-    return this.callMethod("getFile");
+    return this.exec("getFile");
   }
   addFile(...paths) {
-    return this.callMethod("addFile", ...paths);
+    return this.exec("addFile", ...paths);
   }
   clear() {
-    return this.callMethod("clear");
+    return this.exec("clear");
   }
-  private callMethod(methodName: string, ...params: any[]) {
+  private exec(methodName: string, ...params: any[]) {
     return this.call({
       className: "clipboard",
       winId: globalThis.__WIN_ID,

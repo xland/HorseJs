@@ -13,6 +13,9 @@
       <div id="btnQuit" class="btn">关闭所有窗口，并退出应用</div>
       <div id="btnExit" class="btn">退出应用</div>
       <div id="btnRelaunch" class="btn">启动当前应用的一个新实例</div>
+      <div id="btnAppLock" class="btn">禁止双开，并监听双开事件</div>
+      <div id="btnNewWinEvent" class="btn">监听新窗口创建事件</div>
+      <div id="btnWinCloseEvent" class="btn">监听旧窗口关闭事件</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
@@ -72,6 +75,20 @@
           horse.exit(1);
         });
         $("#btnRelaunch").addEventListener("click", async () => {
+          let data = await horse.relaunch();
+          console.log(JSON.stringify(data));
+        });
+        $("#btnAppLock").addEventListener("click", async () => {
+          let data = await horse.relaunch();
+          console.log(JSON.stringify(data));
+        });
+        $("#btnNewWinEvent").addEventListener("click", async () => {
+          let data = await horse.on("newWin", (obj) => {
+            console.log(obj);
+          });
+          console.log(JSON.stringify(data));
+        });
+        $("#btnWinCloseEvent").addEventListener("click", async () => {
           let data = await horse.relaunch();
           console.log(JSON.stringify(data));
         });

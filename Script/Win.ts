@@ -2,54 +2,54 @@ import { Eventer } from "./Eventer";
 
 export class Win extends Eventer {
   maximize() {
-    return this.callMethod("maximize");
+    return this.exec("maximize");
   }
   minimize() {
-    return this.callMethod("minimize");
+    return this.exec("minimize");
   }
   hide() {
-    return this.callMethod("hide");
+    return this.exec("hide");
   }
   show() {
-    return this.callMethod("show");
+    return this.exec("show");
   }
   restore() {
-    return this.callMethod("restore");
+    return this.exec("restore");
   }
   resize(w: number, h: number) {
-    return this.callMethod("resize", w, h);
+    return this.exec("resize", w, h);
   }
   move(x: number, y: number) {
-    return this.callMethod("move", x, y);
+    return this.exec("move", x, y);
   }
   close() {
-    return this.callMethod("close");
+    return this.exec("close");
   }
   destroy() {
-    return this.callMethod("destroy");
+    return this.exec("destroy");
   }
   flash(flag: boolean) {
-    return this.callMethod("flash", flag);
+    return this.exec("flash", flag);
   }
   startDrag() {
-    return this.callMethod("startDrag");
+    return this.exec("startDrag");
   }
   setResizable(flag: boolean) {
-    return this.callMethod("setResizable", flag);
+    return this.exec("setResizable", flag);
   }
-  addEventListener(eventName, func) {
-    let flag = this.on(eventName, func);
+  on(eventName, func) {
+    let flag = this.listen(eventName, func);
     if (flag) {
-      this.callMethod("addEventListener", eventName);
+      this.exec("on", eventName);
     }
   }
-  removeEventListener(eventName, func) {
-    let flag = this.off(eventName, func);
+  off(eventName, func) {
+    let flag = this.unlisten(eventName, func);
     if (flag) {
-      this.callMethod("removeEventListener", eventName);
+      this.exec("off", eventName);
     }
   }
-  protected callMethod(methodName: string, ...params: any[]) {
+  protected exec(methodName: string, ...params: any[]) {
     return this.call({
       className: "win",
       winId: globalThis.__WIN_ID,
