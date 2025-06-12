@@ -22,6 +22,7 @@ public:
 	wil::com_ptr<ICoreWebView2Environment> env;
 	HINSTANCE hInstance;
 	std::filesystem::path appDir;
+	std::unordered_map<std::string, std::set<int>> events;
 private:
 	void loadConfig();
 	void createEnv();

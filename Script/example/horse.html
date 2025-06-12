@@ -15,6 +15,7 @@
       <div id="btnRelaunch" class="btn">启动当前应用的一个新实例</div>
       <div id="btnAppLock" class="btn">禁止双开，并监听双开事件</div>
       <div id="btnNewWinEvent" class="btn">监听新窗口创建事件</div>
+      <div id="btnOffNewWinEvent" class="btn">取消监听新窗口创建事件</div>
       <div id="btnWinCloseEvent" class="btn">监听旧窗口关闭事件</div>
     </div>
     <script>
@@ -25,7 +26,7 @@
           console.log(config);
         });
         $("#btnNewWindow").addEventListener("click", async () => {
-          let proxy = await horse.createWindow({
+          let proxy = await horse.createWin({
             resizable: true,
             maximizable: false,
             minimizable: false,
@@ -54,10 +55,6 @@
               url: "index.html",
             },
           });
-          // let obj = await proxy.addEventListener("sizePosChanged", (data) => {
-          // console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
-          // });
-          await proxy.minimize();
         });
         $("#btnGetHorseVer").addEventListener("click", async () => {
           let data = await horse.getHorseVer();
@@ -83,10 +80,18 @@
           console.log(JSON.stringify(data));
         });
         $("#btnNewWinEvent").addEventListener("click", async () => {
-          let data = await horse.on("newWin", (obj) => {
-            console.log(obj);
+          let func = (proxy) => {
+            console.log(proxy.id);
+            proxy.minimize();
+            horse.offNewWin(func);
+          };
+          await horse.onNewWin(func);
+        });
+        $("#btnOffNewWinEvent").addEventListener("click", async () => {
+          await horse.offNewWin((proxy) => {
+            console.log(proxy.id);
+            proxy.minimize();
           });
-          console.log(JSON.stringify(data));
         });
         $("#btnWinCloseEvent").addEventListener("click", async () => {
           let data = await horse.relaunch();

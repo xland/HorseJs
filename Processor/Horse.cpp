@@ -8,7 +8,7 @@ namespace {
     std::unique_ptr<Horse> horse;
     static std::unordered_map<std::string, void (Horse::*)(const rapidjson::Value&, JsonResult*)> funcs{
     {"getConfig", &Horse::getConfig},
-    {"createWindow", &Horse::createWindow},
+    {"createWin", &Horse::createWin},
     {"getExeVer", &Horse::getExeVer},
     {"getHorseVer", &Horse::getHorseVer},
     {"quit", &Horse::quit},
@@ -57,7 +57,7 @@ void Horse::getConfig(const rapidjson::Value& params, JsonResult* result)
 	result->addValue("data", std::move(copiedValue));
 }
 
-void Horse::createWindow(const rapidjson::Value& params, JsonResult* result)
+void Horse::createWin(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     const rapidjson::Value& value = arr[0];
@@ -144,7 +144,13 @@ void Horse::relaunch(const rapidjson::Value& params, JsonResult* result)
 }
 void Horse::on(const rapidjson::Value& params, JsonResult* result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::string eventName = arr[0].GetString();
+    App::get()->events[eventName].insert(result->winId);
 }
 void Horse::off(const rapidjson::Value& params, JsonResult* result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::string eventName = arr[0].GetString();
+    App::get()->events[eventName].erase(result->winId);
 }

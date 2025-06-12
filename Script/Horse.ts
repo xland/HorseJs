@@ -57,20 +57,25 @@ class Horse extends Eventer {
   exit(code: number) {
     return this.exec("exit", code);
   }
-  async createWindow(config: object) {
-    let obj = await this.exec("createWindow", config);
-    return new WinProx(obj.id, this.win);
+  async createWin(config: object) {
+    let obj = await this.exec("createWin", config);
+    return new WinProx(obj.id);
   }
-  on(eventName, func) {
-    let flag = this.listen(eventName, func);
-    if (flag) {
-      this.exec("on", eventName);
+  onNewWin(func) {
+    this.listen("_newWin", func);
+    if (!this.has("newWin")) {
+      this.listen("newWin", (data) => {
+        let proxy = new WinProx(data.id);
+        this.emit("_newWin", proxy);
+      });
+      this.exec("on", "newWin");
     }
   }
-  off(eventName, func) {
-    let flag = this.unlisten(eventName, func);
+  offNewWin(func) {
+    let flag = this.unlisten("_newWin", func);
     if (flag) {
-      this.exec("off", eventName);
+      this.unlisten("newWin");
+      this.exec("off", "newWin");
     }
   }
   private listenMsg() {

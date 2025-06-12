@@ -58,8 +58,20 @@ bool App::hasWindow()
 
 void App::addWindow(std::unique_ptr<BrowserWindow> win)
 {
-    std::unique_lock<std::shared_mutex> lock(mtx);
-    wins.push_back(std::move(win));
+    int winId{-1};
+    {
+        std::unique_lock<std::shared_mutex> lock(mtx);
+        winId = win->id;
+        wins.push_back(std::move(win));
+    }
+    auto& vec = app->events["newWin"];
+    if (vec.size() == 0) return;
+    for (auto& id : vec)
+    {
+        JsonResult result(id, "horse", "newWin");
+        result.addNumber("id", winId);
+        result.returnBack();
+    }
 }
 
 void App::init(HINSTANCE hInstance)
