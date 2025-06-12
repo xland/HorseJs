@@ -276,11 +276,11 @@
 
   // Dialog.ts
   var Dialog = class extends Eventer {
-    async openPathDialog(config) {
-      return this.callMethod("openPathDialog", config);
+    async openPath(config) {
+      return this.callMethod("openPath", config);
     }
-    async savePathDialog(config) {
-      return this.callMethod("savePathDialog", config);
+    async savePath(config) {
+      return this.callMethod("savePath", config);
     }
     async msgBox(config) {
       return this.callMethod("msgBox", config);

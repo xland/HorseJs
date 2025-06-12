@@ -1,10 +1,10 @@
 import { Eventer } from "./Eventer";
 export class Dialog extends Eventer {
-  async openPathDialog(config: any) {
-    return this.callMethod("openPathDialog", config);
+  async openPath(config: any) {
+    return this.callMethod("openPath", config);
   }
-  async savePathDialog(config: any) {
-    return this.callMethod("savePathDialog", config);
+  async savePath(config: any) {
+    return this.callMethod("savePath", config);
   }
   async msgBox(config: any) {
     return this.callMethod("msgBox", config);
