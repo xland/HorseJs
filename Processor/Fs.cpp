@@ -23,6 +23,7 @@ namespace {
     {"copyPath", &Fs::copyPath},
     {"movePath", &Fs::movePath},
     {"renamePath", &Fs::renamePath},
+    {"getPath", &Fs::getPath},
     {"watch", &Fs::watch},
     {"stopWatch", &Fs::stopWatch},
     };
@@ -512,7 +513,67 @@ void Fs::renamePath(const rapidjson::Value& params, JsonResult* result)
         result->addErr("remove path error.");
     }
 }
-
+void Fs::getPath(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    if (arr.Size() < 1 || arr[0].IsNull() || !arr[0].IsString()) {
+        result->addErr("type err");
+        return;
+    }
+    std::string type{ arr[0].GetString() };
+    if (type == "exeDir" || type == "exePath") {
+        result->addString("data", getExePath(type));
+    }
+    else if (type == "download") {
+        getKnownPath(FOLDERID_Downloads, result);
+    }
+    else if (type == "music") {
+        getKnownPath(FOLDERID_Music, result);
+    }
+    else if (type == "video") {
+        getKnownPath(FOLDERID_Videos, result);
+    }
+    else if (type == "picture") {
+        getKnownPath(FOLDERID_Pictures, result);
+    }
+    else if (type == "document") {
+        getKnownPath(FOLDERID_Documents, result);
+    }
+    else if (type == "startup") {
+        getKnownPath(FOLDERID_Startup, result);
+    }
+    else if (type == "desktop") {
+        getKnownPath(FOLDERID_Desktop, result);
+    }
+    else if (type == "font") {
+        getKnownPath(FOLDERID_Fonts, result);
+    }
+    else if (type == "program") {
+        getKnownPath(FOLDERID_ProgramFiles, result);
+    }
+    else if (type == "system") {
+        getKnownPath(FOLDERID_System, result);
+    }
+    else if (type == "windows") {
+        getKnownPath(FOLDERID_Windows, result);
+    }
+    else if (type == "profile") {
+        getKnownPath(FOLDERID_Profile, result);
+    }
+    else if (type == "appdata") {
+        getKnownPath(FOLDERID_LocalAppData, result);
+    }
+    else if (type == "roaming") {
+        getKnownPath(FOLDERID_RoamingAppData, result);
+    }
+    else if (type == "cache") {
+        getKnownPath(FOLDERID_InternetCache, result);
+    }
+    else if (type == "userdata") {
+        auto str = App::get()->appDir.string();
+        result->addString("data", str);
+    }
+}
 void Fs::watch(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
@@ -641,4 +702,30 @@ void Fs::removeWatch(const std::string& id)
 {
     std::unique_lock<std::shared_mutex> lock(mtx);
     watchMap.erase(id);
+}
+std::string Fs::getExePath(const std::string& type)
+{
+    wchar_t buffer[MAX_PATH];
+    GetModuleFileName(nullptr, buffer, MAX_PATH);
+    auto curPath = std::filesystem::path(buffer);
+    if (type == "exeDir") {
+        curPath = curPath.parent_path();
+    }
+    auto curPathStr = curPath.string();
+    return curPathStr;
+}
+
+void Fs::getKnownPath(const GUID& type, JsonResult* result)
+{
+    PWSTR path = nullptr;
+    HRESULT hr = SHGetKnownFolderPath(type, 0, nullptr, &path);
+    if (SUCCEEDED(hr)) {
+        std::wstring strW(path);
+        auto str = Util::convertToStr(strW);
+        CoTaskMemFree(path);
+        result->addString("data", str);
+    }
+    else {
+        result->addErr("get known folder err");
+    }
 }

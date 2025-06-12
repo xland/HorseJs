@@ -252,6 +252,9 @@
     async renamePath(srcPath, dstPath) {
       return this.callMethod("renamePath", srcPath, dstPath);
     }
+    getPath(type) {
+      return this.callMethod("getPath", type);
+    }
     async watch(path, cb) {
       let id = `${util.randomNum()}`;
       this.on(id, cb);
@@ -417,17 +420,17 @@
     getConfig() {
       return this.callMethod("getConfig");
     }
-    getVersion() {
-      return this.callMethod("getVersion");
+    getExeVer() {
+      return this.callMethod("getExeVer");
+    }
+    getHorseVer() {
+      return this.callMethod("getHorseVer");
     }
     quit() {
       return this.callMethod("quit");
     }
     relaunch() {
       return this.callMethod("relaunch");
-    }
-    getPath(type) {
-      return this.callMethod("getPath", type);
     }
     exit(code) {
       return this.callMethod("exit", code);

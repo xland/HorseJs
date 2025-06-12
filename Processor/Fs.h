@@ -24,7 +24,7 @@ public:
 	void copyPath(const rapidjson::Value& params, JsonResult* result);
 	void movePath(const rapidjson::Value& params, JsonResult* result);
 	void renamePath(const rapidjson::Value& params, JsonResult* result);
-
+	void getPath(const rapidjson::Value& params, JsonResult* result);
 	void watch(const rapidjson::Value& params, JsonResult* result);
 	void stopWatch(const rapidjson::Value& params, JsonResult* result);
 private:
@@ -32,5 +32,7 @@ private:
 	static void addWatch(const std::string& id, HANDLE handle);
 	static bool hasWatch(const std::string& id);
 	static void removeWatch(const std::string& id);
+	std::string getExePath(const std::string& type);
+	void getKnownPath(const GUID& type, JsonResult* result);
 };
 

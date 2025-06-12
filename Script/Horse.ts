@@ -42,17 +42,17 @@ class Horse extends Eventer {
   getConfig() {
     return this.callMethod("getConfig");
   }
-  getVersion() {
-    return this.callMethod("getVersion");
+  getExeVer() {
+    return this.callMethod("getExeVer");
+  }
+  getHorseVer() {
+    return this.callMethod("getHorseVer");
   }
   quit() {
     return this.callMethod("quit");
   }
   relaunch() {
     return this.callMethod("relaunch");
-  }
-  getPath(type: string) {
-    return this.callMethod("getPath", type);
   }
   exit(code: number) {
     return this.callMethod("exit", code);

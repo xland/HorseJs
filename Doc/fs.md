@@ -97,6 +97,32 @@ let data = await horse.fs.renamePath("D:\\doc\\allen\\", "D:\\doc\\新目录\\")
 console.log(data);
 ```
 
+- 获取一个已知路径
+>可选参数：<br />
+> exeDir          <br />
+> exePath	      <br />
+> download	      <br />
+> music		      <br />
+> video		      <br />
+> picture	      <br />
+> document	      <br />
+> startup	      <br />
+> desktop	      <br />
+> font		      <br />
+> program	      <br />
+> system	      <br />
+> windows	      <br />
+> profile	      <br />
+> appdata	      <br />
+> roaming	      <br />
+> cache		      <br />
+> userdata	      <br />
+```js
+let data = await horse.getPath("userdata");
+console.log(JSON.stringify(data));
+>> {"data":"C:\\Users\\liuxiaolun\\AppData\\Roaming\\","ok":true}
+```
+
 - 监视一个路径的变化
 > 得到的data里有一个id属性，这个属性用于取消监视 <br />
 > 当路径发生变化时，将输出：{file: '111.txt', ok: true, type: 'remove'} <br />

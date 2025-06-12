@@ -21,6 +21,7 @@
       <div id="btnMovePath" class="btn">移动一个路径</div>
       <div id="btnCopyPath" class="btn">复制一个路径</div>
       <div id="btnRenamePath" class="btn">重命名一个路径</div>
+      <div id="btnGetPath" class="btn">获取常用路径</div>
       <div id="btnWatch" class="btn">监视路径</div>
       <div id="btnStopWatch" class="btn">取消监视路径</div>
     </div>
@@ -94,6 +95,11 @@
         $("#btnRenamePath").addEventListener("click", async () => {
           let data = await horse.fs.renamePath("D:\\doc\\周报\\allen\\", "D:\\doc\\周报\\新目录\\");
           console.log(data);
+        });
+        $("#btnGetPath").addEventListener("click", async () => {
+          //exeDir,exePath,download，music，video，picture，document，startup，desktop，font，program，system，windows，profile，appdata，roaming，cache，userdata
+          let data = await horse.fs.getPath("userdata");
+          console.log(JSON.stringify(data));
         });
         $("#btnWatch").addEventListener("click", async () => {
           if (window.watchId) {
