@@ -12,7 +12,7 @@
       let $ = (selector) => document.querySelector(selector);
       window.addEventListener("DOMContentLoaded", async () => {
         $("#btnStartProcess").addEventListener("click", async () => {
-          let data = await horse.process.exec("notepad.exe");
+          let data = await horse.process.start("notepad.exe");
           console.log(data);
         });
       });

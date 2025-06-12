@@ -49,14 +49,15 @@ $(".titleBar").addEventListener("mousedown",async ()=>{
 - 注册事件
 > 注册窗口位置或大小改变事件
 ```js
-horse.win.addEventListener("sizePosChanged",(x,y,w,h)=>{
+horse.win.on("sizePosChanged",(x,y,w,h)=>{
     console.log(`x:${x},y:${y},w:${w},h:${h}`);
 })
 ```
+
 - 取消注册事件
 > 取消 注册的窗口关闭事件
 ```js
-await horse.window.removeEventListener("closing");
+await horse.window.off("closing");
 ```
 
 

@@ -5,7 +5,7 @@
 namespace {
     std::unique_ptr<Process> process;
     static std::unordered_map<std::string, void (Process::*)(const rapidjson::Value&, JsonResult*)> funcs{
-        {"exec", &Process::exec},
+        {"start", &Process::start},
     };
 }
 
@@ -32,7 +32,7 @@ bool Process::execute(std::string& methodName, const rapidjson::Value& param, Js
     return true;
 }
 
-void Process::exec(const rapidjson::Value& params, JsonResult* result)
+void Process::start(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::wstring path = Util::convertToWStr(arr[0].GetString());
@@ -42,10 +42,10 @@ void Process::exec(const rapidjson::Value& params, JsonResult* result)
     ZeroMemory(&si, sizeof(STARTUPINFO));
     ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
     si.cb = sizeof(STARTUPINFO);
-    //si.hStdError = hStdoutWrite;  // 标准错误重定向到输出管道
-    //si.hStdOutput = hStdoutWrite; // 标准输出重定向到输出管道
-    //si.hStdInput = hStdinRead;    // 标准输入重定向到输入管道
-    //si.dwFlags |= STARTF_USESTDHANDLES; // 使用标准句柄
+    //si.hStdError = hStdoutWrite;  // 鏍囧噯閿欒閲嶅畾鍚戝埌杈撳嚭绠￠亾
+    //si.hStdOutput = hStdoutWrite; // 鏍囧噯杈撳嚭閲嶅畾鍚戝埌杈撳嚭绠￠亾
+    //si.hStdInput = hStdinRead;    // 鏍囧噯杈撳叆閲嶅畾鍚戝埌杈撳叆绠￠亾
+    //si.dwFlags |= STARTF_USESTDHANDLES; // 浣跨敤鏍囧噯鍙ユ焺
 
     if (!CreateProcess(NULL, path.data(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
         result->addErr("can not create process");

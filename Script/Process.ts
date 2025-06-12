@@ -1,7 +1,7 @@
 import { Eventer } from "./Eventer";
 export class Process extends Eventer {
-  async exec(path: string) {
-    return this.exec("exec", path);
+  async start(path: string) {
+    return this.exec("start", path);
   }
   private exec(methodName: string, ...params: any[]) {
     return this.call({
