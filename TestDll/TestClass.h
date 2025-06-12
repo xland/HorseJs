@@ -1,6 +1,6 @@
 #pragma once
 
 extern "C" {
-    __declspec(dllexport) const char* AddNumbers(const char* param);
+    __declspec(dllexport) const char* joinStr(const char* param);
 }
 

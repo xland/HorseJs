@@ -46,9 +46,9 @@ void Dll::load(const rapidjson::Value& params, JsonResult* result)
         return;
     }
     static int id{ 0 };
-    dllModules.insert({ id,hDll });
-    id += 1;
+    dllModules.insert({ id,std::move(hDll)});
     result->addNumber("id", id);
+    id += 1;
 }
 
 void Dll::free(const rapidjson::Value& params, JsonResult* result)
@@ -69,13 +69,7 @@ void Dll::invoke(const rapidjson::Value& params, JsonResult* result)
     auto id = arr[0].GetInt();
     std::string funcName = arr[1].GetString();
     std::string funcParam = arr[2].GetString();
-
-    HMODULE hDll = LoadLibrary(L"TestDll.dll");
-    if (hDll == NULL) {
-        result->addErr("load dll error.");
-        return;
-    }
-
+    auto& hDll = dllModules[id];
     FuncPtr func = reinterpret_cast<FuncPtr>(GetProcAddress(hDll, funcName.data()));
     if (func == NULL) {
         result->addErr("failed to get function address.");
@@ -83,4 +77,5 @@ void Dll::invoke(const rapidjson::Value& params, JsonResult* result)
     }
     auto data = func(funcParam.data());
     result->addString("data", data);
+    CoTaskMemFree((void*)data);
 }

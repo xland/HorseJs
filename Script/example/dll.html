@@ -24,7 +24,7 @@
           console.log(data);
         });
         $("#btnExcute").addEventListener("click", async () => {
-          let data = await horse.dll.invoke(dllId, "AddNumbers", "66,88");
+          let data = await horse.dll.invoke(dllId, "joinStr", "hello,");
           console.log(data);
         });
       });
