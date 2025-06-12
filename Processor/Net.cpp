@@ -12,6 +12,7 @@ namespace {
     {"getAddress", &Net::getAddress},
     };
     // todo: 创建一个命名管道，接收数据
+    // todo: 获取网卡地址
 }
 
 Net::Net()

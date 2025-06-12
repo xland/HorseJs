@@ -6,8 +6,10 @@ namespace {
     static std::unordered_map<std::string, void (Os::*)(const rapidjson::Value&, JsonResult*)> funcs{
     {"getVersion", &Os::getVersion},
     };
-
     typedef LONG(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
+    //todo获取系统预研
+    //todo 获取系统颜色主题
+    //todo 获取磁盘、主板、网卡串号
 }
 
 Os::Os()

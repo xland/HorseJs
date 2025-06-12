@@ -15,6 +15,12 @@ namespace {
     {"exit", &Horse::exit},
     {"relaunch", &Horse::relaunch},
     };
+
+    //todo 监听窗口创建事件
+    //todo  Application User Model IDs  https://learn.microsoft.com/en-us/windows/win32/shell/appids
+    //todo 进程锁，单例进程
+    //todo  Show the platform's native emoji picker.
+    //todo setProxy
 }
 
 Horse::Horse()

@@ -27,6 +27,7 @@ namespace {
     {"watch", &Fs::watch},
     {"stopWatch", &Fs::stopWatch},
     };
+    //todo: 获取有几个逻辑磁盘
 }
 
 Fs::Fs()

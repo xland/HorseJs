@@ -6,6 +6,8 @@ namespace {
     static std::unordered_map<std::string, void (Screen::*)(const rapidjson::Value&, JsonResult*)> funcs{
         {"getAll", &Screen::getAll},
     };
+    //todo dpi变化
+    //todo 指定点的颜色信息（窗口位置、屏幕位置）
     using Context = std::pair<rapidjson::Value&, rapidjson::Document::AllocatorType&>;
 }
 
