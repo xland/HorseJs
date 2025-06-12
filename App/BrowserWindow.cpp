@@ -89,7 +89,7 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         return false;
     }
     else if (msg == WM_SIZE) {
-        stateChanged(wParam);
+        stateChanged((int)wParam);
     }
     else if (msg == WM_WINDOWPOSCHANGED) {
         WINDOWPOS* winPos = reinterpret_cast<WINDOWPOS*>(lParam);
@@ -111,9 +111,9 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             result.returnBack();
             POINT pt;
             GetCursorPos(&pt);
-            if (trayMenus.contains(wParam)) {
+            if (trayMenus.contains((int)wParam)) {
                 SetForegroundWindow(hwnd);
-                TrackPopupMenuEx(trayMenus[wParam], TPM_RIGHTBUTTON, pt.x, pt.y, hwnd, nullptr);
+                TrackPopupMenuEx(trayMenus[(int)wParam], TPM_RIGHTBUTTON, pt.x, pt.y, hwnd, nullptr);
             }
         }
         else if (lParam == WM_LBUTTONDOWN) {
@@ -357,28 +357,16 @@ void BrowserWindow::setWindowStyle(long& exStyle, long& style)
 
 void BrowserWindow::bindCompCtrlToHwnd()
 {
-    namespace abi = ABI::Windows::System;
-    DispatcherQueueOptions options{
-            sizeof(DispatcherQueueOptions), /* dwSize */
-            DQTYPE_THREAD_CURRENT,          /* threadType */
-            DQTAT_COM_ASTA                  /* apartmentType */
-    };
-    winrt::Windows::System::DispatcherQueueController controller{ nullptr };
-    CreateDispatcherQueueController(options, reinterpret_cast<abi::IDispatcherQueueController**>(winrt::put_abi(controller)));
-    m_dispatcherQueueController = controller;
-    m_compositor = winrt::Windows::UI::Composition::Compositor();
+    auto app = App::get();
+    auto interop = app->compositor.as<ABI::Windows::UI::Composition::Desktop::ICompositorDesktopInterop>();
+    interop->CreateDesktopWindowTarget(hwnd, false, reinterpret_cast<ABI::Windows::UI::Composition::Desktop::IDesktopWindowTarget**>(winrt::put_abi(m_target)));
 
-    namespace abi2 = ABI::Windows::UI::Composition::Desktop;
-
-    auto interop = m_compositor.as<abi2::ICompositorDesktopInterop>();
-    interop->CreateDesktopWindowTarget(hwnd, false, reinterpret_cast<abi2::IDesktopWindowTarget**>(winrt::put_abi(m_target)));
-
-    m_rootVisual = m_compositor.CreateContainerVisual();
+    m_rootVisual = app->compositor.CreateContainerVisual();
     m_rootVisual.RelativeSizeAdjustment({ 1.0f, 1.0f });
     m_rootVisual.Offset({ 0, 0, 0 });
     m_target.Root(m_rootVisual);
 
-    m_webViewVisual = m_compositor.CreateContainerVisual();
+    m_webViewVisual = app->compositor.CreateContainerVisual();
     m_rootVisual.Children().InsertAtTop(m_webViewVisual);
     this->ctrlComp->put_RootVisualTarget(m_webViewVisual.as<IUnknown>().get());
     RECT bounds;

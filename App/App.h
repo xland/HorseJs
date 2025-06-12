@@ -23,6 +23,8 @@ public:
 	HINSTANCE hInstance;
 	std::filesystem::path appDir;
 	std::unordered_map<std::string, std::set<int>> events;
+	
+	UI::Composition::Compositor compositor{nullptr};
 private:
 	void loadConfig();
 	void createEnv();
@@ -30,6 +32,7 @@ private:
 	void checkRuntime();
 	bool checkRegKey(const HKEY& key, const std::wstring& subKey);
 	void ensureAppFolder();
+	void initUICompositor();
 	HRESULT envReady(HRESULT result, ICoreWebView2Environment* env);
 private:
 };

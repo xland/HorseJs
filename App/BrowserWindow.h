@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <pch.h>
 #include "../App/Util.h"
 #include "../Processor/JsonResult.h"
@@ -23,9 +23,6 @@ public:
 
 	wil::com_ptr<ICoreWebView2Controller> ctrl;
 	wil::com_ptr<ICoreWebView2CompositionController> ctrlComp;
-
-	System::DispatcherQueueController m_dispatcherQueueController{ nullptr };
-	UI::Composition::Compositor m_compositor{ nullptr };
 	UI::Composition::Desktop::DesktopWindowTarget m_target{ nullptr };
 	UI::Composition::ContainerVisual m_rootVisual{ nullptr };
 	UI::Composition::ContainerVisual m_webViewVisual{ nullptr };

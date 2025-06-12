@@ -97,6 +97,7 @@ void App::start()
     checkRuntime();
     ensureAppFolder();
     loadConfig();
+    initUICompositor();
     createEnv();
 }
 void App::checkRuntime()
@@ -153,6 +154,18 @@ void App::ensureAppFolder() {
             exit(1);
         }
     }
+}
+
+void App::initUICompositor()
+{
+    DispatcherQueueOptions options{
+            sizeof(DispatcherQueueOptions), /* dwSize */
+            DQTYPE_THREAD_CURRENT,          /* threadType */
+            DQTAT_COM_ASTA                  /* apartmentType */
+    };
+    static System::DispatcherQueueController dispatchCtrl{nullptr};
+    CreateDispatcherQueueController(options, reinterpret_cast<ABI::Windows::System::IDispatcherQueueController**>(winrt::put_abi(dispatchCtrl)));
+    compositor = winrt::Windows::UI::Composition::Compositor();
 }
 void App::loadConfig()
 {
