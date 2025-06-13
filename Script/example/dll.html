@@ -8,7 +8,8 @@
     <div class="box">
       <div id="btnLoad" class="btn">加载dll</div>
       <div id="btnFree" class="btn">释放dll</div>
-      <div id="btnExcute" class="btn">调用dll中的方法</div>
+      <div id="btnInvoke" class="btn">调用dll中的方法</div>
+      <div id="btnRegEvent" class="btn">注册自定义事件</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
@@ -20,11 +21,17 @@
           dllId = data.id;
         });
         $("#btnFree").addEventListener("click", async () => {
-          let data = await horse.dll.free();
+          let data = await horse.dll.free(dllId);
           console.log(data);
         });
-        $("#btnExcute").addEventListener("click", async () => {
+        $("#btnInvoke").addEventListener("click", async () => {
           let data = await horse.dll.invoke(dllId, "joinStr", "hello,");
+          console.log(data);
+        });
+        $("#btnRegEvent").addEventListener("click", async () => {
+          let data = await horse.dll.on(dllId, "customEvent", (data) => {
+            console.log("event", data);
+          });
           console.log(data);
         });
       });

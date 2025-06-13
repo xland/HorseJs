@@ -11,6 +11,9 @@ public:
 	void load(const rapidjson::Value& params, JsonResult* result);
 	void free(const rapidjson::Value& params, JsonResult* result);
 	void invoke(const rapidjson::Value& params, JsonResult* result);
+	void on(const rapidjson::Value& params, JsonResult* result);
+	void off(const rapidjson::Value& params, JsonResult* result);
 private:
+	static void eventCB(const char* eventName, const char* eventData);
 };
 
