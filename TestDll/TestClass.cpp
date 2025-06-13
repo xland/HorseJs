@@ -41,5 +41,6 @@ const char* regEvent(const char* eventName, EventCB eventCB)
 
 const char* unregEvent(const char* eventName)
 {
+    //dll 开发者负责停止event线程
     return nullptr;
 }
