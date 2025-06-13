@@ -206,7 +206,7 @@
     <None Include="Doc\FAQ.md" />
     <None Include="Doc\fs.md" />
     <None Include="Doc\horse.md" />
-    <None Include="Doc\lib.md" />
+    <None Include="Doc\dll.md" />
     <None Include="Doc\net.md" />
     <None Include="Doc\notify.md" />
     <None Include="Doc\os.md" />
