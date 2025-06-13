@@ -31,13 +31,19 @@ std::string Util::convertToStr(const std::wstring& wstr)
     return str;
 }
 
-std::string Util::convertToAnsi(const std::wstring& wstr)
-{
-    int count = WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), (int)wstr.size(), nullptr, 0, nullptr, nullptr);
-    if (count <= 0) {
-        return std::string(); // ×ª»»Ê§°Ü
-    }
-    std::string str(count, 0);
-    WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), (int)wstr.size(), &str[0], count, nullptr, nullptr);
-    return str;
+std::wstring Util::convertAnsiToWstring(const char* str) {
+    if (!str) return std::wstring();
+    int count = MultiByteToWideChar(CP_ACP, 0, str, -1, nullptr, 0);
+    if (count <= 0) return std::wstring();
+    std::wstring wstr(count - 1, 0);
+    MultiByteToWideChar(CP_ACP, 0, str, -1, &wstr[0], count);
+    return wstr;
+}
+
+std::string Util::convertWstringToUtf8(const std::wstring& wstr) {
+    int count = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, nullptr, 0, nullptr, nullptr);
+    if (count <= 0) return std::string();
+    std::string utf8Str(count - 1, 0);
+    WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, &utf8Str[0], count, nullptr, nullptr);
+    return utf8Str;
 }

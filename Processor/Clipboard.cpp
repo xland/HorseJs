@@ -310,68 +310,6 @@ void Clipboard::readImg(const rapidjson::Value& params, JsonResult* result)
     CloseClipboard();
     result->cancel = true;
 }
-void Clipboard::readImg1(const rapidjson::Value& params, JsonResult* result)
-{
-    if (!OpenClipboard(nullptr)) {
-        result->addErr("can not open clipboard");
-        return;
-    }
-    if (!IsClipboardFormatAvailable(CF_BITMAP)) {
-        result->addErr("no img");
-        CloseClipboard();
-        return;
-    }
-    HBITMAP hBitmap = (HBITMAP)GetClipboardData(CF_BITMAP);
-    if (hBitmap == nullptr) {
-        result->addErr("can not get img");
-        CloseClipboard();
-        return;
-    }
-    BITMAP bmp;
-    if (GetObject(hBitmap, sizeof(BITMAP), &bmp) == 0) {
-        result->addErr("can not get bitmap");
-        CloseClipboard();
-        return;
-    }
-    HDC hdc = CreateCompatibleDC(nullptr);
-    if (hdc == nullptr) {
-        result->addErr("create compatible DC err");
-        CloseClipboard();
-        return;
-    }
-    HBITMAP hOldBitmap = (HBITMAP)SelectObject(hdc, hBitmap);
-    if (hOldBitmap == nullptr) {
-        result->addErr("select bitmap to hdc err");
-        DeleteDC(hdc);
-        CloseClipboard();
-        return;
-    }
-    long long pixCount = bmp.bmWidth * 4 * bmp.bmHeight;
-    BITMAPINFO bmi = { sizeof(BITMAPINFOHEADER), bmp.bmWidth, 0 - bmp.bmHeight, 1, 32, BI_RGB, pixCount, 0, 0, 0, 0 };
-    std::vector<unsigned char> buffer(pixCount);
-    if (GetDIBits(hdc, hBitmap, 0, bmp.bmHeight, buffer.data(), &bmi, DIB_RGB_COLORS) == 0) {
-        result->addErr("get pix err");
-        SelectObject(hdc, hOldBitmap);
-        DeleteDC(hdc);
-        CloseClipboard();
-        return;
-    }
-    auto env12 = App::get()->env.try_query<ICoreWebView2Environment12>();
-    wil::com_ptr<ICoreWebView2SharedBuffer> sharedBuffer;
-    auto hr = env12->CreateSharedBuffer(pixCount, &sharedBuffer);
-    wil::com_ptr<IStream> stream;
-    sharedBuffer->OpenStream(&stream);
-    stream->Write(buffer.data(), pixCount, nullptr);
-    result->addNumber("w", (int)bmp.bmWidth);
-    result->addNumber("h", (int)bmp.bmHeight);
-    result->returnBackSharedBuffer(sharedBuffer.get());
-    sharedBuffer->Close();
-    result->cancel = true;
-    // 清理资源
-    SelectObject(hdc, hOldBitmap);
-    DeleteDC(hdc);
-    CloseClipboard();
-}
 void Clipboard::writeImg(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
@@ -607,6 +545,9 @@ void Clipboard::writeHtml(const rapidjson::Value& params, JsonResult* result)
     CloseClipboard();
 }
 
+
+
+
 void Clipboard::readRtf(const rapidjson::Value& params, JsonResult* result)
 {
     //todo 如果剪切板里存储的是普通文本，那么有可能读出来的也是普通文本，此时应该给客户端报个异常才对
@@ -615,18 +556,18 @@ void Clipboard::readRtf(const rapidjson::Value& params, JsonResult* result)
         return;
     }
     if (!IsClipboardFormatAvailable(CF_RTF)) {
-        result->addErr("No HTML data in clipboard");
+        result->addErr("No Rtf data in clipboard");
         CloseClipboard();
         return;
     }
     HGLOBAL hData = GetClipboardData(CF_RTF);
     if (hData == NULL) {
-        result->addErr("Cannot get HTML data: " + std::to_string(GetLastError()));
+        result->addErr("Cannot get Rtf data: " + std::to_string(GetLastError()));
         CloseClipboard();
         return;
     }
-    const char* data = static_cast<const char*>(GlobalLock(hData));
-    if (data == NULL) {
+    const char* data = (char*)(GlobalLock(hData));
+    if (data == nullptr) {
         result->addErr("Cannot lock memory: " + std::to_string(GetLastError()));
         CloseClipboard();
         return;
@@ -634,14 +575,16 @@ void Clipboard::readRtf(const rapidjson::Value& params, JsonResult* result)
     // 解锁内存并关闭剪切板
     GlobalUnlock(hData);
     CloseClipboard();
-    result->addString("data", data);
+    std::wstring wstr = Util::convertAnsiToWstring(data);
+    std::string utf8Str = Util::convertWstringToUtf8(wstr);
+    result->addString("data", utf8Str.data());
 }
 
 void Clipboard::writeRtf(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::wstring text1 = Util::convertToWStr(arr[0].GetString());
-    std::string text = Util::convertToAnsi(text1);
+    std::string text = Util::convertWstringToUtf8(text1);
     if (!OpenClipboard(NULL)) {
         result->addErr("open clipboard err");
         return;

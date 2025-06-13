@@ -22,6 +22,8 @@ public:
 	static std::string readFile(const std::wstring& filePath);
 	static std::wstring convertToWStr(const char* str);
 	static std::string convertToStr(const std::wstring& wstr);
-	static std::string convertToAnsi(const std::wstring& wstr);
+
+	static std::wstring convertAnsiToWstring(const char* str);
+	static std::string convertWstringToUtf8(const std::wstring& wstr);
 };
 

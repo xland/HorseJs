@@ -39,12 +39,12 @@
         });
         $("#btnRegWinClose").addEventListener("click", () => {
           horse.win.on("closing", async () => {
-            alert("现在你只能用销毁窗口关闭此窗口了");
+            console.log("现在你只能用销毁窗口关闭此窗口了");
           });
         });
         $("#btnUnregWinClose").addEventListener("click", async () => {
           await horse.win.off("closing");
-          alert("现在你可以正常关闭窗口了");
+          console.log("现在你可以正常关闭窗口了");
         });
         $("#btnResize").addEventListener("click", async () => {
           await horse.win.resize(1200, 600);
