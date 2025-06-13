@@ -38,3 +38,8 @@ const char* regEvent(const char* eventName, EventCB eventCB)
     }
     return "ok";
 }
+
+const char* unregEvent(const char* eventName)
+{
+    return nullptr;
+}

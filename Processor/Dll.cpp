@@ -14,6 +14,7 @@ namespace {
     typedef const char* (__cdecl *FuncPtr)(const char*);
     typedef void (*EventCB)(const char* eventName, const char* eventData);
     typedef const char* (__cdecl* RegEventPtr)(const char* eventName, EventCB eventCB);
+    typedef const char* (__cdecl* UnRegEventPtr)(const char* eventName);
     std::unordered_map<std::string, std::set<int>> events;
 }
 
@@ -93,18 +94,17 @@ void Dll::on(const rapidjson::Value& params, JsonResult* result)
     events[eventName].insert(result->winId);
     auto& hDll = dllModules[id];
     RegEventPtr func = reinterpret_cast<RegEventPtr>(GetProcAddress(hDll, "regEvent"));
-    char* eNameStr = (char*)CoTaskMemAlloc(eventName.size() + 1);
-    if (eNameStr) {
-        strcpy_s(eNameStr, eventName.size() + 1, eventName.c_str());
-    }
-    func(eNameStr, &Dll::eventCB);
-    CoTaskMemFree((void*)eNameStr);
+    func(eventName.data(), &Dll::eventCB);
 }
 void Dll::off(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     auto id = arr[0].GetInt();
     std::string eventName = arr[1].GetString();
+    events[eventName].erase(result->winId);
+    auto& hDll = dllModules[id];
+    UnRegEventPtr func = reinterpret_cast<UnRegEventPtr>(GetProcAddress(hDll, "unregEvent"));
+    func(eventName.data());
 }
 
 void Dll::eventCB(const char* eventName, const char* eventData)

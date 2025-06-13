@@ -10,6 +10,7 @@
       <div id="btnFree" class="btn">释放dll</div>
       <div id="btnInvoke" class="btn">调用dll中的方法</div>
       <div id="btnRegEvent" class="btn">注册自定义事件</div>
+      <div id="btnunRegEvent" class="btn">取消注册自定义事件</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
@@ -32,6 +33,10 @@
           let data = await horse.dll.on(dllId, "customEvent", (data) => {
             console.log("event", data);
           });
+          console.log(data);
+        });
+        $("#btnunRegEvent").addEventListener("click", async () => {
+          let data = await horse.dll.off(dllId, "customEvent");
           console.log(data);
         });
       });
