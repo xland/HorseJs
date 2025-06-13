@@ -73,8 +73,78 @@ console.log(JSON.stringify(data));
 horse.exit(1);
 ```
 
+- 获取Exe可执行文件的版本号
+```js
+let data = await horse.getExeVer();
+console.log(JSON.stringify(data));
+//{"build":0,"major":0,"minor":0,"ok":true,"patch":10}
+```
+
+- 获取HorseJs框架的版本号
+```js
+let data = await horse.getHorseVer();
+console.log(JSON.stringify(data));
+//{"build":0,"major":0,"minor":0,"ok":true,"patch":10}
+```
+
 - 启动当前应用的一个新实例
 ```js
 let data = await horse.relaunch();
 console.log(JSON.stringify(data));
+```
+
+- 监听新窗口创建事件
+```js
+let func = (proxy) => {
+    console.log(proxy.id);
+    proxy.minimize();
+};
+await horse.on("newWin", func);
+```
+
+- 取消监听新窗口创建事件
+```js
+await horse.off("newWin",func);
+```
+- 监听窗口关闭事件
+```js
+await horse.on("winClose", (data) => {
+    console.log(data);
+});
+```
+- 取消监听窗口关闭事件
+```js
+await horse.off("winClose",func);
+```
+- 监听应用第二个实例启动事件
+> 需配合设置config.json中的 <br/>
+>  "instanceWatch": true, <br/>
+>  "instanceLock": true, <br/>
+```js
+await horse.on("secondIns", () => {
+  console.log("secondIns");
+});
+```
+
+- 取消监听应用第二个实例启动事件
+```js
+await horse.off("secondIns",func);
+```
+
+- 允许启动第二个实例
+> 需配合设置config.json中的 <br/>
+>  "instanceWatch": true, <br/>
+>  "instanceLock": true, <br/>
+```js
+let obj = await horse.enableSecondIns();
+console.log(obj);
+```
+
+- 禁止启动第二个实例
+> 需配合设置config.json中的 <br/>
+>  "instanceWatch": true, <br/>
+>  "instanceLock": true, <br/>
+```js
+let obj = await horse.disableSecondIns();
+console.log(obj);
 ```
