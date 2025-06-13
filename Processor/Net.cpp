@@ -44,13 +44,14 @@ void Net::getAddress(const rapidjson::Value& params, JsonResult* result)
         result->addErr("WSAStartup failed");
         return;
     }
+
     // 设置初始缓冲区大小
-    ULONG bufferSize = 15000; // 初始估计
+    ULONG bufferSize = 15000;
     std::vector<char> buffer(bufferSize);
     PIP_ADAPTER_ADDRESSES adapters = reinterpret_cast<PIP_ADAPTER_ADDRESSES>(buffer.data());
+
     // 获取适配器信息,支持 IPv4 和 IPv6
-    DWORD dr = GetAdaptersAddresses(AF_UNSPEC,GAA_FLAG_INCLUDE_PREFIX,nullptr,adapters,&bufferSize);
-    // 如果缓冲区不足，重新分配
+    DWORD dr = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, nullptr, adapters, &bufferSize);
     if (dr == ERROR_BUFFER_OVERFLOW) {
         buffer.resize(bufferSize);
         adapters = reinterpret_cast<PIP_ADAPTER_ADDRESSES>(buffer.data());
@@ -61,15 +62,42 @@ void Net::getAddress(const rapidjson::Value& params, JsonResult* result)
         WSACleanup();
         return;
     }
+
     rapidjson::Value array(rapidjson::kArrayType);
-    // 遍历适配器
     for (PIP_ADAPTER_ADDRESSES adapter = adapters; adapter; adapter = adapter->Next) {
         // 跳过未启用的适配器
         if (adapter->OperStatus != IfOperStatusUp) {
             continue;
         }
-        // 遍历单播地址
-        for (PIP_ADAPTER_UNICAST_ADDRESS unicast = adapter->FirstUnicastAddress; unicast; unicast = unicast->Next) 
+
+        // 创建适配器对象
+        rapidjson::Value adapterObj(rapidjson::kObjectType);
+
+        // 获取适配器名称
+        std::wstring wideName = adapter->FriendlyName;
+        std::string adapterName(wideName.begin(), wideName.end());
+        rapidjson::Value nameVal;
+        nameVal.SetString(adapterName.c_str(), adapterName.length(), result->getAllocator());
+        adapterObj.AddMember("name", nameVal, result->getAllocator());
+
+        // 获取物理地址（MAC地址）
+        rapidjson::Value macVal;
+        if (adapter->PhysicalAddressLength > 0) {
+            char macStr[18]; // 格式为 XX-XX-XX-XX-XX-XX
+            snprintf(macStr, sizeof(macStr), "%02X-%02X-%02X-%02X-%02X-%02X",
+                adapter->PhysicalAddress[0], adapter->PhysicalAddress[1],
+                adapter->PhysicalAddress[2], adapter->PhysicalAddress[3],
+                adapter->PhysicalAddress[4], adapter->PhysicalAddress[5]);
+            macVal.SetString(macStr, strlen(macStr), result->getAllocator());
+        }
+        else {
+            continue;
+        }
+        adapterObj.AddMember("mac", macVal, result->getAllocator());
+
+        // 获取IP地址
+        rapidjson::Value ipArray(rapidjson::kArrayType);
+        for (PIP_ADAPTER_UNICAST_ADDRESS unicast = adapter->FirstUnicastAddress; unicast; unicast = unicast->Next)
         {
             SOCKET_ADDRESS& sockAddr = unicast->Address;
             std::string addr;
@@ -77,7 +105,7 @@ void Net::getAddress(const rapidjson::Value& params, JsonResult* result)
                 char buffer[INET_ADDRSTRLEN];
                 sockaddr_in* ipv4 = reinterpret_cast<sockaddr_in*>(sockAddr.lpSockaddr);
                 addr = inet_ntop(AF_INET, &(ipv4->sin_addr), buffer, sizeof(buffer));
-                if (addr == "127.0.0.1") { // 跳过回环地址
+                if (addr == "127.0.0.1") {
                     continue;
                 }
             }
@@ -91,11 +119,14 @@ void Net::getAddress(const rapidjson::Value& params, JsonResult* result)
             }
             if (!addr.empty()) {
                 rapidjson::Value val;
-                val.SetString(addr.data(), addr.length(), result->getAllocator());
-                array.PushBack(val, result->getAllocator());
+                val.SetString(addr.c_str(), addr.length(), result->getAllocator());
+                ipArray.PushBack(val, result->getAllocator());
             }
         }
+        adapterObj.AddMember("addresses", ipArray, result->getAllocator());
+        array.PushBack(adapterObj, result->getAllocator());
     }
+
     WSACleanup();
     result->addValue("data", std::move(array));
 }
