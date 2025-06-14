@@ -234,6 +234,7 @@ void App::createEnv()
     auto options = WRL::Make<CoreWebView2EnvironmentOptions>();
 	//todo 设置附加浏览器参数 
     options->put_AdditionalBrowserArguments(L"--disable-features=msSmartScreenProtection");
+    options->put_AdditionalBrowserArguments(L"--no-proxy-server");
 	//std::wstring cacheCmd = L"--disk-cache-dir=" + appDir.wstring() + L"\\Cache";
  //   options->put_AdditionalBrowserArguments(cacheCmd.data());
     //options->put_AdditionalBrowserArguments(L"--allow-file-access-from-files");
