@@ -9,6 +9,9 @@ public:
 	static Net* get();
 	static bool execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result);
 	void getAddress(const rapidjson::Value& params, JsonResult* result);
+	void on(const rapidjson::Value& params, JsonResult* result);
+	void off(const rapidjson::Value& params, JsonResult* result);
 private:
+	void regNetConnListener();
 };
 

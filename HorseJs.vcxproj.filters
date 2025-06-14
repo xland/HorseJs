@@ -60,9 +60,6 @@
     <ClCompile Include="Processor\Tray.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Processor\Lib.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Processor\Clipboard.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -84,6 +81,12 @@
     <ClCompile Include="Processor\Horse.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Processor\Dll.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Processor\NetConnListener.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -95,7 +98,6 @@
     <None Include="Doc\dialog.md" />
     <None Include="Doc\FAQ.md" />
     <None Include="Doc\clipboard.md" />
-    <None Include="Doc\lib.md" />
     <None Include="Doc\net.md" />
     <None Include="Doc\notify.md" />
     <None Include="Doc\os.md" />
@@ -107,6 +109,7 @@
     <None Include="README.md" />
     <None Include="LICENSE" />
     <None Include=".gitignore" />
+    <None Include="Doc\dll.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\BrowserWindow.h">
@@ -262,9 +265,6 @@
     <ClInclude Include="Processor\Screen.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Processor\Lib.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Processor\Clipboard.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -286,12 +286,31 @@
     <ClInclude Include="Processor\Horse.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Processor\Dll.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Processor\NetConnListener.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Script\config.json" />
     <CopyFileToFolders Include="Script\index.html" />
     <CopyFileToFolders Include="Script\css\iconfont.woff2" />
     <CopyFileToFolders Include="Script\css\iconfont.css" />
+    <CopyFileToFolders Include="Script\css\example.css" />
+    <CopyFileToFolders Include="Script\example\clipboard.html" />
+    <CopyFileToFolders Include="Script\example\dialog.html" />
+    <CopyFileToFolders Include="Script\example\fs.html" />
+    <CopyFileToFolders Include="Script\example\horse.html" />
+    <CopyFileToFolders Include="Script\example\net.html" />
+    <CopyFileToFolders Include="Script\example\notify.html" />
+    <CopyFileToFolders Include="Script\example\os.html" />
+    <CopyFileToFolders Include="Script\example\process.html" />
+    <CopyFileToFolders Include="Script\example\screen.html" />
+    <CopyFileToFolders Include="Script\example\tray.html" />
+    <CopyFileToFolders Include="Script\example\window.html" />
+    <CopyFileToFolders Include="Script\example\dll.html" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
@@ -301,5 +320,8 @@
     <ResourceCompile Include="Res\Res.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="HorseJs.manifest" />
   </ItemGroup>
 </Project>

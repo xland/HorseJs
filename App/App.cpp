@@ -107,8 +107,8 @@ void App::init(HINSTANCE hInstance)
 void App::start()
 {
     checkRuntime();
-    ensureAppFolder();
     loadConfig();
+    ensureAppFolder();
     initUICompositor();
     createEnv();
 }
@@ -231,7 +231,11 @@ void App::loadConfig()
 }
 void App::createEnv()
 {
-    //auto options = WRL::Make<CoreWebView2EnvironmentOptions>();
+    auto options = WRL::Make<CoreWebView2EnvironmentOptions>();
+	//todo 设置附加浏览器参数 
+    options->put_AdditionalBrowserArguments(L"--disable-features=msSmartScreenProtection");
+	//std::wstring cacheCmd = L"--disk-cache-dir=" + appDir.wstring() + L"\\Cache";
+ //   options->put_AdditionalBrowserArguments(cacheCmd.data());
     //options->put_AdditionalBrowserArguments(L"--allow-file-access-from-files");
     //WRL::ComPtr<ICoreWebView2EnvironmentOptions4> options4;
     //HRESULT oeResult = options.As(&options4);
@@ -261,7 +265,7 @@ void App::createEnv()
     //        }).Get(), nullptr);
 
     auto envReadyInstance = WRL::Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(this, &App::envReady);
-    HRESULT hr = CreateCoreWebView2EnvironmentWithOptions(nullptr, appDir.c_str(), nullptr, envReadyInstance.Get());
+    HRESULT hr = CreateCoreWebView2EnvironmentWithOptions(nullptr, appDir.c_str(), options.Get(), envReadyInstance.Get());
     if (FAILED(hr)) {
         MessageBox(nullptr, L"创建 WebView2 环境失败", L"错误", MB_OK | MB_ICONERROR);
         return;

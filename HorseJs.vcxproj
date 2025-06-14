@@ -165,6 +165,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App\App.cpp" />
+    <ClCompile Include="Processor\NetConnListener.cpp" />
     <ClCompile Include="Processor\Clipboard.cpp" />
     <ClCompile Include="Processor\Dialog.cpp" />
     <ClCompile Include="App\JsonParsor.cpp" />
@@ -289,6 +290,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\App.h" />
+    <ClInclude Include="Processor\NetConnListener.h" />
     <ClInclude Include="Processor\Clipboard.h" />
     <ClInclude Include="Processor\Dialog.h" />
     <ClInclude Include="Processor\Fs.h" />

@@ -18,6 +18,8 @@ void BrowserWindow::loadPage()
 
     wil::com_ptr<ICoreWebView2Settings> settings;
     webview->get_Settings(&settings);
+    //settings->put_AreDevToolsEnabled(false);
+    //settings->put_AreDefaultContextMenusEnabled(false);
     settings->put_IsScriptEnabled(scriptEnable);
     settings->put_AreDefaultScriptDialogsEnabled(scriptDialogEnable);
     settings->put_IsWebMessageEnabled(webMessageEnable);
@@ -69,10 +71,19 @@ void BrowserWindow::loadPage()
     auto frameCreatedCB = WRL::Callback<ICoreWebView2FrameCreatedEventHandler>(this, &BrowserWindow::frameCreated);
     webView15->add_FrameCreated(frameCreatedCB.Get(), &frameCreatedToken);
 
+    hr = webview->AddWebResourceRequestedFilter(L"*", COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL);
+    auto resRequestedCB = WRL::Callback<ICoreWebView2WebResourceRequestedEventHandler>(this, &BrowserWindow::resRequested);
+    EventRegistrationToken resRequestedToken;
+    hr = webview->add_WebResourceRequested(resRequestedCB.Get(), &resRequestedToken);
+
     loadResource();    
     //webview->OpenDevToolsWindow();
     auto url = std::format(L"https://{}/index.html", localDomain);
+    //url = L"file://D:/project/HorseJs/x64/Release/UI/index.html";
+	//url = L"https://www.baidu.com/";
 	webview->Navigate(url.data()); //todo: 替换为实际的资源路径
+    //webview->NavigateToString(L"<html><body>Hello, World!</body></html>");
+    Util::printTime();
 }
 
 void BrowserWindow::loadResource()
@@ -309,7 +320,22 @@ HRESULT BrowserWindow::frameCreated(ICoreWebView2* sender, ICoreWebView2FrameCre
     }
     return S_OK;
 }
+HRESULT BrowserWindow::resRequested(ICoreWebView2* sender,ICoreWebView2WebResourceRequestedEventArgs* args)
+{
+    Util::printTime();
+    //auto now = std::chrono::system_clock::now();
+    //auto time_t_now = std::chrono::system_clock::to_time_t(now);
+    //auto str = std::format(L"222{:%F %T}\n", std::chrono::system_clock::from_time_t(time_t_now));
+    //OutputDebugString(str.data());
 
+    // 你可以在这里获取请求的 URL、方法、头部等信息
+    //wil::com_ptr<ICoreWebView2WebResourceRequest> request;
+    //args->get_Request(&request);
+    //wil::unique_cotaskmem_string uri;
+    //request->get_Uri(&uri);
+    //OutputDebugStringW((L"请求资源: " + std::wstring(uri.get()) + L"\n").c_str());
+    return S_OK;
+}
 
 HRESULT BrowserWindow::msgReceive(ICoreWebView2* webview, ICoreWebView2WebMessageReceivedEventArgs* args)
 {

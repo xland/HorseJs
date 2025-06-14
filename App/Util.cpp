@@ -47,3 +47,11 @@ std::string Util::convertWstringToUtf8(const std::wstring& wstr) {
     WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, &utf8Str[0], count, nullptr, nullptr);
     return utf8Str;
 }
+
+void Util::printTime()
+{
+    SYSTEMTIME st;
+    GetSystemTime(&st);
+    auto str = std::format(L"\n{}-{}-{} {}:{}:{}:{}", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
+    OutputDebugString(str.data());
+}

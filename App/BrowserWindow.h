@@ -67,6 +67,7 @@ private:
 	HRESULT newWindowRequeste(ICoreWebView2* sender, ICoreWebView2NewWindowRequestedEventArgs* args);
 	HRESULT msgReceive(ICoreWebView2* webview, ICoreWebView2WebMessageReceivedEventArgs* args);
 	HRESULT msgReceiveIframe(ICoreWebView2Frame* webview, ICoreWebView2WebMessageReceivedEventArgs* args);
+	HRESULT resRequested(ICoreWebView2* webview, ICoreWebView2WebResourceRequestedEventArgs* args);
 	void loadResource();
 	void loadPage();
 	std::string getMsgStr(ICoreWebView2WebMessageReceivedEventArgs* args);
