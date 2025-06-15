@@ -1,21 +1,34 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="../css/example.css" />
-  </head>
-  <body>
-    <div class="box">
-      <div id="btnGetVersion" class="btn">获取系统版本号</div>
-    </div>
-    <script>
-      let $ = (selector) => document.querySelector(selector);
-      window.addEventListener("DOMContentLoaded", async () => {
-        $("#btnGetVersion").addEventListener("click", async () => {
-          let data = await horse.os.getVersion();
-          console.log(data);
-        });
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="../css/example.css" />
+</head>
+
+<body>
+  <div class="box">
+    <div id="btnGetVersion" class="btn">获取系统版本号</div>
+    <div id="btnGetLang" class="btn">获取系统默认语言（未完成）</div>
+    <div id="btnGetTheame" class="btn">获取系统默认皮肤（未完成）</div>
+    <div id="btnShowItemInFolder" class="btn">打开文件夹，并选中某个路径（未完成）</div>
+    <div id="btnShowItemInFolder" class="btn">创建一个快捷方式（未完成）</div>
+    <div id="btnShowItemInFolder" class="btn">使用默认应用打开一个路径（未完成）</div>
+    <div id="btnWriteUserCredentials" class="btn">文本写入用户凭据区（未完成）</div>
+    <div id="btnReadUserCredentials" class="btn">从用户凭据区读取文本（未完成）</div>
+    <div id="btnRegMouseHook" class="btn">注册鼠标钩子（未完成）</div>
+    <div id="btnRegKeyboardHook" class="btn">注册键盘钩子（未完成）</div>
+    <div id="btnEnumWindows" class="btn">遍历系统中的窗口</div>
+  </div>
+  <script>
+    let $ = (selector) => document.querySelector(selector);
+    window.addEventListener("DOMContentLoaded", async () => {
+      $("#btnGetVersion").addEventListener("click", async () => {
+        let data = await horse.os.getVersion();
+        console.log(data);
       });
-    </script>
-  </body>
+    });
+  </script>
+</body>
+
 </html>

@@ -1,119 +1,125 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="../css/example.css" />
-  </head>
-  <body>
-    <div class="box">
-      <div id="btnGetConfig" class="btn">获取App配置</div>
-      <div id="btnNewWindow" class="btn">创建窗口</div>
-      <div id="btnGetHorseVer" class="btn">获取HorseJs的版本号</div>
-      <div id="btnGetExeVer" class="btn">获取Exe的版本号</div>
-      <div id="btnQuit" class="btn">关闭所有窗口，并退出应用</div>
-      <div id="btnExit" class="btn">退出应用</div>
-      <div id="btnRelaunch" class="btn">启动当前应用的一个新实例</div>
-      <div id="btnNewWinEvent" class="btn">监听新窗口创建事件</div>
-      <div id="btnOffNewWinEvent" class="btn">取消监听新窗口创建事件</div>
-      <div id="btnWinCloseEvent" class="btn">监听旧窗口关闭事件</div>
-      <div id="btnOffWinCloseEvent" class="btn">取消监听旧窗口关闭事件</div>
-      <div id="btnSecondInsEvent" class="btn">监听本应用第二次启动</div>
-      <div id="btnOffSecondInsEvent" class="btn">取消监听本应用的第二次启动</div>
-      <div id="btnEnableSecondIns" class="btn">允许本应用多开</div>
-      <div id="btnDisableSecondIns" class="btn">禁止本应用多开</div>
-    </div>
-    <script>
-      let $ = (selector) => document.querySelector(selector);
-      window.addEventListener("DOMContentLoaded", async () => {
-        $("#btnGetConfig").addEventListener("click", async () => {
-          let config = await horse.getConfig();
-          console.log(config);
-        });
-        $("#btnNewWindow").addEventListener("click", async () => {
-          let proxy = await horse.createWin({
-            resizable: true,
-            maximizable: false,
-            minimizable: false,
-            alwaysOnTop: false,
-            skipTaskbar: false,
-            visible: true,
-            frame: false,
-            shadow: true,
-            title: "窗口标题！！！",
-            size: {
-              w: 1000,
-              h: 800,
-            },
-            minSize: {
-              w: 250,
-              h: 200,
-            },
-            position: {
-              x: 200,
-              y: 200,
-            },
-            page: {
-              areDefaultScriptDialogsEnabled: true,
-              isScriptEnabled: true,
-              isWebMessageEnabled: true,
-              url: "index.html",
-            },
-          });
-        });
-        $("#btnGetHorseVer").addEventListener("click", async () => {
-          let data = await horse.getHorseVer();
-          console.log(JSON.stringify(data));
-        });
-        $("#btnGetExeVer").addEventListener("click", async () => {
-          let data = await horse.getExeVer();
-          console.log(JSON.stringify(data));
-        });
-        $("#btnQuit").addEventListener("click", async () => {
-          let data = await horse.quit();
-          console.log(JSON.stringify(data));
-        });
-        $("#btnExit").addEventListener("click", async () => {
-          horse.exit(1);
-        });
-        $("#btnRelaunch").addEventListener("click", async () => {
-          let data = await horse.relaunch();
-          console.log(JSON.stringify(data));
-        });
-        $("#btnNewWinEvent").addEventListener("click", async () => {
-          let func = (proxy) => {
-            console.log(proxy.id);
-            proxy.minimize();
-          };
-          await horse.on("newWin", func);
-        });
-        $("#btnOffNewWinEvent").addEventListener("click", async () => {
-          await horse.off("newWin");
-        });
-        $("#btnWinCloseEvent").addEventListener("click", async () => {
-          await horse.on("winClose", (data) => {
-            console.log(data);
-          });
-        });
-        $("#btnOffWinCloseEvent").addEventListener("click", async () => {
-          await horse.off("winClose");
-        });
-        $("#btnSecondInsEvent").addEventListener("click", async () => {
-          await horse.on("secondIns", () => {
-            console.log("secondIns");
-          });
-        });
-        $("#btnOffSecondInsEvent").addEventListener("click", async () => {
-          await horse.off("secondIns");
-        });
-        $("#btnEnableSecondIns").addEventListener("click", async () => {
-          let obj = await horse.enableSecondIns();
-          console.log(obj);
-        });
-        $("#btnDisableSecondIns").addEventListener("click", async () => {
-          let obj = await horse.disableSecondIns();
-          console.log(obj);
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="../css/example.css" />
+</head>
+
+<body>
+  <div class="box">
+    <div id="btnGetConfig" class="btn">获取App配置</div>
+    <div id="btnNewWindow" class="btn">创建窗口</div>
+    <div id="btnGetHorseVer" class="btn">获取HorseJs的版本号</div>
+    <div id="btnGetExeVer" class="btn">获取Exe的版本号</div>
+    <div id="btnQuit" class="btn">关闭所有窗口，并退出应用</div>
+    <div id="btnExit" class="btn">退出应用</div>
+    <div id="btnRelaunch" class="btn">启动当前应用的一个新实例</div>
+    <div id="btnNewWinEvent" class="btn">监听新窗口创建事件</div>
+    <div id="btnOffNewWinEvent" class="btn">取消监听新窗口创建事件</div>
+    <div id="btnWinCloseEvent" class="btn">监听旧窗口关闭事件</div>
+    <div id="btnOffWinCloseEvent" class="btn">取消监听旧窗口关闭事件</div>
+    <div id="btnSecondInsEvent" class="btn">监听本应用第二次启动</div>
+    <div id="btnOffSecondInsEvent" class="btn">取消监听本应用的第二次启动</div>
+    <div id="btnEnableSecondIns" class="btn">允许本应用多开</div>
+    <div id="btnDisableSecondIns" class="btn">禁止本应用多开</div>
+    <div id="btnAutoStartup" class="btn">设置开机自启动（未完成）</div>
+    <div id="btnIsPackage" class="btn">是否嵌入资源（未完成）</div>
+    <div id="btnRegBrowserScheme" class="btn">注册浏览器自定义协议（未完成）</div>
+  </div>
+  <script>
+    let $ = (selector) => document.querySelector(selector);
+    window.addEventListener("DOMContentLoaded", async () => {
+      $("#btnGetConfig").addEventListener("click", async () => {
+        let config = await horse.getConfig();
+        console.log(config);
+      });
+      $("#btnNewWindow").addEventListener("click", async () => {
+        let proxy = await horse.createWin({
+          resizable: true,
+          maximizable: false,
+          minimizable: false,
+          alwaysOnTop: false,
+          skipTaskbar: false,
+          visible: true,
+          frame: false,
+          shadow: true,
+          title: "窗口标题！！！",
+          size: {
+            w: 1000,
+            h: 800,
+          },
+          minSize: {
+            w: 250,
+            h: 200,
+          },
+          position: {
+            x: 200,
+            y: 200,
+          },
+          page: {
+            areDefaultScriptDialogsEnabled: true,
+            isScriptEnabled: true,
+            isWebMessageEnabled: true,
+            url: "index.html",
+          },
         });
       });
-    </script>
-  </body>
+      $("#btnGetHorseVer").addEventListener("click", async () => {
+        let data = await horse.getHorseVer();
+        console.log(JSON.stringify(data));
+      });
+      $("#btnGetExeVer").addEventListener("click", async () => {
+        let data = await horse.getExeVer();
+        console.log(JSON.stringify(data));
+      });
+      $("#btnQuit").addEventListener("click", async () => {
+        let data = await horse.quit();
+        console.log(JSON.stringify(data));
+      });
+      $("#btnExit").addEventListener("click", async () => {
+        horse.exit(1);
+      });
+      $("#btnRelaunch").addEventListener("click", async () => {
+        let data = await horse.relaunch();
+        console.log(JSON.stringify(data));
+      });
+      $("#btnNewWinEvent").addEventListener("click", async () => {
+        let func = (proxy) => {
+          console.log(proxy.id);
+          proxy.minimize();
+        };
+        await horse.on("newWin", func);
+      });
+      $("#btnOffNewWinEvent").addEventListener("click", async () => {
+        await horse.off("newWin");
+      });
+      $("#btnWinCloseEvent").addEventListener("click", async () => {
+        await horse.on("winClose", (data) => {
+          console.log(data);
+        });
+      });
+      $("#btnOffWinCloseEvent").addEventListener("click", async () => {
+        await horse.off("winClose");
+      });
+      $("#btnSecondInsEvent").addEventListener("click", async () => {
+        await horse.on("secondIns", () => {
+          console.log("secondIns");
+        });
+      });
+      $("#btnOffSecondInsEvent").addEventListener("click", async () => {
+        await horse.off("secondIns");
+      });
+      $("#btnEnableSecondIns").addEventListener("click", async () => {
+        let obj = await horse.enableSecondIns();
+        console.log(obj);
+      });
+      $("#btnDisableSecondIns").addEventListener("click", async () => {
+        let obj = await horse.disableSecondIns();
+        console.log(obj);
+      });
+    });
+  </script>
+</body>
+
 </html>

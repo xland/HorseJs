@@ -110,6 +110,7 @@
     <None Include="LICENSE" />
     <None Include=".gitignore" />
     <None Include="Doc\dll.md" />
+    <None Include="Doc\dev\websocket.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\BrowserWindow.h">

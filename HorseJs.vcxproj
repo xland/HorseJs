@@ -203,6 +203,7 @@
     <None Include="Doc\clipboard.md" />
     <None Include="Doc\config.md" />
     <None Include="Doc\dev\ChangeLog.md" />
+    <None Include="Doc\dev\websocket.md" />
     <None Include="Doc\dialog.md" />
     <None Include="Doc\FAQ.md" />
     <None Include="Doc\fs.md" />
