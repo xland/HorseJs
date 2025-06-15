@@ -159,13 +159,13 @@ void App::ensureAppFolder() {
     appDir = pathTmp;
     CoTaskMemFree(pathTmp);
     appDir /= appId;
-    if (!std::filesystem::exists(appDir)) {
-        auto flag = std::filesystem::create_directory(appDir);
-        if (!flag) {
-            MessageBox(nullptr, L"无法创建应用程序数据目录", L"系统提示", MB_OK | MB_ICONINFORMATION | MB_DEFBUTTON1);
-            exit(1);
-        }
-    }
+    //if (!std::filesystem::exists(appDir)) {
+    //    auto flag = std::filesystem::create_directory(appDir);
+    //    if (!flag) {
+    //        MessageBox(nullptr, L"无法创建应用程序数据目录", L"系统提示", MB_OK | MB_ICONINFORMATION | MB_DEFBUTTON1);
+    //        exit(1);
+    //    }
+    //}
 }
 
 void App::initUICompositor()
@@ -235,6 +235,7 @@ void App::createEnv()
 	//todo 设置附加浏览器参数 
     options->put_AdditionalBrowserArguments(L"--disable-features=msSmartScreenProtection");
     options->put_AdditionalBrowserArguments(L"--no-proxy-server");
+    options->put_AdditionalBrowserArguments(L"--use-system-proxy-resolver");
 	//std::wstring cacheCmd = L"--disk-cache-dir=" + appDir.wstring() + L"\\Cache";
  //   options->put_AdditionalBrowserArguments(cacheCmd.data());
     //options->put_AdditionalBrowserArguments(L"--allow-file-access-from-files");
