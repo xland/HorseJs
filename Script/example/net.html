@@ -1,21 +1,31 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="../css/example.css" />
-  </head>
-  <body>
-    <div class="box">
-      <div id="btnGetAddress" class="btn">获取IP地址</div>
-    </div>
-    <script>
-      let $ = (selector) => document.querySelector(selector);
-      window.addEventListener("DOMContentLoaded", async () => {
-        $("#btnGetAddress").addEventListener("click", async () => {
-          let data = await horse.net.getAddress();
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="../css/example.css" />
+</head>
+
+<body>
+  <div class="box">
+    <div id="btnGetAddress" class="btn">获取IP地址</div>
+    <div id="btnRegNetConnListener" class="btn">监听网络连接、断开事件</div>
+  </div>
+  <script>
+    let $ = (selector) => document.querySelector(selector);
+    window.addEventListener("DOMContentLoaded", async () => {
+      $("#btnGetAddress").addEventListener("click", async () => {
+        let data = await horse.net.getAddress();
+        console.log(data);
+      });
+      $("#btnRegNetConnListener").addEventListener("click", async () => {
+        let data = await horse.net.on("connChanged", (data) => {
           console.log(data);
         });
+        console.log(data);
       });
-    </script>
-  </body>
+    });
+  </script>
+</body>
+
 </html>

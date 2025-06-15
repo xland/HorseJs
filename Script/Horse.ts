@@ -84,7 +84,6 @@ class Horse extends Eventer {
   }
 
   private listenMsg() {
-    if (window.self !== window.top) return;
     this.webview.addEventListener("message", (e) => {
       let clsName = e.data.className;
       delete e.data.className;

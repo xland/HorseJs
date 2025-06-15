@@ -13,6 +13,8 @@ namespace {
     std::unique_ptr<Net> net;
     static std::unordered_map<std::string, void (Net::*)(const rapidjson::Value&, JsonResult*)> funcs{
     {"getAddress", &Net::getAddress},
+    {"on", &Net::on},
+    {"off", &Net::off},
     };
     // todo: 创建一个命名管道，接收数据
     // todo: 获取网卡地址
@@ -137,61 +139,19 @@ void Net::on(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::string eventName = arr[0].GetString();
-    auto tar = result->getTar();
-    //tar->events[eventName].insert(result->winId);
+    if (eventName == "connChanged") {
+        if (!NetConnListener::listen(result->winId)) {
+            result->addErr("can not listen network");
+            return;
+        }
+    }
 }
 
 void Net::off(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::string eventName = arr[0].GetString();
-    auto tar = result->getTar();
-    //tar->events[eventName].erase(result->winId);
-}
-
-void Net::regNetConnListener()
-{
-    INetworkListManagerPtr spNLM;
-    auto hr = spNLM.CreateInstance(__uuidof(NetworkListManager));
-    if (FAILED(hr)) {
-        std::cerr << "Failed to create NetworkListManager: " << std::hex << hr << std::endl;
-        return;
-    }
-
-    // 创建事件接收对象
-    NetConnListener* pSink = new NetConnListener();
-    if (!pSink) {
-        std::cerr << "Failed to allocate sink" << std::endl;
-        return;
-    }
-
-    // 获取连接点容器
-    IConnectionPointContainer* pCPC = nullptr;
-    hr = spNLM->QueryInterface(IID_IConnectionPointContainer, (void**)&pCPC);
-    if (FAILED(hr)) {
-        std::cerr << "QueryInterface for IConnectionPointContainer failed: " << std::hex << hr << std::endl;
-        pSink->Release();
-        return;
-    }
-
-    // 查找 INetworkListManagerEvents 的连接点
-    IConnectionPoint* pCP = nullptr;
-    hr = pCPC->FindConnectionPoint(__uuidof(INetworkListManagerEvents), &pCP);
-    if (FAILED(hr)) {
-        std::cerr << "FindConnectionPoint failed: " << std::hex << hr << std::endl;
-        pCPC->Release();
-        pSink->Release();
-        return;
-    }
-
-    // 注册事件接收器
-    DWORD dwCookie = 0;
-    hr = pCP->Advise(pSink, &dwCookie);
-    if (FAILED(hr)) {
-        std::cerr << "Advise failed: " << std::hex << hr << std::endl;
-        pCP->Release();
-        pCPC->Release();
-        pSink->Release();
-        return;
-    }
+   if (eventName == "connChanged") {
+       NetConnListener::unlisten(result->winId);
+   }
 }

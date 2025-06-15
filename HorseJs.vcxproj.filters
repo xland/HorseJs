@@ -321,7 +321,4 @@
       <Filter>资源文件</Filter>
     </ResourceCompile>
   </ItemGroup>
-  <ItemGroup>
-    <Manifest Include="HorseJs.manifest" />
-  </ItemGroup>
 </Project>

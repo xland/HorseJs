@@ -13,6 +13,8 @@ public:
 	ULONG STDMETHODCALLTYPE AddRef();
 	ULONG STDMETHODCALLTYPE Release();
 	HRESULT STDMETHODCALLTYPE ConnectivityChanged(NLM_CONNECTIVITY newConnectivity);
+	static bool listen(const int& winId);
+	static bool unlisten(const int& winId);
 private:
 	LONG m_cRef;
 };
