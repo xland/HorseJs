@@ -111,6 +111,7 @@
     <None Include=".gitignore" />
     <None Include="Doc\dll.md" />
     <None Include="Doc\dev\websocket.md" />
+    <None Include="Doc\build.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\BrowserWindow.h">

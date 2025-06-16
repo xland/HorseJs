@@ -200,6 +200,7 @@
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)UI</DestinationFolders>
     </CopyFileToFolders>
     <None Include=".gitignore" />
+    <None Include="Doc\build.md" />
     <None Include="Doc\clipboard.md" />
     <None Include="Doc\config.md" />
     <None Include="Doc\dev\ChangeLog.md" />

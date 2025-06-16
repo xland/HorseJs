@@ -30,6 +30,7 @@
     - [托盘 horse.tray](./Doc/tray.md)
     - [窗口对象 horse.win](./Doc/win.md)
 - [FAQ](./Doc/FAQ.md)
+- [编译](./Doc/build.md)
 
 ## 赞助
 <table>
