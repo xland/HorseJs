@@ -155,7 +155,7 @@
         // });
         $("#menuContainer").addEventListener("click", (e) => {
           let id = e.target.getAttribute("id");
-          if (!id || e.target.classList.contains("menuSelected")) return;
+          if (!id || id === "menuContainer" || e.target.classList.contains("menuSelected")) return;
           $(".menuSelected").classList.remove("menuSelected");
           e.target.classList.add("menuSelected");
           $("#exampleIframe").setAttribute("src", `./example/${id}.html`);
