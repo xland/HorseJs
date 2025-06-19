@@ -9,7 +9,10 @@
     <div class="box">
       <div id="btnGetVersion" class="btn">获取系统版本号</div>
       <div id="btnCreateShortcut" class="btn">创建一个快捷方式</div>
-      <div id="btnGetLang" class="btn">获取系统默认语言（未完成）</div>
+      <div id="btnGetCPUID" class="btn">获取CPU ID</div>
+      <div id="btnGetDiskSerialNumber" class="btn">获取磁盘串号</div>
+      <div id="btnGetUserLang" class="btn">获取用户语言</div>
+      <div id="btnGetOsLang" class="btn">获取系统语言</div>
       <div id="btnGetTheame" class="btn">获取系统默认皮肤（未完成）</div>
       <div id="btnShowItemInFolder" class="btn">打开文件夹，并选中某个路径（未完成）</div>
       <div id="btnShowItemInFolder" class="btn">创建一个快捷方式（未完成）</div>
@@ -34,6 +37,22 @@
         $("#btnCreateShortcut").addEventListener("click", async () => {
           let data = await horse.os.createShortcut("C:\\Windows\\System32\\cmd.exe", "C:\\Users\\liuxiaolun\\Desktop\\cmd.lnk", "命令行", "C:\\Windows\\System32\\");
           console.log(data);
+        });
+        $("#btnGetCPUID").addEventListener("click", async () => {
+          let data = await horse.os.getCPUID();
+          console.log(JSON.stringify(data));
+        });
+        $("#btnGetDiskSerialNumber").addEventListener("click", async () => {
+          let data = await horse.os.getDiskSerialNumber();
+          console.log(JSON.stringify(data));
+        });
+        $("#btnGetUserLang").addEventListener("click", async () => {
+          let data = await horse.os.getUserLang();
+          console.log(JSON.stringify(data));
+        });
+        $("#btnGetOsLang").addEventListener("click", async () => {
+          let data = await horse.os.getOsLang();
+          console.log(JSON.stringify(data));
         });
       });
     </script>

@@ -6,6 +6,18 @@ export class Os extends Eventer {
   createShortcut(srcPath: string, dstSrc: string, des: string, workDir: string) {
     return this.exec("createShortcut", srcPath, dstSrc, des, workDir);
   }
+  getCPUID() {
+    return this.exec("getCPUID");
+  }
+  getDiskSerialNumber() {
+    return this.exec("getDiskSerialNumber");
+  }
+  getUserLang() {
+    return this.exec("getUserLang");
+  }
+  getOsLang() {
+    return this.exec("getOsLang");
+  }
   private exec(methodName: string, ...params: any[]) {
     return this.call({
       className: "os",

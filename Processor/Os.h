@@ -10,6 +10,10 @@ public:
 	static bool execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result);
 	void getVersion(const rapidjson::Value& params, JsonResult* result);
 	void createShortcut(const rapidjson::Value& params, JsonResult* result);
+	void getCPUID(const rapidjson::Value& params, JsonResult* result);
+	void getDiskSerialNumber(const rapidjson::Value& params, JsonResult* result);
+	void getUserLang(const rapidjson::Value& params, JsonResult* result);
+	void getOsLang(const rapidjson::Value& params, JsonResult* result);
 private:
 };
 

@@ -6,9 +6,12 @@ namespace {
     static std::unordered_map<std::string, void (Os::*)(const rapidjson::Value&, JsonResult*)> funcs{
     {"getVersion", &Os::getVersion},
     {"createShortcut", &Os::createShortcut},
+    {"getCPUID", &Os::getCPUID},
+    {"getDiskSerialNumber", &Os::getDiskSerialNumber},
+    {"getUserLang", &Os::getUserLang},
+    {"getOsLang", &Os::getOsLang},
     };
     typedef LONG(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
-    //todo 获取磁盘、主板、网卡串号
 }
 
 Os::Os()
@@ -91,6 +94,70 @@ void Os::createShortcut(const rapidjson::Value& params, JsonResult* result)
         }
         pShellLink->Release();
     }
+}
+
+void Os::getCPUID(const rapidjson::Value& params, JsonResult* result)
+{
+    int cpuInfo[4] = { 0 };
+    __cpuid(cpuInfo, 1);
+    std::stringstream ss;
+    ss << std::hex << std::setfill('0') << std::setw(8) << cpuInfo[0] << std::setw(8) << cpuInfo[3];
+    auto str = ss.str();
+    result->addString("data", str.data());
+}
+
+void Os::getDiskSerialNumber(const rapidjson::Value& params, JsonResult* result)
+{
+    std::string data;
+    char volumeName[MAX_PATH + 1] = { 0 };
+    char fileSystemName[MAX_PATH + 1] = { 0 };
+    DWORD serialNumber = 0;
+    DWORD maxComponentLen = 0;
+    DWORD fileSystemFlags = 0; 
+    char windowsPath[MAX_PATH] = { 0 };
+    if (GetWindowsDirectoryA(windowsPath, MAX_PATH) == 0) {
+        result->addErr("Failed to get Windows directory.");
+        return;
+    }
+    std::string rootPath = std::string(windowsPath).substr(0, 3);
+    if (GetVolumeInformationA(
+        rootPath.c_str(),
+        volumeName,
+        MAX_PATH + 1,
+        &serialNumber,
+        &maxComponentLen,
+        &fileSystemFlags,
+        fileSystemName,
+        MAX_PATH + 1)) {
+        std::stringstream ss;
+        ss << std::hex << std::setfill('0') << std::setw(8) << serialNumber;
+        data = ss.str();
+    }
+    result->addString("data", data.data());
+}
+
+void Os::getUserLang(const rapidjson::Value& params, JsonResult* result)
+{
+    LANGID langID = GetUserDefaultLangID();
+    WCHAR langName[LOCALE_NAME_MAX_LENGTH];
+    if (!LCIDToLocaleName(MAKELCID(langID, SORT_DEFAULT), langName, LOCALE_NAME_MAX_LENGTH, 0)) {
+        result->addErr("get lang name err");
+        return;
+    }
+    auto str = Util::convertToStr(langName);
+    result->addString("data", str.data());
+}
+
+void Os::getOsLang(const rapidjson::Value& params, JsonResult* result)
+{
+    LANGID langID = GetSystemDefaultLangID();
+    WCHAR langName[LOCALE_NAME_MAX_LENGTH];
+    if (!LCIDToLocaleName(MAKELCID(langID, SORT_DEFAULT), langName, LOCALE_NAME_MAX_LENGTH, 0)) {
+        result->addErr("get lang name err");
+        return;
+    }
+    auto str = Util::convertToStr(langName);
+    result->addString("data", str.data());
 }
 
 // 保存数据到用户凭据区

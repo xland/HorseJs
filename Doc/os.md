@@ -14,3 +14,31 @@ let data = await horse.os.createShortcut("C:\\Windows\\System32\\cmd.exe",
 	"C:\\Windows\\System32\\");
 console.log(data);
 ```
+- 获取CPU ID
+
+```js
+let data = await horse.os.getCPUID();
+console.log(JSON.stringify(data));
+// {"data":"000906edbfebfbff","ok":true}
+```
+- 获取磁盘串号
+
+```js
+let data = await horse.os.getDiskSerialNumber();
+console.log(JSON.stringify(data));
+// {"data":"92adfb09","ok":true}
+```
+- 获取当前用户使用的语言
+
+```js
+let data = await horse.os.getUserLang();
+console.log(JSON.stringify(data));
+// {"data":"zh-CN","ok":true}
+```
+- 获取系统语言
+
+```js
+let data = await horse.os.getOsLang();
+console.log(JSON.stringify(data));
+//  {"data":"zh-CN","ok":true}
+```
