@@ -48,6 +48,18 @@ std::string Util::convertWstringToUtf8(const std::wstring& wstr) {
     return utf8Str;
 }
 
+std::string Util::colorToHex(COLORREF color) {
+    int r = GetRValue(color);
+    int g = GetGValue(color);
+    int b = GetBValue(color);
+    std::stringstream ss;
+    ss << "#"
+        << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << r
+        << std::setw(2) << std::setfill('0') << g
+        << std::setw(2) << std::setfill('0') << b;
+    return ss.str();
+}
+
 void Util::printTime()
 {
     SYSTEMTIME st;

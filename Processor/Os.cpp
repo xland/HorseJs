@@ -10,6 +10,7 @@ namespace {
     {"getDiskSerialNumber", &Os::getDiskSerialNumber},
     {"getUserLang", &Os::getUserLang},
     {"getOsLang", &Os::getOsLang},
+    {"getOsColor", &Os::getOsColor},
     };
     typedef LONG(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
 }
@@ -158,6 +159,28 @@ void Os::getOsLang(const rapidjson::Value& params, JsonResult* result)
     }
     auto str = Util::convertToStr(langName);
     result->addString("data", str.data());
+}
+
+void Os::getOsColor(const rapidjson::Value& params, JsonResult* result)
+{
+    COLORREF winColor = GetSysColor(COLOR_WINDOW);
+    COLORREF btnColor = GetSysColor(CTLCOLOR_BTN);
+    COLORREF bgColor = GetSysColor(COLOR_BACKGROUND);
+    COLORREF textColor = GetSysColor(COLOR_WINDOWTEXT);
+    COLORREF captionColor = GetSysColor(COLOR_CAPTIONTEXT);
+    COLORREF borderColor = GetSysColor(COLOR_ACTIVEBORDER);
+    auto winColorStr = Util::colorToHex(winColor);
+    auto btnColorStr = Util::colorToHex(btnColor);
+    auto bgColorStr = Util::colorToHex(bgColor);
+    auto textColorStr = Util::colorToHex(textColor);
+    auto captionColorStr = Util::colorToHex(captionColor);
+    auto borderColorStr = Util::colorToHex(borderColor);
+    result->addString("winColor", winColorStr.data());
+    result->addString("btnColor", btnColorStr.data());
+    result->addString("bgColor", bgColorStr.data());
+    result->addString("textColor", textColorStr.data());
+    result->addString("captionColor", captionColorStr.data());
+    result->addString("borderColor", borderColorStr.data());
 }
 
 // 保存数据到用户凭据区

@@ -18,6 +18,9 @@ export class Os extends Eventer {
   getOsLang() {
     return this.exec("getOsLang");
   }
+  getOsColor() {
+    return this.exec("getOsColor");
+  }
   private exec(methodName: string, ...params: any[]) {
     return this.call({
       className: "os",

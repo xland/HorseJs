@@ -14,6 +14,7 @@ public:
 	void getDiskSerialNumber(const rapidjson::Value& params, JsonResult* result);
 	void getUserLang(const rapidjson::Value& params, JsonResult* result);
 	void getOsLang(const rapidjson::Value& params, JsonResult* result);
+	void getOsColor(const rapidjson::Value& params, JsonResult* result);
 private:
 };
 

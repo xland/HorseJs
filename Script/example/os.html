@@ -13,7 +13,7 @@
       <div id="btnGetDiskSerialNumber" class="btn">获取磁盘串号</div>
       <div id="btnGetUserLang" class="btn">获取用户语言</div>
       <div id="btnGetOsLang" class="btn">获取系统语言</div>
-      <div id="btnGetTheame" class="btn">获取系统默认皮肤（未完成）</div>
+      <div id="btnGetOsColor" class="btn">获取系统默认颜色</div>
       <div id="btnShowItemInFolder" class="btn">打开文件夹，并选中某个路径（未完成）</div>
       <div id="btnShowItemInFolder" class="btn">创建一个快捷方式（未完成）</div>
       <div id="btnShowItemInFolder" class="btn">使用默认应用打开一个路径（未完成）</div>
@@ -52,6 +52,10 @@
         });
         $("#btnGetOsLang").addEventListener("click", async () => {
           let data = await horse.os.getOsLang();
+          console.log(JSON.stringify(data));
+        });
+        $("#btnGetOsColor").addEventListener("click", async () => {
+          let data = await horse.os.getOsColor();
           console.log(JSON.stringify(data));
         });
       });
