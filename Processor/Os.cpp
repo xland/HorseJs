@@ -5,10 +5,9 @@ namespace {
     std::unique_ptr<Os> os;
     static std::unordered_map<std::string, void (Os::*)(const rapidjson::Value&, JsonResult*)> funcs{
     {"getVersion", &Os::getVersion},
+    {"createShortcut", &Os::createShortcut},
     };
     typedef LONG(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
-    //todo获取系统预研
-    //todo 获取系统颜色主题
     //todo 获取磁盘、主板、网卡串号
 }
 
@@ -63,6 +62,35 @@ void Os::getVersion(const rapidjson::Value& params, JsonResult* result)
     result->addNumber("major", (long long)osInfo.dwMajorVersion);
     result->addNumber("minor", (long long)osInfo.dwMinorVersion);
     result->addNumber("build", (long long)osInfo.dwBuildNumber);
+}
+
+void Os::createShortcut(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    auto srcPath = arr[0].GetString();
+    auto srcPathW = Util::convertToWStr(srcPath);
+    auto dstPath = arr[1].GetString();
+    auto dstPathW = Util::convertToWStr(dstPath);
+    auto des = arr[2].GetString();
+    auto desW = Util::convertToWStr(des);
+    auto workDir = arr[3].GetString();
+    auto workDirW = Util::convertToWStr(workDir);
+
+    IShellLink* pShellLink = nullptr;
+    HRESULT hr = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID*)&pShellLink);
+    if (SUCCEEDED(hr)) {
+        pShellLink->SetPath(srcPathW.c_str());
+        pShellLink->SetDescription(desW.c_str());
+        pShellLink->SetIconLocation(srcPathW.c_str(), 0);
+        pShellLink->SetWorkingDirectory(workDirW.c_str());
+        IPersistFile* pPersistFile = nullptr;
+        hr = pShellLink->QueryInterface(IID_IPersistFile, (LPVOID*)&pPersistFile);
+        if (SUCCEEDED(hr)) {
+            pPersistFile->Save(dstPathW.c_str(), TRUE);
+            pPersistFile->Release();
+        }
+        pShellLink->Release();
+    }
 }
 
 // 保存数据到用户凭据区

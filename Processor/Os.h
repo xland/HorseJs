@@ -9,6 +9,7 @@ public:
 	static Os* get();
 	static bool execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result);
 	void getVersion(const rapidjson::Value& params, JsonResult* result);
+	void createShortcut(const rapidjson::Value& params, JsonResult* result);
 private:
 };
 
