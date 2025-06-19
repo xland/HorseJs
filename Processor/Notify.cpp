@@ -1,7 +1,5 @@
 ﻿#include <pch.h>
-#include <shobjidl.h>
-#include <propkey.h>
-#include <propvarutil.h>
+
 #include <winrt/Windows.UI.Notifications.h>
 #include <winrt/Windows.Data.Xml.Dom.h>
 #include "../App/App.h"
@@ -43,25 +41,9 @@ bool Notify::execute(std::string& methodName, const rapidjson::Value& param, Jso
 }
 void Notify::show(const rapidjson::Value& params, JsonResult* result)
 {
-    //todo： 要在这个注册表下写数据：HKEY_CURRENT_USER\Software\Classes\AppUserModelId\YourAppName
-    //std::wstring logoPath = getIcon();
-    //if (logoPath.empty()) {
-    //    result->addErr("can not get logo png");
-    //    return;
-    //}
-    //logoPath = L"file:///" + logoPath;
-    //logoPath = L"file:///D:/project/ScreenCapture/Res/logo.ico";
-    // 替换反斜杠为正斜杠
-    //std::replace(logoPath.begin(), logoPath.end(), L'\\', L'/');
+    auto appIdStr = Util::convertToWStr(App::get()->appId.data());
+    auto aumid = std::format(L"com.liulun.{}", appIdStr.data());
     const rapidjson::Value::ConstArray arr = params.GetArray();
-    std::wstring appName = Util::convertToWStr(arr[0].GetString());    
-    auto aumid = std::format(L"com.{}",appName);
-    HRESULT hr = SetCurrentProcessExplicitAppUserModelID(aumid.data());
-    createShortcutWithAUMID(aumid);
-    if (FAILED(hr)) {
-        result->addErr("can not reg aumid");
-        return;
-    }
     std::wstring title = Util::convertToWStr(arr[1].GetString());
     std::wstring content = Util::convertToWStr(arr[2].GetString());
     auto xmlString = std::format(L"<toast><visual><binding template='ToastText02'>"

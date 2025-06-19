@@ -226,6 +226,43 @@ void App::loadConfig()
     if (instanceLock || instanceWatch) {
         createSingleMutex();
     }
+
+    auto appIdStr = Util::convertToWStr(appId.data());
+    auto aumid = std::format(L"com.liulun.{}", appIdStr.data());
+    HRESULT hr = SetCurrentProcessExplicitAppUserModelID(aumid.data());
+    wchar_t buffer[MAX_PATH];
+    GetModuleFileName(nullptr, buffer, MAX_PATH);
+    /*std::wstring exePath{ buffer };
+    auto curPath = std::filesystem::path(buffer).parent_path();
+    auto curPathStr = curPath.wstring();
+    std::wstring shortcutPath = L"C:\\Users\\liuxiaolun\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\HorseJs.lnk";
+    IShellLink* pShellLink = nullptr;
+    hr = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID*)&pShellLink);
+    if (SUCCEEDED(hr)) {
+        pShellLink->SetPath(exePath.c_str());
+        pShellLink->SetDescription(L"HorseJs");
+        pShellLink->SetIconLocation(exePath.c_str(), 0);
+        pShellLink->SetWorkingDirectory(curPathStr.c_str());
+        IPropertyStore* pPropStore = nullptr;
+        hr = pShellLink->QueryInterface(IID_IPropertyStore, (LPVOID*)&pPropStore);
+        if (SUCCEEDED(hr)) {
+            PROPVARIANT pv;
+            InitPropVariantFromString(aumid.c_str(), &pv);
+            pPropStore->SetValue(PKEY_AppUserModel_ID, pv);
+            PropVariantClear(&pv);
+            pPropStore->Commit();
+            pPropStore->Release();
+        }
+        IPersistFile* pPersistFile = nullptr;
+        hr = pShellLink->QueryInterface(IID_IPersistFile, (LPVOID*)&pPersistFile);
+        if (SUCCEEDED(hr)) {
+            pPersistFile->Save(shortcutPath.c_str(), TRUE);
+            pPersistFile->Release();
+        }
+        pShellLink->Release();
+    }*/
+
+
     auto win = std::make_unique<BrowserWindow>(jsonDoc["window"]);
     wins.push_back(std::move(win));
 }

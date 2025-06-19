@@ -24,6 +24,8 @@
 #include <gdiplus.h>
 #include <wincodec.h>
 #include <comdef.h>
+#include <propkey.h>
+#include <propvarutil.h>
 #include <shellscalingapi.h>
 
 #include <WebView2.h>
