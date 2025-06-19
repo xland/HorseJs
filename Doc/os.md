@@ -61,3 +61,15 @@ await horse.os.showItemInFolder("C:\\Windows\\System32\\cmd.exe");
 ```js
 await horse.os.openFile("D:\\doc\\123.docx");
 ```
+
+- 阻止系统睡眠、休眠。
+
+```js
+await horse.os.preventSleep();
+```
+
+- 取消阻止系统睡眠、休眠。
+
+```js
+await horse.os.stopPreventSleep();
+```

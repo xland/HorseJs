@@ -17,6 +17,8 @@ public:
 	void getOsColor(const rapidjson::Value& params, JsonResult* result);
 	void showItemInFolder(const rapidjson::Value& params, JsonResult* result);
 	void openFile(const rapidjson::Value& params, JsonResult* result);
+	void preventSleep(const rapidjson::Value& params, JsonResult* result);
+	void stopPreventSleep(const rapidjson::Value& params, JsonResult* result);
 private:
 };
 

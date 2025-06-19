@@ -16,6 +16,8 @@
       <div id="btnGetOsColor" class="btn">获取系统默认颜色</div>
       <div id="btnShowItemInFolder" class="btn">打开文件夹，并选中某个路径</div>
       <div id="btnOpenFile" class="btn">使用默认应用打开一个路径</div>
+      <div id="btnPreventSleep" class="btn">阻止屏幕锁屏</div>
+      <div id="btnStopPreventSleep" class="btn">取消阻止锁屏</div>
       <div id="btnWriteUserCredentials" class="btn">文本写入用户凭据区（未完成）</div>
       <div id="btnReadUserCredentials" class="btn">从用户凭据区读取文本（未完成）</div>
       <div id="btnRegMouseHook" class="btn">注册鼠标钩子（未完成）</div>
@@ -63,6 +65,14 @@
         });
         $("#btnOpenFile").addEventListener("click", async () => {
           let data = await horse.os.openFile("D:\\doc\\Qt高分屏问题.docx");
+          console.log(JSON.stringify(data));
+        });
+        $("#btnPreventSleep").addEventListener("click", async () => {
+          let data = await horse.os.preventSleep();
+          console.log(JSON.stringify(data));
+        });
+        $("#btnStopPreventSleep").addEventListener("click", async () => {
+          let data = await horse.os.stopPreventSleep();
           console.log(JSON.stringify(data));
         });
       });

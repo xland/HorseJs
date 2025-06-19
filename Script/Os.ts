@@ -27,6 +27,12 @@ export class Os extends Eventer {
   openFile(filePath: string) {
     return this.exec("openFile", filePath);
   }
+  preventSleep() {
+    return this.exec("preventSleep");
+  }
+  stopPreventSleep() {
+    return this.exec("stopPreventSleep");
+  }
   private exec(methodName: string, ...params: any[]) {
     return this.call({
       className: "os",

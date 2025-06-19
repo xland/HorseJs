@@ -13,6 +13,8 @@ namespace {
     {"getOsColor", &Os::getOsColor},
     {"showItemInFolder", &Os::showItemInFolder},
     {"openFile", &Os::openFile},
+    {"preventSleep", &Os::preventSleep},
+    {"stopPreventSleep", &Os::stopPreventSleep},
     };
     typedef LONG(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
 }
@@ -201,6 +203,16 @@ void Os::openFile(const rapidjson::Value& params, JsonResult* result)
     auto str = Util::convertToWStr(filePath);
     HINSTANCE hr = ShellExecuteW(nullptr, L"open", str.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
     result->addBool("data", (intptr_t)hr > 32);
+}
+
+void Os::preventSleep(const rapidjson::Value& params, JsonResult* result)
+{
+    SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_SYSTEM_REQUIRED | ES_CONTINUOUS);
+}
+
+void Os::stopPreventSleep(const rapidjson::Value& params, JsonResult* result)
+{
+    SetThreadExecutionState(ES_CONTINUOUS);
 }
 
 // 保存数据到用户凭据区
