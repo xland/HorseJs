@@ -42,7 +42,7 @@ let data = await horse.os.getOsLang();
 console.log(JSON.stringify(data));
 //  {"data":"zh-CN","ok":true}
 ```
-- 获取系统颜色
+- 获取当前系统使用的颜色
 
 ```js
 let data = await horse.os.getOsColor();
