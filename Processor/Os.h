@@ -15,6 +15,8 @@ public:
 	void getUserLang(const rapidjson::Value& params, JsonResult* result);
 	void getOsLang(const rapidjson::Value& params, JsonResult* result);
 	void getOsColor(const rapidjson::Value& params, JsonResult* result);
+	void showItemInFolder(const rapidjson::Value& params, JsonResult* result);
+	void openFile(const rapidjson::Value& params, JsonResult* result);
 private:
 };
 

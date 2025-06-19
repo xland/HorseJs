@@ -11,6 +11,8 @@ namespace {
     {"getUserLang", &Os::getUserLang},
     {"getOsLang", &Os::getOsLang},
     {"getOsColor", &Os::getOsColor},
+    {"showItemInFolder", &Os::showItemInFolder},
+    {"openFile", &Os::openFile},
     };
     typedef LONG(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
 }
@@ -181,6 +183,24 @@ void Os::getOsColor(const rapidjson::Value& params, JsonResult* result)
     result->addString("textColor", textColorStr.data());
     result->addString("captionColor", captionColorStr.data());
     result->addString("borderColor", borderColorStr.data());
+}
+
+void Os::showItemInFolder(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    auto filePath = arr[0].GetString();
+    auto str = Util::convertToWStr(filePath);
+    std::wstring command = std::format(L"/select,\"{}\"",str);
+    ShellExecute(nullptr, L"open", L"explorer.exe", command.c_str(), nullptr, SW_SHOW);
+}
+
+void Os::openFile(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    auto filePath = arr[0].GetString();
+    auto str = Util::convertToWStr(filePath);
+    HINSTANCE hr = ShellExecuteW(nullptr, L"open", str.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+    result->addBool("data", (intptr_t)hr > 32);
 }
 
 // 保存数据到用户凭据区
