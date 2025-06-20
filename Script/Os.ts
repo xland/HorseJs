@@ -33,6 +33,9 @@ export class Os extends Eventer {
   stopPreventSleep() {
     return this.exec("stopPreventSleep");
   }
+  getIpAddr() {
+    return this.exec("getIpAddr");
+  }
   on(eventName, func) {
     let flag = this.listen(eventName, func);
     if (flag) {

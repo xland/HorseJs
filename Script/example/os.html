@@ -20,6 +20,8 @@
       <div id="btnStopPreventSleep" class="btn">取消阻止睡眠、休眠</div>
       <div id="btnOnOsLock" class="btn">监听锁屏事件</div>
       <div id="btnOffOsLock" class="btn">取消监听锁屏事件</div>
+      <div id="btnGetIpAddr" class="btn">获取IP地址</div>
+      <div id="btnRegNetConnListener" class="btn">监听网络连接、断开事件</div>
       <div id="btnWriteUserCredentials" class="btn">文本写入用户凭据区（未完成）</div>
       <div id="btnReadUserCredentials" class="btn">从用户凭据区读取文本（未完成）</div>
       <div id="btnRegMouseHook" class="btn">注册鼠标钩子（未完成）</div>
@@ -77,7 +79,6 @@
           let data = await horse.os.stopPreventSleep();
           console.log(JSON.stringify(data));
         });
-
         $("#btnOnOsLock").addEventListener("click", async () => {
           await horse.os.on("osLock", (data) => {
             console.log(JSON.stringify(data));
@@ -85,6 +86,16 @@
         });
         $("#btnOffOsLock").addEventListener("click", async () => {
           await horse.os.off("osLock");
+        });
+        $("#btnGetIpAddr").addEventListener("click", async () => {
+          let data = await horse.os.getIpAddr();
+          console.log(data);
+        });
+        $("#btnRegNetConnListener").addEventListener("click", async () => {
+          let data = await horse.os.on("netConnChanged", (data) => {
+            console.log(data);
+          });
+          console.log(data);
         });
       });
     </script>

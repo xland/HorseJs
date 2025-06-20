@@ -7,7 +7,6 @@
 #include "Dialog.h"
 #include "Horse.h"
 #include "Dll.h"
-#include "Net.h"
 #include "Fs.h"
 #include "Notify.h"
 #include "Win.h"
@@ -24,7 +23,6 @@ namespace {
         {"dialog",Dialog::execute},
         {"horse",Horse::execute},
         {"dll",Dll::execute},
-        {"net",Net::execute},
         {"fs",Fs::execute},
         {"notify",Notify::execute},
         {"win",Win::execute},

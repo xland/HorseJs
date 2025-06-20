@@ -8,7 +8,6 @@ import { Fs } from "./Fs";
 import { Eventer } from "./Eventer";
 import { Dialog } from "./Dialog";
 import { Clipboard } from "./Clipboard";
-import { Net } from "./Net";
 import { Os } from "./Os";
 import { Screen } from "./Screen";
 class Horse extends Eventer {
@@ -17,7 +16,6 @@ class Horse extends Eventer {
   dialog: Dialog;
   clipboard: Clipboard;
   notify: Notify;
-  net: Net;
   os: Os;
   screen: Screen;
   tray: Tray;
@@ -31,7 +29,6 @@ class Horse extends Eventer {
     this.fs = new Fs();
     this.dialog = new Dialog();
     this.clipboard = new Clipboard();
-    this.net = new Net();
     this.notify = new Notify();
     this.os = new Os();
     this.screen = new Screen();

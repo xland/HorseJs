@@ -42,9 +42,6 @@
     <ClCompile Include="Processor\Fs.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Processor\Net.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Processor\Os.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -98,7 +95,6 @@
     <None Include="Doc\dialog.md" />
     <None Include="Doc\FAQ.md" />
     <None Include="Doc\clipboard.md" />
-    <None Include="Doc\net.md" />
     <None Include="Doc\notify.md" />
     <None Include="Doc\os.md" />
     <None Include="Doc\process.md" />
@@ -252,9 +248,6 @@
     <ClInclude Include="Processor\Tray.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Processor\Net.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Processor\Os.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -305,7 +298,6 @@
     <CopyFileToFolders Include="Script\example\dialog.html" />
     <CopyFileToFolders Include="Script\example\fs.html" />
     <CopyFileToFolders Include="Script\example\horse.html" />
-    <CopyFileToFolders Include="Script\example\net.html" />
     <CopyFileToFolders Include="Script\example\notify.html" />
     <CopyFileToFolders Include="Script\example\os.html" />
     <CopyFileToFolders Include="Script\example\process.html" />

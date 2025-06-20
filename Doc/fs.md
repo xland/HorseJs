@@ -132,7 +132,7 @@ let data = await horse.fs.watch("D:\\doc\\周报\\allen\\", (data) => {
 	console.log(data);
 });
 ```
-- 取消监听路径
+- 取消监听路径的变化
 ```js
 let data = await horse.fs.stopWatch(watchId);
 console.log(data);
