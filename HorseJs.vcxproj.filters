@@ -96,7 +96,6 @@
     <None Include="Doc\os.md" />
     <None Include="Doc\process.md" />
     <None Include="Doc\screen.md" />
-    <None Include="Doc\tray.md" />
     <None Include="Doc\start.md" />
     <None Include="Doc\dev\ChangeLog.md" />
     <None Include="README.md" />

@@ -21,11 +21,11 @@
     - [剪切板 horse.clipboard](./Doc/clipboard.md)
     - [对话框 horse.dialog](./Doc/dialog.md)
     - [第三方库 horse.dll](./Doc/dll.md)
-    - [文件系统 horse.fs](./Doc/fs.md)
+    - [文件 horse.fs](./Doc/fs.md)
     - [系统 horse.os](./Doc/os.md)
     - [进程 horse.process](./Doc/process.md)
     - [屏幕 horse.screen](./Doc/screen.md)
-    - [窗口对象 horse.win](./Doc/win.md)
+    - [窗口 horse.win](./Doc/win.md)
 - [FAQ](./Doc/FAQ.md)
 - [编译、贡献代码](./Doc/build.md)
 > 如果没有你想要的API，请在 [Issue](../../issues/) 里提交申请
