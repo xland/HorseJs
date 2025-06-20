@@ -270,10 +270,6 @@
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)UI\example</DestinationFolders>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)UI\example</DestinationFolders>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Script\example\tray.html">
-      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)UI\example</DestinationFolders>
-      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)UI\example</DestinationFolders>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="Script\example\window.html">
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)UI\example</DestinationFolders>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)UI\example</DestinationFolders>

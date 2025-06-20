@@ -1,108 +1,132 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="../css/example.css" />
-  </head>
 
-  <body>
-    <div class="box">
-      <div id="btnGetVersion" class="btn">获取系统版本号</div>
-      <div id="btnCreateShortcut" class="btn">创建一个快捷方式</div>
-      <div id="btnGetCPUID" class="btn">获取CPU ID</div>
-      <div id="btnGetDiskSerialNumber" class="btn">获取磁盘串号</div>
-      <div id="btnGetUserLang" class="btn">获取用户语言</div>
-      <div id="btnGetOsLang" class="btn">获取系统语言</div>
-      <div id="btnGetOsColor" class="btn">获取系统默认颜色</div>
-      <div id="btnShowItemInFolder" class="btn">打开文件夹，并选中某个路径</div>
-      <div id="btnOpenFile" class="btn">使用默认应用打开一个路径</div>
-      <div id="btnPreventSleep" class="btn">阻止睡眠、休眠</div>
-      <div id="btnStopPreventSleep" class="btn">取消阻止睡眠、休眠</div>
-      <div id="btnOnOsLock" class="btn">监听锁屏事件</div>
-      <div id="btnOffOsLock" class="btn">取消监听锁屏事件</div>
-      <div id="btnGetIpAddr" class="btn">获取IP地址</div>
-      <div id="btnRegNetConnListener" class="btn">监听网络连接、断开事件</div>
-      <div id="btnShowNotify" class="btn">显示系统通知</div>
-      <div id="btnWriteUserCredentials" class="btn">文本写入用户凭据区（未完成）</div>
-      <div id="btnReadUserCredentials" class="btn">从用户凭据区读取文本（未完成）</div>
-      <div id="btnRegMouseHook" class="btn">注册鼠标钩子（未完成）</div>
-      <div id="btnRegKeyboardHook" class="btn">注册键盘钩子（未完成）</div>
-      <div id="btnEnumWindows" class="btn">遍历系统中的窗口（未完成）</div>
-      <div id="btnOnLock" class="btn">监听系统锁屏事件（未完成）</div>
-      <div id="btnOnUnLock" class="btn">监听系统锁屏恢复事件（未完成）</div>
-      <div id="btnOnBattery" class="btn">监听是否使用电源事件（未完成）</div>
-      <div id="btnOnSystemIdle" class="btn">监听系统空转事件（未完成）</div>
-    </div>
-    <script>
-      let $ = (selector) => document.querySelector(selector);
-      window.addEventListener("DOMContentLoaded", async () => {
-        $("#btnGetVersion").addEventListener("click", async () => {
-          let data = await horse.os.getVersion();
-          console.log(data);
-        });
-        $("#btnCreateShortcut").addEventListener("click", async () => {
-          let data = await horse.os.createShortcut("C:\\Windows\\System32\\cmd.exe", "C:\\Users\\liuxiaolun\\Desktop\\cmd.lnk", "命令行", "C:\\Windows\\System32\\");
-          console.log(data);
-        });
-        $("#btnGetCPUID").addEventListener("click", async () => {
-          let data = await horse.os.getCPUID();
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="../css/example.css" />
+</head>
+
+<body>
+  <div class="box">
+    <div id="btnGetVersion" class="btn">获取系统版本号</div>
+    <div id="btnCreateShortcut" class="btn">创建一个快捷方式</div>
+    <div id="btnGetCPUID" class="btn">获取CPU ID</div>
+    <div id="btnGetDiskSerialNumber" class="btn">获取磁盘串号</div>
+    <div id="btnGetUserLang" class="btn">获取用户语言</div>
+    <div id="btnGetOsLang" class="btn">获取系统语言</div>
+    <div id="btnGetOsColor" class="btn">获取系统默认颜色</div>
+    <div id="btnShowItemInFolder" class="btn">打开文件夹，并选中某个路径</div>
+    <div id="btnOpenFile" class="btn">使用默认应用打开一个路径</div>
+    <div id="btnPreventSleep" class="btn">阻止睡眠、休眠</div>
+    <div id="btnStopPreventSleep" class="btn">取消阻止睡眠、休眠</div>
+    <div id="btnOnOsLock" class="btn">监听锁屏事件</div>
+    <div id="btnOffOsLock" class="btn">取消监听锁屏事件</div>
+    <div id="btnGetIpAddr" class="btn">获取IP地址</div>
+    <div id="btnRegNetConnListener" class="btn">监听网络连接、断开事件</div>
+    <div id="btnShowNotify" class="btn">显示系统通知</div>
+    <div id="btnCreateTray" class="btn">创建托盘图标</div>
+    <div id="btnDestroyTray" class="btn">销毁托盘图标（未完成）</div>
+    <div id="btnWriteUserCredentials" class="btn">文本写入用户凭据区（未完成）</div>
+    <div id="btnReadUserCredentials" class="btn">从用户凭据区读取文本（未完成）</div>
+    <div id="btnRegMouseHook" class="btn">注册鼠标钩子（未完成）</div>
+    <div id="btnRegKeyboardHook" class="btn">注册键盘钩子（未完成）</div>
+    <div id="btnEnumWindows" class="btn">遍历系统中的窗口（未完成）</div>
+    <div id="btnOnLock" class="btn">监听系统锁屏事件（未完成）</div>
+    <div id="btnOnUnLock" class="btn">监听系统锁屏恢复事件（未完成）</div>
+    <div id="btnOnBattery" class="btn">监听是否使用电源事件（未完成）</div>
+    <div id="btnOnSystemIdle" class="btn">监听系统空转事件（未完成）</div>
+  </div>
+  <script>
+    let $ = (selector) => document.querySelector(selector);
+    window.addEventListener("DOMContentLoaded", async () => {
+      $("#btnGetVersion").addEventListener("click", async () => {
+        let data = await horse.os.getVersion();
+        console.log(data);
+      });
+      $("#btnCreateShortcut").addEventListener("click", async () => {
+        let data = await horse.os.createShortcut("C:\\Windows\\System32\\cmd.exe", "C:\\Users\\liuxiaolun\\Desktop\\cmd.lnk", "命令行", "C:\\Windows\\System32\\");
+        console.log(data);
+      });
+      $("#btnGetCPUID").addEventListener("click", async () => {
+        let data = await horse.os.getCPUID();
+        console.log(JSON.stringify(data));
+      });
+      $("#btnGetDiskSerialNumber").addEventListener("click", async () => {
+        let data = await horse.os.getDiskSerialNumber();
+        console.log(JSON.stringify(data));
+      });
+      $("#btnGetUserLang").addEventListener("click", async () => {
+        let data = await horse.os.getUserLang();
+        console.log(JSON.stringify(data));
+      });
+      $("#btnGetOsLang").addEventListener("click", async () => {
+        let data = await horse.os.getOsLang();
+        console.log(JSON.stringify(data));
+      });
+      $("#btnGetOsColor").addEventListener("click", async () => {
+        let data = await horse.os.getOsColor();
+        console.log(JSON.stringify(data));
+      });
+      $("#btnShowItemInFolder").addEventListener("click", async () => {
+        let data = await horse.os.showItemInFolder("C:\\Windows\\System32\\cmd.exe");
+        console.log(JSON.stringify(data));
+      });
+      $("#btnOpenFile").addEventListener("click", async () => {
+        let data = await horse.os.openFile("D:\\doc\\Qt高分屏问题.docx");
+        console.log(JSON.stringify(data));
+      });
+      $("#btnPreventSleep").addEventListener("click", async () => {
+        let data = await horse.os.preventSleep();
+        console.log(JSON.stringify(data));
+      });
+      $("#btnStopPreventSleep").addEventListener("click", async () => {
+        let data = await horse.os.stopPreventSleep();
+        console.log(JSON.stringify(data));
+      });
+      $("#btnOnOsLock").addEventListener("click", async () => {
+        await horse.os.on("osLock", (data) => {
           console.log(JSON.stringify(data));
-        });
-        $("#btnGetDiskSerialNumber").addEventListener("click", async () => {
-          let data = await horse.os.getDiskSerialNumber();
-          console.log(JSON.stringify(data));
-        });
-        $("#btnGetUserLang").addEventListener("click", async () => {
-          let data = await horse.os.getUserLang();
-          console.log(JSON.stringify(data));
-        });
-        $("#btnGetOsLang").addEventListener("click", async () => {
-          let data = await horse.os.getOsLang();
-          console.log(JSON.stringify(data));
-        });
-        $("#btnGetOsColor").addEventListener("click", async () => {
-          let data = await horse.os.getOsColor();
-          console.log(JSON.stringify(data));
-        });
-        $("#btnShowItemInFolder").addEventListener("click", async () => {
-          let data = await horse.os.showItemInFolder("C:\\Windows\\System32\\cmd.exe");
-          console.log(JSON.stringify(data));
-        });
-        $("#btnOpenFile").addEventListener("click", async () => {
-          let data = await horse.os.openFile("D:\\doc\\Qt高分屏问题.docx");
-          console.log(JSON.stringify(data));
-        });
-        $("#btnPreventSleep").addEventListener("click", async () => {
-          let data = await horse.os.preventSleep();
-          console.log(JSON.stringify(data));
-        });
-        $("#btnStopPreventSleep").addEventListener("click", async () => {
-          let data = await horse.os.stopPreventSleep();
-          console.log(JSON.stringify(data));
-        });
-        $("#btnOnOsLock").addEventListener("click", async () => {
-          await horse.os.on("osLock", (data) => {
-            console.log(JSON.stringify(data));
-          });
-        });
-        $("#btnOffOsLock").addEventListener("click", async () => {
-          await horse.os.off("osLock");
-        });
-        $("#btnGetIpAddr").addEventListener("click", async () => {
-          let data = await horse.os.getIpAddr();
-          console.log(data);
-        });
-        $("#btnRegNetConnListener").addEventListener("click", async () => {
-          let data = await horse.os.on("netConnChanged", (data) => {
-            console.log(data);
-          });
-          console.log(data);
-        });
-        $("#btnShowNotify").addEventListener("click", async () => {
-          let data = await horse.os.showNotify("HorseJs", "通知标题", "通知内容\n换行\n换行");
-          console.log(data);
         });
       });
-    </script>
-  </body>
+      $("#btnOffOsLock").addEventListener("click", async () => {
+        await horse.os.off("osLock");
+      });
+      $("#btnGetIpAddr").addEventListener("click", async () => {
+        let data = await horse.os.getIpAddr();
+        console.log(data);
+      });
+      $("#btnRegNetConnListener").addEventListener("click", async () => {
+        let data = await horse.os.on("netConnChanged", (data) => {
+          console.log(data);
+        });
+        console.log(data);
+      });
+      $("#btnShowNotify").addEventListener("click", async () => {
+        let data = await horse.os.showNotify("HorseJs", "通知标题", "通知内容\n换行\n换行");
+        console.log(data);
+      });
+      $("#btnCreateTray").addEventListener("click", async () => {
+        let data = await horse.os.createTray({
+          tip: "托盘图标的Tip",
+          rightBtnDown: () => {
+            console.log("rightBtnDown");
+          },
+          leftBtnDown: () => {
+            console.log("leftBtnDown");
+          },
+          menu: [
+            {
+              text: "退出",
+              click: () => {
+                console.log("tray menu item click");
+              },
+            },
+          ],
+        });
+        console.log(data);
+      });
+    });
+  </script>
+</body>
+
 </html>

@@ -1,4 +1,5 @@
 import { Eventer } from "./Eventer";
+import { util } from "./Util";
 export class Os extends Eventer {
   getVersion() {
     return this.exec("getVersion");
@@ -36,8 +37,21 @@ export class Os extends Eventer {
   getIpAddr() {
     return this.exec("getIpAddr");
   }
-  async showNotify(appName: string, title: string, content: string) {
+  showNotify(appName: string, title: string, content: string) {
     return this.exec("showNotify", appName, title, content);
+  }
+  async createTray(config: any) {
+    config.__id = util.randomNum();
+    this.listen(config.__id, (data) => {
+      let type = data.type;
+      delete data.type;
+      config[type]();
+    });
+    config.menu.forEach((item) => {
+      item.__id = util.randomNum();
+      this.unlisten(item.__id, item.click);
+    });
+    return this.exec("createTray", config);
   }
   on(eventName, func) {
     let flag = this.listen(eventName, func);

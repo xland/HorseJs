@@ -296,7 +296,6 @@
     <CopyFileToFolders Include="Script\example\os.html" />
     <CopyFileToFolders Include="Script\example\process.html" />
     <CopyFileToFolders Include="Script\example\screen.html" />
-    <CopyFileToFolders Include="Script\example\tray.html" />
     <CopyFileToFolders Include="Script\example\window.html" />
     <CopyFileToFolders Include="Script\example\dll.html" />
   </ItemGroup>

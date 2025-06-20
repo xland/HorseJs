@@ -25,7 +25,6 @@
     - [系统 horse.os](./Doc/os.md)
     - [进程 horse.process](./Doc/process.md)
     - [屏幕 horse.screen](./Doc/screen.md)
-    - [托盘 horse.tray](./Doc/tray.md)
     - [窗口对象 horse.win](./Doc/win.md)
 - [FAQ](./Doc/FAQ.md)
 - [编译、贡献代码](./Doc/build.md)

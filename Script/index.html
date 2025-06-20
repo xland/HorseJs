@@ -1,164 +1,180 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>HorseJs</title>
-    <link rel="stylesheet" href="css/iconfont.css" />
-    <style>
-      html {
-        margin: 0px;
-        padding: 0px;
-        height: 100%;
-        width: 100%;
-      }
-      body {
-        margin: 0px;
-        padding: 0px;
-        height: 100vh;
-        width: 100%;
-        overflow: hidden;
-        font-size: 12px;
-        display: flex;
-        flex-direction: column;
-      }
-      #titleBar {
-        background: #ccd5f0;
-        user-select: none;
-        line-height: 32px;
-        height: 32px;
-        display: flex;
-      }
-      #titleBox {
-        padding-left: 12px;
-        flex: 1;
-      }
-      .titleBtn {
-        width: 38px;
-        text-align: center;
-        cursor: pointer;
-      }
-      .titleBtn:hover {
-        background: #e9eeff;
-      }
-      #btnCloseT:hover {
-        background: red !important;
-        color: #fff !important;
-      }
-      i {
-        font-size: 12px !important;
-      }
-      .box {
-        display: flex;
-        flex: 1;
-      }
-      #menuContainer {
-        background: rgb(219, 237, 255);
-        width: 180px;
-        line-height: 38px;
-        font-size: 15px;
-        padding: 12px 0px;
-      }
-      #menuContainer div {
-        cursor: pointer;
-        padding-left: 16px;
-        border-left: 6px solid transparent;
-      }
-      #menuContainer div:hover {
-        background: rgb(140, 200, 255);
-        color: #fff;
-        border-left: 6px solid rgb(121, 184, 255);
-      }
 
-      #menuContainer .menuSelected {
-        background: rgb(33, 136, 255) !important;
-        color: #fff;
-        border-left: 6px solid rgb(0, 92, 197) !important;
-        position: relative;
-      }
-      #menuContainer .menuSelected::after {
-        display: block;
-        width: 0px;
-        height: 0px;
-        position: absolute;
-        right: 0px;
-        top: calc(50% - 4px);
-        border-top: solid 4px transparent;
-        border-right: solid 4px #fff;
-        border-bottom: solid 4px transparent;
-        content: "";
-      }
-      #demoContainer {
-        flex: 1;
-        overflow: hidden;
-      }
-      iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="titleBar">
-      <div id="titleBox">HorseJs 示例程序</div>
-      <div id="btnMinimizeT" class="titleBtn"><i class="iconfont horse-minimize"></i></div>
-      <div id="btnMaximizeT" class="titleBtn"><i class="iconfont horse-maximize"></i></div>
-      <div id="btnRestoreT" class="titleBtn" style="display: none"><i class="iconfont horse-restore"></i></div>
-      <div id="btnCloseT" class="titleBtn"><i class="iconfont horse-close"></i></div>
+<head>
+  <meta charset="UTF-8" />
+  <title>HorseJs</title>
+  <link rel="stylesheet" href="css/iconfont.css" />
+  <style>
+    html {
+      margin: 0px;
+      padding: 0px;
+      height: 100%;
+      width: 100%;
+    }
+
+    body {
+      margin: 0px;
+      padding: 0px;
+      height: 100vh;
+      width: 100%;
+      overflow: hidden;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #titleBar {
+      background: #ccd5f0;
+      user-select: none;
+      line-height: 32px;
+      height: 32px;
+      display: flex;
+    }
+
+    #titleBox {
+      padding-left: 12px;
+      flex: 1;
+    }
+
+    .titleBtn {
+      width: 38px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .titleBtn:hover {
+      background: #e9eeff;
+    }
+
+    #btnCloseT:hover {
+      background: red !important;
+      color: #fff !important;
+    }
+
+    i {
+      font-size: 12px !important;
+    }
+
+    .box {
+      display: flex;
+      flex: 1;
+    }
+
+    #menuContainer {
+      background: rgb(219, 237, 255);
+      width: 180px;
+      line-height: 38px;
+      font-size: 15px;
+      padding: 12px 0px;
+    }
+
+    #menuContainer div {
+      cursor: pointer;
+      padding-left: 16px;
+      border-left: 6px solid transparent;
+    }
+
+    #menuContainer div:hover {
+      background: rgb(140, 200, 255);
+      color: #fff;
+      border-left: 6px solid rgb(121, 184, 255);
+    }
+
+    #menuContainer .menuSelected {
+      background: rgb(33, 136, 255) !important;
+      color: #fff;
+      border-left: 6px solid rgb(0, 92, 197) !important;
+      position: relative;
+    }
+
+    #menuContainer .menuSelected::after {
+      display: block;
+      width: 0px;
+      height: 0px;
+      position: absolute;
+      right: 0px;
+      top: calc(50% - 4px);
+      border-top: solid 4px transparent;
+      border-right: solid 4px #fff;
+      border-bottom: solid 4px transparent;
+      content: "";
+    }
+
+    #demoContainer {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="titleBar">
+    <div id="titleBox">HorseJs 示例程序</div>
+    <div id="btnMinimizeT" class="titleBtn"><i class="iconfont horse-minimize"></i></div>
+    <div id="btnMaximizeT" class="titleBtn"><i class="iconfont horse-maximize"></i></div>
+    <div id="btnRestoreT" class="titleBtn" style="display: none"><i class="iconfont horse-restore"></i></div>
+    <div id="btnCloseT" class="titleBtn"><i class="iconfont horse-close"></i></div>
+  </div>
+  <div class="box">
+    <div id="menuContainer">
+      <div id="clipboard" class="menuSelected">剪切板 clipboard</div>
+      <div id="dialog">对话框 dialog</div>
+      <div id="dll">原生插件 dll</div>
+      <div id="fs">文件 fs</div>
+      <div id="horse">应用 horse</div>
+      <div id="os">系统 os</div>
+      <div id="process">进程 process</div>
+      <div id="screen">屏幕 screen</div>
+      <div id="window">窗口 win</div>
     </div>
-    <div class="box">
-      <div id="menuContainer">
-        <div id="clipboard" class="menuSelected">剪切板 clipboard</div>
-        <div id="dialog">对话框 dialog</div>
-        <div id="dll">原生插件 dll</div>
-        <div id="fs">文件 fs</div>
-        <div id="horse">应用 horse</div>
-        <div id="os">系统 os</div>
-        <div id="process">进程 process</div>
-        <div id="screen">屏幕 screen</div>
-        <div id="tray">托盘图标 tray</div>
-        <div id="window">窗口 win</div>
-      </div>
-      <div id="demoContainer"><iframe id="exampleIframe" src="./example/clipboard.html"></iframe></div>
-    </div>
-    <script>
-      let $ = (selector) => document.querySelector(selector);
-      window.addEventListener("DOMContentLoaded", async () => {
-        $("#titleBox").addEventListener("mousedown", async () => {
-          horse.win.startDrag();
-        });
-        $("#btnMaximizeT").addEventListener("click", async () => {
-          await horse.win.maximize();
-        });
-        $("#btnMinimizeT").addEventListener("click", () => {
-          horse.win.minimize();
-        });
-        $("#btnCloseT").addEventListener("click", () => {
-          horse.win.close();
-        });
-        $("#btnRestoreT").addEventListener("click", () => {
-          horse.win.restore();
-        });
-        horse.win.on("stateChanged", async (result) => {
-          if (result.state == "maximize") {
-            $("#btnMaximizeT").setAttribute("style", "display:none;");
-            $("#btnRestoreT").setAttribute("style", "");
-          } else if (result.state == "restore") {
-            $("#btnMaximizeT").setAttribute("style", "");
-            $("#btnRestoreT").setAttribute("style", "display:none;");
-          }
-        });
-        // horse.win.on("sizePosChanged", (data) => {
-        //   // console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
-        // });
-        $("#menuContainer").addEventListener("click", (e) => {
-          let id = e.target.getAttribute("id");
-          if (!id || id === "menuContainer" || e.target.classList.contains("menuSelected")) return;
-          $(".menuSelected").classList.remove("menuSelected");
-          e.target.classList.add("menuSelected");
-          $("#exampleIframe").setAttribute("src", `./example/${id}.html`);
-        });
+    <div id="demoContainer"><iframe id="exampleIframe" src="./example/clipboard.html"></iframe></div>
+  </div>
+  <script>
+    let $ = (selector) => document.querySelector(selector);
+    window.addEventListener("DOMContentLoaded", async () => {
+      $("#titleBox").addEventListener("mousedown", async () => {
+        horse.win.startDrag();
       });
-    </script>
-  </body>
+      $("#btnMaximizeT").addEventListener("click", async () => {
+        await horse.win.maximize();
+      });
+      $("#btnMinimizeT").addEventListener("click", () => {
+        horse.win.minimize();
+      });
+      $("#btnCloseT").addEventListener("click", () => {
+        horse.win.close();
+      });
+      $("#btnRestoreT").addEventListener("click", () => {
+        horse.win.restore();
+      });
+      horse.win.on("stateChanged", async (result) => {
+        if (result.state == "maximize") {
+          $("#btnMaximizeT").setAttribute("style", "display:none;");
+          $("#btnRestoreT").setAttribute("style", "");
+        } else if (result.state == "restore") {
+          $("#btnMaximizeT").setAttribute("style", "");
+          $("#btnRestoreT").setAttribute("style", "display:none;");
+        }
+      });
+      // horse.win.on("sizePosChanged", (data) => {
+      //   // console.log(`x:${data.x},y:${data.y},w:${data.w},h:${data.h}`);
+      // });
+      $("#menuContainer").addEventListener("click", (e) => {
+        let id = e.target.getAttribute("id");
+        if (!id || id === "menuContainer" || e.target.classList.contains("menuSelected")) return;
+        $(".menuSelected").classList.remove("menuSelected");
+        e.target.classList.add("menuSelected");
+        $("#exampleIframe").setAttribute("src", `./example/${id}.html`);
+      });
+    });
+  </script>
+</body>
+
 </html>

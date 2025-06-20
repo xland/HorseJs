@@ -29,6 +29,7 @@ namespace {
     {"stopPreventSleep", &Os::stopPreventSleep},
     {"getIpAddr", &Os::getIpAddr},
     {"showNotify", &Os::showNotify},
+    {"createTray", &Os::createTray},
     {"on", &Os::on},
     {"off", &Os::off},
     };
@@ -382,6 +383,42 @@ void Os::showNotify(const rapidjson::Value& params, JsonResult* result)
     Notifications::ToastNotification toast(xmlDoc);
     Notifications::ToastNotifier notifier = Notifications::ToastNotificationManager::CreateToastNotifier(appIdStr.data());
     notifier.Show(toast);
+}
+
+void Os::createTray(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    const rapidjson::Value& config = arr[0];
+
+    auto win = result->getWin();
+    NOTIFYICONDATA* tray = new NOTIFYICONDATA();
+    ZeroMemory(tray, sizeof(NOTIFYICONDATA));
+    tray->cbSize = sizeof(NOTIFYICONDATA);
+    tray->hWnd = win->hwnd;
+    tray->uID = config["__id"].GetInt();
+    tray->uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+    tray->uCallbackMessage = WM_TRAY;
+    tray->hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+    if (config.HasMember("tip") && config["tip"].IsString()) {
+        auto str = Util::convertToWStr(config["tip"].GetString());
+        wcscpy_s(tray->szTip, str.data());
+    }
+    Shell_NotifyIcon(NIM_ADD, tray);
+    win->trays.push_back(tray);
+
+
+    if (config.HasMember("menu") && config["menu"].IsArray()) {
+        HMENU menu = CreatePopupMenu();
+        const rapidjson::Value::ConstArray menuArr = config["menu"].GetArray();
+        for (size_t i = 0; i < menuArr.Size(); i++)
+        {
+            const rapidjson::Value& value = menuArr[i];
+            auto id = value["__id"].GetInt();
+            auto text = Util::convertToWStr(value["text"].GetString());
+            AppendMenu(menu, MF_STRING, id, text.data());
+        }
+        win->trayMenus.insert({ tray->uID ,menu });
+    }
 }
 
 // 保存数据到用户凭据区

@@ -21,6 +21,7 @@ public:
 	void stopPreventSleep(const rapidjson::Value& params, JsonResult* result);
 	void getIpAddr(const rapidjson::Value& params, JsonResult* result);
 	void showNotify(const rapidjson::Value& params, JsonResult* result);
+	void createTray(const rapidjson::Value& params, JsonResult* result);
 	void on(const rapidjson::Value& params, JsonResult* result);
 	void off(const rapidjson::Value& params, JsonResult* result);
 private:
