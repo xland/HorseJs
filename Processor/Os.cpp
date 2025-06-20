@@ -1,6 +1,7 @@
 ﻿#include <pch.h>
+#include "../App/BrowserWindow.h"
 #include "Os.h"
-
+#include <wtsapi32.h>
 namespace {
     std::unique_ptr<Os> os;
     static std::unordered_map<std::string, void (Os::*)(const rapidjson::Value&, JsonResult*)> funcs{
@@ -15,6 +16,8 @@ namespace {
     {"openFile", &Os::openFile},
     {"preventSleep", &Os::preventSleep},
     {"stopPreventSleep", &Os::stopPreventSleep},
+    {"on", &Os::on},
+    {"off", &Os::off},
     };
     typedef LONG(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
 }
@@ -215,12 +218,39 @@ void Os::stopPreventSleep(const rapidjson::Value& params, JsonResult* result)
     SetThreadExecutionState(ES_CONTINUOUS);
 }
 
+
+void Os::on(const rapidjson::Value& params, JsonResult* result) 
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::string eventName = arr[0].GetString();
+    auto win = result->getWin();
+    if (eventName == "osLock") {
+        if (!WTSRegisterSessionNotification(win->hwnd, NOTIFY_FOR_THIS_SESSION)) {
+            result->addErr("listen os lock err");
+            return;
+        }
+    }
+    win->events[eventName].insert(result->winId);
+}
+void Os::off(const rapidjson::Value& params, JsonResult* result) 
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::string eventName = arr[0].GetString();
+    auto win = result->getWin();
+    win->events[eventName].erase(result->winId);
+    if (eventName == "osLock") {
+        if (!WTSUnRegisterSessionNotification(win->hwnd)) {
+            result->addErr("unlisten os lock err");
+            return;
+        }
+    }
+}
+
+
 // 保存数据到用户凭据区
 // https://zhuanlan.zhihu.com/p/679219628?share_code=NzSd6ri8efPP&utm_psn=1912465887958639333
 
 // 获取当前用户的皮肤颜色 Theme
-
-//阻止锁屏
 
 //插入电源，使用电池
 

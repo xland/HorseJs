@@ -19,6 +19,9 @@ public:
 	void openFile(const rapidjson::Value& params, JsonResult* result);
 	void preventSleep(const rapidjson::Value& params, JsonResult* result);
 	void stopPreventSleep(const rapidjson::Value& params, JsonResult* result);
+
+	void on(const rapidjson::Value& params, JsonResult* result);
+	void off(const rapidjson::Value& params, JsonResult* result);
 private:
 };
 

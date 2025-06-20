@@ -33,6 +33,18 @@ export class Os extends Eventer {
   stopPreventSleep() {
     return this.exec("stopPreventSleep");
   }
+  on(eventName, func) {
+    let flag = this.listen(eventName, func);
+    if (flag) {
+      this.exec("on", eventName);
+    }
+  }
+  off(eventName, func) {
+    let flag = this.unlisten(eventName, func);
+    if (flag) {
+      this.exec("off", eventName);
+    }
+  }
   private exec(methodName: string, ...params: any[]) {
     return this.call({
       className: "os",

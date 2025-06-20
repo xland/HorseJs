@@ -128,6 +128,19 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             result.returnBack();
         }
     }
+    else if (msg == WM_WTSSESSION_CHANGE) {
+        if (wParam == WTS_SESSION_LOCK) {
+            JsonResult r(id, "os", "osLock");
+            r.addString("type", "lock");
+            r.returnBack();
+        }
+        else if (wParam == WTS_SESSION_UNLOCK) {
+            JsonResult r(id, "os", "osLock");
+            r.addString("type", "unlock");
+            r.returnBack();
+        }
+        return false;
+    }
     sysProcess:
     return DefWindowProc(hwnd, msg, wParam, lParam);
 }

@@ -16,8 +16,10 @@
       <div id="btnGetOsColor" class="btn">获取系统默认颜色</div>
       <div id="btnShowItemInFolder" class="btn">打开文件夹，并选中某个路径</div>
       <div id="btnOpenFile" class="btn">使用默认应用打开一个路径</div>
-      <div id="btnPreventSleep" class="btn">阻止屏幕锁屏</div>
-      <div id="btnStopPreventSleep" class="btn">取消阻止锁屏</div>
+      <div id="btnPreventSleep" class="btn">阻止睡眠、休眠</div>
+      <div id="btnStopPreventSleep" class="btn">取消阻止睡眠、休眠</div>
+      <div id="btnOnOsLock" class="btn">监听锁屏事件</div>
+      <div id="btnOffOsLock" class="btn">取消监听锁屏事件</div>
       <div id="btnWriteUserCredentials" class="btn">文本写入用户凭据区（未完成）</div>
       <div id="btnReadUserCredentials" class="btn">从用户凭据区读取文本（未完成）</div>
       <div id="btnRegMouseHook" class="btn">注册鼠标钩子（未完成）</div>
@@ -74,6 +76,15 @@
         $("#btnStopPreventSleep").addEventListener("click", async () => {
           let data = await horse.os.stopPreventSleep();
           console.log(JSON.stringify(data));
+        });
+
+        $("#btnOnOsLock").addEventListener("click", async () => {
+          await horse.os.on("osLock", (data) => {
+            console.log(JSON.stringify(data));
+          });
+        });
+        $("#btnOffOsLock").addEventListener("click", async () => {
+          await horse.os.off("osLock");
         });
       });
     </script>

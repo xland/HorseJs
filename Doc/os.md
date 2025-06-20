@@ -73,3 +73,21 @@ await horse.os.preventSleep();
 ```js
 await horse.os.stopPreventSleep();
 ```
+
+- 监听系统锁屏事件。
+
+```js
+await horse.os.on("osLock", (data) => {
+	console.log(JSON.stringify(data));
+});
+// {"ok":true,"type":"lock"}
+// {"ok":true,"type":"unlock"}
+```
+
+- 取消监听系统锁屏事件。
+
+```js
+$("#btnOffOsLock").addEventListener("click", async () => {
+    await horse.os.off("osLock");
+});
+```
