@@ -42,7 +42,7 @@ bool Notify::execute(std::string& methodName, const rapidjson::Value& param, Jso
 void Notify::show(const rapidjson::Value& params, JsonResult* result)
 {
     auto appIdStr = Util::convertToWStr(App::get()->appId.data());
-    auto aumid = std::format(L"com.liulun.{}", appIdStr.data());
+    //auto aumid = std::format(L"com.liulun.{}", appIdStr.data());
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::wstring title = Util::convertToWStr(arr[1].GetString());
     std::wstring content = Util::convertToWStr(arr[2].GetString());
@@ -52,7 +52,7 @@ void Notify::show(const rapidjson::Value& params, JsonResult* result)
     XmlDocument xmlDoc;
     xmlDoc.LoadXml(xmlString);
     Notifications::ToastNotification toast(xmlDoc);
-    Notifications::ToastNotifier notifier = Notifications::ToastNotificationManager::CreateToastNotifier(aumid.data());
+    Notifications::ToastNotifier notifier = Notifications::ToastNotificationManager::CreateToastNotifier(appIdStr.data());
     notifier.Show(toast);
 }
 void Notify::createShortcutWithAUMID(const std::wstring& aumid)
