@@ -29,7 +29,7 @@
     - [窗口对象 horse.win](./Doc/win.md)
 - [FAQ](./Doc/FAQ.md)
 - [编译、贡献代码](./Doc/build.md)
-
+> 如果没有你想要的API，请在 [Issue](issues/) 里提交申请
 ## 赞助
 <table>
   <tr>
