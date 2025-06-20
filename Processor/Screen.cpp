@@ -5,6 +5,8 @@ namespace {
     std::unique_ptr<Screen> screen;
     static std::unordered_map<std::string, void (Screen::*)(const rapidjson::Value&, JsonResult*)> funcs{
         {"getAll", &Screen::getAll},
+        {"getDesktop", &Screen::getDesktop},
+        {"getColor", &Screen::getColor},
     };
     //todo dpi变化
     //todo 指定点的颜色信息（窗口位置、屏幕位置）
@@ -41,6 +43,38 @@ void Screen::getAll(const rapidjson::Value& params, JsonResult* result)
     Context* ptr = &context;
     EnumDisplayMonitors(NULL, NULL, Screen::enumProc, (LPARAM)ptr);
     result->addValue("data", std::move(array));
+}
+void Screen::getDesktop(const rapidjson::Value& params, JsonResult* result)
+{
+    auto x = GetSystemMetrics(SM_XVIRTUALSCREEN);
+    auto y = GetSystemMetrics(SM_YVIRTUALSCREEN);
+    auto w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+    auto h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+    result->addNumber("x", x);
+    result->addNumber("y", y);
+    result->addNumber("w", w);
+    result->addNumber("h", h);
+}
+void Screen::getColor(const rapidjson::Value& params, JsonResult* result)
+{
+    HDC hdcScreen = GetDC(NULL);
+    if (!hdcScreen) {
+        result->addErr("can not get dc");
+        return;
+    }
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    POINT pt;
+    if (arr.Size() == 2) {
+        pt.x = arr[0].GetInt();
+        pt.y = arr[1].GetInt();
+    }
+    else {
+        GetCursorPos(&pt);
+    }
+    COLORREF color = GetPixel(hdcScreen, pt.x, pt.y);
+    auto str = Util::colorToHex(color);
+    ReleaseDC(nullptr, hdcScreen);
+    result->addString("data", str.data());
 }
 BOOL Screen::enumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
 {
