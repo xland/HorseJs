@@ -86,20 +86,20 @@ void BrowserWindow::configSize(const rapidjson::Value& config)
 
 void BrowserWindow::configPos(const rapidjson::Value& config)
 {
-    if (config.HasMember("position"))
+    if (config.HasMember("pos"))
     {
-        if(config["position"].IsString()){
-            auto pos = std::string_view(config["position"].GetString());
-            if (pos == "screenCenter")
+        if(config["pos"].IsString()){
+            std::string pos = config["pos"].GetString();
+            if (pos == "centerScreen")
             {
-                int sw = GetSystemMetrics(SM_CXSCREEN);
-                int sh = GetSystemMetrics(SM_CYSCREEN);
-                x = (sw - w) / 2;
-                y = (sh - h) / 2;
+                RECT workArea;
+                SystemParametersInfo(SPI_GETWORKAREA, 0, &workArea, 0);
+                x = workArea.left + (workArea.right - workArea.left - w) / 2;
+                y = workArea.top + (workArea.bottom - workArea.top - h) / 2;
             }
         }
-        else if (config["size"].IsObject()) {
-            auto posObj = config["position"].GetObj();
+        else if (config["pos"].IsObject()) {
+            auto posObj = config["pos"].GetObj();
             x = posObj["x"].GetInt();
             y = posObj["y"].GetInt();
         }

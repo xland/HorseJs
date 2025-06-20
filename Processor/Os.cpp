@@ -8,6 +8,9 @@
 #include <comdef.h>
 #include <wtsapi32.h>
 
+#include <winrt/Windows.UI.Notifications.h>
+#include <winrt/Windows.Data.Xml.Dom.h>
+#include "../App/App.h"
 #include "NetConnListener.h"
 
 namespace {
@@ -25,6 +28,7 @@ namespace {
     {"preventSleep", &Os::preventSleep},
     {"stopPreventSleep", &Os::stopPreventSleep},
     {"getIpAddr", &Os::getIpAddr},
+    {"showNotify", &Os::showNotify},
     {"on", &Os::on},
     {"off", &Os::off},
     };
@@ -359,7 +363,26 @@ void Os::getIpAddr(const rapidjson::Value& params, JsonResult* result)
     result->addValue("data", std::move(array));
 }
 
+void Os::showNotify(const rapidjson::Value& params, JsonResult* result)
+{
+    using namespace winrt;
+    using namespace winrt::Windows::UI;
+    using namespace winrt::Windows::Data::Xml::Dom;
 
+    auto appIdStr = Util::convertToWStr(App::get()->appId.data());
+    //auto aumid = std::format(L"com.liulun.{}", appIdStr.data());
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring title = Util::convertToWStr(arr[1].GetString());
+    std::wstring content = Util::convertToWStr(arr[2].GetString());
+    auto xmlString = std::format(L"<toast><visual><binding template='ToastText02'>"
+        L"<text id='1'>{}</text><text id='2'>{}</text></binding></visual></toast>",
+        title, content);
+    XmlDocument xmlDoc;
+    xmlDoc.LoadXml(xmlString);
+    Notifications::ToastNotification toast(xmlDoc);
+    Notifications::ToastNotifier notifier = Notifications::ToastNotificationManager::CreateToastNotifier(appIdStr.data());
+    notifier.Show(toast);
+}
 
 // 保存数据到用户凭据区
 // https://zhuanlan.zhihu.com/p/679219628?share_code=NzSd6ri8efPP&utm_psn=1912465887958639333

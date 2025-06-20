@@ -36,6 +36,9 @@ export class Os extends Eventer {
   getIpAddr() {
     return this.exec("getIpAddr");
   }
+  async showNotify(appName: string, title: string, content: string) {
+    return this.exec("showNotify", appName, title, content);
+  }
   on(eventName, func) {
     let flag = this.listen(eventName, func);
     if (flag) {

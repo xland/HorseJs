@@ -14,17 +14,14 @@
     "shadow": true,
     "title": "窗口标题",
     "size": {
-      "w": 1000,
+      "w": 1200,
       "h": 800
     },
     "minSize": {
       "w": 250,
       "h": 200
     },
-    "position": {
-      "x": 200,
-      "y": 200
-    },
+    "pos": "centerScreen",
     "scriptDialogEnable": true,
     "scriptEnable": true,
     "webMessageEnable": true,

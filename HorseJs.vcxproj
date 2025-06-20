@@ -176,7 +176,6 @@
     <ClCompile Include="Processor\Horse.cpp" />
     <ClCompile Include="Processor\Dll.cpp" />
     <ClCompile Include="Processor\MsgProcessor.cpp" />
-    <ClCompile Include="Processor\Notify.cpp" />
     <ClCompile Include="Processor\Os.cpp" />
     <ClCompile Include="Processor\Process.cpp" />
     <ClCompile Include="Processor\Res.cpp" />
@@ -206,6 +205,7 @@
     <None Include="Doc\clipboard.md" />
     <None Include="Doc\config.md" />
     <None Include="Doc\dev\ChangeLog.md" />
+    <None Include="Doc\dev\notify.md" />
     <None Include="Doc\dev\websocket.md" />
     <None Include="Doc\dialog.md" />
     <None Include="Doc\FAQ.md" />
@@ -258,10 +258,6 @@
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)UI\example</DestinationFolders>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)UI\example</DestinationFolders>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Script\example\notify.html">
-      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)UI\example</DestinationFolders>
-      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)UI\example</DestinationFolders>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="Script\example\os.html">
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)UI\example</DestinationFolders>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)UI\example</DestinationFolders>
@@ -295,7 +291,6 @@
     <ClInclude Include="Processor\Fs.h" />
     <ClInclude Include="Processor\Horse.h" />
     <ClInclude Include="Processor\Dll.h" />
-    <ClInclude Include="Processor\Notify.h" />
     <ClInclude Include="Processor\Os.h" />
     <ClInclude Include="Processor\Process.h" />
     <ClInclude Include="Processor\Res.h" />

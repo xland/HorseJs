@@ -8,7 +8,6 @@
 #include "Horse.h"
 #include "Dll.h"
 #include "Fs.h"
-#include "Notify.h"
 #include "Win.h"
 #include "Os.h"
 #include "Screen.h"
@@ -24,7 +23,6 @@ namespace {
         {"horse",Horse::execute},
         {"dll",Dll::execute},
         {"fs",Fs::execute},
-        {"notify",Notify::execute},
         {"win",Win::execute},
         {"os",Os::execute},
         {"screen",Screen::execute},

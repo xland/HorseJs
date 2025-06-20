@@ -21,7 +21,7 @@
  - window.maxSize
 > 示例值：`{w:2000,h:1600}`  <br />
 > 设置窗口的最大大小。
- - window.position
+ - window.pos
 > 默认值：`"centerScreen"`  <br />
 > 值为：`"centerScreen"` 时,窗口将出现在当前屏幕正中央  <br />
 > 值为：`{x:100,y:100}` 时，窗口将在指定位置显示 。

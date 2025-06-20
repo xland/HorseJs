@@ -1,60 +1,3 @@
-﻿#include <pch.h>
-
-#include <winrt/Windows.UI.Notifications.h>
-#include <winrt/Windows.Data.Xml.Dom.h>
-#include "../App/App.h"
-#include "../Res/Res.h"
-#include "Notify.h"
-
-
-using namespace winrt;
-using namespace winrt::Windows::UI;
-using namespace winrt::Windows::Data::Xml::Dom;
-namespace {
-    std::unique_ptr<Notify> notify;
-    static std::unordered_map<std::string, void (Notify::*)(const rapidjson::Value&, JsonResult*)> funcs{
-    {"show", &Notify::show},
-    };
-}
-
-Notify::Notify()
-{
-}
-
-Notify::~Notify()
-{
-}
-
-Notify* Notify::get()
-{
-    if(!notify) {
-        notify = std::make_unique<Notify>();
-	}
-    return notify.get();
-}
-bool Notify::execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result)
-{
-    auto it = funcs.find(methodName);
-    if (it == funcs.end()) return false;
-    (Notify::get()->*it->second)(param, result);
-    return true;
-}
-void Notify::show(const rapidjson::Value& params, JsonResult* result)
-{
-    auto appIdStr = Util::convertToWStr(App::get()->appId.data());
-    //auto aumid = std::format(L"com.liulun.{}", appIdStr.data());
-    const rapidjson::Value::ConstArray arr = params.GetArray();
-    std::wstring title = Util::convertToWStr(arr[1].GetString());
-    std::wstring content = Util::convertToWStr(arr[2].GetString());
-    auto xmlString = std::format(L"<toast><visual><binding template='ToastText02'>"
-        L"<text id='1'>{}</text><text id='2'>{}</text></binding></visual></toast>", 
-        title, content);
-    XmlDocument xmlDoc;
-    xmlDoc.LoadXml(xmlString);
-    Notifications::ToastNotification toast(xmlDoc);
-    Notifications::ToastNotifier notifier = Notifications::ToastNotificationManager::CreateToastNotifier(appIdStr.data());
-    notifier.Show(toast);
-}
 void Notify::createShortcutWithAUMID(const std::wstring& aumid)
 {
     wchar_t buffer[MAX_PATH];
@@ -147,5 +90,3 @@ std::wstring Notify::getIcon() {
     CloseHandle(hFile);
     return logoStr;
 }
-
-

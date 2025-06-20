@@ -1,7 +1,6 @@
 import { Dll } from "./Dll";
 import { Process } from "./Process";
 import { Tray } from "./Tray";
-import { Notify } from "./Notify";
 import { WinProx } from "./WinProxy";
 import { Win } from "./Win";
 import { Fs } from "./Fs";
@@ -15,7 +14,6 @@ class Horse extends Eventer {
   fs: Fs;
   dialog: Dialog;
   clipboard: Clipboard;
-  notify: Notify;
   os: Os;
   screen: Screen;
   tray: Tray;
@@ -29,7 +27,6 @@ class Horse extends Eventer {
     this.fs = new Fs();
     this.dialog = new Dialog();
     this.clipboard = new Clipboard();
-    this.notify = new Notify();
     this.os = new Os();
     this.screen = new Screen();
     this.tray = new Tray();

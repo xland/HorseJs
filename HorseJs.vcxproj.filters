@@ -72,9 +72,6 @@
     <ClCompile Include="Lib\pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Processor\Notify.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Processor\Horse.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -108,6 +105,7 @@
     <None Include="Doc\dll.md" />
     <None Include="Doc\dev\websocket.md" />
     <None Include="Doc\build.md" />
+    <None Include="Doc\dev\notify.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\BrowserWindow.h">
@@ -275,9 +273,6 @@
     <ClInclude Include="Lib\pch.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Processor\Notify.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Processor\Horse.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -298,7 +293,6 @@
     <CopyFileToFolders Include="Script\example\dialog.html" />
     <CopyFileToFolders Include="Script\example\fs.html" />
     <CopyFileToFolders Include="Script\example\horse.html" />
-    <CopyFileToFolders Include="Script\example\notify.html" />
     <CopyFileToFolders Include="Script\example\os.html" />
     <CopyFileToFolders Include="Script\example\process.html" />
     <CopyFileToFolders Include="Script\example\screen.html" />
