@@ -1,6 +1,7 @@
 ﻿## horse.dialog 的方法
 
 - 打开路径选择对话框
+> todo 默认的filter
 ```js
 let data = await horse.dialog.openPath({
     title: "我的窗口标题",

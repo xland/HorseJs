@@ -653,6 +653,15 @@ void Fs::stopWatch(const rapidjson::Value& params, JsonResult* result)
     CloseHandle(watchMap[id]);
     Fs::removeWatch(id);
 }
+void Fs::packHorse(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring src = Util::convertToWStr(arr[0].GetString());
+    std::filesystem::path targetPath(src);
+	auto pPath = targetPath.parent_path();
+
+
+}
 bool Fs::delDirRecursive(const std::wstring& dirPath)
 {
     WIN32_FIND_DATA findData;
@@ -729,4 +738,36 @@ void Fs::getKnownPath(const GUID& type, JsonResult* result)
     else {
         result->addErr("get known folder err");
     }
+}
+
+void Fs::enumFiles(const std::wstring& baseDir, const std::wstring& currentDir, std::vector<std::wstring>& fileList)
+{
+    std::wstring searchPath = currentDir + L"\\*";
+    WIN32_FIND_DATA findData;
+    HANDLE hFind = FindFirstFile(searchPath.c_str(), &findData);
+    if (hFind == INVALID_HANDLE_VALUE) return;
+
+    do {
+        const std::wstring name = findData.cFileName;
+        if (name == L"." || name == L"..") continue;
+
+        std::wstring fullPath = currentDir + L"\\" + name;
+        std::wstring relativePath = fullPath.substr(baseDir.length() + 1);
+
+        if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+            enumFiles(baseDir, fullPath, fileList);
+        }
+        else {
+            fileList.emplace_back(relativePath);
+        }
+    } while (FindNextFile(hFind, &findData));
+    FindClose(hFind);
+
+
+    //std::ifstream file(filePath, std::ios::binary | std::ios::ate);
+    //std::streamsize size = file.tellg();
+    //file.seekg(0, std::ios::beg);
+
+    //std::vector<char> buffer(size);
+    //file.read(buffer.data(), size);
 }

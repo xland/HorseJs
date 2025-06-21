@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>HorseJs</title>
+    <link rel="stylesheet" href="css/iconfont.css" />
+    <style>
+        html {
+            margin: 0px;
+            padding: 0px;
+            height: 100%;
+            width: 100%;
+            background: transparent;
+        }
+
+        body {
+            margin: 0px;
+            padding: 0px;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            border-bottom-left-radius: 100px;
+        }
+
+        #titleBar {
+            background: #ccd5f0;
+            user-select: none;
+            line-height: 32px;
+            height: 32px;
+            display: flex;
+        }
+
+        #titleBox {
+            padding-left: 12px;
+            flex: 1;
+        }
+
+        .titleBtn {
+            width: 38px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .titleBtn:hover {
+            background: #e9eeff;
+        }
+
+        #btnCloseT:hover {
+            background: red !important;
+            color: #fff !important;
+        }
+
+        i {
+            font-size: 12px !important;
+        }
+
+        .box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .btn {
+            width: 328px;
+            height: 50px;
+            background-color: rgb(140, 200, 255);
+            margin: 10px;
+            text-align: left;
+            line-height: 50px;
+            border-radius: 6px;
+            padding-left: 22px;
+            user-select: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background: rgb(33, 136, 255) !important;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="titleBar">
+        <div id="titleBox">HorseJs 示例程序</div>
+        <div id="btnMinimizeT" class="titleBtn"><i class="iconfont horse-minimize"></i></div>
+        <div id="btnMaximizeT" class="titleBtn"><i class="iconfont horse-maximize"></i></div>
+        <div id="btnRestoreT" class="titleBtn" style="display: none"><i class="iconfont horse-restore"></i></div>
+        <div id="btnCloseT" class="titleBtn"><i class="iconfont horse-close"></i></div>
+    </div>
+    <div class="box">
+        <div id="btnFirst" class="btn">1. 选择 HorseJs 应用程序可执行文件的路径</div>
+        <div id="btnSecond" class="btn">2. 把 UI 文件与 config.json 文件置入可执行文件中</div>
+    </div>
+    <script>
+        let $ = (selector) => document.querySelector(selector);
+
+        window.addEventListener("DOMContentLoaded", async () => {
+            $("#titleBox").addEventListener("mousedown", async () => {
+                horse.win.startDrag();
+            });
+            $("#btnMaximizeT").addEventListener("click", async () => {
+                await horse.win.maximize();
+            });
+            $("#btnMinimizeT").addEventListener("click", () => {
+                horse.win.minimize();
+            });
+            $("#btnCloseT").addEventListener("click", () => {
+                horse.win.close();
+            });
+            $("#btnRestoreT").addEventListener("click", () => {
+                horse.win.restore();
+            });
+            horse.win.on("stateChanged", async (result) => {
+                if (result.state == "maximize") {
+                    $("#btnMaximizeT").setAttribute("style", "display:none;");
+                    $("#btnRestoreT").setAttribute("style", "");
+                } else if (result.state == "restore") {
+                    $("#btnMaximizeT").setAttribute("style", "");
+                    $("#btnRestoreT").setAttribute("style", "display:none;");
+                }
+            });
+            $("#btnFirst").addEventListener("click", async () => {
+                let data = await horse.dialog.openPath({
+                    title: "选择应用程序可执行文件",
+                    okBtnText: "选择",
+                    defaultPath: "C:\\Users",
+                    type: "file", //或"dir"，默认值为file
+                    filter: [
+                        ["All Files", "*.exe"]
+                    ],
+                    multiSelection: false,
+                    showHiddenFile: false,
+                });
+                if (data.cancel || !data.ok) return;
+                window.exePath = data.data;
+            })
+            $("#btnSecond").addEventListener("click", async () => {
+                if (!window.exePath) {
+                    alert("请先选择exe文件路径");
+                    return;
+                }
+                let data = await horse.fs.packHorse(window.exePath);
+            })
+        });
+    </script>
+</body>
+
+</html>

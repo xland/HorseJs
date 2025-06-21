@@ -27,6 +27,7 @@ public:
 	void getPath(const rapidjson::Value& params, JsonResult* result);
 	void watch(const rapidjson::Value& params, JsonResult* result);
 	void stopWatch(const rapidjson::Value& params, JsonResult* result);
+	void packHorse(const rapidjson::Value& params, JsonResult* result);
 private:
 	bool delDirRecursive(const std::wstring& dirPath);
 	static void addWatch(const std::string& id, HANDLE handle);
@@ -34,5 +35,6 @@ private:
 	static void removeWatch(const std::string& id);
 	std::string getExePath(const std::string& type);
 	void getKnownPath(const GUID& type, JsonResult* result);
+	void enumFiles(const std::wstring& baseDir, const std::wstring& currentDir, std::vector<std::wstring>& fileList);
 };
 
