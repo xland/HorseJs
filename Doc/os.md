@@ -138,3 +138,21 @@ console.log(data);
 let data = await horse.os.spawn("notepad.exe");
 console.log(data);
 ```
+
+- 向用户凭据区写入文本
+```js
+let data = await horse.os.creadWrite("keyName", "allen 测试中文");
+console.log(data);
+```
+
+- 从用户凭据区读取文本
+```js
+let data = await horse.os.credRead("keyName");
+console.log(data);
+```
+
+- 删除用户凭据
+```js
+let data = await horse.os.credDel("keyName");
+console.log(data);
+```
