@@ -20,13 +20,6 @@ public:
 	bool scriptDialogEnable{ true }, webMessageEnable{ true }, scriptEnable{ true }, contextMenuEnable{true};
 public:
 	bool framelessResizable{ true };
-
-	wil::com_ptr<ICoreWebView2Controller> ctrl;
-	wil::com_ptr<ICoreWebView2CompositionController> ctrlComp;
-	UI::Composition::Desktop::DesktopWindowTarget m_target{ nullptr };
-	UI::Composition::ContainerVisual m_rootVisual{ nullptr };
-	UI::Composition::ContainerVisual m_webViewVisual{ nullptr };
-
 	HWND hwnd;
 	wil::unique_hicon favicon;
 	//  set不重复，即使一个窗口注册了多个相同的事件，
@@ -35,21 +28,22 @@ public:
 	wil::com_ptr<ICoreWebView2> webview;
 	std::vector<NOTIFYICONDATA*> trays;
 	std::map<int, HMENU> trayMenus;
+	wil::com_ptr<ICoreWebView2CompositionController> ctrlComp;
 protected:
 private:
+	HRESULT ctrlReady(HRESULT result, ICoreWebView2CompositionController* ctrl);
 	void setWindowStyle(long& exStyle, long& style);
 	void bindCompCtrlToHwnd();
+	std::wstring& getWinClsName();
 	void initWindow();
+private:
 	void sizePosChanged(WINDOWPOS* winPos);
 	void stateChanged(const int& state);
 	void closing();
 	void setMinMaxInfo(MINMAXINFO* mmi);
-	void routeMsgToPage(UINT msg, WPARAM wParam, LPARAM lParam);
-	std::wstring& getWinClsName();
 	int hittest(const POINT& pt);
 	static LRESULT CALLBACK winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	HRESULT ctrlReady(HRESULT result, ICoreWebView2CompositionController* ctrl);
 	HRESULT cursorChange(ICoreWebView2CompositionController*, IUnknown*);
 private:
 	void configSize(const rapidjson::Value& config);
@@ -57,6 +51,7 @@ private:
 	void configPage(const rapidjson::Value& config);
 	void configOther(const rapidjson::Value& config);
 private:
+	void routeMsgToPage(UINT msg, WPARAM wParam, LPARAM lParam);
 	HRESULT navigateStart(ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args);
 	HRESULT navigateEnd(ICoreWebView2* webview, ICoreWebView2NavigationCompletedEventArgs* args);
 	HRESULT titleChange(ICoreWebView2* sender, IUnknown* args);
@@ -73,5 +68,9 @@ private:
 	std::string getMsgStr(ICoreWebView2WebMessageReceivedEventArgs* args);
 private:
 	bool isMouseTracking{ false };
+	wil::com_ptr<ICoreWebView2Controller> ctrl;
+	UI::Composition::Desktop::DesktopWindowTarget m_target{ nullptr };
+	UI::Composition::ContainerVisual m_rootVisual{ nullptr };
+	UI::Composition::ContainerVisual m_webViewVisual{ nullptr };
 };
 

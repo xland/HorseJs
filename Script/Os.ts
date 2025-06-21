@@ -40,7 +40,7 @@ export class Os extends Eventer {
   showNotify(appName: string, title: string, content: string) {
     return this.exec("showNotify", appName, title, content);
   }
-  async createTray(config: any) {
+  createTray(config: any) {
     config.__id = util.randomNum();
     this.listen(config.__id, (data) => {
       let type = data.type;
@@ -52,6 +52,9 @@ export class Os extends Eventer {
       this.listen(item.__id, item.click);
     });
     return this.exec("createTray", config);
+  }
+  destroyTray(id: number) {
+    return this.exec("destroyTray", id);
   }
   async spawn(path: string) {
     return this.exec("spawn", path);

@@ -30,6 +30,7 @@ namespace {
     {"getIpAddr", &Os::getIpAddr},
     {"showNotify", &Os::showNotify},
     {"createTray", &Os::createTray},
+    {"destroyTray", &Os::destroyTray},
     {"spawn", &Os::spawn},
     {"on", &Os::on},
     {"off", &Os::off},
@@ -428,6 +429,27 @@ void Os::createTray(const rapidjson::Value& params, JsonResult* result)
         }
         win->trayMenus.insert({ tray->uID ,menu });
     }
+	result->addNumber("id", (int)tray->uID);
+}
+
+void Os::destroyTray(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    int trayId = arr[0].GetInt();
+    auto win = result->getWin();
+    for (auto it = win->trays.begin(); it != win->trays.end(); ++it) {
+        if ((*it)->uID == trayId) {
+            Shell_NotifyIcon(NIM_DELETE, *it);
+            delete *it;
+            win->trays.erase(it);
+            break;
+        }
+    }
+    auto menuIt = win->trayMenus.find(trayId);
+    if (menuIt != win->trayMenus.end()) {
+        DestroyMenu(menuIt->second);
+        win->trayMenus.erase(menuIt);
+	}
 }
 
 

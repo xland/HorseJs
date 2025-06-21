@@ -8,6 +8,35 @@
 using namespace Microsoft;
 
 
+void BrowserWindow::routeMsgToPage(UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    if (!ctrlComp) return;
+    DWORD mouseData = 0;
+    POINT point{ .x{GET_X_LPARAM(lParam)},.y{GET_Y_LPARAM(lParam)} };
+    //todo 鼠标按下 释放时 SetCapture  ReleaseCapture
+    if (msg == WM_MOUSEMOVE)
+    {
+        if (!isMouseTracking) {
+            TRACKMOUSEEVENT tme = { sizeof(TRACKMOUSEEVENT) };
+            tme.dwFlags = TME_LEAVE;
+            tme.hwndTrack = hwnd;
+            TrackMouseEvent(&tme);
+            isMouseTracking = true;
+        }
+    }
+    else if (msg == WM_MOUSEWHEEL || msg == WM_MOUSEHWHEEL)
+    {
+        mouseData = GET_WHEEL_DELTA_WPARAM(wParam);
+        ScreenToClient(hwnd, &point);
+    }
+    else if (msg == WM_XBUTTONDBLCLK || msg == WM_XBUTTONDOWN || msg == WM_XBUTTONUP) { //前进后退之类的按钮
+        mouseData = GET_XBUTTON_WPARAM(wParam);
+    }
+    auto eventKind = static_cast<COREWEBVIEW2_MOUSE_EVENT_KIND>(msg);
+    auto eventKey = static_cast<COREWEBVIEW2_MOUSE_EVENT_VIRTUAL_KEYS>(GET_KEYSTATE_WPARAM(wParam));
+    ctrlComp->SendMouseInput(eventKind, eventKey, mouseData, point);
+}
+
 void BrowserWindow::loadPage()
 {
     HRESULT hr = ctrl->get_CoreWebView2(&webview);

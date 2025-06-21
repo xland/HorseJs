@@ -168,6 +168,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App\App.cpp" />
+    <ClCompile Include="App\BrowserWindowMsg.cpp" />
     <ClCompile Include="Processor\NetConnListener.cpp" />
     <ClCompile Include="Processor\Clipboard.cpp" />
     <ClCompile Include="Processor\Dialog.cpp" />

@@ -25,7 +25,7 @@
     <div id="btnRegNetConnListener" class="btn">监听网络连接、断开事件</div>
     <div id="btnShowNotify" class="btn">显示系统通知</div>
     <div id="btnCreateTray" class="btn">创建托盘图标</div>
-    <div id="btnDestroyTray" class="btn">销毁托盘图标（未完成）</div>
+    <div id="btnDestroyTray" class="btn">销毁托盘图标</div>
     <div id="btnStartProcess" class="btn">启动一个进程</div>
     <div id="btnWriteUserCredentials" class="btn">文本写入用户凭据区（未完成）</div>
     <div id="btnReadUserCredentials" class="btn">从用户凭据区读取文本（未完成）</div>
@@ -124,6 +124,11 @@
             },
           ],
         });
+        console.log(data);
+        window.__trayId = data.id;
+      });
+      $("#btnDestroyTray").addEventListener("click", async () => {
+        let data = await horse.os.destroyTray(window.__trayId);
         console.log(data);
       });
       $("#btnStartProcess").addEventListener("click", async () => {
