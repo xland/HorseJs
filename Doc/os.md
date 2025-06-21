@@ -108,3 +108,33 @@ await horse.os.on("netConnChanged", (data) => {
 //{data: 'disconn', ok: true}
 //{data: 'conn', ok: true, type: 'ipv4'}
 ```
+
+- 创建托盘图标（及其关联的菜单）
+```js
+await horse.os.createTray({
+    rightBtnDown: () => {
+        console.log("rightBtnDown");
+    },
+    leftBtnDown: () => {
+        console.log("leftBtnDown");
+    },
+    menu: [
+        {
+        text: "退出",
+        click: () => {
+            console.log("tray menu item click");
+        },
+        },
+    ],
+});
+```
+- 显示一个系统通知
+```js
+let data = await horse.os.showNotify("通知标题", "通知内容\n换行\n换行");
+console.log(data);
+```
+- 启动一个进程
+```js
+let data = await horse.os.spawn("notepad.exe");
+console.log(data);
+```

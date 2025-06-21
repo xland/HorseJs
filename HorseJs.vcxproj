@@ -212,9 +212,7 @@
     <None Include="Doc\fs.md" />
     <None Include="Doc\horse.md" />
     <None Include="Doc\dll.md" />
-    <None Include="Doc\notify.md" />
     <None Include="Doc\os.md" />
-    <None Include="Doc\process.md" />
     <None Include="Doc\dev\ReadWriteRes.md" />
     <None Include="Doc\screen.md" />
     <None Include="Doc\start.md" />
@@ -258,10 +256,6 @@
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)UI\example</DestinationFolders>
     </CopyFileToFolders>
     <CopyFileToFolders Include="Script\example\os.html">
-      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)UI\example</DestinationFolders>
-      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)UI\example</DestinationFolders>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="Script\example\process.html">
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)UI\example</DestinationFolders>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)UI\example</DestinationFolders>
     </CopyFileToFolders>

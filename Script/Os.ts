@@ -53,6 +53,9 @@ export class Os extends Eventer {
     });
     return this.exec("createTray", config);
   }
+  async spawn(path: string) {
+    return this.exec("spawn", path);
+  }
   on(eventName, func) {
     let flag = this.listen(eventName, func);
     if (flag) {

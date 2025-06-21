@@ -26,6 +26,7 @@
     <div id="btnShowNotify" class="btn">显示系统通知</div>
     <div id="btnCreateTray" class="btn">创建托盘图标</div>
     <div id="btnDestroyTray" class="btn">销毁托盘图标（未完成）</div>
+    <div id="btnStartProcess" class="btn">启动一个进程</div>
     <div id="btnWriteUserCredentials" class="btn">文本写入用户凭据区（未完成）</div>
     <div id="btnReadUserCredentials" class="btn">从用户凭据区读取文本（未完成）</div>
     <div id="btnRegMouseHook" class="btn">注册鼠标钩子（未完成）</div>
@@ -123,6 +124,10 @@
             },
           ],
         });
+        console.log(data);
+      });
+      $("#btnStartProcess").addEventListener("click", async () => {
+        let data = await horse.os.spawn("notepad.exe");
         console.log(data);
       });
     });

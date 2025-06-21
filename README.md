@@ -23,7 +23,6 @@
     - [第三方库 horse.dll](./Doc/dll.md)
     - [文件 horse.fs](./Doc/fs.md)
     - [系统 horse.os](./Doc/os.md)
-    - [进程 horse.process](./Doc/process.md)
     - [屏幕 horse.screen](./Doc/screen.md)
     - [窗口 horse.win](./Doc/win.md)
 - [FAQ](./Doc/FAQ.md)

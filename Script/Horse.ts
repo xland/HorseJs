@@ -1,5 +1,4 @@
 import { Dll } from "./Dll";
-import { Process } from "./Process";
 import { WinProx } from "./WinProxy";
 import { Win } from "./Win";
 import { Fs } from "./Fs";
@@ -15,7 +14,6 @@ class Horse extends Eventer {
   clipboard: Clipboard;
   os: Os;
   screen: Screen;
-  process: Process;
   dll: Dll;
   webview;
   constructor() {
@@ -27,7 +25,6 @@ class Horse extends Eventer {
     this.clipboard = new Clipboard();
     this.os = new Os();
     this.screen = new Screen();
-    this.process = new Process();
     this.dll = new Dll();
     this.listenMsg();
   }

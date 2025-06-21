@@ -30,6 +30,7 @@ namespace {
     {"getIpAddr", &Os::getIpAddr},
     {"showNotify", &Os::showNotify},
     {"createTray", &Os::createTray},
+    {"spawn", &Os::spawn},
     {"on", &Os::on},
     {"off", &Os::off},
     };
@@ -103,19 +104,27 @@ void Os::createShortcut(const rapidjson::Value& params, JsonResult* result)
 
     IShellLink* pShellLink = nullptr;
     HRESULT hr = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID*)&pShellLink);
-    if (SUCCEEDED(hr)) {
-        pShellLink->SetPath(srcPathW.c_str());
-        pShellLink->SetDescription(desW.c_str());
-        pShellLink->SetIconLocation(srcPathW.c_str(), 0);
-        pShellLink->SetWorkingDirectory(workDirW.c_str());
-        IPersistFile* pPersistFile = nullptr;
-        hr = pShellLink->QueryInterface(IID_IPersistFile, (LPVOID*)&pPersistFile);
-        if (SUCCEEDED(hr)) {
-            pPersistFile->Save(dstPathW.c_str(), TRUE);
-            pPersistFile->Release();
-        }
+    if (FAILED(hr)) {
+        result->addErr("Failed to create IShellLink instance.");
+        return;
+	}
+    pShellLink->SetPath(srcPathW.c_str());
+    pShellLink->SetDescription(desW.c_str());
+    pShellLink->SetIconLocation(srcPathW.c_str(), 0);
+    pShellLink->SetWorkingDirectory(workDirW.c_str());
+    IPersistFile* pPersistFile = nullptr;
+    hr = pShellLink->QueryInterface(IID_IPersistFile, (LPVOID*)&pPersistFile);
+    if(FAILED(hr)) {
         pShellLink->Release();
+        result->addErr("Failed to query IPersistFile interface.");
+        return;
+	}
+    hr = pPersistFile->Save(dstPathW.c_str(), TRUE);
+    if (FAILED(hr)) {
+        result->addErr("Failed to save shortcut file.");
     }
+    pPersistFile->Release();
+    pShellLink->Release();
 }
 
 void Os::getCPUID(const rapidjson::Value& params, JsonResult* result)
@@ -419,6 +428,30 @@ void Os::createTray(const rapidjson::Value& params, JsonResult* result)
         }
         win->trayMenus.insert({ tray->uID ,menu });
     }
+}
+
+
+void Os::spawn(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring path = Util::convertToWStr(arr[0].GetString());
+
+    STARTUPINFO si;
+    PROCESS_INFORMATION pi;
+    ZeroMemory(&si, sizeof(STARTUPINFO));
+    ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
+    si.cb = sizeof(STARTUPINFO);
+    //si.hStdError = hStdoutWrite;  // 标准错误重定向到输出管道
+    //si.hStdOutput = hStdoutWrite; // 标准输出重定向到输出管道
+    //si.hStdInput = hStdinRead;    // 标准输入重定向到输入管道
+    //si.dwFlags |= STARTF_USESTDHANDLES; // 使用标准句柄
+
+    if (!CreateProcess(NULL, path.data(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+        result->addErr("can not create process");
+    }
+    //WaitForSingleObject(pi.hProcess, INFINITE);
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
 }
 
 // 保存数据到用户凭据区
