@@ -31,6 +31,9 @@ namespace {
     {"showNotify", &Os::showNotify},
     {"createTray", &Os::createTray},
     {"destroyTray", &Os::destroyTray},
+    {"credWrite", &Os::credWrite},
+    {"credRead", &Os::credRead},
+    {"credDel", &Os::credDel},
     {"spawn", &Os::spawn},
     {"on", &Os::on},
     {"off", &Os::off},
@@ -415,8 +418,6 @@ void Os::createTray(const rapidjson::Value& params, JsonResult* result)
     }
     Shell_NotifyIcon(NIM_ADD, tray);
     win->trays.push_back(tray);
-
-
     if (config.HasMember("menu") && config["menu"].IsArray()) {
         HMENU menu = CreatePopupMenu();
         const rapidjson::Value::ConstArray menuArr = config["menu"].GetArray();
@@ -450,6 +451,47 @@ void Os::destroyTray(const rapidjson::Value& params, JsonResult* result)
         DestroyMenu(menuIt->second);
         win->trayMenus.erase(menuIt);
 	}
+}
+
+void Os::credWrite(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring key = Util::convertToWStr(arr[0].GetString());
+    std::wstring val = Util::convertToWStr(arr[1].GetString());
+    CREDENTIAL cred = { 0 };
+    cred.Type = CRED_TYPE_GENERIC;
+    cred.TargetName = key.data();
+    cred.CredentialBlobSize = val.size() * sizeof(wchar_t);
+    cred.CredentialBlob = (LPBYTE)(val.data());
+    cred.Persist = CRED_PERSIST_LOCAL_MACHINE;
+    auto flag = CredWrite(&cred, 0);
+    if(!flag) {
+        result->addErr("can not write credential");
+	}
+}
+
+void Os::credRead(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring key = Util::convertToWStr(arr[0].GetString());
+    CREDENTIAL* cred;
+    if (CredRead(key.data(), CRED_TYPE_GENERIC, 0, &cred) == FALSE) {
+        result->addErr("can not read credential");
+        return;
+    }
+    std::wstring wstr(reinterpret_cast<wchar_t*>(cred->CredentialBlob), cred->CredentialBlobSize);
+    CredFree(cred);
+	auto str = Util::convertToStr(wstr);
+	result->addString("data", str.data());
+}
+
+void Os::credDel(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring key = Util::convertToWStr(arr[0].GetString());
+    if (!CredDelete(key.data(), CRED_TYPE_GENERIC, 0)) {
+        result->addErr("can not del credential");
+    }
 }
 
 

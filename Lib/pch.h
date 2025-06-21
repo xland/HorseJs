@@ -23,6 +23,9 @@
 #include <dwmapi.h>
 #include <gdiplus.h>
 #include <wincodec.h>
+#include <wincrypt.h>
+#include <wincred.h>
+#include <credentialprovider.h>
 #include <comdef.h>
 #include <propkey.h>
 #include <propvarutil.h>

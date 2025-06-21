@@ -23,6 +23,9 @@ public:
 	void showNotify(const rapidjson::Value& params, JsonResult* result);
 	void createTray(const rapidjson::Value& params, JsonResult* result);
 	void destroyTray(const rapidjson::Value& params, JsonResult* result);
+	void credWrite(const rapidjson::Value& params, JsonResult* result);
+	void credRead(const rapidjson::Value& params, JsonResult* result);
+	void credDel(const rapidjson::Value& params, JsonResult* result);
 	void spawn(const rapidjson::Value& params, JsonResult* result);
 	void on(const rapidjson::Value& params, JsonResult* result);
 	void off(const rapidjson::Value& params, JsonResult* result);

@@ -56,8 +56,17 @@ export class Os extends Eventer {
   destroyTray(id: number) {
     return this.exec("destroyTray", id);
   }
-  async spawn(path: string) {
+  spawn(path: string) {
     return this.exec("spawn", path);
+  }
+  creadWrite(key: string, val: string) {
+    return this.exec("credWrite", key, val);
+  }
+  credRead(key: string) {
+    return this.exec("credRead", key);
+  }
+  credDel(key: string) {
+    return this.exec("credDel", key);
   }
   on(eventName, func) {
     let flag = this.listen(eventName, func);

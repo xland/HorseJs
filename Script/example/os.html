@@ -27,8 +27,9 @@
     <div id="btnCreateTray" class="btn">创建托盘图标</div>
     <div id="btnDestroyTray" class="btn">销毁托盘图标</div>
     <div id="btnStartProcess" class="btn">启动一个进程</div>
-    <div id="btnWriteUserCredentials" class="btn">文本写入用户凭据区（未完成）</div>
-    <div id="btnReadUserCredentials" class="btn">从用户凭据区读取文本（未完成）</div>
+    <div id="btnCredWrite" class="btn">文本写入用户凭据区</div>
+    <div id="btnCredRead" class="btn">从用户凭据区读取文本</div>
+    <div id="btnCredDel" class="btn">删除用户凭据</div>
     <div id="btnRegMouseHook" class="btn">注册鼠标钩子（未完成）</div>
     <div id="btnRegKeyboardHook" class="btn">注册键盘钩子（未完成）</div>
     <div id="btnEnumWindows" class="btn">遍历系统中的窗口（未完成）</div>
@@ -133,6 +134,18 @@
       });
       $("#btnStartProcess").addEventListener("click", async () => {
         let data = await horse.os.spawn("notepad.exe");
+        console.log(data);
+      });
+      $("#btnCredWrite").addEventListener("click", async () => {
+        let data = await horse.os.creadWrite("keyName", "allen 测试中文");
+        console.log(data);
+      });
+      $("#btnCredRead").addEventListener("click", async () => {
+        let data = await horse.os.credRead("keyName");
+        console.log(data);
+      });
+      $("#btnCredDel").addEventListener("click", async () => {
+        let data = await horse.os.credDel("keyName");
         console.log(data);
       });
     });
