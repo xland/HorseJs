@@ -3,7 +3,6 @@
 
 #include "../App/App.h"
 #include "../Processor/MsgProcessor.h"
-#include "../Processor/Tray.h"
 #include "BrowserWindow.h"
 
 BrowserWindow::BrowserWindow(const rapidjson::Value& winConfig)
@@ -104,12 +103,12 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         delete result;
     }
     else if (msg == WM_COMMAND) {
-        JsonResult result(id, "tray", std::to_string(wParam));
+        JsonResult result(id, "os", std::to_string(wParam));
         result.returnBack();
     }
     else if (msg == WM_TRAY) {
         if (lParam == WM_RBUTTONDOWN) {
-            JsonResult result(id, "tray", std::to_string(wParam));
+            JsonResult result(id, "os", std::to_string(wParam));
             result.addString("type", "rightBtnDown");
             result.returnBack();
             POINT pt;
@@ -123,7 +122,7 @@ LRESULT BrowserWindow::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             POINT pt;
             GetCursorPos(&pt);
             SetForegroundWindow(hwnd);
-            JsonResult result(id, "tray", std::to_string(wParam));
+            JsonResult result(id, "os", std::to_string(wParam));
             result.addString("type", "leftBtnDown");
             result.returnBack();
         }

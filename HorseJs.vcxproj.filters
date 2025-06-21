@@ -45,16 +45,10 @@
     <ClCompile Include="Processor\Os.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Processor\Process.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Processor\Res.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Processor\Screen.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Processor\Tray.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Processor\Clipboard.cpp">
@@ -240,13 +234,7 @@
     <ClInclude Include="Processor\Fs.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Processor\Tray.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Processor\Os.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Processor\Process.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Processor\Res.h">

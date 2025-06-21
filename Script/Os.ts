@@ -49,7 +49,7 @@ export class Os extends Eventer {
     });
     config.menu.forEach((item) => {
       item.__id = util.randomNum();
-      this.unlisten(item.__id, item.click);
+      this.listen(item.__id, item.click);
     });
     return this.exec("createTray", config);
   }

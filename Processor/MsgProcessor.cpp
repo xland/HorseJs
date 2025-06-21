@@ -11,8 +11,6 @@
 #include "Win.h"
 #include "Os.h"
 #include "Screen.h"
-#include "Tray.h"
-#include "Process.h"
 
 namespace {
     std::unique_ptr<MsgProcessor> msgProcessor;
@@ -26,8 +24,6 @@ namespace {
         {"win",Win::execute},
         {"os",Os::execute},
         {"screen",Screen::execute},
-        {"tray",Tray::execute},
-        {"process",Process::execute},
     };
 }
 

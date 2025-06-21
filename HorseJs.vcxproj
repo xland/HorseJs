@@ -177,10 +177,8 @@
     <ClCompile Include="Processor\Dll.cpp" />
     <ClCompile Include="Processor\MsgProcessor.cpp" />
     <ClCompile Include="Processor\Os.cpp" />
-    <ClCompile Include="Processor\Process.cpp" />
     <ClCompile Include="Processor\Res.cpp" />
     <ClCompile Include="Processor\Screen.cpp" />
-    <ClCompile Include="Processor\Tray.cpp" />
     <ClCompile Include="Processor\JsonResult.cpp" />
     <ClCompile Include="Processor\Win.cpp" />
     <ClCompile Include="Lib\pch.cpp">
@@ -281,10 +279,8 @@
     <ClInclude Include="Processor\Horse.h" />
     <ClInclude Include="Processor\Dll.h" />
     <ClInclude Include="Processor\Os.h" />
-    <ClInclude Include="Processor\Process.h" />
     <ClInclude Include="Processor\Res.h" />
     <ClInclude Include="Processor\Screen.h" />
-    <ClInclude Include="Processor\Tray.h" />
     <ClInclude Include="Processor\JsonResult.h" />
     <ClInclude Include="Lib\pch.h" />
     <ClInclude Include="Res\Res.h" />
