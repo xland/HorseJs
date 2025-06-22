@@ -28,6 +28,7 @@ namespace {
     {"stopWatch", &Fs::stopWatch},
     {"createShortcut", &Fs::createShortcut},
     {"openFile", &Fs::openFile},
+    {"packHorse", &Fs::packHorse},
     };
     //todo: 获取有几个逻辑磁盘
 }
@@ -525,7 +526,14 @@ void Fs::getPath(const rapidjson::Value& params, JsonResult* result)
     }
     std::string type{ arr[0].GetString() };
     if (type == "exeDir" || type == "exePath") {
-        result->addString("data", getExePath(type));
+        wchar_t buffer[MAX_PATH];
+        GetModuleFileName(nullptr, buffer, MAX_PATH);
+        auto curPath = std::filesystem::path(buffer);
+        if (type == "exeDir") {
+            curPath = curPath.parent_path();
+        }
+        auto curPathStr = curPath.string();
+        result->addString("data", curPathStr);
     }
     else if (type == "download") {
         getKnownPath(FOLDERID_Downloads, result);
@@ -591,14 +599,18 @@ void Fs::watch(const rapidjson::Value& params, JsonResult* result)
         result->addErr("create dir handle error.");
         return;
     }
-    Fs::addWatch(id, hDir);
+    {
+        std::unique_lock<std::shared_mutex> lock(mtx);
+        watchMap.insert({ id ,hDir });
+    }
+
     std::jthread worker([winId = result->winId, hDir,id=std::move(id)]() {
         BYTE buffer[1024];// 缓冲区用于存储变化信息
         DWORD bytesReturned;
         FILE_NOTIFY_INFORMATION* pNotify;
         auto lastTime = std::chrono::steady_clock::now();
         const auto debounceTime = std::chrono::milliseconds(80); // 合并时间窗口        
-        while (App::getWindow(winId) && Fs::hasWatch(id)) {
+        while (App::getWindow(winId) && watchMap.contains(id)) {
             auto flags = FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME |
                 FILE_NOTIFY_CHANGE_ATTRIBUTES | FILE_NOTIFY_CHANGE_SIZE | FILE_NOTIFY_CHANGE_LAST_WRITE;
             if (ReadDirectoryChangesW(hDir, buffer, sizeof(buffer),TRUE,/*子目录*/ flags, &bytesReturned, NULL, NULL) && bytesReturned > 0)
@@ -653,126 +665,21 @@ void Fs::stopWatch(const rapidjson::Value& params, JsonResult* result)
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::string id = arr[0].GetString();
     CloseHandle(watchMap[id]);
-    Fs::removeWatch(id);
+    std::unique_lock<std::shared_mutex> lock(mtx);
+    watchMap.erase(id);
 }
+
+
 void Fs::packHorse(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::wstring src = Util::convertToWStr(arr[0].GetString());
     std::filesystem::path targetPath(src);
-	auto pPath = targetPath.parent_path();
-
-
-}
-bool Fs::delDirRecursive(const std::wstring& dirPath)
-{
-    WIN32_FIND_DATA findData;
-    HANDLE hFind = FindFirstFile((dirPath + L"\\*").c_str(), &findData);
-    if (hFind == INVALID_HANDLE_VALUE) {
-        return false; // 目录不存在或访问失败
-    }
-    do {
-        const std::wstring name = findData.cFileName;
-        if (name == L"." || name == L"..") {
-            continue; // 跳过 "." 和 ".."
-        }
-        const std::wstring fullPath = dirPath + L"\\" + name;
-        if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-            // 是子目录：递归删除
-            if (!delDirRecursive(fullPath)) {
-                FindClose(hFind);
-                return false;
-            }
-        }
-        else {
-            // 是文件：直接删除
-            if (!DeleteFile(fullPath.c_str())) {
-                FindClose(hFind);
-                return false;
-            }
-        }
-    } while (FindNextFile(hFind, &findData) != 0);
-    FindClose(hFind);
-    // 删除空目录
-    return RemoveDirectory(dirPath.c_str()) != 0;
+    auto pPath = targetPath.parent_path();
+    std::vector<std::wstring> fileList;
+	enumFiles(pPath.wstring(), pPath.wstring(), fileList);
 }
 
-void Fs::addWatch(const std::string& id, HANDLE handle)
-{
-    std::unique_lock<std::shared_mutex> lock(mtx);
-    watchMap.insert({ id ,handle});
-}
-
-bool Fs::hasWatch(const std::string& id)
-{
-    std::shared_lock<std::shared_mutex> lock(mtx);
-    auto flag = watchMap.contains(id);
-    return flag;
-}
-
-void Fs::removeWatch(const std::string& id)
-{
-    std::unique_lock<std::shared_mutex> lock(mtx);
-    watchMap.erase(id);
-}
-std::string Fs::getExePath(const std::string& type)
-{
-    wchar_t buffer[MAX_PATH];
-    GetModuleFileName(nullptr, buffer, MAX_PATH);
-    auto curPath = std::filesystem::path(buffer);
-    if (type == "exeDir") {
-        curPath = curPath.parent_path();
-    }
-    auto curPathStr = curPath.string();
-    return curPathStr;
-}
-
-void Fs::getKnownPath(const GUID& type, JsonResult* result)
-{
-    PWSTR path = nullptr;
-    HRESULT hr = SHGetKnownFolderPath(type, 0, nullptr, &path);
-    if (SUCCEEDED(hr)) {
-        std::wstring strW(path);
-        auto str = Util::convertToStr(strW);
-        CoTaskMemFree(path);
-        result->addString("data", str);
-    }
-    else {
-        result->addErr("get known folder err");
-    }
-}
-
-void Fs::enumFiles(const std::wstring& baseDir, const std::wstring& currentDir, std::vector<std::wstring>& fileList)
-{
-    std::wstring searchPath = currentDir + L"\\*";
-    WIN32_FIND_DATA findData;
-    HANDLE hFind = FindFirstFile(searchPath.c_str(), &findData);
-    if (hFind == INVALID_HANDLE_VALUE) return;
-
-    do {
-        const std::wstring name = findData.cFileName;
-        if (name == L"." || name == L"..") continue;
-
-        std::wstring fullPath = currentDir + L"\\" + name;
-        std::wstring relativePath = fullPath.substr(baseDir.length() + 1);
-
-        if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-            enumFiles(baseDir, fullPath, fileList);
-        }
-        else {
-            fileList.emplace_back(relativePath);
-        }
-    } while (FindNextFile(hFind, &findData));
-    FindClose(hFind);
-
-
-    //std::ifstream file(filePath, std::ios::binary | std::ios::ate);
-    //std::streamsize size = file.tellg();
-    //file.seekg(0, std::ios::beg);
-
-    //std::vector<char> buffer(size);
-    //file.read(buffer.data(), size);
-}
 void Fs::createShortcut(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();

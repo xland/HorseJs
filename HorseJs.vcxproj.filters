@@ -78,6 +78,9 @@
     <ClCompile Include="App\BrowserWindowMsg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Processor\FsPrivate.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -100,6 +103,7 @@
     <None Include="Doc\dev\websocket.md" />
     <None Include="Doc\build.md" />
     <None Include="Doc\dev\notify.md" />
+    <None Include="Doc\dev\todo.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\BrowserWindow.h">

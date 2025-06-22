@@ -64,6 +64,9 @@ export class Fs extends Eventer {
   openFile(filePath: string) {
     return this.exec("openFile", filePath);
   }
+  packHorse(filePath: string) {
+    return this.exec("packHorse", filePath);
+  }
   private exec(methodName: string, ...params: any[]) {
     return this.call({
       className: "fs",
