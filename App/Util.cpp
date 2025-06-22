@@ -60,6 +60,38 @@ std::string Util::colorToHex(COLORREF color) {
     return ss.str();
 }
 
+std::wstring Util::getContentType(const std::wstring& fileName)
+{
+    static const std::map<std::string, std::wstring> mimeTypes = {
+            {".html", L"text/html"},
+            {".htm",  L"text/html"},
+            {".js",   L"application/javascript"},
+            {".css",  L"text/css"},
+            {".json", L"application/json"},
+            {".png",  L"image/png"},
+            {".jpg",  L"image/jpeg"},
+            {".jpeg", L"image/jpeg"},
+            {".gif",  L"image/gif"},
+            {".svg",  L"image/svg+xml"},
+            {".ico",  L"image/x-icon"},
+            {".woff", L"font/woff"},
+            {".woff2",L"font/woff2"},
+            {".ttf",  L"font/ttf"},
+            {".eot",  L"application/vnd.ms-fontobject"},
+            {".txt",  L"text/plain"},
+            {".mp3",  L"audio/mpeg"},
+            {".mp4",  L"video/mp4"}
+    };
+    std::filesystem::path path(fileName);
+    auto ext = path.extension().string();
+    std::transform(ext.begin(), ext.end(), ext.begin(), ::towlower);
+    auto it = mimeTypes.find(ext);
+    if (it != mimeTypes.end()) {
+        return it->second;
+    }
+    return L"application/octet-stream";
+}
+
 void Util::printTime()
 {
     SYSTEMTIME st;

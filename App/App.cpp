@@ -204,7 +204,18 @@ void App::createSingleMutex()
 }
 void App::loadConfig()
 {
-    auto jsonData = Util::readFile(L"UI/config.json");
+    std::string jsonData;
+    if (FindResource(NULL, L"config.json", RT_RCDATA)) {
+        auto resHandle = LoadResource(NULL, FindResource(NULL, L"config.json", RT_RCDATA));
+        if (resHandle) {
+            auto data = static_cast<const char*>(LockResource(resHandle));
+            auto size = SizeofResource(NULL, FindResource(NULL, L"config.json", RT_RCDATA));
+            jsonData = std::string(data, size);            
+		}
+    }
+    else {
+        jsonData = Util::readFile(L"UI/config.json");
+    }
     rapidjson::Document jsonDoc;
     jsonDoc.Parse(jsonData.data());
     if (jsonDoc.HasMember("appId") && jsonDoc["appId"].IsString())

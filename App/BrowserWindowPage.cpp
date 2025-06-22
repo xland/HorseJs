@@ -42,9 +42,10 @@ void BrowserWindow::loadPage()
     HRESULT hr = ctrl->get_CoreWebView2(&webview);
     auto app = App::get();
     auto localDomain = Util::convertToWStr(app->appId.data())+L".localhost";
-    auto webView3 = webview.try_query<ICoreWebView2_3>();
-    webView3->SetVirtualHostNameToFolderMapping(localDomain.data(),L"UI",COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_ALLOW);
-
+    if (!FindResource(NULL, L"index.html", RT_RCDATA)) {
+        auto webView3 = webview.try_query<ICoreWebView2_3>();
+        webView3->SetVirtualHostNameToFolderMapping(localDomain.data(),L"UI",COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_ALLOW);
+    }
     wil::com_ptr<ICoreWebView2Settings> settings;
     webview->get_Settings(&settings);
     //settings->put_AreDevToolsEnabled(false);
@@ -351,18 +352,44 @@ HRESULT BrowserWindow::frameCreated(ICoreWebView2* sender, ICoreWebView2FrameCre
 }
 HRESULT BrowserWindow::resRequested(ICoreWebView2* sender,ICoreWebView2WebResourceRequestedEventArgs* args)
 {
-    Util::printTime();
-    //auto now = std::chrono::system_clock::now();
-    //auto time_t_now = std::chrono::system_clock::to_time_t(now);
-    //auto str = std::format(L"222{:%F %T}\n", std::chrono::system_clock::from_time_t(time_t_now));
-    //OutputDebugString(str.data());
+    wil::com_ptr<ICoreWebView2WebResourceRequest> request;
+    args->get_Request(&request);
 
-    // 你可以在这里获取请求的 URL、方法、头部等信息
-    //wil::com_ptr<ICoreWebView2WebResourceRequest> request;
-    //args->get_Request(&request);
-    //wil::unique_cotaskmem_string uri;
-    //request->get_Uri(&uri);
-    //OutputDebugStringW((L"请求资源: " + std::wstring(uri.get()) + L"\n").c_str());
+    wil::unique_cotaskmem_string uri;
+    request->get_Uri(&uri);
+    std::wstring urlStr = uri.get();
+    uri.reset();
+    
+    size_t pos1 = urlStr.find(L".localhost/");
+    if (pos1 == std::wstring::npos) {
+        args->put_Response(nullptr);
+        return S_OK;
+    }
+    size_t pathStart = pos1 + wcslen(L".localhost/");
+    size_t pos2 = urlStr.find(L"?", pathStart);
+    std::wstring resName = urlStr.substr(pathStart, pos2 == std::wstring::npos ? std::wstring::npos : pos2 - pathStart);
+
+
+
+    HRSRC hRes = FindResource(NULL, resName.c_str(), RT_RCDATA);
+    if (!hRes) {
+        args->put_Response(nullptr);
+        return S_OK;
+	}
+    HGLOBAL hData = LoadResource(NULL, hRes);
+    if (!hData) {
+        args->put_Response(nullptr);
+        return S_OK;
+    }
+    void* pData = LockResource(hData);
+    DWORD size = SizeofResource(NULL, hRes);
+
+    wil::com_ptr<ICoreWebView2WebResourceResponse> response;
+    wil::com_ptr<IStream> stream = SHCreateMemStream((const BYTE*)pData, size);
+	auto ct = Util::getContentType(resName);
+    auto hd = std::format(L"Content-Type: {}", ct.data());
+    App::get()->env->CreateWebResourceResponse(stream.get(), 200, L"OK", hd.data(), &response);
+    args->put_Response(response.get());
     return S_OK;
 }
 

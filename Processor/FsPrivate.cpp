@@ -33,6 +33,25 @@ void Fs::enumFiles(const std::wstring& baseDir, const std::wstring& currentDir, 
     //file.read(buffer.data(), size);
 }
 
+bool Fs::addResToExe(const HANDLE& handle, std::wstring& resName, const std::wstring& resDir)
+{
+	auto filePath = resDir + L"\\" + resName;
+    std::ifstream file(filePath, std::ios::binary | std::ios::ate);
+    std::streamsize size = file.tellg();
+    file.seekg(0, std::ios::beg);
+    std::vector<char> buffer(size);
+    file.read(buffer.data(), size);
+	file.close();
+    std::replace(resName.begin(), resName.end(), L'\\', L'/');
+    BOOL ok = UpdateResource(handle,RT_RCDATA,resName.c_str(),
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL), (void*)buffer.data(), (DWORD)buffer.size());
+    if (!ok) {
+        EndUpdateResource(handle, TRUE);
+        return false;
+    }
+    return true;
+}
+
 bool Fs::delDirRecursive(const std::wstring& dirPath)
 {
     WIN32_FIND_DATA findData;

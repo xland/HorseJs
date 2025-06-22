@@ -147,6 +147,9 @@
                     return;
                 }
                 let data = await horse.fs.packHorse(window.exePath);
+                if (data.ok) {
+                    alert("打包成功")
+                }
             })
         });
     </script>

@@ -26,6 +26,7 @@ public:
 	static std::wstring convertAnsiToWstring(const char* str);
 	static std::string convertWstringToUtf8(const std::wstring& wstr);
 	static std::string colorToHex(COLORREF color);
+	static std::wstring getContentType(const std::wstring& fileName);
 	static void printTime();
 };
 

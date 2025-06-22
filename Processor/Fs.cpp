@@ -675,9 +675,27 @@ void Fs::packHorse(const rapidjson::Value& params, JsonResult* result)
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::wstring src = Util::convertToWStr(arr[0].GetString());
     std::filesystem::path targetPath(src);
-    auto pPath = targetPath.parent_path();
+
+    HANDLE handle = BeginUpdateResource(src.c_str(), FALSE);
+    if (!handle) {
+		result->addErr("BeginUpdateResource failed");
+        return;
+    }
+    auto pPath = targetPath.parent_path() / "UI";
+	auto pPathStr = pPath.wstring();
     std::vector<std::wstring> fileList;
-	enumFiles(pPath.wstring(), pPath.wstring(), fileList);
+	enumFiles(pPathStr, pPathStr, fileList);
+    for (auto& fileStr:fileList)
+    {
+        auto flag = addResToExe(handle, fileStr, pPathStr);
+        if (!flag) {
+            result->addErr("add file to exe error: " + Util::convertToStr(fileStr));
+            break;
+        }
+    }
+    if (!EndUpdateResource(handle, FALSE)) {
+		result->addErr("EndUpdateResource failed");
+    }
 }
 
 void Fs::createShortcut(const rapidjson::Value& params, JsonResult* result)
