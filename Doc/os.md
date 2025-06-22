@@ -1,30 +1,22 @@
 - 获得系统版本号
 
 ```js
-let data = await horse.os.getVersion();
+let data = await horse.os.getOsVer();
 console.log(data);
 //{"buildNumber":19044,"majorVersion":10,"minorVersion":0,"ok":true,"versionName":"win10"}
 ```
-- 创建一个快捷方式
 
-```js
-let data = await horse.os.createShortcut("C:\\Windows\\System32\\cmd.exe", 
-	"C:\\Users\\liuxiaolun\\Desktop\\cmd.lnk", 
-	"命令行", 
-	"C:\\Windows\\System32\\");
-console.log(data);
-```
 - 获取CPU ID
 
 ```js
-let data = await horse.os.getCPUID();
+let data = await horse.os.getCpuId();
 console.log(JSON.stringify(data));
 // {"data":"000906edbfebfbff","ok":true}
 ```
 - 获取磁盘串号
 
 ```js
-let data = await horse.os.getDiskSerialNumber();
+let data = await horse.os.getDiskId();
 console.log(JSON.stringify(data));
 // {"data":"92adfb09","ok":true}
 ```

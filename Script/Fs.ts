@@ -58,6 +58,9 @@ export class Fs extends Eventer {
     this.unlisten(id);
     return this.exec("stopWatch", id);
   }
+  createShortcut(srcPath: string, dstSrc: string, des: string, workDir: string) {
+    return this.exec("createShortcut", srcPath, dstSrc, des, workDir);
+  }
   private exec(methodName: string, ...params: any[]) {
     return this.call({
       className: "fs",

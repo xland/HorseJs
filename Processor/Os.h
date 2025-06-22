@@ -8,10 +8,9 @@ public:
 	~Os();
 	static Os* get();
 	static bool execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result);
-	void getVersion(const rapidjson::Value& params, JsonResult* result);
-	void createShortcut(const rapidjson::Value& params, JsonResult* result);
-	void getCPUID(const rapidjson::Value& params, JsonResult* result);
-	void getDiskSerialNumber(const rapidjson::Value& params, JsonResult* result);
+	void getOsVer(const rapidjson::Value& params, JsonResult* result);
+	void getCpuId(const rapidjson::Value& params, JsonResult* result);
+	void getDiskId(const rapidjson::Value& params, JsonResult* result);
 	void getUserLang(const rapidjson::Value& params, JsonResult* result);
 	void getOsLang(const rapidjson::Value& params, JsonResult* result);
 	void getOsColor(const rapidjson::Value& params, JsonResult* result);

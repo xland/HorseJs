@@ -1,17 +1,14 @@
 import { Eventer } from "./Eventer";
 import { util } from "./Util";
 export class Os extends Eventer {
-  getVersion() {
-    return this.exec("getVersion");
+  getOsVer() {
+    return this.exec("getOsVer");
   }
-  createShortcut(srcPath: string, dstSrc: string, des: string, workDir: string) {
-    return this.exec("createShortcut", srcPath, dstSrc, des, workDir);
+  getCpuId() {
+    return this.exec("getCpuId");
   }
-  getCPUID() {
-    return this.exec("getCPUID");
-  }
-  getDiskSerialNumber() {
-    return this.exec("getDiskSerialNumber");
+  getDiskId() {
+    return this.exec("getDiskId");
   }
   getUserLang() {
     return this.exec("getUserLang");

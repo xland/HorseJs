@@ -26,6 +26,7 @@ namespace {
     {"getPath", &Fs::getPath},
     {"watch", &Fs::watch},
     {"stopWatch", &Fs::stopWatch},
+    {"createShortcut", &Fs::createShortcut},
     };
     //todo: 获取有几个逻辑磁盘
 }
@@ -770,4 +771,40 @@ void Fs::enumFiles(const std::wstring& baseDir, const std::wstring& currentDir, 
 
     //std::vector<char> buffer(size);
     //file.read(buffer.data(), size);
+}
+void Fs::createShortcut(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    auto srcPath = arr[0].GetString();
+    auto srcPathW = Util::convertToWStr(srcPath);
+    auto dstPath = arr[1].GetString();
+    auto dstPathW = Util::convertToWStr(dstPath);
+    auto des = arr[2].GetString();
+    auto desW = Util::convertToWStr(des);
+    auto workDir = arr[3].GetString();
+    auto workDirW = Util::convertToWStr(workDir);
+
+    IShellLink* pShellLink = nullptr;
+    HRESULT hr = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID*)&pShellLink);
+    if (FAILED(hr)) {
+        result->addErr("Failed to create IShellLink instance.");
+        return;
+    }
+    pShellLink->SetPath(srcPathW.c_str());
+    pShellLink->SetDescription(desW.c_str());
+    pShellLink->SetIconLocation(srcPathW.c_str(), 0);
+    pShellLink->SetWorkingDirectory(workDirW.c_str());
+    IPersistFile* pPersistFile = nullptr;
+    hr = pShellLink->QueryInterface(IID_IPersistFile, (LPVOID*)&pPersistFile);
+    if (FAILED(hr)) {
+        pShellLink->Release();
+        result->addErr("Failed to query IPersistFile interface.");
+        return;
+    }
+    hr = pPersistFile->Save(dstPathW.c_str(), TRUE);
+    if (FAILED(hr)) {
+        result->addErr("Failed to save shortcut file.");
+    }
+    pPersistFile->Release();
+    pShellLink->Release();
 }

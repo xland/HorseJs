@@ -1,123 +1,131 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="../css/example.css" />
-  </head>
-  <body>
-    <div class="box">
-      <div id="btnReadFile" class="btn">读文件</div>
-      <div id="btnReadFileChunk" class="btn">读文件的一部分</div>
-      <div id="btnWriteFile" class="btn">写文件</div>
-      <div id="btnWriteFileChunk" class="btn">在指定位置向文件写入数据</div>
-      <div id="btnDelPath" class="btn">删除路径</div>
-      <div id="btnRemovePath" class="btn">把路径移入回收站</div>
-      <div id="btnPathExists" class="btn">路径是否存在</div>
-      <div id="btnFileInfo" class="btn">获取文件信息</div>
-      <div id="btnCreateFile" class="btn">创建一个文件</div>
-      <div id="btnCreateDir" class="btn">创建一个目录</div>
-      <div id="btnEnsurePath" class="btn">递归创建一个路径</div>
-      <div id="btnListDir" class="btn">遍历一个目录下的所有子路径</div>
-      <div id="btnMovePath" class="btn">移动一个路径</div>
-      <div id="btnCopyPath" class="btn">复制一个路径</div>
-      <div id="btnRenamePath" class="btn">重命名一个路径</div>
-      <div id="btnGetPath" class="btn">获取常用路径</div>
-      <div id="btnWatch" class="btn">监视路径</div>
-      <div id="btnStopWatch" class="btn">取消监视路径</div>
-    </div>
-    <script>
-      let $ = (selector) => document.querySelector(selector);
-      window.addEventListener("DOMContentLoaded", async () => {
-        $("#btnReadFile").addEventListener("click", async () => {
-          let data = await horse.fs.readFile("D:\\project\\HorseJs\\Script\\index.html");
-          const uint8Array = new Uint8Array(data.buffer); // 字节视图
-          const decoder = new TextDecoder("utf-8"); // UTF-8 解码器
-          const text = decoder.decode(uint8Array); // 转换为字符串
-          console.log("Decoded string:", text);
-          data.release();
-        });
-        $("#btnReadFileChunk").addEventListener("click", async () => {
-          let data = await horse.fs.readFileChunk("D:\\project\\HorseJs\\Script\\index.html", 10, 100);
-          const uint8Array = new Uint8Array(data.buffer); // 字节视图
-          const decoder = new TextDecoder("utf-8"); // UTF-8 解码器
-          const text = decoder.decode(uint8Array); // 转换为字符串
-          console.log("Decoded string:", text);
-          data.release();
-        });
-        $("#btnWriteFile").addEventListener("click", async () => {
-          let data = await horse.fs.writeFile("D:\\project\\HorseJs\\Script\\abc.txt", "Hello World \n 你好，世界！！！");
-          console.log(data);
-        });
-        $("#btnWriteFileChunk").addEventListener("click", async () => {
-          let data = await horse.fs.writeFileChunk("D:\\project\\HorseJs\\Script\\abc.txt", "插入的数据", -1);
-          console.log(data);
-        });
-        $("#btnDelPath").addEventListener("click", async () => {
-          let data = await horse.fs.delPath("D:\\doc\\周报\\allen\\");
-          console.log(data);
-        });
-        $("#btnRemovePath").addEventListener("click", async () => {
-          let data = await horse.fs.removePath("D:\\project\\HorseJs\\Script\\abc.txt");
-          console.log(data);
-        });
-        $("#btnPathExists").addEventListener("click", async () => {
-          let data = await horse.fs.exists("D:\\project\\HorseJs\\Script\\index.html");
-          console.log(data);
-        });
-        $("#btnFileInfo").addEventListener("click", async () => {
-          let data = await horse.fs.getFileInfo("D:\\project\\HorseJs\\Script\\index.html");
-          console.log(data);
-        });
-        $("#btnCreateFile").addEventListener("click", async () => {
-          let data = await horse.fs.createFile("D:\\ddd.txt");
-          console.log(data);
-        });
-        $("#btnCreateDir").addEventListener("click", async () => {
-          let data = await horse.fs.createDir("D:\\aaa");
-          console.log(data);
-        });
-        $("#btnEnsurePath").addEventListener("click", async () => {
-          let data = await horse.fs.ensurePath("D:\\aaa\\bbb\\ccc\\ddd.txt");
-          console.log(data);
-        });
-        $("#btnListDir").addEventListener("click", async () => {
-          let data = await horse.fs.listDir("D:\\project\\HorseJs\\x64\\Release");
-          console.log(data);
-        });
-        $("#btnMovePath").addEventListener("click", async () => {
-          let data = await horse.fs.movePath("D:\\doc\\周报\\allen\\allen.txt", "D:\\project\\HorseJs\\Doc\\img\\");
-          console.log(data);
-        });
-        $("#btnCopyPath").addEventListener("click", async () => {
-          let data = await horse.fs.copyPath("D:\\doc\\周报\\allen\\", "D:\\project\\HorseJs\\Doc\\img\\");
-          console.log(data);
-        });
-        $("#btnRenamePath").addEventListener("click", async () => {
-          let data = await horse.fs.renamePath("D:\\doc\\周报\\allen\\", "D:\\doc\\周报\\新目录\\");
-          console.log(data);
-        });
-        $("#btnGetPath").addEventListener("click", async () => {
-          //exeDir,exePath,download，music，video，picture，document，startup，desktop，font，program，system，windows，profile，appdata，roaming，cache，userdata
-          let data = await horse.fs.getPath("userdata");
-          console.log(JSON.stringify(data));
-        });
-        $("#btnWatch").addEventListener("click", async () => {
-          if (window.watchId) {
-            console.log("已存在监视器，请先取消监视");
-            return;
-          }
-          let data = await horse.fs.watch("D:\\doc\\周报\\allen\\", (data) => {
-            console.log("change:", data);
-          });
-          console.log(data);
-          window.watchId = data.id;
-        });
-        $("#btnStopWatch").addEventListener("click", async () => {
-          let data = await horse.fs.stopWatch(window.watchId);
-          console.log(data);
-          window.watchId = undefined;
-        });
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="../css/example.css" />
+</head>
+
+<body>
+  <div class="box">
+    <div id="btnReadFile" class="btn">读文件</div>
+    <div id="btnReadFileChunk" class="btn">读文件的一部分</div>
+    <div id="btnWriteFile" class="btn">写文件</div>
+    <div id="btnWriteFileChunk" class="btn">在指定位置向文件写入数据</div>
+    <div id="btnDelPath" class="btn">删除路径</div>
+    <div id="btnRemovePath" class="btn">把路径移入回收站</div>
+    <div id="btnPathExists" class="btn">路径是否存在</div>
+    <div id="btnFileInfo" class="btn">获取文件信息</div>
+    <div id="btnCreateFile" class="btn">创建一个文件</div>
+    <div id="btnCreateDir" class="btn">创建一个目录</div>
+    <div id="btnEnsurePath" class="btn">递归创建一个路径</div>
+    <div id="btnListDir" class="btn">遍历一个目录下的所有子路径</div>
+    <div id="btnMovePath" class="btn">移动一个路径</div>
+    <div id="btnCopyPath" class="btn">复制一个路径</div>
+    <div id="btnRenamePath" class="btn">重命名一个路径</div>
+    <div id="btnGetPath" class="btn">获取常用路径</div>
+    <div id="btnWatch" class="btn">监视路径</div>
+    <div id="btnStopWatch" class="btn">取消监视路径</div>
+    <div id="btnCreateShortcut" class="btn">创建一个快捷方式</div>
+  </div>
+  <script>
+    let $ = (selector) => document.querySelector(selector);
+    window.addEventListener("DOMContentLoaded", async () => {
+      $("#btnReadFile").addEventListener("click", async () => {
+        let data = await horse.fs.readFile("D:\\project\\HorseJs\\Script\\index.html");
+        const uint8Array = new Uint8Array(data.buffer); // 字节视图
+        const decoder = new TextDecoder("utf-8"); // UTF-8 解码器
+        const text = decoder.decode(uint8Array); // 转换为字符串
+        console.log("Decoded string:", text);
+        data.release();
       });
-    </script>
-  </body>
+      $("#btnReadFileChunk").addEventListener("click", async () => {
+        let data = await horse.fs.readFileChunk("D:\\project\\HorseJs\\Script\\index.html", 10, 100);
+        const uint8Array = new Uint8Array(data.buffer); // 字节视图
+        const decoder = new TextDecoder("utf-8"); // UTF-8 解码器
+        const text = decoder.decode(uint8Array); // 转换为字符串
+        console.log("Decoded string:", text);
+        data.release();
+      });
+      $("#btnWriteFile").addEventListener("click", async () => {
+        let data = await horse.fs.writeFile("D:\\project\\HorseJs\\Script\\abc.txt", "Hello World \n 你好，世界！！！");
+        console.log(data);
+      });
+      $("#btnWriteFileChunk").addEventListener("click", async () => {
+        let data = await horse.fs.writeFileChunk("D:\\project\\HorseJs\\Script\\abc.txt", "插入的数据", -1);
+        console.log(data);
+      });
+      $("#btnDelPath").addEventListener("click", async () => {
+        let data = await horse.fs.delPath("D:\\doc\\周报\\allen\\");
+        console.log(data);
+      });
+      $("#btnRemovePath").addEventListener("click", async () => {
+        let data = await horse.fs.removePath("D:\\project\\HorseJs\\Script\\abc.txt");
+        console.log(data);
+      });
+      $("#btnPathExists").addEventListener("click", async () => {
+        let data = await horse.fs.exists("D:\\project\\HorseJs\\Script\\index.html");
+        console.log(data);
+      });
+      $("#btnFileInfo").addEventListener("click", async () => {
+        let data = await horse.fs.getFileInfo("D:\\project\\HorseJs\\Script\\index.html");
+        console.log(data);
+      });
+      $("#btnCreateFile").addEventListener("click", async () => {
+        let data = await horse.fs.createFile("D:\\ddd.txt");
+        console.log(data);
+      });
+      $("#btnCreateDir").addEventListener("click", async () => {
+        let data = await horse.fs.createDir("D:\\aaa");
+        console.log(data);
+      });
+      $("#btnEnsurePath").addEventListener("click", async () => {
+        let data = await horse.fs.ensurePath("D:\\aaa\\bbb\\ccc\\ddd.txt");
+        console.log(data);
+      });
+      $("#btnListDir").addEventListener("click", async () => {
+        let data = await horse.fs.listDir("D:\\project\\HorseJs\\x64\\Release");
+        console.log(data);
+      });
+      $("#btnMovePath").addEventListener("click", async () => {
+        let data = await horse.fs.movePath("D:\\doc\\周报\\allen\\allen.txt", "D:\\project\\HorseJs\\Doc\\img\\");
+        console.log(data);
+      });
+      $("#btnCopyPath").addEventListener("click", async () => {
+        let data = await horse.fs.copyPath("D:\\doc\\周报\\allen\\", "D:\\project\\HorseJs\\Doc\\img\\");
+        console.log(data);
+      });
+      $("#btnRenamePath").addEventListener("click", async () => {
+        let data = await horse.fs.renamePath("D:\\doc\\周报\\allen\\", "D:\\doc\\周报\\新目录\\");
+        console.log(data);
+      });
+      $("#btnGetPath").addEventListener("click", async () => {
+        //exeDir,exePath,download，music，video，picture，document，startup，desktop，font，program，system，windows，profile，appdata，roaming，cache，userdata
+        let data = await horse.fs.getPath("userdata");
+        console.log(JSON.stringify(data));
+      });
+      $("#btnWatch").addEventListener("click", async () => {
+        if (window.watchId) {
+          console.log("已存在监视器，请先取消监视");
+          return;
+        }
+        let data = await horse.fs.watch("D:\\doc\\周报\\allen\\", (data) => {
+          console.log("change:", data);
+        });
+        console.log(data);
+        window.watchId = data.id;
+      });
+      $("#btnStopWatch").addEventListener("click", async () => {
+        let data = await horse.fs.stopWatch(window.watchId);
+        console.log(data);
+        window.watchId = undefined;
+      });
+      $("#btnCreateShortcut").addEventListener("click", async () => {
+        let data = await horse.fs.createShortcut("C:\\Windows\\System32\\cmd.exe", "C:\\Users\\liuxiaolun\\Desktop\\cmd.lnk", "命令行", "C:\\Windows\\System32\\");
+        console.log(data);
+      });
+    });
+  </script>
+</body>
+
 </html>

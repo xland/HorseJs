@@ -137,3 +137,12 @@ let data = await horse.fs.watch("D:\\doc\\周报\\allen\\", (data) => {
 let data = await horse.fs.stopWatch(watchId);
 console.log(data);
 ```
+- 创建一个快捷方式
+
+```js
+let data = await horse.fs.createShortcut("C:\\Windows\\System32\\cmd.exe", 
+	"C:\\Users\\liuxiaolun\\Desktop\\cmd.lnk", 
+	"命令行", 
+	"C:\\Windows\\System32\\");
+console.log(data);
+```

@@ -28,6 +28,7 @@ public:
 	void watch(const rapidjson::Value& params, JsonResult* result);
 	void stopWatch(const rapidjson::Value& params, JsonResult* result);
 	void packHorse(const rapidjson::Value& params, JsonResult* result);
+	void createShortcut(const rapidjson::Value& params, JsonResult* result);
 private:
 	bool delDirRecursive(const std::wstring& dirPath);
 	static void addWatch(const std::string& id, HANDLE handle);

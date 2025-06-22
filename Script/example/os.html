@@ -9,9 +9,8 @@
 <body>
   <div class="box">
     <div id="btnGetVersion" class="btn">获取系统版本号</div>
-    <div id="btnCreateShortcut" class="btn">创建一个快捷方式</div>
-    <div id="btnGetCPUID" class="btn">获取CPU ID</div>
-    <div id="btnGetDiskSerialNumber" class="btn">获取磁盘串号</div>
+    <div id="btnGetCpuId" class="btn">获取Cpu Id</div>
+    <div id="btnGetDiskId" class="btn">获取磁盘串号</div>
     <div id="btnGetUserLang" class="btn">获取用户语言</div>
     <div id="btnGetOsLang" class="btn">获取系统语言</div>
     <div id="btnGetOsColor" class="btn">获取系统默认颜色</div>
@@ -35,19 +34,15 @@
     let $ = (selector) => document.querySelector(selector);
     window.addEventListener("DOMContentLoaded", async () => {
       $("#btnGetVersion").addEventListener("click", async () => {
-        let data = await horse.os.getVersion();
+        let data = await horse.os.getOsVer();
         console.log(data);
       });
-      $("#btnCreateShortcut").addEventListener("click", async () => {
-        let data = await horse.os.createShortcut("C:\\Windows\\System32\\cmd.exe", "C:\\Users\\liuxiaolun\\Desktop\\cmd.lnk", "命令行", "C:\\Windows\\System32\\");
-        console.log(data);
-      });
-      $("#btnGetCPUID").addEventListener("click", async () => {
-        let data = await horse.os.getCPUID();
+      $("#btnGetCpuId").addEventListener("click", async () => {
+        let data = await horse.os.getCpuId();
         console.log(JSON.stringify(data));
       });
-      $("#btnGetDiskSerialNumber").addEventListener("click", async () => {
-        let data = await horse.os.getDiskSerialNumber();
+      $("#btnGetDiskId").addEventListener("click", async () => {
+        let data = await horse.os.getDiskId();
         console.log(JSON.stringify(data));
       });
       $("#btnGetUserLang").addEventListener("click", async () => {

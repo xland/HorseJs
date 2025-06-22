@@ -16,10 +16,9 @@
 namespace {
     std::unique_ptr<Os> os;
     static std::unordered_map<std::string, void (Os::*)(const rapidjson::Value&, JsonResult*)> funcs{
-    {"getVersion", &Os::getVersion},
-    {"createShortcut", &Os::createShortcut},
-    {"getCPUID", &Os::getCPUID},
-    {"getDiskSerialNumber", &Os::getDiskSerialNumber},
+    {"getOsVer", &Os::getOsVer},
+    {"getCpuId", &Os::getCpuId},
+    {"getDiskId", &Os::getDiskId},
     {"getUserLang", &Os::getUserLang},
     {"getOsLang", &Os::getOsLang},
     {"getOsColor", &Os::getOsColor},
@@ -63,7 +62,7 @@ bool Os::execute(std::string& methodName, const rapidjson::Value& param, JsonRes
     (Os::get()->*it->second)(param, result);
     return true;
 }
-void Os::getVersion(const rapidjson::Value& params, JsonResult* result) 
+void Os::getOsVer(const rapidjson::Value& params, JsonResult* result)
 {
     RTL_OSVERSIONINFOW osInfo = { 0 };
     osInfo.dwOSVersionInfoSize = sizeof(osInfo);
@@ -94,44 +93,9 @@ void Os::getVersion(const rapidjson::Value& params, JsonResult* result)
     result->addNumber("build", (long long)osInfo.dwBuildNumber);
 }
 
-void Os::createShortcut(const rapidjson::Value& params, JsonResult* result)
-{
-    const rapidjson::Value::ConstArray arr = params.GetArray();
-    auto srcPath = arr[0].GetString();
-    auto srcPathW = Util::convertToWStr(srcPath);
-    auto dstPath = arr[1].GetString();
-    auto dstPathW = Util::convertToWStr(dstPath);
-    auto des = arr[2].GetString();
-    auto desW = Util::convertToWStr(des);
-    auto workDir = arr[3].GetString();
-    auto workDirW = Util::convertToWStr(workDir);
 
-    IShellLink* pShellLink = nullptr;
-    HRESULT hr = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID*)&pShellLink);
-    if (FAILED(hr)) {
-        result->addErr("Failed to create IShellLink instance.");
-        return;
-	}
-    pShellLink->SetPath(srcPathW.c_str());
-    pShellLink->SetDescription(desW.c_str());
-    pShellLink->SetIconLocation(srcPathW.c_str(), 0);
-    pShellLink->SetWorkingDirectory(workDirW.c_str());
-    IPersistFile* pPersistFile = nullptr;
-    hr = pShellLink->QueryInterface(IID_IPersistFile, (LPVOID*)&pPersistFile);
-    if(FAILED(hr)) {
-        pShellLink->Release();
-        result->addErr("Failed to query IPersistFile interface.");
-        return;
-	}
-    hr = pPersistFile->Save(dstPathW.c_str(), TRUE);
-    if (FAILED(hr)) {
-        result->addErr("Failed to save shortcut file.");
-    }
-    pPersistFile->Release();
-    pShellLink->Release();
-}
 
-void Os::getCPUID(const rapidjson::Value& params, JsonResult* result)
+void Os::getCpuId(const rapidjson::Value& params, JsonResult* result)
 {
     int cpuInfo[4] = { 0 };
     __cpuid(cpuInfo, 1);
@@ -141,7 +105,7 @@ void Os::getCPUID(const rapidjson::Value& params, JsonResult* result)
     result->addString("data", str.data());
 }
 
-void Os::getDiskSerialNumber(const rapidjson::Value& params, JsonResult* result)
+void Os::getDiskId(const rapidjson::Value& params, JsonResult* result)
 {
     std::string data;
     char volumeName[MAX_PATH + 1] = { 0 };
