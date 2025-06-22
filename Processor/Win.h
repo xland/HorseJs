@@ -22,6 +22,7 @@ public:
 	void resize(const rapidjson::Value& params, JsonResult* result);
 	void insertMenu(const rapidjson::Value& params, JsonResult* result);
 	void removeMenu(const rapidjson::Value& params, JsonResult* result);
+	void writeCookie(const rapidjson::Value& params, JsonResult* result);
 	void on(const rapidjson::Value& params, JsonResult* result);
 	void off(const rapidjson::Value& params, JsonResult* result);
 };

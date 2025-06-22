@@ -16,6 +16,9 @@ namespace {
     {"setResizable", &Win::setResizable},
     {"resize", &Win::resize},
     {"flash", &Win::flash},
+    {"insertMenu", &Win::insertMenu},
+    {"removeMenu", &Win::removeMenu},
+    {"writeCookie", &Win::writeCookie},
     {"on", &Win::on},
     {"off", &Win::off},
     };
@@ -178,4 +181,16 @@ void Win::insertMenu(const rapidjson::Value& params, JsonResult* result)
 
 void Win::removeMenu(const rapidjson::Value& params, JsonResult* result)
 {
+}
+
+void Win::writeCookie(const rapidjson::Value& params, JsonResult* result)
+{
+    //wil::com_ptr<ICoreWebView2CookieManager> cookieManager;
+    //result->getWin()->webview->get_CookieManager(&cookieManager);
+    //wil::com_ptr<ICoreWebView2Cookie> cookie;
+    //cookieManager->CreateCookie(L"myCookie", L"cookieValue", L"example.com", L"/", &cookie);
+    //// 设置 HttpOnly 属性
+    //cookie->put_IsHttpOnly(TRUE);
+    //// 添加或更新 cookie
+    //cookieManager->AddOrUpdateCookie(cookie.get());
 }

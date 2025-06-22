@@ -42,6 +42,18 @@ void BrowserWindow::initWindow()
         DwmSetWindowAttribute(hwnd, DWMWA_NCRENDERING_POLICY, &value, sizeof(value));
         DwmSetWindowAttribute(hwnd, DWMWA_ALLOW_NCPAINT, &value, sizeof(value));
     }
+
+    // 准备内存 DC 和位图
+    //HDC hdcScreen = GetDC(NULL);
+    //HDC hdcMem = CreateCompatibleDC(hdcScreen);
+    //HBITMAP hBitmap = CreateCompatibleBitmap(hdcScreen, w, h);
+    //SelectObject(hdcMem, hBitmap);
+    //BLENDFUNCTION blend = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
+    //POINT ptSrc = { 0, 0 };
+    //SIZE sizeWnd = { w, h };
+    //UpdateLayeredWindow(hwnd, hdcScreen, NULL, &sizeWnd, hdcMem, &ptSrc, 0, &blend, ULW_ALPHA);
+    //DeleteDC(hdcMem);
+    //ReleaseDC(NULL, hdcScreen);
 }
 
 std::wstring& BrowserWindow::getWinClsName()
@@ -84,6 +96,12 @@ HRESULT BrowserWindow::ctrlReady(HRESULT result, ICoreWebView2CompositionControl
     this->ctrlComp = ctrlComp;
     this->ctrl = this->ctrlComp.query<ICoreWebView2Controller>();
     ctrl->put_IsVisible(true);
+
+    //todo 
+    //auto ctrl2 = ctrl.try_query<ICoreWebView2Controller2>();
+    //COREWEBVIEW2_COLOR bgColor = { 60, 30, 30, 30 };
+    //ctrl2->put_DefaultBackgroundColor(bgColor);
+
     EventRegistrationToken token;
     auto cursorChangeCB = WRL::Callback<ICoreWebView2CursorChangedEventHandler>(this, &BrowserWindow::cursorChange);
     this->ctrlComp->add_CursorChanged(cursorChangeCB.Get(), &token);
@@ -118,6 +136,7 @@ void BrowserWindow::setWindowStyle(long& exStyle, long& style)
     }
     else {
         exStyle = WS_EX_APPWINDOW;
+        //exStyle = WS_EX_LAYERED;
     }
     if (alwaysOnTop) {
         exStyle = exStyle | WS_EX_TOPMOST;
