@@ -9,6 +9,7 @@ namespace {
         {"openPath", &Dialog::openPath},
         {"savePath", &Dialog::savePath},
         {"msgBox", &Dialog::msgBox},
+        {"itemInFolder", &Dialog::itemInFolder},
     };
 }
 
@@ -608,4 +609,13 @@ void Dialog::showSavePathDialog(JsonResult* result,
     auto str = Util::convertToStr(pathStr);
     result->addString("data", str);
     result->returnBackThread();
+}
+
+void Dialog::itemInFolder(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    auto filePath = arr[0].GetString();
+    auto str = Util::convertToWStr(filePath);
+    std::wstring command = std::format(L"/select,\"{}\"", str);
+    ShellExecute(nullptr, L"open", L"explorer.exe", command.c_str(), nullptr, SW_SHOW);
 }

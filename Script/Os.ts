@@ -19,12 +19,6 @@ export class Os extends Eventer {
   getOsColor() {
     return this.exec("getOsColor");
   }
-  showItemInFolder(filePath: string) {
-    return this.exec("showItemInFolder", filePath);
-  }
-  openFile(filePath: string) {
-    return this.exec("openFile", filePath);
-  }
   preventSleep() {
     return this.exec("preventSleep");
   }

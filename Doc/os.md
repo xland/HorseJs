@@ -42,18 +42,6 @@ console.log(JSON.stringify(data));
 //  {"bgColor":"#0063B1","borderColor":"#B4B4B4","btnColor":"#BFCDDB","captionColor":"#000000","ok":true,"textColor":"#000000","winColor":"#FFFFFF"}
 ```
 
-- 打开一个文件路径：显示此文件所在的文件夹，并选中文件。
-
-```js
-await horse.os.showItemInFolder("C:\\Windows\\System32\\cmd.exe");
-```
-
-- 使用默认应用打开一个文件路径。
-
-```js
-await horse.os.openFile("D:\\doc\\123.docx");
-```
-
 - 阻止系统睡眠、休眠。
 
 ```js

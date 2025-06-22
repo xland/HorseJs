@@ -14,6 +14,7 @@ public:
 	void openPath(const rapidjson::Value& params, JsonResult* result);
 	void savePath(const rapidjson::Value& params, JsonResult* result);
 	void msgBox(const rapidjson::Value& params, JsonResult* result);
+	void itemInFolder(const rapidjson::Value& params, JsonResult* result);
 private:
 	void showOpenPathDialog(JsonResult* result,
 		const std::wstring&& title,

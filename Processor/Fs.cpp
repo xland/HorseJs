@@ -27,6 +27,7 @@ namespace {
     {"watch", &Fs::watch},
     {"stopWatch", &Fs::stopWatch},
     {"createShortcut", &Fs::createShortcut},
+    {"openFile", &Fs::openFile},
     };
     //todo: 获取有几个逻辑磁盘
 }
@@ -807,4 +808,16 @@ void Fs::createShortcut(const rapidjson::Value& params, JsonResult* result)
     }
     pPersistFile->Release();
     pShellLink->Release();
+}
+
+void Fs::openFile(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    auto filePath = arr[0].GetString();
+    auto str = Util::convertToWStr(filePath);
+    HINSTANCE hr = ShellExecuteW(nullptr, L"open", str.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+	if (reinterpret_cast<intptr_t>(hr) <= 32) 
+    {
+		result->addErr("Failed to open file");
+    }
 }

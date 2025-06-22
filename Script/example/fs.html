@@ -27,6 +27,7 @@
     <div id="btnWatch" class="btn">监视路径</div>
     <div id="btnStopWatch" class="btn">取消监视路径</div>
     <div id="btnCreateShortcut" class="btn">创建一个快捷方式</div>
+    <div id="btnOpenFile" class="btn">使用默认应用打开一个路径</div>
   </div>
   <script>
     let $ = (selector) => document.querySelector(selector);
@@ -123,6 +124,10 @@
       $("#btnCreateShortcut").addEventListener("click", async () => {
         let data = await horse.fs.createShortcut("C:\\Windows\\System32\\cmd.exe", "C:\\Users\\liuxiaolun\\Desktop\\cmd.lnk", "命令行", "C:\\Windows\\System32\\");
         console.log(data);
+      });
+      $("#btnOpenFile").addEventListener("click", async () => {
+        let data = await horse.fs.openFile("C:\\Recovery\\ReAgentOld.xml");
+        console.log(JSON.stringify(data));
       });
     });
   </script>

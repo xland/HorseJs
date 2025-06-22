@@ -48,3 +48,9 @@ console.log(JSON.stringify(data));
 // 输出：{"data":"no","ok":true}
 // 输出：{"data":"cancel","ok":true}
 ```
+
+- 打开一个文件路径：显示此文件所在的文件夹，并选中文件。
+
+```js
+await horse.dialog.itemInFolder("C:\\Windows\\System32\\cmd.exe");
+```

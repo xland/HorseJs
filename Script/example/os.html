@@ -14,8 +14,6 @@
     <div id="btnGetUserLang" class="btn">获取用户语言</div>
     <div id="btnGetOsLang" class="btn">获取系统语言</div>
     <div id="btnGetOsColor" class="btn">获取系统默认颜色</div>
-    <div id="btnShowItemInFolder" class="btn">打开文件夹，并选中某个路径</div>
-    <div id="btnOpenFile" class="btn">使用默认应用打开一个路径</div>
     <div id="btnPreventSleep" class="btn">阻止睡眠、休眠</div>
     <div id="btnStopPreventSleep" class="btn">取消阻止睡眠、休眠</div>
     <div id="btnOnOsLock" class="btn">监听锁屏事件</div>
@@ -55,14 +53,6 @@
       });
       $("#btnGetOsColor").addEventListener("click", async () => {
         let data = await horse.os.getOsColor();
-        console.log(JSON.stringify(data));
-      });
-      $("#btnShowItemInFolder").addEventListener("click", async () => {
-        let data = await horse.os.showItemInFolder("C:\\Windows\\System32\\cmd.exe");
-        console.log(JSON.stringify(data));
-      });
-      $("#btnOpenFile").addEventListener("click", async () => {
-        let data = await horse.os.openFile("D:\\doc\\Qt高分屏问题.docx");
         console.log(JSON.stringify(data));
       });
       $("#btnPreventSleep").addEventListener("click", async () => {

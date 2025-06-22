@@ -1,13 +1,16 @@
 import { Eventer } from "./Eventer";
 export class Dialog extends Eventer {
-  async openPath(config: any) {
+  openPath(config: any) {
     return this.exec("openPath", config);
   }
-  async savePath(config: any) {
+  savePath(config: any) {
     return this.exec("savePath", config);
   }
-  async msgBox(config: any) {
+  msgBox(config: any) {
     return this.exec("msgBox", config);
+  }
+  itemInFolder(filePath: string) {
+    return this.exec("itemInFolder", filePath);
   }
   private exec(methodName: string, ...params: any[]) {
     return this.call({

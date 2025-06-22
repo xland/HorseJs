@@ -146,3 +146,9 @@ let data = await horse.fs.createShortcut("C:\\Windows\\System32\\cmd.exe",
 	"C:\\Windows\\System32\\");
 console.log(data);
 ```
+
+- 使用默认应用打开一个文件路径。
+
+```js
+await horse.os.openFile("C:\\Recovery\\ReAgentOld.xml");
+```
