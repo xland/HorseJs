@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="../css/example.css" />
+  </head>
+  <body>
+    <div class="box">
+      <div id="btnOpen" class="btn">打开数据库（不存在则创建）</div>
+      <div id="btnClose" class="btn">关闭数据库</div>
+      <div id="btnSql" class="btn">执行SQL语句</div>
+      <div id="btnDel" class="btn">删除数据库</div>
+    </div>
+    <script>
+      let $ = (selector) => document.querySelector(selector);
+      window.addEventListener("DOMContentLoaded", async () => {
+        $("#btnOpen").addEventListener("click", async () => {
+          let data = await horse.db.open("TestDll.dll");
+          console.log(data);
+          dllId = data.id;
+        });
+        $("#btnClose").addEventListener("click", async () => {
+          let data = await horse.db.close(dllId);
+          console.log(data);
+        });
+        $("#btnSql").addEventListener("click", async () => {
+          let data = await horse.db.sql(dllId, "joinStr", "hello,");
+          console.log(data);
+        });
+        $("#btnDel").addEventListener("click", async () => {
+          let data = await horse.db.del(dllId, "joinStr", "hello,");
+          console.log(data);
+        });
+      });
+    </script>
+  </body>
+</html>

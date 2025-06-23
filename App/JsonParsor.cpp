@@ -28,6 +28,13 @@ std::string JsonParsor::getString(const std::string& name)
     return doc[name.data()].GetString();
 }
 
+rapidjson::Value JsonParsor::getVal()
+{
+    rapidjson::Value docValue;
+    docValue.CopyFrom(doc,doc.GetAllocator());
+    return docValue;
+}
+
 void JsonParsor::addNumber(const std::string& name, const int& value)
 {
 

@@ -13,6 +13,7 @@ class JsonParsor
 		rapidjson::Document::AllocatorType& getAllocator();
 		void addString(const std::string& name, const std::string& value);
 		std::string getString(const std::string& name);
+		rapidjson::Value getVal();
 		void addNumber(const std::string& name, const int& value);
 		void addNumber(const std::string& name, const double& value);
 		void addNumber(const std::string& name, const long long& value);
