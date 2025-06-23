@@ -50,17 +50,8 @@ await proxyWin.addEventListener("sizePosChanged", (data) => {
 });
 ```
 
-- 获得应用的版本号
-> 返回结果中exeVer是应用程序的版本号（exe文件的版本信息）<br />
-> horseVer是当前应用所使用的HorseJs框架的版本号
-```js
-let data = await horse.getVersion();
-console.log(data);
-// 输出：{"exeVer":[0,0,10,0],"horseVer":[0,0,10,0],"ok":true}
-```
-
 - 关闭所有窗口，并退出应用
-> 如果窗口注册了closing事件，那么应用不会退出，而是返回一个错误
+> 如果窗口注册了closing 事件，那么应用不会退出，而是返回一个错误
 ```js
 let data = await horse.quit();
 console.log(JSON.stringify(data));
@@ -71,14 +62,14 @@ console.log(JSON.stringify(data));
 horse.exit(1);
 ```
 
-- 获取Exe可执行文件的版本号
+- 获取 exe 可执行文件的版本号
 ```js
 let data = await horse.getExeVer();
 console.log(JSON.stringify(data));
 //{"build":0,"major":0,"minor":0,"ok":true,"patch":10}
 ```
 
-- 获取HorseJs框架的版本号
+- 获取 HorseJs 框架的版本号
 ```js
 let data = await horse.getHorseVer();
 console.log(JSON.stringify(data));
