@@ -28,7 +28,6 @@ namespace {
     {"stopWatch", &Fs::stopWatch},
     {"createShortcut", &Fs::createShortcut},
     {"openFile", &Fs::openFile},
-    {"packHorse", &Fs::packHorse},
     };
     //todo: 获取有几个逻辑磁盘
 }
@@ -668,36 +667,6 @@ void Fs::stopWatch(const rapidjson::Value& params, JsonResult* result)
     std::unique_lock<std::shared_mutex> lock(mtx);
     watchMap.erase(id);
 }
-
-
-void Fs::packHorse(const rapidjson::Value& params, JsonResult* result)
-{
-    const rapidjson::Value::ConstArray arr = params.GetArray();
-    std::wstring src = Util::convertToWStr(arr[0].GetString());
-    std::filesystem::path targetPath(src);
-
-    HANDLE handle = BeginUpdateResource(src.c_str(), FALSE);
-    if (!handle) {
-		result->addErr("BeginUpdateResource failed");
-        return;
-    }
-    auto pPath = targetPath.parent_path() / "UI";
-	auto pPathStr = pPath.wstring();
-    std::vector<std::wstring> fileList;
-	enumFiles(pPathStr, pPathStr, fileList);
-    for (auto& fileStr:fileList)
-    {
-        auto flag = addResToExe(handle, fileStr, pPathStr);
-        if (!flag) {
-            result->addErr("add file to exe error: " + Util::convertToStr(fileStr));
-            break;
-        }
-    }
-    if (!EndUpdateResource(handle, FALSE)) {
-		result->addErr("EndUpdateResource failed");
-    }
-}
-
 void Fs::createShortcut(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();

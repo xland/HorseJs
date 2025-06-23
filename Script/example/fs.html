@@ -28,7 +28,6 @@
     <div id="btnStopWatch" class="btn">取消监视路径</div>
     <div id="btnCreateShortcut" class="btn">创建一个快捷方式</div>
     <div id="btnOpenFile" class="btn">使用默认应用打开一个路径</div>
-    <div id="btnPackHorse" class="btn">打包HorseJs的界面文件到exe文件中</div>
   </div>
   <script>
     let $ = (selector) => document.querySelector(selector);
@@ -128,10 +127,6 @@
       });
       $("#btnOpenFile").addEventListener("click", async () => {
         let data = await horse.fs.openFile("C:\\Recovery\\ReAgentOld.xml");
-        console.log(JSON.stringify(data));
-      });
-      $("#btnPackHorse").addEventListener("click", async () => {
-        let data = await horse.fs.packHorse("D:\\project\\HorseJs\\x64\\Debug\\HorseJs.exe");
         console.log(JSON.stringify(data));
       });
     });

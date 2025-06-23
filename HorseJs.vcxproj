@@ -169,7 +169,17 @@
   <ItemGroup>
     <ClCompile Include="App\App.cpp" />
     <ClCompile Include="App\BrowserWindowMsg.cpp" />
+    <ClCompile Include="Processor\Db.cpp" />
+    <ClCompile Include="Lib\sqlite\shell.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Lib\sqlite\sqlite3.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Processor\FsPrivate.cpp" />
+    <ClCompile Include="Processor\HorsePrivate.cpp" />
     <ClCompile Include="Processor\NetConnListener.cpp" />
     <ClCompile Include="Processor\Clipboard.cpp" />
     <ClCompile Include="Processor\Dialog.cpp" />
@@ -179,7 +189,6 @@
     <ClCompile Include="Processor\Dll.cpp" />
     <ClCompile Include="Processor\MsgProcessor.cpp" />
     <ClCompile Include="Processor\Os.cpp" />
-    <ClCompile Include="Processor\Res.cpp" />
     <ClCompile Include="Processor\Screen.cpp" />
     <ClCompile Include="Processor\JsonResult.cpp" />
     <ClCompile Include="Processor\Win.cpp" />
@@ -204,6 +213,7 @@
     <None Include="Doc\build.md" />
     <None Include="Doc\clipboard.md" />
     <None Include="Doc\config.md" />
+    <None Include="Doc\db.md" />
     <None Include="Doc\dev\ChangeLog.md" />
     <None Include="Doc\dev\notify.md" />
     <None Include="Doc\dev\todo.md" />
@@ -272,9 +282,16 @@
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)UI\example</DestinationFolders>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)UI\example</DestinationFolders>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="Script\example\db.html">
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)UI\example</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)UI\example</DestinationFolders>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\App.h" />
+    <ClInclude Include="Processor\Db.h" />
+    <ClInclude Include="Lib\sqlite\sqlite3.h" />
+    <ClInclude Include="Lib\sqlite\sqlite3ext.h" />
     <ClInclude Include="Processor\NetConnListener.h" />
     <ClInclude Include="Processor\Clipboard.h" />
     <ClInclude Include="Processor\Dialog.h" />
@@ -282,7 +299,6 @@
     <ClInclude Include="Processor\Horse.h" />
     <ClInclude Include="Processor\Dll.h" />
     <ClInclude Include="Processor\Os.h" />
-    <ClInclude Include="Processor\Res.h" />
     <ClInclude Include="Processor\Screen.h" />
     <ClInclude Include="Processor\JsonResult.h" />
     <ClInclude Include="Lib\pch.h" />

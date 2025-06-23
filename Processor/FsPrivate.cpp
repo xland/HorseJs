@@ -1,79 +1,28 @@
 #include <pch.h>
 #include "Fs.h"
 
-void Fs::enumFiles(const std::wstring& baseDir, const std::wstring& currentDir, std::vector<std::wstring>& fileList)
-{
-    std::wstring searchPath = currentDir + L"\\*";
-    WIN32_FIND_DATA findData;
-    HANDLE hFind = FindFirstFile(searchPath.c_str(), &findData);
-    if (hFind == INVALID_HANDLE_VALUE) return;
-
-    do {
-        const std::wstring name = findData.cFileName;
-        if (name == L"." || name == L"..") continue;
-
-        std::wstring fullPath = currentDir + L"\\" + name;
-        std::wstring relativePath = fullPath.substr(baseDir.length() + 1);
-
-        if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-            enumFiles(baseDir, fullPath, fileList);
-        }
-        else {
-            fileList.emplace_back(relativePath);
-        }
-    } while (FindNextFile(hFind, &findData));
-    FindClose(hFind);
-
-
-    //std::ifstream file(filePath, std::ios::binary | std::ios::ate);
-    //std::streamsize size = file.tellg();
-    //file.seekg(0, std::ios::beg);
-
-    //std::vector<char> buffer(size);
-    //file.read(buffer.data(), size);
-}
-
-bool Fs::addResToExe(const HANDLE& handle, std::wstring& resName, const std::wstring& resDir)
-{
-	auto filePath = resDir + L"\\" + resName;
-    std::ifstream file(filePath, std::ios::binary | std::ios::ate);
-    std::streamsize size = file.tellg();
-    file.seekg(0, std::ios::beg);
-    std::vector<char> buffer(size);
-    file.read(buffer.data(), size);
-	file.close();
-    std::replace(resName.begin(), resName.end(), L'\\', L'/');
-    BOOL ok = UpdateResource(handle,RT_RCDATA,resName.c_str(),
-        MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL), (void*)buffer.data(), (DWORD)buffer.size());
-    if (!ok) {
-        EndUpdateResource(handle, TRUE);
-        return false;
-    }
-    return true;
-}
-
 bool Fs::delDirRecursive(const std::wstring& dirPath)
 {
     WIN32_FIND_DATA findData;
     HANDLE hFind = FindFirstFile((dirPath + L"\\*").c_str(), &findData);
     if (hFind == INVALID_HANDLE_VALUE) {
-        return false; // Ä¿Â¼²»´æÔÚ»ò·ÃÎÊÊ§°Ü
+        return false; // ç›®å½•ä¸å­˜åœ¨æˆ–è®¿é—®å¤±è´¥
     }
     do {
         const std::wstring name = findData.cFileName;
         if (name == L"." || name == L"..") {
-            continue; // Ìø¹ı "." ºÍ ".."
+            continue; // è·³è¿‡ "." å’Œ ".."
         }
         const std::wstring fullPath = dirPath + L"\\" + name;
         if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-            // ÊÇ×ÓÄ¿Â¼£ºµİ¹éÉ¾³ı
+            // æ˜¯å­ç›®å½•ï¼šé€’å½’åˆ é™¤
             if (!delDirRecursive(fullPath)) {
                 FindClose(hFind);
                 return false;
             }
         }
         else {
-            // ÊÇÎÄ¼ş£ºÖ±½ÓÉ¾³ı
+            // æ˜¯æ–‡ä»¶ï¼šç›´æ¥åˆ é™¤
             if (!DeleteFile(fullPath.c_str())) {
                 FindClose(hFind);
                 return false;
@@ -81,7 +30,7 @@ bool Fs::delDirRecursive(const std::wstring& dirPath)
         }
     } while (FindNextFile(hFind, &findData) != 0);
     FindClose(hFind);
-    // É¾³ı¿ÕÄ¿Â¼
+    // åˆ é™¤ç©ºç›®å½•
     return RemoveDirectory(dirPath.c_str()) != 0;
 }
 

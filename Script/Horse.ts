@@ -60,6 +60,9 @@ class Horse extends Eventer {
   disableSecondIns() {
     return this.exec("disableSecondIns");
   }
+  pack(exePath: string) {
+    return this.exec("pack", exePath);
+  }
   on(eventName, func) {
     if (eventName === "newWin") return this.onNewWin(func);
     let flag = this.listen(eventName, func);

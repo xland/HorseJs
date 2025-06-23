@@ -45,9 +45,6 @@
     <ClCompile Include="Processor\Os.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Processor\Res.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Processor\Screen.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -81,6 +78,18 @@
     <ClCompile Include="Processor\FsPrivate.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Lib\sqlite\shell.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\sqlite\sqlite3.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Processor\Db.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Processor\HorsePrivate.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -104,6 +113,7 @@
     <None Include="Doc\build.md" />
     <None Include="Doc\dev\notify.md" />
     <None Include="Doc\dev\todo.md" />
+    <None Include="Doc\db.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\BrowserWindow.h">
@@ -244,9 +254,6 @@
     <ClInclude Include="Processor\Os.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Processor\Res.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Processor\Screen.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -274,6 +281,15 @@
     <ClInclude Include="Processor\NetConnListener.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Lib\sqlite\sqlite3ext.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\sqlite\sqlite3.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Processor\Db.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Script\config.json" />
@@ -289,6 +305,7 @@
     <CopyFileToFolders Include="Script\example\screen.html" />
     <CopyFileToFolders Include="Script\example\window.html" />
     <CopyFileToFolders Include="Script\example\dll.html" />
+    <CopyFileToFolders Include="Script\example\db.html" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

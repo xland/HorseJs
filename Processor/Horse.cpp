@@ -16,6 +16,8 @@ namespace {
     {"relaunch", &Horse::relaunch},
     {"enableSecondIns", &Horse::enableSecondIns},
     {"disableSecondIns", &Horse::disableSecondIns},
+    {"pack", &Horse::pack},
+    {"saveRes", &Horse::saveRes},
     {"on", &Horse::on},
     {"off", &Horse::off},
     };
@@ -159,6 +161,39 @@ void Horse::disableSecondIns(const rapidjson::Value& params, JsonResult* result)
     }
     app->singleInsMutext = singleInsMutext;
     app->instanceLock = true;
+}
+
+void Horse::pack(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring src = Util::convertToWStr(arr[0].GetString());
+    std::filesystem::path targetPath(src);
+
+    HANDLE handle = BeginUpdateResource(src.c_str(), FALSE);
+    if (!handle) {
+        result->addErr("BeginUpdateResource failed");
+        return;
+    }
+    auto pPath = targetPath.parent_path() / "UI";
+    auto pPathStr = pPath.wstring();
+    std::vector<std::wstring> fileList;
+    enumFiles(pPathStr, pPathStr, fileList);
+    for (auto& fileStr : fileList)
+    {
+        auto flag = addResToExe(handle, fileStr, pPathStr);
+        if (!flag) {
+            result->addErr("add file to exe error: " + Util::convertToStr(fileStr));
+            break;
+        }
+    }
+    if (!EndUpdateResource(handle, FALSE)) {
+        result->addErr("EndUpdateResource failed");
+    }
+}
+
+void Horse::saveRes(const rapidjson::Value& params, JsonResult* result)
+{
+
 }
 void Horse::on(const rapidjson::Value& params, JsonResult* result)
 {

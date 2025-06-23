@@ -12,6 +12,7 @@ public:
 	void open(const rapidjson::Value& params, JsonResult* result);
 	void sql(const rapidjson::Value& params, JsonResult* result);
 	void close(const rapidjson::Value& params, JsonResult* result);
+	void del(const rapidjson::Value& params, JsonResult* result);
 private:
 };
 

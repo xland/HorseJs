@@ -3,11 +3,11 @@ export class Db extends Eventer {
   async open(dbPath: string, inDbDir = true) {
     return this.exec("open", dbPath, inDbDir);
   }
-  async close(id = 0) {
-    return this.exec("close", id);
+  async close(dbPath: string) {
+    return this.exec("close", dbPath);
   }
-  async sql(sql: string, id = 0) {
-    return this.exec("sql", sql, id);
+  async sql(sql: string, dbPath: string) {
+    return this.exec("sql", sql, dbPath);
   }
   async del(dbPath: string, inDbDir = true) {
     return this.exec("del", dbPath, inDbDir);

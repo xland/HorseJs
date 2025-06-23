@@ -15,20 +15,19 @@
       let $ = (selector) => document.querySelector(selector);
       window.addEventListener("DOMContentLoaded", async () => {
         $("#btnOpen").addEventListener("click", async () => {
-          let data = await horse.db.open("TestDll.dll");
-          console.log(data);
-          dllId = data.id;
+          let data = await horse.db.open("db.db", true);
+          console.log(JSON.stringify(data));
         });
         $("#btnClose").addEventListener("click", async () => {
-          let data = await horse.db.close(dllId);
+          let data = await horse.db.close("db.db");
           console.log(data);
         });
         $("#btnSql").addEventListener("click", async () => {
-          let data = await horse.db.sql(dllId, "joinStr", "hello,");
+          let data = await horse.db.sql("SELECT * FROM users;", "db.db");
           console.log(data);
         });
         $("#btnDel").addEventListener("click", async () => {
-          let data = await horse.db.del(dllId, "joinStr", "hello,");
+          let data = await horse.db.del("db.db", true);
           console.log(data);
         });
       });

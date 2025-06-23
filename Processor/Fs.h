@@ -27,13 +27,10 @@ public:
 	void getPath(const rapidjson::Value& params, JsonResult* result);
 	void watch(const rapidjson::Value& params, JsonResult* result);
 	void stopWatch(const rapidjson::Value& params, JsonResult* result);
-	void packHorse(const rapidjson::Value& params, JsonResult* result);
 	void createShortcut(const rapidjson::Value& params, JsonResult* result);
 	void openFile(const rapidjson::Value& params, JsonResult* result);
 private:
 	bool delDirRecursive(const std::wstring& dirPath);
 	void getKnownPath(const GUID& type, JsonResult* result);
-	void enumFiles(const std::wstring& baseDir, const std::wstring& currentDir, std::vector<std::wstring>& fileList);
-	bool addResToExe(const HANDLE& handle, std::wstring& resName, const std::wstring& resDir);
 };
 

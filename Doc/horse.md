@@ -148,3 +148,10 @@ console.log(obj);
 let obj = await horse.disableSecondIns();
 console.log(obj);
 ```
+
+- 把 UI 文件夹内的文件当作资源写入 exe 文件中。
+
+```js
+let obj = await horse.pack();
+console.log(obj);
+```

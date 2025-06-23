@@ -1,15 +1,17 @@
 #include "pch.h"
 #include <sqlite/sqlite3.h>
 #include "Db.h"
+#include "../App/App.h"
 
 
 namespace {
     std::unique_ptr<Db> db;
-    std::map<int, sqlite3*> dbMap;
+    std::unordered_map<std::wstring, sqlite3*> dbMap;
     static std::unordered_map<std::string, void (Db::*)(const rapidjson::Value&, JsonResult*)> funcs{
         {"open", &Db::open},
         {"sql", &Db::sql},
         {"close", &Db::close},
+        {"del", &Db::del},
     };
 }
 
@@ -40,24 +42,41 @@ bool Db::execute(std::string& methodName, const rapidjson::Value& param, JsonRes
 void Db::open(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
-    std::string dbPath = arr[0].GetString();
+    std::wstring dbName = Util::convertToWStr(arr[0].GetString());
+    bool inDbDir = arr[1].GetBool();
     sqlite3* dbIns;
-    int rc = sqlite3_open(dbPath.data(), &dbIns);
+    int rc;
+    if (inDbDir) {
+        auto dbPath = App::get()->appDir / dbName;
+        auto dbPathStr = dbPath.string();
+        rc = sqlite3_open(dbPathStr.data(), &dbIns);
+    }
+    else {
+        std::filesystem::path dbPath(dbName);
+        if (!dbPath.is_absolute()) {
+            dbPath = std::filesystem::absolute(dbPath);
+            dbName = dbPath.wstring();
+        }
+        auto dbPathStr = dbPath.string();
+        rc = sqlite3_open(dbPathStr.data(), &dbIns);
+    }
     sqlite3_exec(dbIns, "PRAGMA journal_mode=WAL;", 0, 0, 0);
     if (rc) {
-        std::string errInfo = std::format("打开数据库失败: {}", sqlite3_errmsg(dbIns));
+        std::string errInfo = std::format("open db err: {}", sqlite3_errmsg(dbIns));
         result->addErr(errInfo);
     }
-    dbMap.insert({0,dbIns});
+    dbMap.insert({ dbName,dbIns });
+    auto str = Util::convertWstringToUtf8(dbName);
+    result->addString("data", str);
 }
 
 void Db::sql(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::string sql = arr[0].GetString();
-    auto dbId = arr[1].GetInt();
+    auto dbName = Util::convertToWStr(arr[1].GetString());
     sqlite3_stmt* stmt = nullptr;
-    sqlite3_prepare_v2(dbMap[dbId], sql.data(), -1, &stmt, nullptr);
+    sqlite3_prepare_v2(dbMap[dbName], sql.data(), -1, &stmt, nullptr);
 
     rapidjson::Value array(rapidjson::kArrayType);
     while (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -97,7 +116,42 @@ void Db::sql(const rapidjson::Value& params, JsonResult* result)
 void Db::close(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
-    auto dbId = arr[0].GetInt();
-    sqlite3_close(dbMap[dbId]);
-    dbMap.erase(dbId);
+    auto dbName = Util::convertToWStr(arr[0].GetString());
+    sqlite3_close(dbMap[dbName]);
+    dbMap.erase(dbName);
+}
+
+void Db::del(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring dbName = Util::convertToWStr(arr[0].GetString());
+    if (dbMap.contains(dbName)) {
+        sqlite3_close(dbMap[dbName]);
+        dbMap.erase(dbName);
+    }
+    bool inDbDir = arr[1].GetBool();
+    std::filesystem::path dbPath;
+    if (inDbDir) {
+        dbPath = App::get()->appDir / dbName;
+    }
+    else {
+        dbPath = std::filesystem::path(dbName);
+    }
+    try {
+        if (std::filesystem::exists(dbPath)) {
+            bool removed = std::filesystem::remove(dbPath);
+            if (!removed) {
+                result->addErr("can not remove db");
+                return;
+            }
+        }
+        else {
+            result->addErr("file not exists");
+            return;
+        }
+    }
+    catch (const std::filesystem::filesystem_error& e) {
+        result->addErr("remove db err");
+        return;
+    }
 }

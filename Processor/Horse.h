@@ -17,10 +17,12 @@ public:
 	void relaunch(const rapidjson::Value& params, JsonResult* result);
 	void enableSecondIns(const rapidjson::Value& params, JsonResult* result);
 	void disableSecondIns(const rapidjson::Value& params, JsonResult* result);
-
+	void pack(const rapidjson::Value& params, JsonResult* result);
+	void saveRes(const rapidjson::Value& params, JsonResult* result);
 	void on(const rapidjson::Value& params, JsonResult* result);
 	void off(const rapidjson::Value& params, JsonResult* result);
 private:
-
+	void enumFiles(const std::wstring& baseDir, const std::wstring& currentDir, std::vector<std::wstring>& fileList);
+	bool addResToExe(const HANDLE& handle, std::wstring& resName, const std::wstring& resDir);
 };
 
