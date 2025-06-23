@@ -63,6 +63,9 @@ class Horse extends Eventer {
   pack(exePath: string) {
     return this.exec("pack", exePath);
   }
+  saveRes(resPath: string, tarPath: string, inDataDir = true) {
+    return this.exec("saveRes", resPath, tarPath, inDataDir);
+  }
   on(eventName, func) {
     if (eventName === "newWin") return this.onNewWin(func);
     let flag = this.listen(eventName, func);

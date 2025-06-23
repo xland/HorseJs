@@ -1,7 +1,7 @@
 import { Eventer } from "./Eventer";
 export class Db extends Eventer {
-  async open(dbPath: string, inDbDir = true) {
-    return this.exec("open", dbPath, inDbDir);
+  async open(dbPath: string, inDataDir = true) {
+    return this.exec("open", dbPath, inDataDir);
   }
   async close(dbPath: string) {
     return this.exec("close", dbPath);
@@ -9,8 +9,8 @@ export class Db extends Eventer {
   async sql(sql: string, dbPath: string) {
     return this.exec("sql", sql, dbPath);
   }
-  async del(dbPath: string, inDbDir = true) {
-    return this.exec("del", dbPath, inDbDir);
+  async del(dbPath: string, inDataDir = true) {
+    return this.exec("del", dbPath, inDataDir);
   }
   private exec(methodName: string, ...params: any[]) {
     return this.call({

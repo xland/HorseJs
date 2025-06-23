@@ -43,10 +43,10 @@ void Db::open(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::wstring dbName = Util::convertToWStr(arr[0].GetString());
-    bool inDbDir = arr[1].GetBool();
+    bool inDataDir = arr[1].GetBool();
     sqlite3* dbIns;
     int rc;
-    if (inDbDir) {
+    if (inDataDir) {
         auto dbPath = App::get()->appDir / dbName;
         auto dbPathStr = dbPath.string();
         rc = sqlite3_open(dbPathStr.data(), &dbIns);

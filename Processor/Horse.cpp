@@ -193,6 +193,34 @@ void Horse::pack(const rapidjson::Value& params, JsonResult* result)
 
 void Horse::saveRes(const rapidjson::Value& params, JsonResult* result)
 {
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::wstring resName = Util::convertToWStr(arr[0].GetString());
+    std::wstring tarPath = Util::convertToWStr(arr[1].GetString());
+    bool inDataDir = arr[2].GetBool();
+    unsigned int pos{ 0 };
+    if (inDataDir) {
+        pos = App::get()->appDir.wstring().size();
+        auto p = App::get()->appDir / tarPath;
+        tarPath = p.make_preferred().wstring();
+    }
+
+    HRSRC hRes = FindResource(NULL, resName.c_str(), RT_RCDATA);
+    if (!hRes) {
+        result->addErr("no resName");
+        return;
+    }
+    HGLOBAL hData = LoadResource(NULL, hRes);
+    if (!hData) {
+        result->addErr("load resName err");
+        return;
+    }
+    void* pData = LockResource(hData);
+    DWORD size = SizeofResource(NULL, hRes);
+
+
+
+    std::ofstream outFile(tarPath, std::ios::binary);
+    outFile.write(reinterpret_cast<const char*>(pData), size);
 
 }
 void Horse::on(const rapidjson::Value& params, JsonResult* result)

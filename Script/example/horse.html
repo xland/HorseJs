@@ -25,7 +25,8 @@
       <div id="btnAutoStartup" class="btn">设置开机自启动（未完成）</div>
       <div id="btnIsPackage" class="btn">是否嵌入资源（未完成）</div>
       <div id="btnRegBrowserScheme" class="btn">注册浏览器自定义协议（未完成）</div>
-      <div id="btnPackHorse" class="btn">打包HorseJs的界面文件到exe文件中</div>
+      <div id="btnPackHorse" class="btn">打包UI子目录内的文件到exe文件中</div>
+      <div id="btnSaveRes" class="btn">读取exe文件中的资源并保存到文件</div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
@@ -131,6 +132,10 @@
           if (exePath.cancel || !exePath.ok) return;
           let data = await horse.pack(exePath.data);
           console.log(JSON.stringify(data));
+        });
+        $("#btnSaveRes").addEventListener("click", async () => {
+          let config = await horse.saveRes("css/iconfont.woff2", "css/iconfont.woff2", true);
+          console.log(config);
         });
       });
     </script>
