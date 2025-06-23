@@ -21,7 +21,7 @@
     - [剪切板 horse.clipboard](./Doc/clipboard.md)
     - [数据库 horse.db](./Doc/db.md)
     - [对话框 horse.dialog](./Doc/dialog.md)
-    - [第三方库 horse.dll](./Doc/dll.md)
+    - [动态链接库 horse.dll](./Doc/dll.md)
     - [文件 horse.fs](./Doc/fs.md)
     - [系统 horse.os](./Doc/os.md)
     - [屏幕 horse.screen](./Doc/screen.md)

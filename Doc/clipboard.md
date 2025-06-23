@@ -1,4 +1,4 @@
-## horse.clipboard 的方法
+## 剪切板
 
 - 获取剪切板内的数据的数据类型
 > 已定义的数据类型：file、html、text、img、rtf、unknown

@@ -1,4 +1,6 @@
-﻿1. [下载 HorseJs](https://github.com/xland/HorseJs/releases)，并解压缩 Release.7z
+﻿## 快速开始
+
+1. [下载 HorseJs](https://github.com/xland/HorseJs/releases)，并解压缩 Release.7z
 
 1. 使用以下目录结构配置你的项目
 

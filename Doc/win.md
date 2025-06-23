@@ -1,4 +1,4 @@
-## horse.win 的方法
+## 窗口
 
 - 最大化
 > horse.win是当前页面所在窗口的对象。<br />
@@ -60,9 +60,6 @@ horse.win.on("sizePosChanged",(x,y,w,h)=>{
 await horse.window.off("closing");
 ```
 
-
-
-## horse.window 的事件
 
 - 窗口位置或大小改变事件
 ```js

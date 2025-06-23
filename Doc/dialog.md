@@ -1,4 +1,4 @@
-﻿## horse.dialog 的方法
+﻿## 对话框
 
 - 打开路径选择对话框
 > todo 默认的filter
