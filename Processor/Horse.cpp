@@ -197,13 +197,26 @@ void Horse::saveRes(const rapidjson::Value& params, JsonResult* result)
     std::wstring resName = Util::convertToWStr(arr[0].GetString());
     std::wstring tarPath = Util::convertToWStr(arr[1].GetString());
     bool inDataDir = arr[2].GetBool();
-    unsigned int pos{ 0 };
     if (inDataDir) {
-        pos = App::get()->appDir.wstring().size();
         auto p = App::get()->appDir / tarPath;
         tarPath = p.make_preferred().wstring();
     }
-
+    std::vector<std::filesystem::path> directories;
+    std::filesystem::path current(tarPath);
+    current = current.parent_path();
+    while (!current.empty() && !std::filesystem::exists(current)) {
+        directories.push_back(current);
+        current = current.parent_path();
+    }
+    for (auto it = directories.rbegin(); it != directories.rend(); ++it) {
+        if (!CreateDirectory(it->wstring().c_str(), nullptr)) {
+            DWORD error = GetLastError();
+            if (error != ERROR_ALREADY_EXISTS) {
+                result->addErr("create path exists");
+                return;
+            }
+        }
+    }
     HRSRC hRes = FindResource(NULL, resName.c_str(), RT_RCDATA);
     if (!hRes) {
         result->addErr("no resName");
@@ -216,9 +229,6 @@ void Horse::saveRes(const rapidjson::Value& params, JsonResult* result)
     }
     void* pData = LockResource(hData);
     DWORD size = SizeofResource(NULL, hRes);
-
-
-
     std::ofstream outFile(tarPath, std::ios::binary);
     outFile.write(reinterpret_cast<const char*>(pData), size);
 

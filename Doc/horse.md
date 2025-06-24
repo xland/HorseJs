@@ -139,8 +139,22 @@ console.log(obj);
 ```
 
 - 把 UI 文件夹内的文件当作资源写入 exe 文件中。
-
+> 资源的名称即为文件相对于UI的目录
 ```js
 let obj = await horse.pack();
 console.log(obj);
+```
+
+- 读取 exe 文件中的资源并保存为文件。
+
+> 第一个参数为资源名称，这个名称其实就是horse.pack()打包的资源的名称，注意名称中的路径分隔符，必须是`/` <br />
+> 第二个参数为保存的文件路径，此处可以用相对路径， <br />
+> 如果第三个参数为 true 时，则相对路径是相对于应用程序数据目录的路径， <br />
+> 比如：C:\Users\liuxiaolun\AppData\Roaming\HorseJs\css\iconfont.woff2 <br />
+> 如果第三个参数为 false ，则相对路径是相对于应用程序 exe 的路径。 <br />
+> 第三个参数的默认值为 true <br />
+> 第二个参数的默认值与第一个参数相同
+```js
+let config = await horse.saveRes("css/iconfont.woff2", "css/iconfont.woff2", true);
+console.log(config);
 ```
