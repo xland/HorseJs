@@ -309,6 +309,7 @@ void Clipboard::readImg(const rapidjson::Value& params, JsonResult* result)
     sharedBuffer->Close();
     CloseClipboard();
     result->cancel = true;
+    DeleteObject(hBitmap);
 }
 void Clipboard::writeImg(const rapidjson::Value& params, JsonResult* result)
 {

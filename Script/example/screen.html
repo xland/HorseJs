@@ -7,9 +7,12 @@
   <body>
     <div class="box">
       <div id="btnGetAllScreenInfo" class="btn">获取所有屏幕信息</div>
-      <div id="btnGetDesktop" class="btn">获取桌面矩形</div>
+      <div id="btnGetDesktop" class="btn">获取桌面矩形（支持多个屏幕）</div>
       <div id="btnGetColor" class="btn">获取所有屏幕上某一点的颜色</div>
-      <div id="btnGetImg" class="btn">获取屏幕某个区域的图像（未完成）</div>
+      <div id="btnGetImg" class="btn">获取屏幕某个区域的图像</div>
+      <div id="imgBox">
+        <img id="imgIns" src="" alt="" style="width: 400px; height: 300px; display: none" />
+      </div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
@@ -25,6 +28,16 @@
         $("#btnGetColor").addEventListener("click", async () => {
           let data = await horse.screen.getColor(100, 100);
           console.log(data);
+        });
+        $("#btnGetImg").addEventListener("click", async () => {
+          let data = await horse.screen.getImg(100, 100, 800, 600);
+          const uint8Array = new Uint8Array(data.buffer); // 字节视图
+          debugger;
+          const blob = new Blob([uint8Array], { type: "image/bmp" });
+          const url = URL.createObjectURL(blob);
+          $("#imgIns").setAttribute("src", url);
+          $("#imgIns").setAttribute("style", "width: 400px; height: 300px;");
+          // data.release();
         });
       });
     </script>
