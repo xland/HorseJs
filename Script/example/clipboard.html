@@ -18,6 +18,10 @@
       <div id="btnGetFile" class="btn">读取剪切板内的文件</div>
       <div id="btnAddFile" class="btn">向剪切板写入文件</div>
       <div id="btnClearClipboard" class="btn">清空剪切板</div>
+
+      <div id="imgBox">
+        <img id="imgIns" src="" alt="" style="width: 400px; height: 300px; display: none" />
+      </div>
     </div>
     <script>
       let $ = (selector) => document.querySelector(selector);
@@ -64,14 +68,20 @@
             console.log(data.err);
             return;
           }
-          const uint8Array = new Uint8Array(data.buffer);
-          const binary = Array.from(uint8Array)
-            .map((byte) => String.fromCharCode(byte))
-            .join("");
-          const base64String = btoa(binary);
-          const base64Image = `data:image/png;base64,${base64String}`;
+          const uint8Array = new Uint8Array(data.buffer); // 字节视图
+          // objectURL读取图像（推荐）
+          const blob = new Blob([uint8Array], { type: "image/png" });
+          const url = URL.createObjectURL(blob);
+
+          // base64 字符串设置图像
+          // const binary = Array.from(uint8Array)
+          //   .map((byte) => String.fromCharCode(byte))
+          //   .join("");
+          // const base64String = btoa(binary);
+          // const url = `data:image/png;base64,${base64String}`;
           data.release();
-          console.log(base64Image);
+          $("#imgIns").setAttribute("src", url);
+          $("#imgIns").setAttribute("style", `width: ${data.w}px; height: ${data.h}px;`);
         });
         $("#btnWriteImg").addEventListener("click", async () => {
           let data = await horse.clipboard.writeImg(`D:\\project\\HorseJs\\Doc\\img\\horse.png`);
@@ -88,6 +98,9 @@
         $("#btnClearClipboard").addEventListener("click", async () => {
           let data = await horse.clipboard.clear();
           console.log(data);
+        });
+        $("#imgIns").addEventListener("click", async () => {
+          $("#imgIns").setAttribute("style", `display: none;`);
         });
       });
     </script>

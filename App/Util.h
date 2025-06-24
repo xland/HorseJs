@@ -28,5 +28,8 @@ public:
 	static std::string colorToHex(COLORREF color);
 	static std::wstring getContentType(const std::wstring& fileName);
 	static void printTime();
+	static int bitmapToPngData(HBITMAP bitmap, std::vector<std::byte>& pngData,int& w,int& h);
+private:
+	static CLSID* getPngClsid();
 };
 

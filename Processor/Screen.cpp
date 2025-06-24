@@ -13,31 +13,6 @@ namespace {
     };
     //todo dpi变化
     using Context = std::pair<rapidjson::Value&, rapidjson::Document::AllocatorType&>;
-
-    int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
-    {
-        using namespace Gdiplus;
-        UINT num = 0;          // 编码器数量
-        UINT size = 0;         // 编码器数组大小（字节）
-
-        GetImageEncodersSize(&num, &size);
-        if (size == 0) return -1;  // 无编码器
-
-        std::vector<BYTE> buffer(size);
-        ImageCodecInfo* pImageCodecInfo = reinterpret_cast<ImageCodecInfo*>(buffer.data());
-        if (GetImageEncoders(num, size, pImageCodecInfo) != Ok)
-            return -1;
-
-        for (UINT i = 0; i < num; ++i)
-        {
-            if (wcscmp(pImageCodecInfo[i].MimeType, format) == 0)
-            {
-                *pClsid = pImageCodecInfo[i].Clsid;
-                return i;
-            }
-        }
-        return -1;
-    }
 }
 
 Screen::Screen()
@@ -119,49 +94,21 @@ void Screen::getImg(const rapidjson::Value& params, JsonResult* result)
     SelectObject(hDC, oldObj);
     DeleteDC(hDC);
     ReleaseDC(NULL, hScreen);
-    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-    ULONG_PTR gdiplusToken;
-    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
-
-    IStream* pngStream = nullptr;
-    auto hr = CreateStreamOnHGlobal(nullptr, TRUE, &pngStream);
-    if (FAILED(hr)) {
-        result->addErr("CreateStreamOnHGlobal err");
-        return;
-    }
-    Gdiplus::Bitmap bmp(hBitmap, nullptr);
-    w = bmp.GetWidth();
-    h = bmp.GetHeight();
-    CLSID pngClsid;
-    GetEncoderClsid(L"image/png", &pngClsid);
-    // 将 Bitmap 保存为 PNG 到内存流
-    bmp.Save(pngStream, &pngClsid, nullptr);
+    std::vector<std::byte> pngData;
+    Util::bitmapToPngData(hBitmap, pngData,w,h);
     DeleteObject(hBitmap);
-    // 获取流大小并读取数据
-    STATSTG stat;
-    pngStream->Stat(&stat, STATFLAG_NONAME);
-    ULONG pngSize = (ULONG)stat.cbSize.QuadPart;
-
-    std::vector<BYTE> pngData(pngSize);
-    LARGE_INTEGER zero = {};
-    pngStream->Seek(zero, STREAM_SEEK_SET, nullptr);
-    ULONG bytesRead;
-    pngStream->Read(pngData.data(), pngSize, &bytesRead);
-    pngStream->Release();
-    Gdiplus::GdiplusShutdown(gdiplusToken);
-
 
     auto env12 = App::get()->env.try_query<ICoreWebView2Environment12>();
     wil::com_ptr<ICoreWebView2SharedBuffer> sharedBuffer;
-    hr = env12->CreateSharedBuffer(pngSize, &sharedBuffer);
+    auto hr = env12->CreateSharedBuffer(pngData.size(), &sharedBuffer);
     if (FAILED(hr)) {
         result->addErr("CreateSharedBuffer err");
         return;
     }
     wil::com_ptr<IStream> stream;
     sharedBuffer->OpenStream(&stream);
-    stream->Write(pngData.data(), pngSize, nullptr);
-    result->addNumber("totalSize", (long long)pngSize);
+    stream->Write(pngData.data(), pngData.size(), nullptr);
+    result->addNumber("totalSize", (long long)pngData.size());
     result->returnBackSharedBuffer(sharedBuffer.get());
     sharedBuffer->Close();
     result->cancel = true;

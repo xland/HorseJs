@@ -130,186 +130,43 @@ void Clipboard::writeText(const rapidjson::Value& params, JsonResult* result)
 
 void Clipboard::readImg(const rapidjson::Value& params, JsonResult* result)
 {
-    // 打开剪切板
     if (!OpenClipboard(nullptr)) {
         result->addErr("open clipboard err");
         return;
     }
-
-    // 检查剪切板是否有位图
     if (!IsClipboardFormatAvailable(CF_BITMAP)) {
         result->addErr("no img");
         CloseClipboard();
         return;
     }
-
-    // 获取位图句柄
     HBITMAP hBitmap = (HBITMAP)GetClipboardData(CF_BITMAP);
     if (hBitmap == nullptr) {
         result->addErr("can not get img");
         CloseClipboard();
         return;
     }
+    int w, h;
+    std::vector<std::byte> pngData;
+    Util::bitmapToPngData(hBitmap, pngData,w,h);
+    DeleteObject(hBitmap);
+    CloseClipboard();
 
-    // 获取位图信息
-    BITMAP bmp;
-    if (GetObject(hBitmap, sizeof(BITMAP), &bmp) == 0) {
-        result->addErr("can not get img info");
-        CloseClipboard();
-        return;
-    }
-
-    // 初始化 COM（确保在程序启动时调用 CoInitialize）
-    HRESULT hr;
-    wil::com_ptr<IWICImagingFactory> factory;
-    hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&factory));
-    if (FAILED(hr)) {
-        result->addErr("can not init WIC");
-        CloseClipboard();
-        return;
-    }
-
-    // 从 HBITMAP 创建 WIC 位图
-    wil::com_ptr<IWICBitmap> wicBitmap;
-    hr = factory->CreateBitmapFromHBITMAP(hBitmap, nullptr, WICBitmapUsePremultipliedAlpha, &wicBitmap);
-    if (FAILED(hr)) {
-        result->addErr("can not init WIC img");
-        CloseClipboard();
-        return;
-    }
-
-    // 创建内存流
-    wil::com_ptr<IWICStream> wicStream;
-    wil::com_ptr<IStream> memStream;
-    hr = CreateStreamOnHGlobal(nullptr, TRUE, &memStream);
-    if (FAILED(hr)) {
-        result->addErr("can not create WIC stream1");
-        CloseClipboard();
-        return;
-    }
-    hr = factory->CreateStream(&wicStream);
-    if (FAILED(hr)) {
-        result->addErr("can not create WIC stream2");
-        CloseClipboard();
-        return;
-    }
-    hr = wicStream->InitializeFromIStream(memStream.get());
-    if (FAILED(hr)) {
-        result->addErr("can not create WIC stream3");
-        CloseClipboard();
-        return;
-    }
-
-    // 创建 PNG 编码器
-    wil::com_ptr<IWICBitmapEncoder> encoder;
-    hr = factory->CreateEncoder(GUID_ContainerFormatPng, nullptr, &encoder);
-    if (FAILED(hr)) {
-        result->addErr("can not create png encoder1");
-        CloseClipboard();
-        return;
-    }
-    hr = encoder->Initialize(wicStream.get(), WICBitmapEncoderNoCache);
-    if (FAILED(hr)) {
-        result->addErr("can not create png encoder2");
-        CloseClipboard();
-        return;
-    }
-
-    // 创建帧并写入数据
-    wil::com_ptr<IWICBitmapFrameEncode> frame;
-    hr = encoder->CreateNewFrame(&frame, nullptr);
-    if (FAILED(hr)) {
-        result->addErr("can not create img frame");
-        CloseClipboard();
-        return;
-    }
-    hr = frame->Initialize(nullptr);
-    if (FAILED(hr)) {
-        result->addErr("can not init img frame");
-        CloseClipboard();
-        return;
-    }
-    hr = frame->SetSize(bmp.bmWidth, bmp.bmHeight);
-    if (FAILED(hr)) {
-        result->addErr("can not init img frame size");
-        CloseClipboard();
-        return;
-    }
-    WICPixelFormatGUID format = GUID_WICPixelFormat32bppRGBA;
-    hr = frame->SetPixelFormat(&format);
-    if (FAILED(hr)) {
-        result->addErr("can not init pix format");
-        CloseClipboard();
-        return;
-    }
-    hr = frame->WriteSource(wicBitmap.get(), nullptr);
-    if (FAILED(hr)) {
-        result->addErr("can not write img frame");
-        CloseClipboard();
-        return;
-    }
-    hr = frame->Commit();
-    if (FAILED(hr)) {
-        result->addErr("can not commit img frame");
-        CloseClipboard();
-        return;
-    }
-    hr = encoder->Commit();
-    if (FAILED(hr)) {
-        result->addErr("can not commit img encoder");
-        CloseClipboard();
-        return;
-    }
-
-    // 获取 PNG 数据
-    STATSTG stat;
-    hr = memStream->Stat(&stat, STATFLAG_NONAME);
-    if (FAILED(hr)) {
-        result->addErr("can not stat img stream");
-        CloseClipboard();
-        return;
-    }
-    std::vector<unsigned char> pngBuffer(stat.cbSize.LowPart);
-    HGLOBAL hGlobal;
-    hr = GetHGlobalFromStream(memStream.get(), &hGlobal);
-    if (FAILED(hr)) {
-        result->addErr("can not get global stream");
-        CloseClipboard();
-        return;
-    }
-    void* data = GlobalLock(hGlobal);
-    memcpy(pngBuffer.data(), data, stat.cbSize.LowPart);
-    GlobalUnlock(hGlobal);
-
-    // 创建共享缓冲区
     auto env12 = App::get()->env.try_query<ICoreWebView2Environment12>();
     wil::com_ptr<ICoreWebView2SharedBuffer> sharedBuffer;
-    hr = env12->CreateSharedBuffer(stat.cbSize.LowPart, &sharedBuffer);
+    auto hr = env12->CreateSharedBuffer(pngData.size(), &sharedBuffer);
     if (FAILED(hr)) {
-        result->addErr("can not create shared buffer");
-        CloseClipboard();
+        result->addErr("CreateSharedBuffer err");
         return;
     }
     wil::com_ptr<IStream> stream;
-    hr = sharedBuffer->OpenStream(&stream);
-    if (FAILED(hr)) {
-        result->addErr("can not open stream");
-        CloseClipboard();
-        return;
-    }
-    hr = stream->Write(pngBuffer.data(), stat.cbSize.LowPart, nullptr);
-    if (FAILED(hr)) {
-        result->addErr("can not write png buffer");
-        CloseClipboard();
-        return;
-    }
-    result->addNumber("w", (int)bmp.bmWidth);
-    result->addNumber("h", (int)bmp.bmHeight);
+    sharedBuffer->OpenStream(&stream);
+    stream->Write(pngData.data(), pngData.size(), nullptr);
+    result->addNumber("totalSize", (long long)pngData.size());
+    result->addNumber("w", w);
+    result->addNumber("h", h);
     result->returnBackSharedBuffer(sharedBuffer.get());
     sharedBuffer->Close();
-    CloseClipboard();
     result->cancel = true;
-    DeleteObject(hBitmap);
 }
 void Clipboard::writeImg(const rapidjson::Value& params, JsonResult* result)
 {

@@ -11,7 +11,7 @@
       <div id="btnGetColor" class="btn">获取所有屏幕上某一点的颜色</div>
       <div id="btnGetImg" class="btn">获取屏幕某个区域的图像</div>
       <div id="imgBox">
-        <img id="imgIns" src="" alt="" style="width: 400px; height: 300px; display: none" />
+        <img id="imgIns" src="" alt="" style="display: none" />
       </div>
     </div>
     <script>
@@ -32,12 +32,14 @@
         $("#btnGetImg").addEventListener("click", async () => {
           let data = await horse.screen.getImg(100, 100, 800, 600);
           const uint8Array = new Uint8Array(data.buffer); // 字节视图
-          debugger;
-          const blob = new Blob([uint8Array], { type: "image/bmp" });
+          const blob = new Blob([uint8Array], { type: "image/png" });
           const url = URL.createObjectURL(blob);
+          data.release();
           $("#imgIns").setAttribute("src", url);
-          $("#imgIns").setAttribute("style", "width: 400px; height: 300px;");
-          // data.release();
+          $("#imgIns").setAttribute("style", `width: ${data.w}px; height: ${data.h}px;`);
+        });
+        $("#imgIns").addEventListener("click", async () => {
+          $("#imgIns").setAttribute("style", `display: none;`);
         });
       });
     </script>

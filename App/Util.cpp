@@ -99,3 +99,64 @@ void Util::printTime()
     auto str = std::format(L"\n{}-{}-{} {}:{}:{}:{}", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
     OutputDebugString(str.data());
 }
+
+int Util::bitmapToPngData(HBITMAP bitmap, std::vector<std::byte>& pngData, int& w, int& h)
+{
+    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+    ULONG_PTR gdiplusToken;
+    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
+    IStream* pngStream = nullptr;
+    auto hr = CreateStreamOnHGlobal(nullptr, TRUE, &pngStream);
+    if (FAILED(hr)) {
+        return -1;
+    }
+    Gdiplus::Bitmap bmp(bitmap, nullptr);
+    CLSID pngClsid = *Util::getPngClsid();
+    if (pngClsid == CLSID_NULL) {
+        return -1;
+    }
+    // 将 Bitmap 保存为 PNG 到内存流
+    bmp.Save(pngStream, &pngClsid, nullptr);
+    w = bmp.GetWidth();
+    h = bmp.GetHeight();
+    // 获取流大小并读取数据
+    STATSTG stat;
+    pngStream->Stat(&stat, STATFLAG_NONAME);
+    ULONG pngSize = (ULONG)stat.cbSize.QuadPart;
+    pngData.resize(pngSize);
+    LARGE_INTEGER zero = {};
+    pngStream->Seek(zero, STREAM_SEEK_SET, nullptr);
+    ULONG bytesRead;
+    pngStream->Read(pngData.data(), pngSize, &bytesRead);
+    pngStream->Release();
+    Gdiplus::GdiplusShutdown(gdiplusToken);
+    return 0;
+}
+
+CLSID* Util::getPngClsid()
+{
+    static CLSID pngClsid = [] {
+        using namespace Gdiplus;
+        UINT num = 0;          // 编码器数量
+        UINT size = 0;         // 编码器数组大小（字节）
+        GetImageEncodersSize(&num, &size);
+        if (size == 0) {
+            return CLSID_NULL;
+        }
+        std::vector<BYTE> buffer(size);
+        ImageCodecInfo* pImageCodecInfo = reinterpret_cast<ImageCodecInfo*>(buffer.data());
+        if (GetImageEncoders(num, size, pImageCodecInfo) != Ok) {
+            return CLSID_NULL;
+        }
+        for (UINT i = 0; i < num; ++i)
+        {
+            //todo 目前只用到了png，用到其他的编码之后再扩展此函数
+            if (wcscmp(pImageCodecInfo[i].MimeType, L"image/png") == 0) 
+            {
+                return pImageCodecInfo[i].Clsid;
+            }
+        }
+        return CLSID_NULL;
+    }();
+    return &pngClsid;
+}
