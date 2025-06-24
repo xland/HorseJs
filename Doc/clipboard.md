@@ -72,16 +72,29 @@ console.log(data);
 ```
 
 - 读取剪切板内的图像
+> 如下示例提供了两种使用image buffer数据的方式：<br />
+> 使用objectURL读取图像数据、把图像数据格式化为 base64 字符串再使用 <br />
+> 推荐第一种，因为占用内存更小，处理和渲染速度都更快。<br />
+> 无论使用哪一种方案，都不要忘记 data.release(); 释放数据。
 ```js
 let data = await horse.clipboard.readImg();
-const uint8Array = new Uint8Array(data.buffer);
-const binary = Array.from(uint8Array)
-	.map((byte) => String.fromCharCode(byte))
-	.join("");
-const base64String = btoa(binary);
-const base64Image = `data:image/png;base64,${base64String}`;
+if (!data.ok) {
+	console.log(data.err);
+	return;
+}
+const uint8Array = new Uint8Array(data.buffer); // 字节视图
+// objectURL读取图像（推荐）
+const blob = new Blob([uint8Array], { type: "image/png" });
+const url = URL.createObjectURL(blob);
+// base64 字符串设置图像
+// const binary = Array.from(uint8Array)
+//   .map((byte) => String.fromCharCode(byte))
+//   .join("");
+// const base64String = btoa(binary);
+// const url = `data:image/png;base64,${base64String}`;
 data.release();
-console.log(base64Image);
+$("#imgIns").setAttribute("src", url);
+$("#imgIns").setAttribute("style", `width: ${data.w}px; height: ${data.h}px;`);
 ```
 
 - 向剪切板写入图像
