@@ -198,7 +198,7 @@ void Clipboard::writeImg(const rapidjson::Value& params, JsonResult* result)
     HDC screenDC = GetDC(nullptr);
     HDC memoryDC = CreateCompatibleDC(screenDC);
     HBITMAP hBitmap = CreateCompatibleBitmap(screenDC, width, height);
-    DeleteObject(SelectObject(memoryDC, hBitmap));
+    DeleteObject(SelectObject(memoryDC, hBitmap)); //todo 这里可能有风险，看看screen读图像那里
     BITMAPINFO bmi = { sizeof(BITMAPINFOHEADER), width, 0 - height, 1, 32, BI_RGB, width * 4 * height, 0, 0, 0, 0 };
     SetDIBitsToDevice(memoryDC, 0, 0, width, height, 0, 0, 0, height, bitmapData.Scan0, &bmi, DIB_RGB_COLORS);
 
