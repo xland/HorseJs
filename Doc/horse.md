@@ -132,14 +132,14 @@ console.log(obj);
 - 禁止启动第二个实例
 > 需配合设置config.json中的 <br/>
 >  "instanceWatch": true, <br/>
->  "instanceLock": true, <br/>
+>  "instanceLock": true,
 ```js
 let obj = await horse.disableSecondIns();
 console.log(obj);
 ```
 
 - 把 UI 文件夹内的文件当作资源写入 exe 文件中。
-> 资源的名称即为文件相对于UI的目录
+> 资源的名称即为文件相对于UI的目录，比如：css\iconfont.woff2
 ```js
 let obj = await horse.pack();
 console.log(obj);
