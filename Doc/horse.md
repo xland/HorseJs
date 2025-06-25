@@ -141,7 +141,7 @@ console.log(obj);
 - 把 UI 文件夹内的文件当作资源写入 exe 文件中。
 > 资源的名称即为文件相对于UI的目录，比如：css\iconfont.woff2
 ```js
-let obj = await horse.pack();
+let obj = await horse.packRes();
 console.log(obj);
 ```
 
@@ -157,4 +157,12 @@ console.log(obj);
 ```js
 let config = await horse.saveRes("css/iconfont.woff2", "css/iconfont.woff2", true);
 console.log(config);
+```
+
+- 设置开机自启动
+> 第一个参数默认为 true ，则开机自启动 <br />
+> 如果第一个参数为 false，则取消开机自启动
+```js
+let data = await horse.autoStart(true);
+console.log(data);
 ```

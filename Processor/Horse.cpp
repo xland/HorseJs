@@ -16,8 +16,9 @@ namespace {
     {"relaunch", &Horse::relaunch},
     {"enableSecondIns", &Horse::enableSecondIns},
     {"disableSecondIns", &Horse::disableSecondIns},
-    {"pack", &Horse::pack},
+    {"packRes", &Horse::packRes},
     {"saveRes", &Horse::saveRes},
+    {"autoStart", &Horse::autoStart},
     {"on", &Horse::on},
     {"off", &Horse::off},
     };
@@ -163,7 +164,7 @@ void Horse::disableSecondIns(const rapidjson::Value& params, JsonResult* result)
     app->instanceLock = true;
 }
 
-void Horse::pack(const rapidjson::Value& params, JsonResult* result)
+void Horse::packRes(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::wstring src = Util::convertToWStr(arr[0].GetString());
@@ -231,6 +232,34 @@ void Horse::saveRes(const rapidjson::Value& params, JsonResult* result)
     DWORD size = SizeofResource(NULL, hRes);
     std::ofstream outFile(tarPath, std::ios::binary);
     outFile.write(reinterpret_cast<const char*>(pData), size);
+
+}
+void Horse::autoStart(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    auto flag = arr[0].GetBool();
+    HKEY hKey;
+    std::wstring runKey = L"Software\\Microsoft\\Windows\\CurrentVersion\\Run";
+    std::wstring valueName = Util::convertToWStr(App::get()->appId.data());
+    if (flag) {
+        wchar_t buffer[MAX_PATH];
+        GetModuleFileName(nullptr, buffer, MAX_PATH);
+        auto curPath = std::filesystem::path(buffer);
+        std::wstring exePath = curPath.wstring();
+        if (RegOpenKeyEx(HKEY_CURRENT_USER, runKey.data(), 0, KEY_WRITE, &hKey) == ERROR_SUCCESS) {
+            RegSetValueEx(hKey, valueName.data(), 0, REG_SZ, (const BYTE*)exePath.data(), exePath.size() * sizeof(wchar_t));
+            RegCloseKey(hKey);
+            return;
+        }
+    }
+    else {
+        if (RegOpenKeyEx(HKEY_CURRENT_USER, runKey.data(), 0, KEY_WRITE, &hKey) == ERROR_SUCCESS) {
+            RegDeleteValue(hKey, valueName.data());
+            RegCloseKey(hKey);
+            return;
+        }
+    }
+    result->addErr("edit reg err");
 
 }
 void Horse::on(const rapidjson::Value& params, JsonResult* result)
