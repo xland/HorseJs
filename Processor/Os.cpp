@@ -328,7 +328,6 @@ void Os::showNotify(const rapidjson::Value& params, JsonResult* result)
     using namespace winrt::Windows::UI;
     using namespace winrt::Windows::Data::Xml::Dom;
 
-    auto appIdStr = Util::convertToWStr(App::get()->appId.data());
     //auto aumid = std::format(L"com.liulun.{}", appIdStr.data());
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::wstring title = Util::convertToWStr(arr[1].GetString());
@@ -339,7 +338,7 @@ void Os::showNotify(const rapidjson::Value& params, JsonResult* result)
     XmlDocument xmlDoc;
     xmlDoc.LoadXml(xmlString);
     Notifications::ToastNotification toast(xmlDoc);
-    Notifications::ToastNotifier notifier = Notifications::ToastNotificationManager::CreateToastNotifier(appIdStr.data());
+    Notifications::ToastNotifier notifier = Notifications::ToastNotificationManager::CreateToastNotifier(App::get()->appId.data());
     notifier.Show(toast);
 }
 

@@ -153,9 +153,8 @@ void Horse::enableSecondIns(const rapidjson::Value& params, JsonResult* result)
 void Horse::disableSecondIns(const rapidjson::Value& params, JsonResult* result)
 {
     auto app = App::get();
-    auto mutextName = "Global\\" + app->appId;
-    auto nameStr = Util::convertToWStr(mutextName.data());
-    auto singleInsMutext = CreateMutex(NULL, TRUE, nameStr.data());
+    auto mutextName = L"Global\\" + app->appId;
+    auto singleInsMutext = CreateMutex(NULL, TRUE, mutextName.data());
     if (GetLastError()) {
         result->addErr("already disable");
         return;
@@ -240,21 +239,20 @@ void Horse::autoStart(const rapidjson::Value& params, JsonResult* result)
     auto flag = arr[0].GetBool();
     HKEY hKey;
     std::wstring runKey = L"Software\\Microsoft\\Windows\\CurrentVersion\\Run";
-    std::wstring valueName = Util::convertToWStr(App::get()->appId.data());
     if (flag) {
         wchar_t buffer[MAX_PATH];
         GetModuleFileName(nullptr, buffer, MAX_PATH);
         auto curPath = std::filesystem::path(buffer);
         std::wstring exePath = curPath.wstring();
         if (RegOpenKeyEx(HKEY_CURRENT_USER, runKey.data(), 0, KEY_WRITE, &hKey) == ERROR_SUCCESS) {
-            RegSetValueEx(hKey, valueName.data(), 0, REG_SZ, (const BYTE*)exePath.data(), exePath.size() * sizeof(wchar_t));
+            RegSetValueEx(hKey, App::get()->appId.data(), 0, REG_SZ, (const BYTE*)exePath.data(), exePath.size() * sizeof(wchar_t));
             RegCloseKey(hKey);
             return;
         }
     }
     else {
         if (RegOpenKeyEx(HKEY_CURRENT_USER, runKey.data(), 0, KEY_WRITE, &hKey) == ERROR_SUCCESS) {
-            RegDeleteValue(hKey, valueName.data());
+            RegDeleteValue(hKey, App::get()->appId.data());
             RegCloseKey(hKey);
             return;
         }

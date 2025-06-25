@@ -1,5 +1,5 @@
 ﻿- 象棋棋力训练软件
 - 个人知识管理工具
-- 把UI目录下的内容与config.json写入exe资源（HorseExePakager）
-- 制作一个sqlite的包装器（HorseSqlite）
+- 日历
 - 关注Win11下HorseJs的启动速度
+- 读取命令行参数，通过注入脚本传递给页面

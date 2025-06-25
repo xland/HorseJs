@@ -17,7 +17,6 @@ public:
 	bool maximize{ false }, visible{ true }, frame{ true }, shadow{ true }, skipTaskbar{ false };
 	bool maximizable{ true }, resizable{ true }, minimizable{ true }, alwaysOnTop{ false };  //todo closable
 	std::wstring title{ L"HorseJs" };
-	bool scriptDialogEnable{ true }, webMessageEnable{ true }, scriptEnable{ true }, contextMenuEnable{true};
 public:
 	bool framelessResizable{ true };
 	HWND hwnd;
@@ -72,5 +71,8 @@ private:
 	UI::Composition::Desktop::DesktopWindowTarget m_target{ nullptr };
 	UI::Composition::ContainerVisual m_rootVisual{ nullptr };
 	UI::Composition::ContainerVisual m_webViewVisual{ nullptr };
+private:
+	bool scriptDialogEnable{ true }, webMessageEnable{ true }, scriptEnable{ true }, contextMenuEnable{ true };
+	std::wstring url{L"index.html"};
 };
 

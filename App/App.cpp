@@ -181,8 +181,7 @@ void App::initUICompositor()
 }
 void App::createSingleMutex()
 {
-    auto mutextName = "Global\\" + appId;
-    auto nameStr = Util::convertToWStr(mutextName.data());
+    auto nameStr = L"Global\\" + appId;
     singleInsMutext = CreateMutex(NULL, TRUE, nameStr.data());
     if (GetLastError() == ERROR_ALREADY_EXISTS)
     {
@@ -220,7 +219,7 @@ void App::loadConfig()
     jsonDoc.Parse(jsonData.data());
     if (jsonDoc.HasMember("appId") && jsonDoc["appId"].IsString())
     {
-        appId = jsonDoc["appId"].GetString();
+        appId = Util::convertToWStr(jsonDoc["appId"].GetString());
     }
     if (jsonDoc.HasMember("quitWhenAllWinClosed") && jsonDoc["quitWhenAllWinClosed"].IsBool())
     {
@@ -237,9 +236,7 @@ void App::loadConfig()
     if (instanceLock || instanceWatch) {
         createSingleMutex();
     }
-
-    auto appIdStr = Util::convertToWStr(appId.data());
-    auto aumid = std::format(L"com.liulun.{}", appIdStr.data());
+    auto aumid = std::format(L"com.liulun.{}", appId.data());
     HRESULT hr = SetCurrentProcessExplicitAppUserModelID(aumid.data());
     wchar_t buffer[MAX_PATH];
     GetModuleFileName(nullptr, buffer, MAX_PATH);

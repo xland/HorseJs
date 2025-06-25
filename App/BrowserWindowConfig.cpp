@@ -123,4 +123,8 @@ void BrowserWindow::configPage(const rapidjson::Value& config)
     {
         contextMenuEnable = config["contextMenuEnable"].GetBool();
     }
+    if (config.HasMember("url") && config["url"].IsString())
+    {
+        url = Util::convertToWStr(config["url"].GetString());
+    }
 }

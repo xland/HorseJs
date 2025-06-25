@@ -19,7 +19,7 @@ public:
 	static void init(HINSTANCE hInstance);
 public:
 	bool quitWhenAllWinClosed{ true };
-	std::string appId;
+	std::wstring appId;
 	wil::com_ptr<ICoreWebView2Environment> env;
 	HINSTANCE hInstance;
 	std::filesystem::path appDir;

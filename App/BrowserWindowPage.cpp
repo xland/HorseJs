@@ -41,10 +41,13 @@ void BrowserWindow::loadPage()
 {
     HRESULT hr = ctrl->get_CoreWebView2(&webview);
     auto app = App::get();
-    auto localDomain = Util::convertToWStr(app->appId.data())+L".localhost";
-    if (!FindResource(NULL, L"index.html", RT_RCDATA)) {
-        auto webView3 = webview.try_query<ICoreWebView2_3>();
-        webView3->SetVirtualHostNameToFolderMapping(localDomain.data(),L"UI",COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_ALLOW);
+    if (!url.starts_with(L"http")) {
+        auto localDomain = app->appId + L".localhost";
+        if (!FindResource(NULL, url.data(), RT_RCDATA)) {            
+            auto webView3 = webview.try_query<ICoreWebView2_3>();
+            webView3->SetVirtualHostNameToFolderMapping(localDomain.data(), L"UI", COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_ALLOW);            
+        }
+        url = std::format(L"https://{}/{}", localDomain, url);
     }
     wil::com_ptr<ICoreWebView2Settings> settings;
     webview->get_Settings(&settings);
@@ -108,7 +111,6 @@ void BrowserWindow::loadPage()
 
     loadResource();    
     //webview->OpenDevToolsWindow();
-    auto url = std::format(L"https://{}/index.html", localDomain);
     //url = L"file://D:/project/HorseJs/x64/Release/UI/index.html";
 	//url = L"https://www.baidu.com/";
 	webview->Navigate(url.data()); //todo: 替换为实际的资源路径
