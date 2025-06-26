@@ -49,7 +49,7 @@ void Db::open(const rapidjson::Value& params, JsonResult* result)
     bool firstCreate;
     if (inDataDir) {
         auto dbPath = App::get()->appDir / dbName;
-        firstCreate = std::filesystem::exists(dbPath);
+        firstCreate = !std::filesystem::exists(dbPath);
         auto dbPathStr = dbPath.string();
         rc = sqlite3_open(dbPathStr.data(), &dbIns);
     }
@@ -59,7 +59,7 @@ void Db::open(const rapidjson::Value& params, JsonResult* result)
             dbPath = std::filesystem::absolute(dbPath);
             dbName = dbPath.wstring();
         }
-        firstCreate = std::filesystem::exists(dbPath);
+        firstCreate = !std::filesystem::exists(dbPath);
         auto dbPathStr = dbPath.string();
         rc = sqlite3_open(dbPathStr.data(), &dbIns);
     }
