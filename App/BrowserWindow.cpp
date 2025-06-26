@@ -161,3 +161,13 @@ void BrowserWindow::bindCompCtrlToHwnd()
     GetClientRect(hwnd, &bounds);
     ctrl->put_Bounds(bounds);
 }
+HRESULT BrowserWindow::cursorChange(ICoreWebView2CompositionController*, IUnknown*)
+{
+    HCURSOR cursor = nullptr;
+    HRESULT hr = this->ctrlComp->get_Cursor(&cursor);
+    if (SUCCEEDED(hr) && cursor)
+    {
+        SetCursor(cursor);
+    }
+    return S_OK;
+}

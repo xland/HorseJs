@@ -154,7 +154,7 @@ void BrowserWindow::closing()
             JsonResult result(id, "win", "closing");
             result.returnBack();
         }
-        return; //×èÖ¹´°¿Ú¹Ø±Õ
+        return; //é˜»æ­¢çª—å£å…³é—­
     }
     DestroyWindow(hwnd);
 }
@@ -210,14 +210,4 @@ LRESULT BrowserWindow::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
     else {
         return DefWindowProc(hwnd, msg, wParam, lParam);
     }
-}
-HRESULT BrowserWindow::cursorChange(ICoreWebView2CompositionController*, IUnknown*)
-{
-    HCURSOR cursor = nullptr;
-    HRESULT hr = this->ctrlComp->get_Cursor(&cursor);
-    if (SUCCEEDED(hr) && cursor)
-    {
-        SetCursor(cursor);
-    }
-    return S_OK;
 }
