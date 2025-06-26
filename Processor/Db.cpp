@@ -79,7 +79,7 @@ void Db::sql(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::string sql = arr[0].GetString();
-    auto dbName = Util::convertToWStr(arr[1].GetString());
+    auto dbName = Util::convertToWStr(arr[1].GetString()); //todo sql 参数，防蛀参数
     sqlite3_stmt* stmt = nullptr;
     sqlite3_prepare_v2(dbMap[dbName], sql.data(), -1, &stmt, nullptr);
 
