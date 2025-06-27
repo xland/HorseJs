@@ -1,18 +1,18 @@
 import { Eventer } from "./Eventer";
 export class Screen extends Eventer {
   async getAll() {
-    return this.exec("getAll");
+    return this.execute("getAll");
   }
   async getDesktop() {
-    return this.exec("getDesktop");
+    return this.execute("getDesktop");
   }
   async getColor(x: number, y: number) {
-    return this.exec("getColor", x, y);
+    return this.execute("getColor", x, y);
   }
   async getImg(x: number, y: number, w: number, h: number) {
-    return this.exec("getImg", x, y, w, h);
+    return this.execute("getImg", x, y, w, h);
   }
-  private exec(methodName: string, ...params: any[]) {
+  private execute(methodName: string, ...params: any[]) {
     return this.call({
       className: "screen",
       winId: globalThis.__WIN_ID,

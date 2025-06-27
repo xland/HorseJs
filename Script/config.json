@@ -26,6 +26,6 @@
     "scriptEnable": true,
     "webMessageEnable": true,
     "contextMenuEnable": true,
-    "url": "index.html"
+    "url": "http://localhost:8000/index.html"
   }
 }

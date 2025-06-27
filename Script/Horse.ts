@@ -33,54 +33,54 @@ class Horse extends Eventer {
     this.listenMsg();
   }
   getConfig() {
-    return this.exec("getConfig");
+    return this.execute("getConfig");
   }
   getExeVer() {
-    return this.exec("getExeVer");
+    return this.execute("getExeVer");
   }
   getHorseVer() {
-    return this.exec("getHorseVer");
+    return this.execute("getHorseVer");
   }
   quit() {
-    return this.exec("quit");
+    return this.execute("quit");
   }
   relaunch() {
-    return this.exec("relaunch");
+    return this.execute("relaunch");
   }
   exit(code: number) {
-    return this.exec("exit", code);
+    return this.execute("exit", code);
   }
   async createWin(config: object) {
-    let obj = await this.exec("createWin", config);
+    let obj = await this.execute("createWin", config);
     return new WinProx(obj.id);
   }
   enableSecondIns() {
-    return this.exec("enableSecondIns");
+    return this.execute("enableSecondIns");
   }
   disableSecondIns() {
-    return this.exec("disableSecondIns");
+    return this.execute("disableSecondIns");
   }
   packRes(exePath: string) {
-    return this.exec("packRes", exePath);
+    return this.execute("packRes", exePath);
   }
   saveRes(resPath: string, tarPath = resPath, inDataDir = true) {
-    return this.exec("saveRes", resPath, tarPath, inDataDir);
+    return this.execute("saveRes", resPath, tarPath, inDataDir);
   }
   autoStart(flag = true) {
-    return this.exec("autoStart", flag);
+    return this.execute("autoStart", flag);
   }
   on(eventName, func) {
     if (eventName === "newWin") return this.onNewWin(func);
     let flag = this.listen(eventName, func);
     if (flag) {
-      this.exec("on", eventName);
+      this.execute("on", eventName);
     }
   }
   off(eventName, func) {
     if (eventName === "newWin") return this.offNewWin(func);
     let flag = this.unlisten(eventName, func);
     if (flag) {
-      this.exec("off", eventName);
+      this.execute("off", eventName);
     }
   }
 
@@ -121,7 +121,7 @@ class Horse extends Eventer {
       }
     });
   }
-  private exec(methodName: string, ...params: any[]) {
+  private execute(methodName: string, ...params: any[]) {
     return this.call({
       className: "horse",
       winId: globalThis.__WIN_ID,
@@ -136,14 +136,14 @@ class Horse extends Eventer {
         let proxy = new WinProx(data.id);
         this.emit("_newWin", proxy);
       });
-      this.exec("on", "newWin");
+      this.execute("on", "newWin");
     }
   }
   private offNewWin(func) {
     let flag = this.unlisten("_newWin", func);
     if (flag) {
       this.unlisten("newWin");
-      this.exec("off", "newWin");
+      this.execute("off", "newWin");
     }
   }
 }

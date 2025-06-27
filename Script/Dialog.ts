@@ -1,18 +1,18 @@
 import { Eventer } from "./Eventer";
 export class Dialog extends Eventer {
   openPath(config: any) {
-    return this.exec("openPath", config);
+    return this.execute("openPath", config);
   }
   savePath(config: any) {
-    return this.exec("savePath", config);
+    return this.execute("savePath", config);
   }
   msgBox(config: any) {
-    return this.exec("msgBox", config);
+    return this.execute("msgBox", config);
   }
   itemInFolder(filePath: string) {
-    return this.exec("itemInFolder", filePath);
+    return this.execute("itemInFolder", filePath);
   }
-  private exec(methodName: string, ...params: any[]) {
+  private execute(methodName: string, ...params: any[]) {
     return this.call({
       className: "dialog",
       winId: globalThis.__WIN_ID,

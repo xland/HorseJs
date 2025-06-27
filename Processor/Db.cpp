@@ -9,7 +9,8 @@ namespace {
     std::unordered_map<std::wstring, sqlite3*> dbMap;
     static std::unordered_map<std::string, void (Db::*)(const rapidjson::Value&, JsonResult*)> funcs{
         {"open", &Db::open},
-        {"sql", &Db::sql},
+        {"prepare", &Db::prepare},
+        {"exec", &Db::exec},
         {"close", &Db::close},
         {"del", &Db::del},
     };
@@ -75,13 +76,14 @@ void Db::open(const rapidjson::Value& params, JsonResult* result)
     result->addBool("isDbFirstCreated", firstCreate);
 }
 
-void Db::sql(const rapidjson::Value& params, JsonResult* result)
+void Db::prepare(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::string sql = arr[0].GetString();
     auto dbName = Util::convertToWStr(arr[1].GetString()); //todo sql 参数，防蛀参数
     sqlite3_stmt* stmt = nullptr;
     sqlite3_prepare_v2(dbMap[dbName], sql.data(), -1, &stmt, nullptr);
+    
 
     rapidjson::Value array(rapidjson::kArrayType);
     while (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -115,6 +117,23 @@ void Db::sql(const rapidjson::Value& params, JsonResult* result)
         array.PushBack(dataItem.getVal(), result->getAllocator());
     }
     sqlite3_finalize(stmt);
+    result->addValue("data", std::move(array));
+}
+
+void Db::exec(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    std::string sql = arr[0].GetString();
+    auto dbName = Util::convertToWStr(arr[1].GetString()); //todo sql 参数，防蛀参数
+    char* errMsg = nullptr;
+    rapidjson::Value array(rapidjson::kArrayType);    
+    std::pair<rapidjson::Value*, JsonResult*> pair(&array, result);
+    if (sqlite3_exec(dbMap[dbName], sql.data(), &Db::callback, &pair, &errMsg) != SQLITE_OK) {
+        std::string err{ "SQL error: " + std::string{errMsg} };
+        sqlite3_free(errMsg);
+        result->addErr(err);
+        return;
+    }
     result->addValue("data", std::move(array));
 }
 
@@ -159,4 +178,16 @@ void Db::del(const rapidjson::Value& params, JsonResult* result)
         result->addErr("remove db err");
         return;
     }
+}
+
+int Db::callback(void* pairPtr, int argc, char** argv, char** azColName) {
+    auto pair = (std::pair<rapidjson::Value*, JsonResult*>*)pairPtr;
+    JsonParsor dataItem;
+    for (int i = 0; i < argc; i++) {
+        std::string colName{ azColName[i] };
+        std::string colVal{ argv[i] ? argv[i] : "NULL" };
+        dataItem.addString(colName, colVal);
+    }
+    pair->first->PushBack(dataItem.getVal(), pair->second->getAllocator());
+    return 0;
 }

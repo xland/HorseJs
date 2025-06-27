@@ -1,42 +1,42 @@
 import { Eventer } from "./Eventer";
 export class Clipboard extends Eventer {
   getDataType() {
-    return this.exec("getDataType");
+    return this.execute("getDataType");
   }
   readText() {
-    return this.exec("readText");
+    return this.execute("readText");
   }
   writeText(text: string) {
-    return this.exec("writeText", text);
+    return this.execute("writeText", text);
   }
   readHtml() {
-    return this.exec("readHtml");
+    return this.execute("readHtml");
   }
   writeHtml(html: string) {
-    return this.exec("writeHtml", html);
+    return this.execute("writeHtml", html);
   }
   readRtf() {
-    return this.exec("readRtf");
+    return this.execute("readRtf");
   }
   writeRtf(rtf: string) {
-    return this.exec("writeRtf", rtf);
+    return this.execute("writeRtf", rtf);
   }
   readImg() {
-    return this.exec("readImg");
+    return this.execute("readImg");
   }
   writeImg(rtf: string) {
-    return this.exec("writeImg", rtf);
+    return this.execute("writeImg", rtf);
   }
   getFile() {
-    return this.exec("getFile");
+    return this.execute("getFile");
   }
   addFile(...paths) {
-    return this.exec("addFile", ...paths);
+    return this.execute("addFile", ...paths);
   }
   clear() {
-    return this.exec("clear");
+    return this.execute("clear");
   }
-  private exec(methodName: string, ...params: any[]) {
+  private execute(methodName: string, ...params: any[]) {
     return this.call({
       className: "clipboard",
       winId: globalThis.__WIN_ID,

@@ -79,6 +79,7 @@ std::wstring Util::getContentType(const std::wstring& fileName)
             {".ttf",  L"font/ttf"},
             {".eot",  L"application/vnd.ms-fontobject"},
             {".txt",  L"text/plain"},
+            {".wasm",  L"application/wasm"},
             {".mp3",  L"audio/mpeg"},
             {".mp4",  L"video/mp4"}
     };

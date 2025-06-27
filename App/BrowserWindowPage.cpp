@@ -43,9 +43,15 @@ void BrowserWindow::loadPage()
     auto app = App::get();
     if (!url.starts_with(L"http")) {
         auto localDomain = app->appId + L".localhost";
-        if (!FindResource(NULL, url.data(), RT_RCDATA)) {            
+        if (FindResource(NULL, url.data(), RT_RCDATA)) {
+            hr = webview->AddWebResourceRequestedFilter(L"*", COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL);
+            auto resRequestedCB = WRL::Callback<ICoreWebView2WebResourceRequestedEventHandler>(this, &BrowserWindow::resRequested);
+            EventRegistrationToken resRequestedToken;
+            hr = webview->add_WebResourceRequested(resRequestedCB.Get(), &resRequestedToken);         
+        }
+        else {
             auto webView3 = webview.try_query<ICoreWebView2_3>();
-            webView3->SetVirtualHostNameToFolderMapping(localDomain.data(), L"UI", COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_ALLOW);            
+            webView3->SetVirtualHostNameToFolderMapping(localDomain.data(), L"UI", COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_ALLOW);
         }
         url = std::format(L"https://{}/{}", localDomain, url);
     }
@@ -104,10 +110,7 @@ void BrowserWindow::loadPage()
     auto frameCreatedCB = WRL::Callback<ICoreWebView2FrameCreatedEventHandler>(this, &BrowserWindow::frameCreated);
     webView15->add_FrameCreated(frameCreatedCB.Get(), &frameCreatedToken);
 
-    hr = webview->AddWebResourceRequestedFilter(L"*", COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL);
-    auto resRequestedCB = WRL::Callback<ICoreWebView2WebResourceRequestedEventHandler>(this, &BrowserWindow::resRequested);
-    EventRegistrationToken resRequestedToken;
-    hr = webview->add_WebResourceRequested(resRequestedCB.Get(), &resRequestedToken);
+
 
     loadResource();    
     //webview->OpenDevToolsWindow();

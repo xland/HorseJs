@@ -2,54 +2,54 @@ import { Eventer } from "./Eventer";
 
 export class Win extends Eventer {
   maximize() {
-    return this.exec("maximize");
+    return this.execute("maximize");
   }
   minimize() {
-    return this.exec("minimize");
+    return this.execute("minimize");
   }
   hide() {
-    return this.exec("hide");
+    return this.execute("hide");
   }
   show() {
-    return this.exec("show");
+    return this.execute("show");
   }
   restore() {
-    return this.exec("restore");
+    return this.execute("restore");
   }
   resize(w: number, h: number) {
-    return this.exec("resize", w, h);
+    return this.execute("resize", w, h);
   }
   move(x: number, y: number) {
-    return this.exec("move", x, y);
+    return this.execute("move", x, y);
   }
   close() {
-    return this.exec("close");
+    return this.execute("close");
   }
   destroy() {
-    return this.exec("destroy");
+    return this.execute("destroy");
   }
   flash(flag: boolean) {
-    return this.exec("flash", flag);
+    return this.execute("flash", flag);
   }
   startDrag() {
-    return this.exec("startDrag");
+    return this.execute("startDrag");
   }
   setResizable(flag: boolean) {
-    return this.exec("setResizable", flag);
+    return this.execute("setResizable", flag);
   }
   on(eventName, func) {
     let flag = this.listen(eventName, func);
     if (flag) {
-      this.exec("on", eventName);
+      this.execute("on", eventName);
     }
   }
   off(eventName, func) {
     let flag = this.unlisten(eventName, func);
     if (flag) {
-      this.exec("off", eventName);
+      this.execute("off", eventName);
     }
   }
-  protected exec(methodName: string, ...params: any[]) {
+  protected execute(methodName: string, ...params: any[]) {
     return this.call({
       className: "win",
       winId: globalThis.__WIN_ID,
