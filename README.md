@@ -19,7 +19,6 @@
 - [配置说明 config.json](./Doc/config.md)
 - [全局对象 horse](./Doc/horse.md)
     - [剪切板 horse.clipboard](./Doc/clipboard.md)
-    - [数据库 horse.db](./Doc/db.md)
     - [对话框 horse.dialog](./Doc/dialog.md)
     - [动态链接库 horse.dll](./Doc/dll.md)
     - [文件 horse.fs](./Doc/fs.md)

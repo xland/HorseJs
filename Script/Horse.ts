@@ -7,11 +7,9 @@ import { Dialog } from "./Dialog";
 import { Clipboard } from "./Clipboard";
 import { Os } from "./Os";
 import { Screen } from "./Screen";
-import { Db } from "./Db";
 
 class Horse extends Eventer {
   clipboard: Clipboard;
-  db: Db;
   dialog: Dialog;
   dll: Dll;
   fs: Fs;
@@ -29,7 +27,6 @@ class Horse extends Eventer {
     this.os = new Os();
     this.screen = new Screen();
     this.dll = new Dll();
-    this.db = new Db();
     this.listenMsg();
   }
   getConfig() {

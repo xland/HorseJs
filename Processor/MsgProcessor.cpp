@@ -11,14 +11,12 @@
 #include "Win.h"
 #include "Os.h"
 #include "Screen.h"
-#include "Db.h"
 
 namespace {
     std::unique_ptr<MsgProcessor> msgProcessor;
 
     static std::unordered_map<std::string, std::function<bool(std::string&, const rapidjson::Value&, JsonResult*)>> processFunc{
         {"clipboard",Clipboard::execute},
-        {"db",Db::execute},
         {"dialog",Dialog::execute},
         {"dll",Dll::execute},
         {"fs",Fs::execute},
