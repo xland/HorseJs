@@ -5,6 +5,7 @@ export class Eventer {
   constructor() {}
   // 监听事件
   protected listen(eventName: string, cb: EventHandler) {
+    console.log("listen", eventName);
     if (!this.dic[eventName]) {
       this.dic[eventName] = [cb];
       return true;
@@ -18,6 +19,7 @@ export class Eventer {
   }
   // 取消监听事件
   protected unlisten(eventName: string, cb?: EventHandler) {
+    console.log("unlisten", eventName);
     const handlers = this.dic[eventName];
     if (!handlers) return false;
     if (cb) {

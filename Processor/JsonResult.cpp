@@ -46,18 +46,3 @@ void JsonResult::returnBackSharedBuffer(ICoreWebView2SharedBuffer* sharedBuffer)
     auto webview17 = win->webview.try_query<ICoreWebView2_17>();
     webview17->PostSharedBufferToScript(sharedBuffer, COREWEBVIEW2_SHARED_BUFFER_ACCESS_READ_ONLY, jsonStr.data());
 }
-
-BrowserWindow* JsonResult::getTar()
-{
-    if (tarId < 0) {
-        return App::getWindow(winId);
-    }
-    else {
-        return App::getWindow(tarId);
-    }
-}
-
-BrowserWindow* JsonResult::getWin()
-{
-    return App::getWindow(winId);
-}

@@ -74,7 +74,7 @@ export class Os extends Eventer {
   private execute(methodName: string, ...params: any[]) {
     return this.call({
       className: "os",
-      winId: globalThis.__WIN_ID,
+      winId: horse.win.id,
       methodName,
       params,
     });

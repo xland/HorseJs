@@ -195,7 +195,7 @@ void Os::on(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::string eventName = arr[0].GetString();
-    auto win = result->getWin();
+    auto win = App::getWindow(result->winId);
     if (eventName == "osLock") {
         if (!WTSRegisterSessionNotification(win->hwnd, NOTIFY_FOR_THIS_SESSION)) {
             result->addErr("listen os lock err");
@@ -214,7 +214,7 @@ void Os::off(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::string eventName = arr[0].GetString();
-    auto win = result->getWin();
+    auto win = App::getWindow(result->winId);
     win->events[eventName].erase(result->winId);
     if (eventName == "osLock") {
         if (!WTSUnRegisterSessionNotification(win->hwnd)) {
@@ -347,7 +347,7 @@ void Os::createTray(const rapidjson::Value& params, JsonResult* result)
     const rapidjson::Value::ConstArray arr = params.GetArray();
     const rapidjson::Value& config = arr[0];
 
-    auto win = result->getWin();
+    auto win = App::getWindow(result->winId);
     NOTIFYICONDATA* tray = new NOTIFYICONDATA();
     ZeroMemory(tray, sizeof(NOTIFYICONDATA));
     tray->cbSize = sizeof(NOTIFYICONDATA);
@@ -381,7 +381,7 @@ void Os::destroyTray(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     int trayId = arr[0].GetInt();
-    auto win = result->getWin();
+    auto win = App::getWindow(result->winId);
     for (auto it = win->trays.begin(); it != win->trays.end(); ++it) {
         if ((*it)->uID == trayId) {
             Shell_NotifyIcon(NIM_DELETE, *it);

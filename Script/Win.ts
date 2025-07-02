@@ -1,6 +1,11 @@
 import { Eventer } from "./Eventer";
 
 export class Win extends Eventer {
+  id: string;
+
+  async create(config: object) {
+    return this.execute("create", config);
+  }
   maximize() {
     return this.execute("maximize");
   }
@@ -40,19 +45,21 @@ export class Win extends Eventer {
   on(eventName, func) {
     let flag = this.listen(eventName, func);
     if (flag) {
-      this.execute("on", eventName);
+      return this.execute("on", eventName);
     }
+    return Promise.resolve({ ok: true });
   }
   off(eventName, func) {
     let flag = this.unlisten(eventName, func);
     if (flag) {
-      this.execute("off", eventName);
+      return this.execute("off", eventName);
     }
+    return Promise.resolve({ ok: true });
   }
   protected execute(methodName: string, ...params: any[]) {
     return this.call({
       className: "win",
-      winId: globalThis.__WIN_ID,
+      winId: horse.win.id,
       methodName,
       params,
     });

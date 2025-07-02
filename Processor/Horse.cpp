@@ -8,7 +8,6 @@ namespace {
     std::unique_ptr<Horse> horse;
     static std::unordered_map<std::string, void (Horse::*)(const rapidjson::Value&, JsonResult*)> funcs{
     {"getConfig", &Horse::getConfig},
-    {"createWin", &Horse::createWin},
     {"getExeVer", &Horse::getExeVer},
     {"getHorseVer", &Horse::getHorseVer},
     {"quit", &Horse::quit},
@@ -57,16 +56,6 @@ void Horse::getConfig(const rapidjson::Value& params, JsonResult* result)
     doc.Parse(str.data());
     rapidjson::Value copiedValue(doc, result->getAllocator());
 	result->addValue("data", std::move(copiedValue));
-}
-
-void Horse::createWin(const rapidjson::Value& params, JsonResult* result)
-{
-    const rapidjson::Value::ConstArray arr = params.GetArray();
-    const rapidjson::Value& value = arr[0];
-    auto winIns = std::make_unique<BrowserWindow>(value);
-    winIns->load();
-    result->addNumber("id", winIns->id);
-    App::addWindow(std::move(winIns));
 }
 void Horse::getExeVer(const rapidjson::Value& params, JsonResult* result) {
     std::vector<wchar_t> exePath(MAX_PATH);

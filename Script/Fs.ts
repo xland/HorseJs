@@ -67,7 +67,7 @@ export class Fs extends Eventer {
   private execute(methodName: string, ...params: any[]) {
     return this.call({
       className: "fs",
-      winId: globalThis.__WIN_ID,
+      winId: horse.win.id,
       methodName,
       params,
     });

@@ -9,7 +9,6 @@ public:
 	static Horse* get();
 	static bool execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result);
 	void getConfig(const rapidjson::Value& params, JsonResult* result);
-	void createWin(const rapidjson::Value& params, JsonResult* result);
 	void getExeVer(const rapidjson::Value& params, JsonResult* result);
 	void getHorseVer(const rapidjson::Value& params, JsonResult* result);
 	void quit(const rapidjson::Value& params, JsonResult* result);

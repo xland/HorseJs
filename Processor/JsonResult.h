@@ -11,8 +11,6 @@ class JsonResult : public JsonParsor
         void returnBackThread();
         void returnBack();
         void returnBackSharedBuffer(ICoreWebView2SharedBuffer* sharedBuffer);
-        BrowserWindow* getTar();
-        BrowserWindow* getWin();
     public:
         bool ok{ true },cancel{false};
         int winId, tarId{-1};

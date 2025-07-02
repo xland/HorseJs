@@ -22,7 +22,7 @@ export class Dll extends Eventer {
   private execute(methodName: string, ...params: any[]) {
     return this.call({
       className: "dll",
-      winId: globalThis.__WIN_ID,
+      winId: horse.win.id,
       methodName,
       params,
     });

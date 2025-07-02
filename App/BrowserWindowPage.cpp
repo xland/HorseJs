@@ -137,9 +137,8 @@ void BrowserWindow::loadResource()
         std::wstring script = Util::convertToWStr(utf8Script.data());
         return script;
         }();
-    auto str = std::format(L"__WIN_ID={};",id);
+    auto str = resScript + std::format(L"horse.win.id={};",id);
     auto hr = webview->AddScriptToExecuteOnDocumentCreated(str.data(), nullptr);
-    hr = webview->AddScriptToExecuteOnDocumentCreated(resScript.data(), nullptr);
 }
 
 HRESULT BrowserWindow::navigateStart(ICoreWebView2* webview, ICoreWebView2NavigationStartingEventArgs* args)

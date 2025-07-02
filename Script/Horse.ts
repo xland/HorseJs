@@ -1,5 +1,4 @@
 import { Dll } from "./Dll";
-import { WinProx } from "./WinProxy";
 import { Win } from "./Win";
 import { Fs } from "./Fs";
 import { Eventer } from "./Eventer";
@@ -47,10 +46,6 @@ class Horse extends Eventer {
   exit(code: number) {
     return this.execute("exit", code);
   }
-  async createWin(config: object) {
-    let obj = await this.execute("createWin", config);
-    return new WinProx(obj.id);
-  }
   enableSecondIns() {
     return this.execute("enableSecondIns");
   }
@@ -67,14 +62,12 @@ class Horse extends Eventer {
     return this.execute("autoStart", flag);
   }
   on(eventName, func) {
-    if (eventName === "newWin") return this.onNewWin(func);
     let flag = this.listen(eventName, func);
     if (flag) {
       this.execute("on", eventName);
     }
   }
   off(eventName, func) {
-    if (eventName === "newWin") return this.offNewWin(func);
     let flag = this.unlisten(eventName, func);
     if (flag) {
       this.execute("off", eventName);
@@ -121,27 +114,10 @@ class Horse extends Eventer {
   private execute(methodName: string, ...params: any[]) {
     return this.call({
       className: "horse",
-      winId: globalThis.__WIN_ID,
+      winId: horse.win.id,
       methodName,
       params,
     });
-  }
-  private onNewWin(func) {
-    this.listen("_newWin", func);
-    if (!this.has("newWin")) {
-      this.listen("newWin", (data) => {
-        let proxy = new WinProx(data.id);
-        this.emit("_newWin", proxy);
-      });
-      this.execute("on", "newWin");
-    }
-  }
-  private offNewWin(func) {
-    let flag = this.unlisten("_newWin", func);
-    if (flag) {
-      this.unlisten("newWin");
-      this.execute("off", "newWin");
-    }
   }
 }
 if (window.self === window.top) {

@@ -39,7 +39,7 @@ export class Clipboard extends Eventer {
   private execute(methodName: string, ...params: any[]) {
     return this.call({
       className: "clipboard",
-      winId: globalThis.__WIN_ID,
+      winId: horse.win.id,
       methodName,
       params,
     });

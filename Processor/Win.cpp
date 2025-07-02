@@ -5,6 +5,7 @@
 namespace {
     std::unique_ptr<Win> win;
     static std::unordered_map<std::string, void (Win::*)(const rapidjson::Value&, JsonResult*)> funcs{
+    {"create", &Win::create},
     {"show", &Win::show},
     {"hide", &Win::hide},
     {"maximize", &Win::maximize},
@@ -47,25 +48,32 @@ bool Win::execute(std::string& methodName, const rapidjson::Value& param, JsonRe
     (Win::get()->*it->second)(param, result);
     return true;
 }
+void Win::create(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    const rapidjson::Value& value = arr[0];
+    auto winIns = std::make_unique<BrowserWindow>(value);
+    winIns->load();
+    result->addNumber("id", winIns->id);
+    App::addWindow(std::move(winIns));
+}
 void Win::on(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::string eventName = arr[0].GetString();
-    auto tar = result->getTar();
-    tar->events[eventName].insert(result->winId);
+    App::getWindow(result->winId)->events[eventName].insert(result->winId);
 }
 
 void Win::off(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     std::string eventName = arr[0].GetString();
-    auto tar = result->getTar();
-    tar->events[eventName].erase(result->winId);
+    App::getWindow(result->winId)->events[eventName].erase(result->winId);
 }
 
 void Win::maximize(const rapidjson::Value& params, JsonResult* result)
 {
-    auto win = result->getTar();
+    auto win = App::getWindow(result->winId);
     if (!win->maximizable) {
         result->addErr("failed due to the maximizable or maxSize settings in config.json.");
         return;
@@ -75,7 +83,7 @@ void Win::maximize(const rapidjson::Value& params, JsonResult* result)
 
 void Win::minimize(const rapidjson::Value& params, JsonResult* result)
 {
-    auto win = result->getTar();
+    auto win = App::getWindow(result->winId);
     if (win->ctrlComp) {
         //由于窗口最小化了，WebView2 内部的 Chromium 引擎判定视图不可见，不再处理鼠标事件。
         //todo 还得拦截这个消息： case WM_SYSCOMMAND: switch (wParam & 0xFFF0) { case SC_MINIMIZE:
@@ -86,7 +94,7 @@ void Win::minimize(const rapidjson::Value& params, JsonResult* result)
 }
 void Win::show(const rapidjson::Value& params, JsonResult* result)
 {
-    auto win = result->getTar();
+    auto win = App::getWindow(result->winId);
     ShowWindow(win->hwnd, SW_SHOW);
     SetForegroundWindow(win->hwnd);
     //ShowWindow(hwnd, SW_SHOWNORMAL);
@@ -94,19 +102,19 @@ void Win::show(const rapidjson::Value& params, JsonResult* result)
 
 void Win::hide(const rapidjson::Value& params, JsonResult* result)
 {
-    auto win = result->getTar();
+    auto win = App::getWindow(result->winId);
     ShowWindow(win->hwnd, SW_HIDE);
 }
 
 void Win::restore(const rapidjson::Value& params, JsonResult* result)
 {
-    auto win = result->getTar();
+    auto win = App::getWindow(result->winId);
     ShowWindow(win->hwnd, SW_RESTORE);
 }
 
 void Win::close(const rapidjson::Value& params, JsonResult* result)
 {
-    auto win = result->getTar();
+    auto win = App::getWindow(result->winId);
     //CloseWindow(hwnd); 这相当于窗口最小化
     //不能用SendMessage，因为这回导致对象删除之后，MsgProcessor还在准备向页面发消息
     PostMessage(win->hwnd, WM_CLOSE, 0, 0);
@@ -114,13 +122,14 @@ void Win::close(const rapidjson::Value& params, JsonResult* result)
 
 void Win::destroy(const rapidjson::Value& params, JsonResult* result)
 {
-    auto win = result->getTar();
-    PostMessage(win->hwnd, WM_DESTROY, 0, 0);
+    auto win = App::getWindow(result->winId);
+    win->events["closing"].clear();
+    PostMessage(win->hwnd, WM_CLOSE, 0, 0);
 }
 
 void Win::flash(const rapidjson::Value& params, JsonResult* result)
 {
-    auto win = result->getTar();
+    auto win = App::getWindow(result->winId);
     const rapidjson::Value::ConstArray arr = params.GetArray();
     auto isStart = arr[0].GetBool();
     FLASHWINFO fwInfo = {};
@@ -140,7 +149,7 @@ void Win::flash(const rapidjson::Value& params, JsonResult* result)
 
 void Win::setResizable(const rapidjson::Value& params, JsonResult* result)
 {
-    auto win = result->getTar();
+    auto win = App::getWindow(result->winId);
     const rapidjson::Value::ConstArray arr = params.GetArray();
     auto flag = arr[0].GetBool();
     if (!win->frame) {
@@ -161,14 +170,14 @@ void Win::setResizable(const rapidjson::Value& params, JsonResult* result)
 void Win::startDrag(const rapidjson::Value& params, JsonResult* result)
 {
     //todo 这里不稳定，应该用hittest方法解决
-    auto win = result->getTar();
+    auto win = App::getWindow(result->winId);
     //ReleaseCapture();
     PostMessage(win->hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
 }
 
 void Win::resize(const rapidjson::Value& params, JsonResult* result)
 {
-    auto win = result->getTar();
+    auto win = App::getWindow(result->winId);
     const rapidjson::Value::ConstArray arr = params.GetArray();
     auto w = arr[0].GetInt();
     auto h = arr[0].GetInt();

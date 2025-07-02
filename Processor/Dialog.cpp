@@ -1,5 +1,6 @@
 ﻿#include <pch.h>
 
+#include "../App/App.h"
 #include "Dialog.h"
 #include "../App/BrowserWindow.h"
 
@@ -211,7 +212,7 @@ void Dialog::msgBox(const rapidjson::Value& params, JsonResult* result)
     auto iconAndBtns = mbButton | icon;
     auto asyncResult = new JsonResult(result->winId, "dialog", result->getString("eventName"));
     std::jthread worker([asyncResult,title = std::move(title),msg = std::move(msg),iconAndBtns ]() {
-            int ret = MessageBox(asyncResult->getWin()->hwnd, msg.c_str(), title.c_str(), iconAndBtns);
+            int ret = MessageBox(App::getWindow(asyncResult->winId)->hwnd, msg.c_str(), title.c_str(), iconAndBtns);
             switch (ret) {
             case IDOK:
                 asyncResult->addString("data", "ok");
@@ -325,7 +326,7 @@ void Dialog::showOpenPathDialog(JsonResult* result,
             return;
         }
     }
-    auto win = result->getWin();
+    auto win = App::getWindow(result->winId);
     hr = pFileOpen->Show(win->hwnd);
     if (hr == HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
         pFileOpen->Release();
@@ -565,7 +566,7 @@ void Dialog::showSavePathDialog(JsonResult* result,
         }
     }
     // 显示保存对话框
-    auto win = result->getWin();
+    auto win = App::getWindow(result->winId);
     hr = pFileSave->Show(win->hwnd);
     if (hr == HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
         pFileSave->Release();
