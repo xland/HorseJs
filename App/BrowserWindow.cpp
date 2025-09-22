@@ -5,8 +5,11 @@
 #include "../Processor/MsgProcessor.h"
 #include "BrowserWindow.h"
 
-BrowserWindow::BrowserWindow(const rapidjson::Value& winConfig)
+BrowserWindow::BrowserWindow(const rapidjson::Value& winConfig, const int& pid):pid{pid}
 {
+    static int orgId{ 0 };
+    id = orgId;
+    orgId += 1;
     configSize(winConfig);
     configPos(winConfig);
     configPage(winConfig);

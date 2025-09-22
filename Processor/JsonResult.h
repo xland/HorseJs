@@ -13,7 +13,7 @@ class JsonResult : public JsonParsor
         void returnBackSharedBuffer(ICoreWebView2SharedBuffer* sharedBuffer);
     public:
         bool ok{ true },cancel{false};
-        int winId, tarId{-1};
+        int winId;
     private:
     private:
 };

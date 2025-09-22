@@ -137,7 +137,7 @@ void BrowserWindow::loadResource()
         std::wstring script = Util::convertToWStr(utf8Script.data());
         return script;
         }();
-    auto str = resScript + std::format(L"horse.win.id={};",id);
+    auto str = resScript + std::format(L"horse.win.id={};horse.win.pid={};",id,pid);
     auto hr = webview->AddScriptToExecuteOnDocumentCreated(str.data(), nullptr);
 }
 

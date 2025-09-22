@@ -61,9 +61,6 @@ void MsgProcessor::processStr(const std::string& msgStr)
         eventName = jsonDoc["eventName"].GetString();
     }
     JsonResult result(winId,className,eventName);
-    if (jsonDoc.HasMember("tarId") && jsonDoc["tarId"].IsInt()) {
-        result.tarId = jsonDoc["tarId"].GetInt();
-    }
     auto it = processFunc.find(className);
     if (it == processFunc.end()) {
         result.addErr(std::format("class {} not found!", className));

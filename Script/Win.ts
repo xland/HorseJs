@@ -1,10 +1,13 @@
 import { Eventer } from "./Eventer";
 
 export class Win extends Eventer {
-  id: string;
-
-  async create(config: object) {
+  id: number;
+  pid = -1;
+  create(config: object) {
     return this.execute("create", config);
+  }
+  sendMsg(tarId: number, msg: any) {
+    return this.execute("sendMsg", tarId, msg);
   }
   maximize() {
     return this.execute("maximize");
@@ -33,8 +36,11 @@ export class Win extends Eventer {
   destroy() {
     return this.execute("destroy");
   }
-  flash(flag: boolean) {
+  flash(flag = true) {
     return this.execute("flash", flag);
+  }
+  activate() {
+    return this.execute("activate");
   }
   startDrag() {
     return this.execute("startDrag");
@@ -59,7 +65,7 @@ export class Win extends Eventer {
   protected execute(methodName: string, ...params: any[]) {
     return this.call({
       className: "win",
-      winId: horse.win.id,
+      winId: this.id,
       methodName,
       params,
     });

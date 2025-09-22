@@ -10,14 +10,16 @@ public:
 	static Win* get();
 	static bool execute(std::string& methodName, const rapidjson::Value& param, JsonResult* result);
 	void create(const rapidjson::Value& params, JsonResult* result);
+	void close(const rapidjson::Value& params, JsonResult* result);
+	void destroy(const rapidjson::Value& params, JsonResult* result);
+	void sendMsg(const rapidjson::Value& params, JsonResult* result);
 	void show(const rapidjson::Value& params, JsonResult* result);
 	void hide(const rapidjson::Value& params, JsonResult* result);
 	void maximize(const rapidjson::Value& params, JsonResult* result);
 	void minimize(const rapidjson::Value& params, JsonResult* result);
 	void restore(const rapidjson::Value& params, JsonResult* result);
 	void flash(const rapidjson::Value& params, JsonResult* result);
-	void close(const rapidjson::Value& params, JsonResult* result);
-	void destroy(const rapidjson::Value& params, JsonResult* result);
+	void activate(const rapidjson::Value& params, JsonResult* result);
 	void startDrag(const rapidjson::Value& params, JsonResult* result);
 	void setResizable(const rapidjson::Value& params, JsonResult* result);
 	void resize(const rapidjson::Value& params, JsonResult* result);

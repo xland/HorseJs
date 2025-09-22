@@ -8,11 +8,11 @@ class JsonResult;
 class BrowserWindow
 {
 public:
-	BrowserWindow(const rapidjson::Value& winConfig);
+	BrowserWindow(const rapidjson::Value& winConfig,const int& pid=-1);
 	~BrowserWindow();
 	bool load();
 public:
-	int id{ 0 }, x{ 100 }, y{ 100 }, w{ 1000 }, h{ 800 };
+	int id{ 0 },pid{-1}, x{100}, y{100}, w{1000}, h{800};
 	int minWidth{ 0 }, minHeight{ 0 }, maxWidth{ std::numeric_limits<int>::max() }, maxHeight{ std::numeric_limits<int>::max() };
 	bool maximize{ false }, visible{ true }, frame{ true }, shadow{ true }, skipTaskbar{ false };
 	bool maximizable{ true }, resizable{ true }, minimizable{ true }, alwaysOnTop{ false };  //todo closable

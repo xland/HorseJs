@@ -3,9 +3,6 @@
 
 void BrowserWindow::configOther(const rapidjson::Value& config)
 {
-    static int orgId{ 0 };
-    id = orgId;
-    orgId += 1;
     if (config.HasMember("visible") && config["visible"].IsBool())
     {
         visible = config["visible"].GetBool();

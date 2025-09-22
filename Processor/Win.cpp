@@ -7,6 +7,7 @@ namespace {
     static std::unordered_map<std::string, void (Win::*)(const rapidjson::Value&, JsonResult*)> funcs{
     {"create", &Win::create},
     {"show", &Win::show},
+    {"sendMsg", &Win::sendMsg},
     {"hide", &Win::hide},
     {"maximize", &Win::maximize},
     {"minimize", &Win::minimize},
@@ -17,6 +18,7 @@ namespace {
     {"setResizable", &Win::setResizable},
     {"resize", &Win::resize},
     {"flash", &Win::flash},
+    {"activate", &Win::activate},
     {"insertMenu", &Win::insertMenu},
     {"removeMenu", &Win::removeMenu},
     {"writeCookie", &Win::writeCookie},
@@ -52,7 +54,7 @@ void Win::create(const rapidjson::Value& params, JsonResult* result)
 {
     const rapidjson::Value::ConstArray arr = params.GetArray();
     const rapidjson::Value& value = arr[0];
-    auto winIns = std::make_unique<BrowserWindow>(value);
+    auto winIns = std::make_unique<BrowserWindow>(value,result->winId);
     winIns->load();
     result->addNumber("id", winIns->id);
     App::addWindow(std::move(winIns));
@@ -127,6 +129,16 @@ void Win::destroy(const rapidjson::Value& params, JsonResult* result)
     PostMessage(win->hwnd, WM_CLOSE, 0, 0);
 }
 
+void Win::sendMsg(const rapidjson::Value& params, JsonResult* result)
+{
+    const rapidjson::Value::ConstArray arr = params.GetArray();
+    auto tarId = arr[0].GetInt(); 
+    rapidjson::Value& val = const_cast<rapidjson::Value&>(arr[1]);
+    JsonResult tarResult(tarId, "win", "msg");
+    tarResult.addValue("data", std::move(val));
+    tarResult.returnBack();
+}
+
 void Win::flash(const rapidjson::Value& params, JsonResult* result)
 {
     auto win = App::getWindow(result->winId);
@@ -145,6 +157,13 @@ void Win::flash(const rapidjson::Value& params, JsonResult* result)
     fwInfo.uCount = 0;                   // uCount = 0 且设置了 FLASHW_TIMERNOFG 时，会持续闪烁直到窗口变为前台；
     fwInfo.dwTimeout = 0;                 // 使用默认闪烁时间
     FlashWindowEx(&fwInfo);
+}
+
+void Win::activate(const rapidjson::Value& params, JsonResult* result)
+{
+    auto win = App::getWindow(result->winId);
+    SetForegroundWindow(win->hwnd);
+    SetFocus(win->hwnd);
 }
 
 void Win::setResizable(const rapidjson::Value& params, JsonResult* result)
