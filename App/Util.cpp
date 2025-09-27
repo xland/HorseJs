@@ -62,7 +62,7 @@ std::string Util::colorToHex(COLORREF color) {
 
 std::wstring Util::getContentType(const std::wstring& fileName)
 {
-    static const std::map<std::string, std::wstring> mimeTypes = {
+    static const std::unordered_map<std::string, std::wstring> mimeTypes = {
             {".html", L"text/html"},
             {".htm",  L"text/html"},
             {".js",   L"application/javascript"},
